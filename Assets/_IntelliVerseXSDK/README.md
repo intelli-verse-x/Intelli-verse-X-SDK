@@ -35,7 +35,7 @@ Add to your `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK"
   }
 }
 ```
@@ -45,7 +45,7 @@ Add to your `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v2.0.0"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v2.0.0"
   }
 }
 ```
@@ -56,7 +56,7 @@ Add to your `Packages/manifest.json`:
 2. Click **+** > **Add package from git URL...**
 3. Enter:
    ```
-   https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK
+   https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK
    ```
 4. Click **Add**
 
@@ -267,7 +267,7 @@ MIT License - see [LICENSE](LICENSE) for details.
 ## 🆘 Support
 
 - **Documentation**: [Documentation~/](Documentation~/)
-- **Issues**: [GitHub Issues](https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK/issues)
+- **Issues**: [GitHub Issues](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues)
 - **Email**: sdk@intelliversex.com
 
 ---

@@ -137,7 +137,7 @@ Add to your \`Packages/manifest.json\`:
 \`\`\`json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v$VERSION"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v$VERSION"
   }
 }
 \`\`\`
@@ -146,7 +146,7 @@ Add to your \`Packages/manifest.json\`:
 
 1. Open **Window > Package Manager**
 2. Click **+** > **Add package from git URL...**
-3. Enter: \`https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v$VERSION\`
+3. Enter: \`https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v$VERSION\`
 4. Click **Add**
 
 ---
@@ -185,7 +185,7 @@ EOF
           echo '```json' >> $GITHUB_STEP_SUMMARY
           echo '{' >> $GITHUB_STEP_SUMMARY
           echo '  "dependencies": {' >> $GITHUB_STEP_SUMMARY
-          echo "    \"com.intelliversex.sdk\": \"https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v$VERSION\"" >> $GITHUB_STEP_SUMMARY
+          echo "    \"com.intelliversex.sdk\": \"https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v$VERSION\"" >> $GITHUB_STEP_SUMMARY
           echo '  }' >> $GITHUB_STEP_SUMMARY
           echo '}' >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY

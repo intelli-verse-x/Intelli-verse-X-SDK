@@ -19,7 +19,7 @@ Add the following to your `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK"
   }
 }
 ```
@@ -29,7 +29,7 @@ Add the following to your `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v2.0.0"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v2.0.0"
   }
 }
 ```
@@ -38,7 +38,7 @@ Add the following to your `Packages/manifest.json`:
 
 1. Open **Window > Package Manager**
 2. Click **+** > **Add package from git URL...**
-3. Enter: `https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK`
+3. Enter: `https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK`
 4. Click **Add**
 
 ## Initial Setup

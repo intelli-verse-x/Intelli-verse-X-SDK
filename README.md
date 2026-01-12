@@ -17,7 +17,7 @@ Add to your `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK"
   }
 }
 ```
@@ -27,7 +27,7 @@ Add to your `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v2.0.0"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v2.0.0"
   }
 }
 ```
@@ -35,7 +35,7 @@ Add to your `Packages/manifest.json`:
 **Via Package Manager UI:**
 1. **Window > Package Manager**
 2. **+** > **Add package from git URL...**
-3. Enter: `https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK`
+3. Enter: `https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK`
 
 ---
 
@@ -168,7 +168,7 @@ After installing, import samples via Package Manager:
 
 This repository is a Unity project for SDK development:
 
-1. Clone: `git clone https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git`
+1. Clone: `git clone https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git`
 2. Open in Unity 2023.3+
 3. SDK code: `Assets/_IntelliVerseXSDK/`
 4. Tests: `Window > General > Test Runner`
@@ -183,7 +183,7 @@ MIT License - see [LICENSE](LICENSE)
 
 ## 🆘 Support
 
-- [Issues](https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK/issues)
+- [Issues](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues)
 - Email: sdk@intelliversex.com
 
 ---

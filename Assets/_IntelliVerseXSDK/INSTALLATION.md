@@ -31,7 +31,7 @@ Add to your `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK"
   }
 }
 ```
@@ -41,7 +41,7 @@ Add to your `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v2.0.0"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v2.0.0"
   }
 }
 ```
@@ -53,7 +53,7 @@ Add to your `Packages/manifest.json`:
 3. Select **Add package from git URL...**
 4. Enter:
    ```
-   https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK
+   https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK
    ```
 5. Click **Add**
 
@@ -61,7 +61,7 @@ Add to your `Packages/manifest.json`:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git
+   git clone https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git
    ```
 2. In Unity, go to **Window > Package Manager**
 3. Click **+** > **Add package from disk...**
@@ -317,7 +317,7 @@ Update the version tag:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v2.1.0"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v2.1.0"
   }
 }
 ```
@@ -383,7 +383,7 @@ Check `CHANGELOG.md` for breaking changes when updating major versions.
 
 ## 📞 Support
 
-- **GitHub Issues:** [Report Issues](https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK/issues)
+- **GitHub Issues:** [Report Issues](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues)
 - **Email:** sdk@intelliversex.com
 
 ---

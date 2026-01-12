@@ -64,7 +64,7 @@ Complete restructuring as a world-class Unity Package Manager (UPM) package for 
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v2.0.0"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v2.0.0"
   }
 }
 ```
@@ -158,7 +158,7 @@ Complete SDK extraction from QuizVerse with 12 modular packages.
 2. **Remove old SDK**: Delete `Assets/_IntelliVerseXSDK` folder
 3. **Install via UPM**: Add to `Packages/manifest.json`:
    ```json
-   "com.intelliversex.sdk": "https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v2.0.0"
+   "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v2.0.0"
    ```
 4. **Run Project Setup**: `IntelliVerseX > Project Setup & Validation`
 5. **Import Samples**: Via Package Manager if needed

@@ -13,7 +13,7 @@ This guide covers common issues and their solutions when using the IntelliVerseX
 2. Ensure Git is installed and accessible from command line
 3. Verify the Git URL is correct:
    ```
-   https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK
+   https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK
    ```
 4. Try closing and reopening Unity
 5. Delete the `Library/PackageCache` folder and reopen Unity
@@ -147,7 +147,7 @@ This guide covers common issues and their solutions when using the IntelliVerseX
 
 If your issue isn't covered here:
 
-1. **Search existing issues**: https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK/issues
+1. **Search existing issues**: https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues
 2. **Create a new issue** with:
    - Unity version
    - SDK version
