@@ -1,0 +1,24 @@
+{
+    "name": "IntelliVerseX.Social",
+    "rootNamespace": "IntelliVerseX.Social",
+    "references": [
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:9da81476d6577524da3bf2ff9010e70e",
+        "DOTween.Modules"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.demigiant.dotween",
+            "expression": "",
+            "define": "DOTWEEN"
+        }
+    ],
+    "noEngineReferences": false
+}

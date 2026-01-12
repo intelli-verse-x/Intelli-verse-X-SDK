@@ -1,0 +1,27 @@
+{
+    "name": "IntelliVerseX.UI",
+    "rootNamespace": "IntelliVerseX.UI",
+    "references": [
+        "Unity.TextMeshPro",
+        "IntelliVerseX.Core",
+        "IntelliVerseX.V2",
+        "IntelliVerseX.Backend",
+        "NakamaRuntime",
+        "DOTween.Modules"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.demigiant.dotween",
+            "expression": "",
+            "define": "DOTWEEN"
+        }
+    ],
+    "noEngineReferences": false
+}

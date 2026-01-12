@@ -1,0 +1,210 @@
+# Context Engineering Validation Workflow
+# Validates context files and guardrails on every PR
+
+name: Context Validation
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - '.cursor/**'
+      - 'Assets/_IntelliVerseXSDK/**'
+      - 'docs/**'
+      - 'AGENT.md'
+      - 'AGENTS.md'
+  push:
+    branches: [main]
+    paths:
+      - '.cursor/**'
+
+jobs:
+  validate-context:
+    name: Validate Context Engineering
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for diff
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Validate Required Context Files Exist
+        run: |
+          echo "🔍 Checking required context files..."
+          
+          REQUIRED_FILES=(
+            ".cursor/context.md"
+            ".cursor/architecture.md"
+            ".cursor/naming-and-style.md"
+            ".cursor/assumptions.md"
+            ".cursor/NON_GOALS.md"
+            ".cursor/AI_GUARDRAILS.md"
+            ".cursor/ANTI_PATTERNS.md"
+            ".cursor/HOT_CONTEXT.md"
+            ".cursor/INTENTS.md"
+            ".cursor/commands.json"
+            ".cursor/FRESHNESS.md"
+            ".cursor/SYSTEM_MAP.md"
+            ".cursor/rules/core/RULE.md"
+            ".cursor/rules/upm/RULE.md"
+            ".cursorrules"
+            "AGENT.md"
+            "AGENTS.md"
+            "tools/context/validate_context.py"
+            "tools/context/README.md"
+            "tools/context/baselines/todo_fixme_cs.tsv"
+          )
+          
+          MISSING=0
+          for file in "${REQUIRED_FILES[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "❌ Missing: $file"
+              MISSING=$((MISSING + 1))
+            else
+              echo "✅ Found: $file"
+            fi
+          done
+          
+          if [ $MISSING -gt 0 ]; then
+            echo "::error::$MISSING required context files are missing!"
+            exit 1
+          fi
+          
+          echo "✅ All required context files present"
+      
+      - name: Validate Required Directories Exist
+        run: |
+          echo "🔍 Checking required directories..."
+          
+          REQUIRED_DIRS=(
+            ".cursor/rules/core"
+            ".cursor/rules/upm"
+            ".cursor/memory"
+            ".cursor/examples"
+            "docs/context"
+            "docs/architecture/adr"
+            "docs/tracking"
+            "tools/context"
+            "tools/context/baselines"
+          )
+          
+          MISSING=0
+          for dir in "${REQUIRED_DIRS[@]}"; do
+            if [ ! -d "$dir" ]; then
+              echo "❌ Missing: $dir"
+              MISSING=$((MISSING + 1))
+            else
+              echo "✅ Found: $dir"
+            fi
+          done
+          
+          if [ $MISSING -gt 0 ]; then
+            echo "::error::$MISSING required directories are missing!"
+            exit 1
+          fi
+          
+          echo "✅ All required directories present"
+      
+      - name: Check for Read-Only Zone Modifications
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "🔍 Checking for read-only zone modifications..."
+          
+          READ_ONLY_ZONES=(
+            "Assets/Nakama/"
+            "Assets/Photon/"
+            "Assets/Appodeal/"
+            "Assets/LevelPlay/"
+            "Assets/AppleAuth/"
+            "Assets/Plugins/Demigiant/"
+            "Assets/Plugins/NativeFilePicker/"
+          )
+          
+          VIOLATIONS=0
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          
+          for zone in "${READ_ONLY_ZONES[@]}"; do
+            if echo "$CHANGED_FILES" | grep -q "^$zone"; then
+              echo "❌ VIOLATION: Files modified in read-only zone: $zone"
+              echo "$CHANGED_FILES" | grep "^$zone"
+              VIOLATIONS=$((VIOLATIONS + 1))
+            fi
+          done
+          
+          if [ $VIOLATIONS -gt 0 ]; then
+            echo "::error::$VIOLATIONS read-only zone violations detected!"
+            exit 1
+          fi
+          
+          echo "✅ No read-only zone violations"
+      
+      - name: Validate JSON Memory Files
+        run: |
+          echo "🔍 Validating JSON memory files..."
+          
+          JSON_FILES=(
+            ".cursor/memory/decisions.json"
+            ".cursor/memory/patterns.json"
+            ".cursor/memory/corrections.json"
+          )
+          
+          INVALID=0
+          for file in "${JSON_FILES[@]}"; do
+            if [ -f "$file" ]; then
+              if python -m json.tool "$file" > /dev/null 2>&1; then
+                echo "✅ Valid JSON: $file"
+              else
+                echo "❌ Invalid JSON: $file"
+                INVALID=$((INVALID + 1))
+              fi
+            fi
+          done
+          
+          if [ $INVALID -gt 0 ]; then
+            echo "::error::$INVALID JSON files are invalid!"
+            exit 1
+          fi
+          
+          echo "✅ All JSON files are valid"
+      
+      - name: Check Context Freshness
+        run: |
+          echo "🔍 Checking context freshness..."
+          
+          # Check if FRESHNESS.md exists and has recent updates
+          if [ -f ".cursor/FRESHNESS.md" ]; then
+            LAST_MODIFIED=$(stat -c %Y ".cursor/FRESHNESS.md" 2>/dev/null || stat -f %m ".cursor/FRESHNESS.md")
+            CURRENT_TIME=$(date +%s)
+            AGE_DAYS=$(( (CURRENT_TIME - LAST_MODIFIED) / 86400 ))
+            
+            if [ $AGE_DAYS -gt 30 ]; then
+              echo "⚠️ Warning: FRESHNESS.md is $AGE_DAYS days old"
+              echo "::warning::Context freshness tracking may be stale"
+            else
+              echo "✅ FRESHNESS.md is $AGE_DAYS days old (within 30-day limit)"
+            fi
+          fi
+
+      - name: Run Context Validator (Schema + Guardrails)
+        run: |
+          echo "🔍 Running tools/context/validate_context.py..."
+          python tools/context/validate_context.py --ci
+      
+      - name: Summary
+        run: |
+          echo "## Context Validation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ All context validation checks passed!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Validated:" >> $GITHUB_STEP_SUMMARY
+          echo "- Required context files exist" >> $GITHUB_STEP_SUMMARY
+          echo "- Required directories exist" >> $GITHUB_STEP_SUMMARY
+          echo "- No read-only zone violations" >> $GITHUB_STEP_SUMMARY
+          echo "- JSON memory files are valid" >> $GITHUB_STEP_SUMMARY
+          echo "- Context freshness checked" >> $GITHUB_STEP_SUMMARY
+          echo "- Validator checks (schema + guardrails) passed" >> $GITHUB_STEP_SUMMARY

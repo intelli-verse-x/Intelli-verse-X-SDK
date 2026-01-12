@@ -1,0 +1,20 @@
+{
+    "name": "IntelliVerseX.V2.Editor",
+    "rootNamespace": "IntelliVerseX.V2.Editor",
+    "references": [
+        "IntelliVerseX.V2",
+        "IntelliVerseX.Core",
+        "IntelliVerseX.Backend"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

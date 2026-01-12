@@ -1,0 +1,21 @@
+{
+    "name": "IntelliVerseX.Leaderboard.Editor",
+    "rootNamespace": "IntelliVerseX.Games.Leaderboard.Editor",
+    "references": [
+        "IntelliVerseX.Leaderboard",
+        "IntelliVerseX.Core",
+        "IntelliVerseX.Backend",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,111 @@
+# Unity Generated Folders (DO NOT INDEX)
+Library/
+Temp/
+Obj/
+Logs/
+Build/
+Builds/
+UserSettings/
+MemoryCaptures/
+
+# Large Binary Assets (skip indexing)
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.gif
+**/*.bmp
+**/*.tga
+**/*.psd
+**/*.tif
+**/*.tiff
+**/*.exr
+**/*.hdr
+
+# 3D Models
+**/*.fbx
+**/*.obj
+**/*.blend
+**/*.max
+**/*.mb
+**/*.ma
+**/*.3ds
+**/*.dae
+
+# Audio Files
+**/*.wav
+**/*.mp3
+**/*.ogg
+**/*.aif
+**/*.aiff
+**/*.flac
+
+# Video Files
+**/*.mp4
+**/*.mov
+**/*.avi
+**/*.webm
+**/*.wmv
+
+# Fonts
+**/*.ttf
+**/*.otf
+**/*.woff
+**/*.woff2
+
+# Unity Specific Binary
+# NOTE: .unity and .prefab are YAML and useful for reference searches
+# Only exclude truly binary/large Unity files
+**/*.asset
+**/*.mat
+**/*.controller
+**/*.anim
+**/*.mask
+**/*.physicMaterial
+**/*.physicsMaterial2D
+**/*.guiskin
+**/*.fontsettings
+**/*.mixer
+**/*.shadergraph
+**/*.shadersubgraph
+**/*.lighting
+**/*.terrainlayer
+**/*.cubemap
+**/*.flare
+
+# Compressed
+**/*.zip
+**/*.7z
+**/*.rar
+**/*.unitypackage
+
+# IDE Files
+.vs/
+.idea/
+**/*.csproj
+**/*.sln
+**/*.slnx
+
+# Meta files (optional - they're small but numerous)
+# **/*.meta
+
+# Third-party SDKs (large, read-only)
+Assets/Nakama/
+Assets/Photon/
+Assets/Appodeal/
+Assets/LevelPlay/
+Assets/AppleAuth/
+Assets/AppleAuthSample/
+Assets/Plugins/Demigiant/
+Assets/Plugins/NativeFilePicker/
+Assets/Sych/
+
+# Packages (managed by Unity)
+Packages/
+
+# Documentation that doesn't need indexing
+**/*.pdf
+**/*.doc
+**/*.docx
+
+# Test Results
+TestResults/

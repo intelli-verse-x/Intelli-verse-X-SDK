@@ -1,0 +1,304 @@
+# IntelliVerseX Unity SDK — Cursor Rules
+# Version: 1.1.0 | Updated: 2026-01-13
+
+## Project Identity
+
+```yaml
+project: IntelliVerseX Unity SDK
+type: Unity UPM Package
+unity_version: "6000.2.8f1"
+platforms: [Android, iOS, WebGL, Standalone]
+package_name: com.intelliversex.sdk
+```
+
+## Namespaces
+
+```yaml
+root: IntelliVerseX
+modules:
+  - IntelliVerseX.Core
+  - IntelliVerseX.Identity
+  - IntelliVerseX.Backend
+  - IntelliVerseX.Analytics
+  - IntelliVerseX.Monetization
+  - IntelliVerseX.Localization
+  - IntelliVerseX.Social
+  - IntelliVerseX.Leaderboard
+  - IntelliVerseX.Quiz
+  - IntelliVerseX.Storage
+  - IntelliVerseX.Networking
+  - IntelliVerseX.Editor
+```
+
+---
+
+## 🏛️ Context Authority System
+
+**Before ANY work, load context in this order:**
+
+1. `.cursor/NON_GOALS.md` — Scope boundaries (what NOT to do)
+2. `.cursor/AI_GUARDRAILS.md` — AI permissions
+3. `.cursor/HOT_CONTEXT.md` — Quick reference
+4. `.cursor/ANTI_PATTERNS.md` — What NOT to code
+5. `.cursor/context.md` — Master context (vision, principles)
+6. `.cursor/architecture.md` — System structure rules
+7. `.cursor/naming-and-style.md` — Naming conventions
+8. `.cursor/assumptions.md` — Explicit assumptions
+
+**System Map:** `.cursor/SYSTEM_MAP.md` — Master index of all files
+
+**Priority:** `.cursorrules` > `NON_GOALS.md` > `AI_GUARDRAILS.md` > `architecture.md` > `context.md`
+
+---
+
+## 🔒 Forbidden Actions
+
+### Never Do These
+
+- ❌ Modify third-party SDKs (`Assets/Nakama/`, `Assets/Photon/`, `Assets/Appodeal/`, etc.)
+- ❌ Touch Unity folders: `Library/`, `Temp/`, `Logs/`, `obj/`
+- ❌ Leave `// TODO` or `// FIXME` in production code
+- ❌ Use `Find()` or `GetComponent()` in `Update()`
+- ❌ Commit with compiler errors or warnings
+- ❌ Allocate in hot paths (LINQ, boxing, closures, string concat)
+- ❌ Add dependencies without explicit approval
+- ❌ Change public API without version planning
+- ❌ Store secrets in code or PlayerPrefs
+- ❌ Skip null checks on singletons
+
+### Read-Only Zones (NEVER Modify)
+
+```yaml
+never_touch:
+  - Assets/Nakama/
+  - Assets/Photon/
+  - Assets/Appodeal/
+  - Assets/LevelPlay/
+  - Assets/AppleAuth/
+  - Assets/Plugins/Demigiant/
+  - Assets/Plugins/NativeFilePicker/
+  - Library/
+  - Temp/
+  - Logs/
+```
+
+---
+
+## 📐 Coding Standards
+
+### Naming Conventions
+
+| Element | Convention | Example |
+|---------|------------|---------|
+| Classes | `IVX` + PascalCase | `IVXIdentityManager` |
+| Interfaces | `IIVX` + PascalCase | `IIVXAuthProvider` |
+| Public Methods | PascalCase | `InitializeAsync()` |
+| Private Fields | `_camelCase` | `_isInitialized` |
+| [SerializeField] | `_camelCase` | `_maxRetries` |
+| Constants | `UPPER_SNAKE` | `MAX_RETRY_COUNT` |
+| Events | `On` + PascalCase | `OnAuthStateChanged` |
+| Async Methods | PascalCase + `Async` | `SignInAsync()` |
+
+### Script Template
+
+```csharp
+using System;
+using UnityEngine;
+
+namespace IntelliVerseX.[Module]
+{
+    /// <summary>
+    /// Brief description of what this class does.
+    /// </summary>
+    public class IVXClassName : MonoBehaviour
+    {
+        #region Constants
+        private const int MAX_VALUE = 100;
+        #endregion
+
+        #region Serialized Fields
+        [Header("Configuration")]
+        [SerializeField] private float _value = 10f;
+        #endregion
+
+        #region Private Fields
+        private bool _isInitialized;
+        #endregion
+
+        #region Properties
+        public bool IsInitialized => _isInitialized;
+        #endregion
+
+        #region Unity Lifecycle
+        private void Awake() { }
+        private void OnDestroy() { }
+        #endregion
+
+        #region Public Methods
+        public void Initialize() { }
+        #endregion
+
+        #region Private Methods
+        private void ValidateState() { }
+        #endregion
+    }
+}
+```
+
+### Architecture Rules
+
+1. **Layer Boundaries** — UI → Manager → Service → Backend
+2. **Singleton Pattern** — Use for managers with `DontDestroyOnLoad`
+3. **Async/Await** — Use `Task` for async operations
+4. **Events** — Use C# events (`Action<T>`) for decoupling
+5. **Null Safety** — Always check references, use `?.` operator
+6. **Logging** — Use `Debug.Log($"[{nameof(ClassName)}] message")`
+
+### Zero-GC Hot Paths
+
+```yaml
+forbidden_in_update:
+  - LINQ queries
+  - Lambda allocations
+  - String concatenation
+  - Boxing/unboxing
+  - GetComponent<T>()
+  - Find*() methods
+
+required:
+  - Pre-allocated collections
+  - Cached component references
+  - StringBuilder for strings
+```
+
+---
+
+## 🎯 Behavior Rules
+
+### Minimum Viable Change
+
+> Implement the **minimum** that satisfies the request. No more.
+
+### Ask Before Expanding
+
+> If scope seems larger than requested, **ASK first**.
+
+### Stop at Boundaries
+
+> When work touches read-only zones or architecture, **STOP and report**.
+
+### Document Decisions
+
+> Significant decisions go in `.cursor/memory/decisions.json`.
+
+---
+
+## ✅ Response Checklist
+
+Every response should verify:
+
+### Code Quality
+- [ ] No forbidden actions
+- [ ] No GC in hot paths
+- [ ] Correct namespace (`IntelliVerseX.*`)
+- [ ] IVX prefix on public types
+- [ ] XML documentation on public APIs
+
+### Architecture
+- [ ] Respects layer boundaries
+- [ ] No circular dependencies
+- [ ] No read-only zone modifications
+
+### Safety
+- [ ] No hardcoded secrets
+- [ ] Null checks on singletons
+- [ ] Error handling included
+
+---
+
+## 📦 UPM Package Rules
+
+### Version Format
+```yaml
+format: MAJOR.MINOR.PATCH
+rules:
+  - MAJOR: Breaking API changes
+  - MINOR: New features, backward compatible
+  - PATCH: Bug fixes only
+```
+
+### Required Files
+- `package.json` — UPM manifest
+- `README.md` — Package documentation
+- `CHANGELOG.md` — Version history
+- `LICENSE.md` — License file
+
+### Assembly Definitions
+- Runtime: `IntelliVerseX.{Module}.asmdef`
+- Editor: `IntelliVerseX.{Module}.Editor.asmdef`
+- Tests: `IntelliVerseX.{Module}.Tests.asmdef`
+
+---
+
+## 🔄 Context Lifecycle
+
+### Before Work
+1. Load `.cursor/NON_GOALS.md`
+2. Load `.cursor/AI_GUARDRAILS.md`
+3. Load `.cursor/HOT_CONTEXT.md`
+4. Load `.cursor/ANTI_PATTERNS.md`
+5. Load `.cursor/context.md`
+6. Load `.cursor/architecture.md`
+7. Load `.cursor/naming-and-style.md`
+8. Load `.cursor/assumptions.md`
+
+### During Work
+1. Follow naming from `.cursor/naming-and-style.md`
+2. Respect architecture from `.cursor/architecture.md`
+3. Check ANTI_PATTERNS.md before generating new code
+4. Document significant decisions
+
+### After Work
+1. Verify against context
+2. Update CHANGELOG if applicable
+3. Update assumptions if changed
+
+---
+
+## 📋 Quick Reference
+
+| Need | File |
+|------|------|
+| **System Map** | `.cursor/SYSTEM_MAP.md` |
+| Quick reference | `.cursor/HOT_CONTEXT.md` |
+| Scope boundaries | `.cursor/NON_GOALS.md` |
+| AI permissions | `.cursor/AI_GUARDRAILS.md` |
+| Anti-patterns | `.cursor/ANTI_PATTERNS.md` |
+| Project vision | `.cursor/context.md` |
+| System structure | `.cursor/architecture.md` |
+| Naming rules | `.cursor/naming-and-style.md` |
+| Assumptions | `.cursor/assumptions.md` |
+| Context freshness | `.cursor/FRESHNESS.md` |
+| Project index | `AGENT.md` |
+| Workflows | `AGENTS.md` |
+| Code templates | `.cursor/examples/` |
+| Decision log | `.cursor/memory/decisions.json` |
+
+---
+
+## 🧠 AI Learning System
+
+AI learns from every interaction:
+
+| You Say | AI Learns |
+|---------|-----------|
+| "I prefer X" | Saves to patterns.json |
+| "Don't do X" | Saves to corrections.json |
+| "We decided X" | Saves to decisions.json |
+| "That's wrong" | Adds correction + applies immediately |
+
+**Tell me once, I remember forever.**
+
+---
+
+*You are governed by the context you create. You do not override it casually. You evolve it deliberately.*

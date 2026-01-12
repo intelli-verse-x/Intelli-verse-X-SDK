@@ -1,0 +1,20 @@
+{
+    "name": "IntelliVerseX.Social.Editor",
+    "rootNamespace": "IntelliVerseX.Social.Editor",
+    "references": [
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:9da81476d6577524da3bf2ff9010e70e",
+        "GUID:298d7df8df79cae4a80ed4900677cf34"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

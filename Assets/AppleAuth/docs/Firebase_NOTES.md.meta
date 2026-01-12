@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: d780c975634e743b7a5906ab490f2412
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 152088
+  packageName: Sign in with Apple Plugin for Unity
+  packageVersion: 1.5.0
+  assetPath: Assets/AppleAuth/docs/Firebase_NOTES.md
+  uploadId: 763184

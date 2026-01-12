@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: b5b6cd4c6059245f5bf45e2cdf6fd52d
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 152088
+  packageName: Sign in with Apple Plugin for Unity
+  packageVersion: 1.5.0
+  assetPath: Assets/AppleAuth/Runtime/Enums/PersonNameFormatterStyle.cs
+  uploadId: 763184

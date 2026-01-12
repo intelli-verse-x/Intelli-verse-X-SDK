@@ -1,0 +1,197 @@
+# Release Tag Workflow
+# Creates a GitHub release when a version tag is pushed
+# For UPM packages, the release creates a tag that consumers can reference
+
+name: Release Tag
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 2.0.0)'
+        required: true
+        type: string
+      prerelease:
+        description: 'Is this a pre-release?'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  PACKAGE_PATH: Assets/_IntelliVerseXSDK
+
+jobs:
+  validate-and-release:
+    name: Validate & Create Release
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Determine Version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" == "push" ]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+          else
+            VERSION=${{ github.event.inputs.version }}
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "📦 Release version: $VERSION"
+      
+      - name: Validate Version Format
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          if [[ ! $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$ ]]; then
+            echo "::error::Invalid version format: $VERSION"
+            echo "Expected format: MAJOR.MINOR.PATCH or MAJOR.MINOR.PATCH-prerelease"
+            exit 1
+          fi
+          echo "✅ Version format is valid"
+      
+      - name: Validate package.json exists
+        run: |
+          if [ ! -f "${{ env.PACKAGE_PATH }}/package.json" ]; then
+            echo "::error::package.json not found at ${{ env.PACKAGE_PATH }}/package.json"
+            exit 1
+          fi
+          echo "✅ package.json found"
+      
+      - name: Validate Version Match
+        run: |
+          TAG_VERSION="${{ steps.version.outputs.version }}"
+          PACKAGE_VERSION=$(python3 -c "import json; print(json.load(open('${{ env.PACKAGE_PATH }}/package.json')).get('version', ''))")
+          
+          if [ "$TAG_VERSION" != "$PACKAGE_VERSION" ]; then
+            echo "::error::Tag version ($TAG_VERSION) does not match package.json version ($PACKAGE_VERSION)"
+            echo "Please update package.json version before creating a release tag."
+            exit 1
+          fi
+          
+          echo "✅ Version match: $TAG_VERSION"
+      
+      - name: Validate Required Files
+        run: |
+          echo "🔍 Checking required package files..."
+          
+          REQUIRED_FILES=(
+            "package.json"
+            "README.md"
+            "CHANGELOG.md"
+            "LICENSE"
+          )
+          
+          MISSING=0
+          for file in "${REQUIRED_FILES[@]}"; do
+            if [ -f "${{ env.PACKAGE_PATH }}/$file" ]; then
+              echo "✅ Found: $file"
+            else
+              echo "❌ Missing: $file"
+              MISSING=$((MISSING + 1))
+            fi
+          done
+          
+          if [ $MISSING -gt 0 ]; then
+            echo "::error::$MISSING required files are missing!"
+            exit 1
+          fi
+      
+      - name: Extract Release Notes from CHANGELOG
+        id: changelog
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          CHANGELOG_PATH="${{ env.PACKAGE_PATH }}/CHANGELOG.md"
+          
+          if [ -f "$CHANGELOG_PATH" ]; then
+            # Extract notes for this version
+            NOTES=$(awk "/## \[$VERSION\]/,/^## \[/" "$CHANGELOG_PATH" | head -n -1)
+            if [ -z "$NOTES" ]; then
+              NOTES="## Release v$VERSION
+
+See CHANGELOG.md for details."
+            fi
+          else
+            NOTES="## Release v$VERSION
+
+Initial release."
+          fi
+          
+          # Save to file
+          echo "$NOTES" > release_notes.md
+          
+          # Add installation instructions
+          cat >> release_notes.md << EOF
+
+---
+
+## 📦 Installation
+
+### Via Git URL
+
+Add to your \`Packages/manifest.json\`:
+
+\`\`\`json
+{
+  "dependencies": {
+    "com.intelliversex.sdk": "https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v$VERSION"
+  }
+}
+\`\`\`
+
+### Via Package Manager UI
+
+1. Open **Window > Package Manager**
+2. Click **+** > **Add package from git URL...**
+3. Enter: \`https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v$VERSION\`
+4. Click **Add**
+
+---
+
+## 📋 Requirements
+
+- **Unity:** 2023.3 LTS or Unity 6
+- See [INSTALLATION.md](Assets/_IntelliVerseXSDK/INSTALLATION.md) for full setup guide
+
+EOF
+          
+          echo "✅ Release notes prepared"
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: IntelliVerseX SDK v${{ steps.version.outputs.version }}
+          body_path: release_notes.md
+          draft: false
+          prerelease: ${{ github.event.inputs.prerelease || contains(steps.version.outputs.version, '-') }}
+          generate_release_notes: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Summary
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          
+          echo "## 🎉 Release Created: v$VERSION" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Installation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Add to \`Packages/manifest.json\`:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '```json' >> $GITHUB_STEP_SUMMARY
+          echo '{' >> $GITHUB_STEP_SUMMARY
+          echo '  "dependencies": {' >> $GITHUB_STEP_SUMMARY
+          echo "    \"com.intelliversex.sdk\": \"https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v$VERSION\"" >> $GITHUB_STEP_SUMMARY
+          echo '  }' >> $GITHUB_STEP_SUMMARY
+          echo '}' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📋 Supported Unity Versions" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Unity 2023.3 LTS" >> $GITHUB_STEP_SUMMARY
+          echo "- Unity 6000.x (Unity 6)" >> $GITHUB_STEP_SUMMARY
+

@@ -1,0 +1,19 @@
+{
+    "name": "IntelliVerseX.Editor",
+    "rootNamespace": "IntelliVerseX.Editor",
+    "references": [
+        "GUID:c3965e1d901114144a8f2da2e8746fdd",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

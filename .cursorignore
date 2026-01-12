@@ -1,0 +1,94 @@
+# Unity Generated Folders (DO NOT ACCESS)
+Library/
+Temp/
+Obj/
+Logs/
+Build/
+Builds/
+UserSettings/
+MemoryCaptures/
+
+# Build Outputs
+*.apk
+*.aab
+*.ipa
+*.exe
+*.app
+
+# Large Binary Assets (reduce context size)
+*.fbx
+*.obj
+*.blend
+*.max
+*.mb
+*.ma
+
+# Audio (large files)
+*.wav
+*.mp3
+*.ogg
+*.aif
+*.aiff
+
+# Video
+*.mp4
+*.mov
+*.avi
+*.webm
+
+# Compressed Archives
+*.zip
+*.7z
+*.rar
+*.tar
+*.gz
+
+# Secrets and Credentials
+**/.env
+**/.env.*
+**/secrets.*
+**/credentials.*
+**/*secret*
+**/*credential*
+**/keystore.*
+**/*.keystore
+**/*.jks
+
+# IDE and Editor
+.vs/
+.idea/
+*.csproj
+*.sln
+*.slnx
+
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+**/*.log
+
+# Crash Reports
+mono_crash*.json
+crash_*.txt
+
+# Third-Party SDKs (Read-Only - Don't Modify)
+Assets/Nakama/
+Assets/Photon/
+Assets/Appodeal/
+Assets/LevelPlay/
+Assets/AppleAuth/
+Assets/AppleAuthSample/
+Assets/Plugins/Demigiant/
+Assets/Plugins/NativeFilePicker/
+Assets/Sych/
+
+# Additional Ignores
+node_modules/
+__pycache__/
+*.pyc
+.git/
+*.bak
+*.tmp

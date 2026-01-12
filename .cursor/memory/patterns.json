@@ -1,0 +1,46 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-13",
+  "patterns": [
+    {
+      "id": "PAT-001",
+      "name": "Singleton Manager",
+      "description": "Use for SDK managers that need global access",
+      "template": "IVX{Feature}Manager with static Instance property",
+      "usage": "All manager classes (Identity, Ads, Analytics, etc.)",
+      "confidence": 1.0
+    },
+    {
+      "id": "PAT-002",
+      "name": "Async Method Naming",
+      "description": "Suffix async methods with 'Async'",
+      "template": "{MethodName}Async()",
+      "usage": "All Task-returning methods",
+      "confidence": 1.0
+    },
+    {
+      "id": "PAT-003",
+      "name": "Event Naming",
+      "description": "Prefix events with 'On'",
+      "template": "On{EventName}",
+      "usage": "All C# events",
+      "confidence": 1.0
+    },
+    {
+      "id": "PAT-004",
+      "name": "Private Field Naming",
+      "description": "Prefix private fields with underscore",
+      "template": "_{camelCase}",
+      "usage": "All private fields",
+      "confidence": 1.0
+    },
+    {
+      "id": "PAT-005",
+      "name": "Region Organization",
+      "description": "Organize class members into regions",
+      "template": "#region Constants, Serialized Fields, Private Fields, Properties, Unity Lifecycle, Public Methods, Private Methods",
+      "usage": "All MonoBehaviour classes",
+      "confidence": 1.0
+    }
+  ]
+}

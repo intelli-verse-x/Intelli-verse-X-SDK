@@ -1,0 +1,25 @@
+{
+    "name": "IntelliVerseX.Editor.Tests",
+    "rootNamespace": "IntelliVerseX.Tests.Editor",
+    "references": [
+        "GUID:c3965e1d901114144a8f2da2e8746fdd",
+        "GUID:52e4c6c34e75482438e55e9acc65cad9",
+        "GUID:27619889b8ba8c24980f49ee34dbb44a",
+        "GUID:0acc523941302664db1f4e527237feb3"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

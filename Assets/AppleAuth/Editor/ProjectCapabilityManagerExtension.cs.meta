@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: f6bbae2bfef6749998d8b2f368d2aaff
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 152088
+  packageName: Sign in with Apple Plugin for Unity
+  packageVersion: 1.5.0
+  assetPath: Assets/AppleAuth/Editor/ProjectCapabilityManagerExtension.cs
+  uploadId: 763184

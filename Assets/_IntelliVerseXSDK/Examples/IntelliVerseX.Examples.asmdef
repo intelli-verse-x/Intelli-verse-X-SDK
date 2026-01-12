@@ -1,0 +1,23 @@
+{
+    "name": "IntelliVerseX.Examples",
+    "rootNamespace": "IntelliVerseX.Examples",
+    "references": [
+        "IntelliVerseX.Core",
+        "IntelliVerseX.Backend",
+        "IntelliVerseX.V2",
+        "IntelliVerseX.Identity",
+        "IntelliVerseX.Localization",
+        "IntelliVerseX.Monetization",
+        "IntelliVerseX.Leaderboard",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

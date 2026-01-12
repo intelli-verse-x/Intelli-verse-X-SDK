@@ -1,0 +1,21 @@
+{
+    "name": "IntelliVerseX.V2",
+    "rootNamespace": "IntelliVerseX.V2",
+    "references": [
+        "IntelliVerseX.Core",
+        "IntelliVerseX.Backend",
+        "IntelliVerseX.Identity",
+        "NakamaRuntime",
+        "Newtonsoft.Json",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

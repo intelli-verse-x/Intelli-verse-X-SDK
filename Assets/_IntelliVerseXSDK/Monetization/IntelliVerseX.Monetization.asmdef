@@ -1,0 +1,21 @@
+{
+    "name": "IntelliVerseX.Monetization",
+    "rootNamespace": "IntelliVerseX.Monetization",
+    "references": [
+        "GUID:c3965e1d901114144a8f2da2e8746fdd",
+        "GUID:059a027cf5fdb4531a6222b3d46e82a7",
+        "GUID:4e20c7306599b442b84e265cb179eddc",
+        "GUID:1f613da493e88413786955ac61fc9673",
+        "GUID:760a4c7888534400e882b82c5b3fba06",
+        "GUID:fe25561d224ed4743af4c60938a59d0b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

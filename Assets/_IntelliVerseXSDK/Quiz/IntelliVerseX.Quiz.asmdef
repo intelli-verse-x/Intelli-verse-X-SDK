@@ -1,0 +1,19 @@
+{
+    "name": "IntelliVerseX.Quiz",
+    "rootNamespace": "IntelliVerseX.Quiz",
+    "references": [
+        "GUID:c3965e1d901114144a8f2da2e8746fdd",
+        "GUID:27e8dd9fab7f44962b2921c02bc9f1b1",
+        "GUID:856c4706ce18a45d9b3c8de860a7f467",
+        "Newtonsoft.Json"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

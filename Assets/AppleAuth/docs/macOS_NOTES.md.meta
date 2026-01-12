@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 7c0761cffa9324386887f29d8f848fba
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 152088
+  packageName: Sign in with Apple Plugin for Unity
+  packageVersion: 1.5.0
+  assetPath: Assets/AppleAuth/docs/macOS_NOTES.md
+  uploadId: 763184

@@ -1,0 +1,212 @@
+# UPM Package Validation Workflow
+# Validates the Unity Package Manager package structure and metadata
+
+name: Package Validation
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'Assets/_IntelliVerseXSDK/**'
+      - 'package.json'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'Assets/_IntelliVerseXSDK/**'
+      - 'package.json'
+
+jobs:
+  validate-package:
+    name: Validate UPM Package
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Find Package Root
+        id: find-package
+        run: |
+          # Check common package locations
+          if [ -f "package.json" ]; then
+            PACKAGE_PATH="."
+          elif [ -f "Assets/_IntelliVerseXSDK/package.json" ]; then
+            PACKAGE_PATH="Assets/_IntelliVerseXSDK"
+          else
+            echo "::error::No package.json found!"
+            exit 1
+          fi
+          
+          echo "package_path=$PACKAGE_PATH" >> $GITHUB_OUTPUT
+          echo "📦 Package found at: $PACKAGE_PATH"
+      
+      - name: Validate package.json Structure
+        run: |
+          PACKAGE_PATH="${{ steps.find-package.outputs.package_path }}"
+          
+          echo "🔍 Validating package.json..."
+          
+          # Check if valid JSON
+          if ! python -m json.tool "$PACKAGE_PATH/package.json" > /dev/null 2>&1; then
+            echo "::error::package.json is not valid JSON"
+            exit 1
+          fi
+          
+          echo "✅ Valid JSON format"
+      
+      - name: Validate Required Fields
+        run: |
+          PACKAGE_PATH="${{ steps.find-package.outputs.package_path }}"
+          
+          echo "🔍 Checking required fields..."
+          
+          # Required fields for UPM
+          REQUIRED_FIELDS=("name" "version" "displayName" "description" "unity")
+          
+          for field in "${REQUIRED_FIELDS[@]}"; do
+            VALUE=$(python -c "import json; print(json.load(open('$PACKAGE_PATH/package.json')).get('$field', ''))" 2>/dev/null)
+            if [ -z "$VALUE" ]; then
+              echo "::error::Missing required field: $field"
+              exit 1
+            fi
+            echo "✅ $field: $VALUE"
+          done
+      
+      - name: Validate Package Name Format
+        run: |
+          PACKAGE_PATH="${{ steps.find-package.outputs.package_path }}"
+          
+          NAME=$(python -c "import json; print(json.load(open('$PACKAGE_PATH/package.json')).get('name', ''))")
+          
+          # UPM package names must be lowercase, use dots/hyphens, start with com./org./etc.
+          if [[ ! $NAME =~ ^[a-z][a-z0-9]*(\.[a-z][a-z0-9-]*)+$ ]]; then
+            echo "::warning::Package name '$NAME' may not follow UPM naming conventions"
+            echo "Recommended format: com.company.package-name"
+          else
+            echo "✅ Package name format is valid: $NAME"
+          fi
+      
+      - name: Validate Version Format
+        run: |
+          PACKAGE_PATH="${{ steps.find-package.outputs.package_path }}"
+          
+          VERSION=$(python -c "import json; print(json.load(open('$PACKAGE_PATH/package.json')).get('version', ''))")
+          
+          # Semantic versioning check
+          if [[ ! $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$ ]]; then
+            echo "::error::Version '$VERSION' is not valid semantic versioning"
+            echo "Expected format: MAJOR.MINOR.PATCH or MAJOR.MINOR.PATCH-prerelease"
+            exit 1
+          fi
+          
+          echo "✅ Version format is valid: $VERSION"
+      
+      - name: Check Required Package Files
+        run: |
+          PACKAGE_PATH="${{ steps.find-package.outputs.package_path }}"
+          
+          echo "🔍 Checking required package files..."
+          
+          REQUIRED_FILES=(
+            "package.json"
+            "README.md"
+            "CHANGELOG.md"
+            "LICENSE"
+          )
+          
+          WARNINGS=0
+          for file in "${REQUIRED_FILES[@]}"; do
+            if [ -f "$PACKAGE_PATH/$file" ]; then
+              echo "✅ Found: $file"
+            else
+              echo "⚠️ Missing: $file"
+              WARNINGS=$((WARNINGS + 1))
+            fi
+          done
+          
+          if [ $WARNINGS -gt 0 ]; then
+            echo "::warning::$WARNINGS recommended files are missing"
+          fi
+      
+      - name: Check Assembly Definitions
+        run: |
+          PACKAGE_PATH="${{ steps.find-package.outputs.package_path }}"
+          
+          echo "🔍 Checking assembly definitions..."
+          
+          ASMDEF_COUNT=$(find "$PACKAGE_PATH" -name "*.asmdef" 2>/dev/null | wc -l)
+          
+          if [ "$ASMDEF_COUNT" -eq 0 ]; then
+            echo "⚠️ No assembly definitions found"
+            echo "::warning::UPM packages should have at least one .asmdef file"
+          else
+            echo "✅ Found $ASMDEF_COUNT assembly definition(s):"
+            find "$PACKAGE_PATH" -name "*.asmdef" -exec basename {} \;
+          fi
+      
+      - name: Validate Assembly Definition Names
+        run: |
+          PACKAGE_PATH="${{ steps.find-package.outputs.package_path }}"
+          
+          # Get package name
+          PACKAGE_NAME=$(python -c "import json; print(json.load(open('$PACKAGE_PATH/package.json')).get('name', ''))")
+          
+          echo "🔍 Validating assembly definition naming..."
+          
+          find "$PACKAGE_PATH" -name "*.asmdef" | while read asmdef; do
+            ASMDEF_NAME=$(python -c "import json; print(json.load(open('$asmdef')).get('name', ''))" 2>/dev/null)
+            echo "  Assembly: $ASMDEF_NAME"
+            
+            # Check if Editor asmdef references Editor platform
+            if [[ "$asmdef" == *"Editor"* ]]; then
+              PLATFORMS=$(python -c "import json; print(json.load(open('$asmdef')).get('includePlatforms', []))" 2>/dev/null)
+              if [[ "$PLATFORMS" != *"Editor"* ]]; then
+                echo "::warning::Editor assembly '$ASMDEF_NAME' should have 'Editor' in includePlatforms"
+              fi
+            fi
+          done
+      
+      - name: Check for Meta Files
+        run: |
+          PACKAGE_PATH="${{ steps.find-package.outputs.package_path }}"
+          
+          echo "🔍 Checking for missing .meta files..."
+          
+          MISSING_META=0
+          
+          # Check each file/folder has a .meta file
+          find "$PACKAGE_PATH" -type f ! -name "*.meta" ! -path "*/.git/*" | while read file; do
+            if [ ! -f "$file.meta" ]; then
+              echo "⚠️ Missing .meta for: $file"
+              MISSING_META=$((MISSING_META + 1))
+            fi
+          done
+          
+          if [ "$MISSING_META" -gt 0 ]; then
+            echo "::warning::Some files are missing .meta files. This may cause issues in Unity."
+          else
+            echo "✅ All files have corresponding .meta files"
+          fi
+      
+      - name: Summary
+        run: |
+          PACKAGE_PATH="${{ steps.find-package.outputs.package_path }}"
+          
+          NAME=$(python -c "import json; print(json.load(open('$PACKAGE_PATH/package.json')).get('name', ''))")
+          VERSION=$(python -c "import json; print(json.load(open('$PACKAGE_PATH/package.json')).get('version', ''))")
+          DISPLAY_NAME=$(python -c "import json; print(json.load(open('$PACKAGE_PATH/package.json')).get('displayName', ''))")
+          
+          echo "## 📦 Package Validation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| **Name** | \`$NAME\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Version** | \`$VERSION\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Display Name** | $DISPLAY_NAME |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Package validation completed!" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91231c530a82d4be6a47916a15fa89e3, type: 3}
+  m_Name: AppodealSettings
+  m_EditorClassIdentifier: AppodealInc.Mediation.PluginSettings.Editor::AppodealInc.Mediation.PluginSettings.Editor.AppodealSettings
+  analyticsEnabled: 1
+  analyticsLoggingEnabled: 0
+  analyticsConfigFileTransmissionEnabled: 1
+  adMobAndroidAppId: ca-app-pub-xxxxxxxxxxxxxxxx~yyyyyyyyyy
+  adMobIosAppId: ca-app-pub-xxxxxxxxxxxxxxxx~yyyyyyyyyy
+  accessCoarseLocationPermission: 0
+  writeExternalStoragePermission: 1
+  accessWifiStatePermission: 1
+  vibratePermission: 0
+  accessFineLocationPermission: 0
+  nSUserTrackingUsageDescription: 0
+  nSLocationWhenInUseUsageDescription: 0
+  nSCalendarsUsageDescription: 0
+  nSAppTransportSecurity: 0
+  iosSkAdNetworkItems: 1
+  iosSkAdNetworkItemsList: []
+  facebookAutoConfiguration: 0
+  facebookAndroidAppId: 
+  facebookIosAppId: 
+  facebookAndroidClientToken: 
+  facebookIosClientToken: 
+  facebookAutoLogAppEvents: 1
+  facebookAdvertiserIDCollection: 1
+  firebaseAutoConfiguration: 0
+  isMaxAdReviewEnabled: 0
+  maxSdkKey: 

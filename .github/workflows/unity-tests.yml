@@ -1,0 +1,276 @@
+# Unity Tests CI Workflow
+# Runs tests on Unity 2023 LTS and Unity 6 to ensure package compatibility
+# Uses game-ci/unity-test-runner for cross-version testing
+
+name: Unity Tests
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'Assets/_IntelliVerseXSDK/**'
+      - '.github/workflows/unity-tests.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'Assets/_IntelliVerseXSDK/**'
+      - '.github/workflows/unity-tests.yml'
+  workflow_dispatch:
+    inputs:
+      unity_version:
+        description: 'Unity version to test (optional, tests both by default)'
+        required: false
+        type: string
+
+env:
+  PACKAGE_PATH: Assets/_IntelliVerseXSDK
+
+jobs:
+  # Job 1: Validate package structure before running tests
+  validate-package:
+    name: Validate Package Structure
+    runs-on: ubuntu-latest
+    outputs:
+      package_valid: ${{ steps.validate.outputs.valid }}
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Validate package.json
+        id: validate
+        run: |
+          PACKAGE_FILE="${{ env.PACKAGE_PATH }}/package.json"
+          
+          if [ ! -f "$PACKAGE_FILE" ]; then
+            echo "::error::package.json not found at $PACKAGE_FILE"
+            echo "valid=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+          
+          # Validate JSON syntax
+          if ! python -m json.tool "$PACKAGE_FILE" > /dev/null 2>&1; then
+            echo "::error::package.json is not valid JSON"
+            echo "valid=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+          
+          # Check required fields
+          NAME=$(python -c "import json; print(json.load(open('$PACKAGE_FILE')).get('name', ''))")
+          VERSION=$(python -c "import json; print(json.load(open('$PACKAGE_FILE')).get('version', ''))")
+          UNITY=$(python -c "import json; print(json.load(open('$PACKAGE_FILE')).get('unity', ''))")
+          
+          echo "Package: $NAME v$VERSION (Unity $UNITY+)"
+          
+          if [ -z "$NAME" ] || [ -z "$VERSION" ] || [ -z "$UNITY" ]; then
+            echo "::error::Missing required fields in package.json"
+            echo "valid=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+          
+          echo "valid=true" >> $GITHUB_OUTPUT
+          echo "✅ Package validation passed"
+
+  # Job 2: Test on Unity 2023 LTS
+  test-unity-2023:
+    name: Test Unity 2023 LTS
+    needs: validate-package
+    if: needs.validate-package.outputs.package_valid == 'true'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+      
+      - name: Cache Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-Test-2023-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-Test-2023-
+            Library-
+      
+      - name: Run EditMode Tests (Unity 2023)
+        uses: game-ci/unity-test-runner@v4
+        id: editmode-tests
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          unityVersion: 2023.3.0f1
+          testMode: EditMode
+          checkName: EditMode Tests (2023)
+          artifactsPath: artifacts/editmode-2023
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+IntelliVerseX.*'
+        continue-on-error: true
+      
+      - name: Run PlayMode Tests (Unity 2023)
+        uses: game-ci/unity-test-runner@v4
+        id: playmode-tests
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          unityVersion: 2023.3.0f1
+          testMode: PlayMode
+          checkName: PlayMode Tests (2023)
+          artifactsPath: artifacts/playmode-2023
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+      
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-2023
+          path: artifacts/
+          retention-days: 14
+      
+      - name: Check Test Results
+        if: steps.editmode-tests.outcome == 'failure' || steps.playmode-tests.outcome == 'failure'
+        run: |
+          echo "::warning::Some tests failed on Unity 2023. Check artifacts for details."
+
+  # Job 3: Test on Unity 6
+  test-unity-6:
+    name: Test Unity 6
+    needs: validate-package
+    if: needs.validate-package.outputs.package_valid == 'true'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+      
+      - name: Cache Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-Test-Unity6-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-Test-Unity6-
+            Library-
+      
+      - name: Run EditMode Tests (Unity 6)
+        uses: game-ci/unity-test-runner@v4
+        id: editmode-tests
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          unityVersion: 6000.0.0f1
+          testMode: EditMode
+          checkName: EditMode Tests (Unity 6)
+          artifactsPath: artifacts/editmode-unity6
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+      
+      - name: Run PlayMode Tests (Unity 6)
+        uses: game-ci/unity-test-runner@v4
+        id: playmode-tests
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          unityVersion: 6000.0.0f1
+          testMode: PlayMode
+          checkName: PlayMode Tests (Unity 6)
+          artifactsPath: artifacts/playmode-unity6
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+      
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-unity6
+          path: artifacts/
+          retention-days: 14
+      
+      - name: Check Test Results
+        if: steps.editmode-tests.outcome == 'failure' || steps.playmode-tests.outcome == 'failure'
+        run: |
+          echo "::warning::Some tests failed on Unity 6. Check artifacts for details."
+
+  # Job 4: Build validation (compile check)
+  build-validation:
+    name: Build Validation
+    needs: validate-package
+    if: needs.validate-package.outputs.package_valid == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        unity-version:
+          - 2023.3.0f1
+          - 6000.0.0f1
+        target-platform:
+          - StandaloneWindows64
+          - Android
+          - WebGL
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+      
+      - name: Cache Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-Build-${{ matrix.unity-version }}-${{ matrix.target-platform }}-${{ hashFiles('Assets/**', 'Packages/**') }}
+          restore-keys: |
+            Library-Build-${{ matrix.unity-version }}-${{ matrix.target-platform }}-
+            Library-Build-${{ matrix.unity-version }}-
+            Library-
+      
+      - name: Build Validation (${{ matrix.unity-version }} - ${{ matrix.target-platform }})
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          unityVersion: ${{ matrix.unity-version }}
+          targetPlatform: ${{ matrix.target-platform }}
+          buildMethod: UnityEditor.BuildPlayerWindow.BuildPlayerAndRun
+          allowDirtyBuild: true
+        continue-on-error: true
+
+  # Job 5: Summary
+  test-summary:
+    name: Test Summary
+    needs: [validate-package, test-unity-2023, test-unity-6, build-validation]
+    if: always()
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Generate Summary
+        run: |
+          echo "## 🧪 Unity Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Package Validation | ${{ needs.validate-package.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Unity 2023 Tests | ${{ needs.test-unity-2023.result == 'success' && '✅ Passed' || needs.test-unity-2023.result == 'skipped' && '⏭️ Skipped' || '⚠️ Issues' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Unity 6 Tests | ${{ needs.test-unity-6.result == 'success' && '✅ Passed' || needs.test-unity-6.result == 'skipped' && '⏭️ Skipped' || '⚠️ Issues' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build Validation | ${{ needs.build-validation.result == 'success' && '✅ Passed' || needs.build-validation.result == 'skipped' && '⏭️ Skipped' || '⚠️ Issues' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### 📦 Tested Package" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Path:** \`${{ env.PACKAGE_PATH }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Unity Versions:** 2023.3 LTS, Unity 6" >> $GITHUB_STEP_SUMMARY
+          echo "- **Platforms:** Windows, Android, WebGL" >> $GITHUB_STEP_SUMMARY

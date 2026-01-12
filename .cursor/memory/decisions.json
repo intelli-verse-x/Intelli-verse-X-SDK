@@ -1,0 +1,42 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-13",
+  "decisions": [
+    {
+      "id": "DEC-20260113-001",
+      "date": "2026-01-13",
+      "category": "architecture",
+      "decision": "Establish context-engineering system for AI governance",
+      "rationale": "Ensure consistent decisions across files, commits, and refactors. Prevent architectural drift and preserve long-term goals.",
+      "alternatives": [
+        "Ad-hoc documentation",
+        "No formal context system"
+      ],
+      "outcome": "successful"
+    },
+    {
+      "id": "DEC-20260113-002",
+      "date": "2026-01-13",
+      "category": "architecture",
+      "decision": "Use IVX prefix for all public SDK types",
+      "rationale": "Avoid naming collisions with consumer code, enable easy discovery via autocomplete, clearly identify SDK types.",
+      "alternatives": [
+        "IntelliVerseX prefix (too long)",
+        "No prefix (collision risk)"
+      ],
+      "outcome": "successful"
+    },
+    {
+      "id": "DEC-20260113-003",
+      "date": "2026-01-13",
+      "category": "architecture",
+      "decision": "Mark third-party SDK folders as read-only zones",
+      "rationale": "Third-party code is upstream maintained. Changes would be lost on SDK updates. Wrapper patterns preferred.",
+      "alternatives": [
+        "Allow modifications (maintenance burden)",
+        "Fork SDKs (version drift risk)"
+      ],
+      "outcome": "successful"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-13",
+  "commands": [
+    {
+      "id": "CMD-001",
+      "name": "Validate Context Engineering",
+      "intent": "tooling",
+      "when_to_use": "Before opening a PR or after updating any .cursor/docs workflows",
+      "run": {
+        "windows_powershell": "python tools/context/validate_context.py --ci",
+        "mac_linux": "python3 tools/context/validate_context.py --ci"
+      },
+      "outputs": [
+        "Pass/fail exit code",
+        "Error list (blocking) and warnings (non-blocking unless --ci)"
+      ]
+    },
+    {
+      "id": "CMD-002",
+      "name": "Create ADR",
+      "intent": "docs_update",
+      "when_to_use": "When a decision changes architecture, introduces new dependency, or is security/release relevant",
+      "run": {
+        "manual_steps": [
+          "Copy docs/architecture/adr/ADR-000-template.md to ADR-XXX-your-title.md",
+          "Fill Context/Decision/Consequences/Alternatives",
+          "Add entry to docs/architecture/adr/README.md",
+          "Log quick summary in .cursor/memory/decisions.json when appropriate"
+        ]
+      },
+      "outputs": [
+        "New ADR file",
+        "Updated ADR index"
+      ]
+    },
+    {
+      "id": "CMD-003",
+      "name": "Update TODO/FIXME Baseline (Intentional)",
+      "intent": "tooling",
+      "when_to_use": "After removing TODO/FIXME lines from SDK C# code so CI baseline stays accurate",
+      "run": {
+        "manual_steps": [
+          "Edit tools/context/baselines/todo_fixme_cs.tsv",
+          "Remove the corresponding baseline rows",
+          "Run CMD-001 to confirm validator passes"
+        ]
+      },
+      "outputs": [
+        "Updated baseline file"
+      ]
+    }
+  ]
+}
+

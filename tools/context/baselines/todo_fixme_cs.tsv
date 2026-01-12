@@ -1,0 +1,11 @@
+Assets/_IntelliVerseXSDK/Examples/CompleteGameBootstrap.cs	// TODO: IVXAdsManager.ShowInterstitial() not yet implemented in SDK
+Assets/_IntelliVerseXSDK/Examples/CompleteGameBootstrap.cs	// TODO: IVXAdsManager.ShowRewarded() not yet implemented in SDK
+Assets/_IntelliVerseXSDK/IAP/IVXSubscriptionManager.cs	Debug.Log("[IVXPremiumGate] Showing paywall (TODO: implement paywall UI)");
+Assets/_IntelliVerseXSDK/IAP/IVXSubscriptionManager.cs	// TODO: Show paywall UI
+Assets/_IntelliVerseXSDK/Identity/APIManager.cs	profilePicture: null,   // TODO: pass avatar URL if/when you have it
+Assets/_IntelliVerseXSDK/Identity/APIManager.cs	socialId: null,         // TODO: pass provider userId if/when you have it
+Assets/_IntelliVerseXSDK/Monetization/Ads/Static/IVXAdsManager.cs	// TODO: Implement hide banner logic
+Assets/_IntelliVerseXSDK/Quiz/IVXQuizSessionManager.cs	// TODO: Implement backend saving if needed
+Assets/_IntelliVerseXSDK/UI/Scripts/IVXLoginController.cs	// TODO: Implement Apple Sign In
+Assets/_IntelliVerseXSDK/UI/Scripts/IVXLoginController.cs	// TODO: Implement Google Sign In
+Assets/_IntelliVerseXSDK/UI/Scripts/IVXLoginController.cs	// TODO: Implement Cognito email/password authentication

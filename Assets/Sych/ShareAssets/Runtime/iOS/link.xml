@@ -1,0 +1,6 @@
+<linker>
+  <assembly fullname="Sych.ShareAssets.Runtime.iOS">
+    <type fullname="Sych.ShareAssets.Runtime.iOS.ShareNativeBridge" preserve="all"/>
+    <type fullname="Sych.ShareAssets.Runtime.iOS.ShareNativeBridge+ShareCallback" preserve="all"/>
+  </assembly>
+</linker>

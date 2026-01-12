@@ -1,0 +1,30 @@
+# CODEOWNERS for IntelliVerseX Unity SDK
+# These owners will be requested for review when someone opens a pull request
+
+# Default owners for everything
+* @intelliversex/sdk-team
+
+# Context Engineering files - require senior review
+/.cursor/ @intelliversex/architects
+/.cursorrules @intelliversex/architects
+/AGENT.md @intelliversex/architects
+/AGENTS.md @intelliversex/architects
+
+# Core SDK modules
+/Assets/_IntelliVerseXSDK/Core/ @intelliversex/sdk-core
+/Assets/_IntelliVerseXSDK/Identity/ @intelliversex/sdk-identity
+/Assets/_IntelliVerseXSDK/Backend/ @intelliversex/sdk-backend
+/Assets/_IntelliVerseXSDK/Monetization/ @intelliversex/sdk-monetization
+
+# Editor tools
+/Assets/_IntelliVerseXSDK/Editor/ @intelliversex/sdk-tools
+
+# Documentation
+/docs/ @intelliversex/docs-team
+
+# CI/CD
+/.github/ @intelliversex/devops
+
+# Package configuration
+/Assets/_IntelliVerseXSDK/package.json @intelliversex/architects
+/Assets/_IntelliVerseXSDK/CHANGELOG.md @intelliversex/architects

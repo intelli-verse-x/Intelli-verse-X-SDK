@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 47ff82dfcc8d54955808810c30492220
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 152088
+  packageName: Sign in with Apple Plugin for Unity
+  packageVersion: 1.5.0
+  assetPath: Assets/AppleAuth/CHANGELOG.md
+  uploadId: 763184

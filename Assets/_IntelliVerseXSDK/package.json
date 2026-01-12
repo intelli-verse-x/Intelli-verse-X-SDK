@@ -1,0 +1,140 @@
+{
+  "name": "com.intelliversex.sdk",
+  "version": "2.0.0",
+  "displayName": "IntelliVerseX SDK",
+  "description": "Complete modular game development SDK with 15+ packages: Core, Identity, Backend, Networking, Localization, Storage, Quiz, QuizUI, UI, Leaderboard, Social, Monetization (IAP, Ads), Analytics, and more. Battle-tested in production. Includes support for Nakama, Photon PUN2, DOTween, LevelPlay, AdMob, and more.",
+  "unity": "2023.3",
+  "unityRelease": "0f1",
+  "documentationUrl": "https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK#readme",
+  "changelogUrl": "https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK/blob/main/Assets/_IntelliVerseXSDK/CHANGELOG.md",
+  "licensesUrl": "https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK/blob/main/Assets/_IntelliVerseXSDK/LICENSE",
+  "hideInEditor": false,
+  "type": "library",
+  "keywords": [
+    "intelliversex",
+    "sdk",
+    "game",
+    "localization",
+    "monetization",
+    "iap",
+    "analytics",
+    "quiz",
+    "ui",
+    "networking",
+    "storage",
+    "nakama",
+    "photon",
+    "multiplayer",
+    "backend",
+    "ads",
+    "dotween",
+    "leaderboard",
+    "social",
+    "identity",
+    "authentication",
+    "webgl",
+    "mobile",
+    "crossplatform"
+  ],
+  "author": {
+    "name": "IntelliVerse-X",
+    "email": "sdk@intelliversex.com",
+    "url": "https://intelliversex.com"
+  },
+  "dependencies": {
+    "com.unity.textmeshpro": "3.0.6",
+    "com.unity.nuget.newtonsoft-json": "3.2.1"
+  },
+  "samples": [
+    {
+      "displayName": "Getting Started",
+      "description": "Basic SDK setup and initialization example with demo scene",
+      "path": "Samples~/GettingStarted"
+    },
+    {
+      "displayName": "Quiz Game Demo",
+      "description": "Complete quiz game implementation using SDK packages",
+      "path": "Samples~/QuizDemo"
+    },
+    {
+      "displayName": "Localization Example",
+      "description": "Multi-language UI demo with RTL support",
+      "path": "Samples~/Localization"
+    },
+    {
+      "displayName": "IAP Integration",
+      "description": "In-app purchase and subscription example",
+      "path": "Samples~/IAP"
+    },
+    {
+      "displayName": "Leaderboard Example",
+      "description": "Global leaderboard with Nakama backend",
+      "path": "Samples~/Leaderboard"
+    },
+    {
+      "displayName": "Social Features",
+      "description": "Friends, sharing, and referral system demo",
+      "path": "Samples~/Social"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AhmedTaha-97/Intelli-verse-X-Unity-SDK.git"
+  },
+  "license": "MIT",
+  "_ivx_externalDependencies": {
+    "_comment": "These dependencies must be installed separately. Use Window > IntelliVerseX > Dependency Manager or run the Project Setup Wizard.",
+    "nakama-unity": {
+      "version": "3.13.0",
+      "url": "https://github.com/heroiclabs/nakama-unity/releases",
+      "required": true,
+      "installMethod": "unitypackage",
+      "description": "Backend server connectivity for leaderboards, authentication, and storage"
+    },
+    "photon-pun2": {
+      "version": "2.45+",
+      "url": "https://assetstore.unity.com/packages/tools/network/pun-2-free-119922",
+      "required": false,
+      "installMethod": "assetStore",
+      "description": "Real-time multiplayer networking (optional)"
+    },
+    "dotween": {
+      "version": "1.2.765+",
+      "url": "http://dotween.demigiant.com/download.php",
+      "required": true,
+      "installMethod": "assetStore",
+      "description": "Animation tweening library for UI animations"
+    },
+    "native-share": {
+      "version": "latest",
+      "url": "https://github.com/yasirkula/UnityNativeShare.git",
+      "required": false,
+      "installMethod": "gitUrl",
+      "packageId": "com.yasirkula.nativeshare",
+      "description": "Native sharing functionality for mobile platforms"
+    },
+    "apple-signin": {
+      "version": "1.4.3+",
+      "url": "https://github.com/lupidan/apple-signin-unity/releases",
+      "required": false,
+      "installMethod": "unitypackage",
+      "description": "Sign in with Apple for iOS (required for iOS builds)"
+    },
+    "levelplay": {
+      "version": "9.2.0+",
+      "url": "https://developers.is.com/ironsource-mobile/unity/unity-plugin/",
+      "required": false,
+      "installMethod": "upm",
+      "packageId": "com.unity.services.levelplay",
+      "description": "Ad mediation for monetization (optional)"
+    },
+    "appodeal": {
+      "version": "3.12.0+",
+      "url": "https://github.com/appodeal/appodeal-unity-plugin-upm",
+      "required": false,
+      "installMethod": "gitUrl",
+      "packageId": "com.appodeal.mediation",
+      "description": "Alternative ad mediation (optional)"
+    }
+  }
+}

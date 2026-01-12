@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: d2e6cf35637124bd3bae6e7160a590d7
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 152088
+  packageName: Sign in with Apple Plugin for Unity
+  packageVersion: 1.5.0
+  assetPath: Assets/AppleAuth/Runtime/AppleAuth.asmdef
+  uploadId: 763184

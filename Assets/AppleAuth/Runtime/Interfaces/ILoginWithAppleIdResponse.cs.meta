@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 0394fee0ab58b44c4ab2b93c2a81f061
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 152088
+  packageName: Sign in with Apple Plugin for Unity
+  packageVersion: 1.5.0
+  assetPath: Assets/AppleAuth/Runtime/Interfaces/ILoginWithAppleIdResponse.cs
+  uploadId: 763184
