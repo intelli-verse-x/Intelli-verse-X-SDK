@@ -1,8 +1,8 @@
 {
   "name": "com.intelliversex.sdk",
-  "version": "2.0.0",
+  "version": "2.5.0",
   "displayName": "IntelliVerseX SDK",
-  "description": "Complete modular game development SDK with 15+ packages: Core, Identity, Backend, Networking, Localization, Storage, Quiz, QuizUI, UI, Leaderboard, Social, Monetization (IAP, Ads), Analytics, and more. Battle-tested in production. Includes support for Nakama, Photon PUN2, DOTween, LevelPlay, AdMob, and more.",
+  "description": "Complete modular game development SDK with 15+ packages: Core, Identity, Auth, Backend, Networking, Localization, Storage, Quiz, QuizUI, UI, Leaderboard, Social, Monetization (IAP, Ads), Analytics, and more. Battle-tested in production. Includes support for Nakama, Photon PUN2, DOTween, LevelPlay, Appodeal, AdMob, and more.",
   "unity": "2023.3",
   "unityRelease": "0f1",
   "documentationUrl": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK#readme",
@@ -14,6 +14,8 @@
     "intelliversex",
     "sdk",
     "game",
+    "auth",
+    "authentication",
     "localization",
     "monetization",
     "iap",
@@ -27,11 +29,15 @@
     "multiplayer",
     "backend",
     "ads",
+    "appodeal",
+    "levelplay",
+    "ironsource",
+    "admob",
     "dotween",
     "leaderboard",
     "social",
+    "friends",
     "identity",
-    "authentication",
     "webgl",
     "mobile",
     "crossplatform"
@@ -50,6 +56,11 @@
       "displayName": "Getting Started",
       "description": "Basic SDK setup and initialization example with demo scene",
       "path": "Samples~/GettingStarted"
+    },
+    {
+      "displayName": "Authentication Demo",
+      "description": "Complete authentication flow with login, register, OTP, and social auth",
+      "path": "Samples~/Authentication"
     },
     {
       "displayName": "Quiz Game Demo",
@@ -84,6 +95,22 @@
   "license": "MIT",
   "_ivx_externalDependencies": {
     "_comment": "These dependencies must be installed separately. Use Window > IntelliVerseX > Dependency Manager or run the Project Setup Wizard.",
+    "external-dependency-manager": {
+      "version": "1.2.186",
+      "required": true,
+      "installMethod": "tarball",
+      "localPath": "com.google.external-dependency-manager-1.2.186.tgz",
+      "description": "Required for Android/iOS dependency resolution. Must be installed before Appodeal."
+    },
+    "appodeal": {
+      "version": "3.12.0",
+      "url": "https://github.com/appodeal/appodeal-unity-plugin-upm.git#v3.12.0",
+      "required": false,
+      "installMethod": "gitUrl",
+      "packageId": "com.appodeal.mediation",
+      "defineSymbol": "APPODEAL",
+      "description": "Ad mediation platform with 70+ ad networks. Requires EDM first."
+    },
     "nakama-unity": {
       "version": "3.13.0",
       "url": "https://github.com/heroiclabs/nakama-unity/releases",
@@ -100,7 +127,7 @@
     },
     "dotween": {
       "version": "1.2.765+",
-      "url": "http://dotween.demigiant.com/download.php",
+      "url": "https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676",
       "required": true,
       "installMethod": "assetStore",
       "description": "Animation tweening library for UI animations"
@@ -118,7 +145,7 @@
       "url": "https://github.com/lupidan/apple-signin-unity/releases",
       "required": false,
       "installMethod": "unitypackage",
-      "description": "Sign in with Apple for iOS (required for iOS builds)"
+      "description": "Sign in with Apple for iOS (required for iOS builds with Apple login)"
     },
     "levelplay": {
       "version": "9.2.0+",
@@ -126,15 +153,8 @@
       "required": false,
       "installMethod": "upm",
       "packageId": "com.unity.services.levelplay",
-      "description": "Ad mediation for monetization (optional)"
-    },
-    "appodeal": {
-      "version": "3.12.0+",
-      "url": "https://github.com/appodeal/appodeal-unity-plugin-upm",
-      "required": false,
-      "installMethod": "gitUrl",
-      "packageId": "com.appodeal.mediation",
-      "description": "Alternative ad mediation (optional)"
+      "defineSymbol": "IRONSOURCE",
+      "description": "Unity LevelPlay (IronSource) ad mediation for monetization"
     }
   }
 }

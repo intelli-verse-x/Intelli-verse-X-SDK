@@ -7,6 +7,70 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.5.0] - 2026-01-13
+
+### 🔐 Authentication & Ads Overhaul - Production Ready
+
+Complete authentication module with full UI system and production-ready ad mediation.
+
+### Added
+
+#### Authentication Module
+- **IVXCanvasAuth** - Complete authentication canvas with panel management
+- **IVXPanelLogin** - Login panel with email/password, social auth, and guest login
+- **IVXPanelRegister** - Registration with validation, terms acceptance
+- **IVXPanelOTP** - OTP verification with auto-focus and resend cooldown
+- **IVXAuthPrefabBuilder** - Editor tool for creating auth UI prefabs
+- Full assembly definitions for Auth and Auth.Editor
+
+#### Ad Mediation Improvements
+- Fixed Appodeal SDK integration with proper #if APPODEAL directives
+- Fixed LevelPlay/IronSource integration with proper #if IRONSOURCE directives
+- Conditional compilation for all ad network code (no more compile errors without SDKs)
+- Updated package.json with defineSymbol requirements for ad networks
+
+#### SDK Setup Wizard Fixes
+- Fixed null reference in AddAuthCanvasToScene when type not found
+- Fixed GUI layout Begin/End mismatch errors
+- Added EditorApplication.delayCall for scene-changing operations
+- Improved error handling in module action methods
+
+### Changed
+
+- Package version: **2.0.0 → 2.5.0**
+- Updated manifest.json with proper EDM4U tarball path
+- External Dependency Manager now uses local tarball (no more path issues)
+- Appodeal uses official git URL: `https://github.com/appodeal/appodeal-unity-plugin-upm.git#v3.12.0`
+
+### Fixed
+
+- **CS0234** - `Unity.Services.LevelPlay` namespace error (wrapped in #if IRONSOURCE)
+- **CS0246** - `AppodealStack` type not found (wrapped in #if APPODEAL)
+- **FindAllObjectsOfType: Invalid Type** - GetTypeByName returning null
+- **GUI Layout errors** - Begin/End call mismatches in SDK Setup Wizard
+- **NullReferenceException** in Authentication Module setup
+
+### Dependencies
+
+Updated manifest with proper dependency order:
+1. External Dependency Manager (EDM4U) from local tarball
+2. Appodeal Mediation v3.12.0 from GitHub
+3. LevelPlay 9.2.0 from Unity Package Manager
+
+### Installation
+
+```json
+{
+  "dependencies": {
+    "com.google.external-dependency-manager": "file:../com.google.external-dependency-manager-1.2.186.tgz",
+    "com.appodeal.mediation": "https://github.com/appodeal/appodeal-unity-plugin-upm.git#v3.12.0",
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v2.5.0"
+  }
+}
+```
+
+---
+
 ## [2.0.0] - 2026-01-13
 
 ### 🚀 Major Release - Production-Ready UPM Package

@@ -527,32 +527,21 @@ namespace IntelliVerseX.Editor
             EditorGUILayout.Space(5);
             EditorGUILayout.LabelField("Auth Actions:", EditorStyles.miniBoldLabel);
 
+            // Store button states to process actions after layout
+            bool createConfig = false;
+            bool createPrefabs = false;
+            bool addToScene = false;
+            bool createDemoScene = false;
+            bool editConfig = false;
+
             EditorGUILayout.BeginHorizontal();
-
-            if (GUILayout.Button("Create Auth Config", GUILayout.Height(25)))
-            {
-                CreateAuthConfig();
-            }
-
-            if (GUILayout.Button("Create Auth Prefabs", GUILayout.Height(25)))
-            {
-                CreateAuthPrefabs();
-            }
-
+            createConfig = GUILayout.Button("Create Auth Config", GUILayout.Height(25));
+            createPrefabs = GUILayout.Button("Create Auth Prefabs", GUILayout.Height(25));
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
-
-            if (GUILayout.Button("Add Auth Canvas to Scene", GUILayout.Height(25)))
-            {
-                AddAuthCanvasToScene();
-            }
-
-            if (GUILayout.Button("Create Auth Demo Scene", GUILayout.Height(25)))
-            {
-                CreateAuthDemoScene();
-            }
-
+            addToScene = GUILayout.Button("Add Auth Canvas to Scene", GUILayout.Height(25));
+            createDemoScene = GUILayout.Button("Create Auth Demo Scene", GUILayout.Height(25));
             EditorGUILayout.EndHorizontal();
 
             // Auth Config Quick Settings
@@ -564,12 +553,16 @@ namespace IntelliVerseX.Editor
 
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.ObjectField("Config Asset:", authConfig, typeof(ScriptableObject), false);
-                if (GUILayout.Button("Edit", GUILayout.Width(50)))
-                {
-                    Selection.activeObject = authConfig;
-                }
+                editConfig = GUILayout.Button("Edit", GUILayout.Width(50));
                 EditorGUILayout.EndHorizontal();
             }
+
+            // Process button actions after all GUI layout is complete
+            if (createConfig) EditorApplication.delayCall += CreateAuthConfig;
+            if (createPrefabs) EditorApplication.delayCall += CreateAuthPrefabs;
+            if (addToScene) EditorApplication.delayCall += AddAuthCanvasToScene;
+            if (createDemoScene) CreateAuthDemoScene();
+            if (editConfig && authConfig != null) Selection.activeObject = authConfig;
         }
 
         private void DrawFriendsModuleActions()
@@ -577,32 +570,21 @@ namespace IntelliVerseX.Editor
             EditorGUILayout.Space(5);
             EditorGUILayout.LabelField("Friends Actions:", EditorStyles.miniBoldLabel);
 
+            // Store button states to process actions after layout
+            bool createConfig = false;
+            bool createPrefabs = false;
+            bool addToScene = false;
+            bool createDemoScene = false;
+            bool openDOTweenStore = false;
+
             EditorGUILayout.BeginHorizontal();
-
-            if (GUILayout.Button("Create Friends Config", GUILayout.Height(25)))
-            {
-                CreateFriendsConfig();
-            }
-
-            if (GUILayout.Button("Create Slot Prefabs", GUILayout.Height(25)))
-            {
-                CreateFriendsPrefabs();
-            }
-
+            createConfig = GUILayout.Button("Create Friends Config", GUILayout.Height(25));
+            createPrefabs = GUILayout.Button("Create Slot Prefabs", GUILayout.Height(25));
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
-
-            if (GUILayout.Button("Add Friends UI to Scene", GUILayout.Height(25)))
-            {
-                AddFriendsUIToScene();
-            }
-
-            if (GUILayout.Button("Create Friends Demo Scene", GUILayout.Height(25)))
-            {
-                CreateFriendsDemoScene();
-            }
-
+            addToScene = GUILayout.Button("Add Friends UI to Scene", GUILayout.Height(25));
+            createDemoScene = GUILayout.Button("Create Friends Demo Scene", GUILayout.Height(25));
             EditorGUILayout.EndHorizontal();
 
             // DOTween Check
@@ -614,11 +596,15 @@ namespace IntelliVerseX.Editor
                     "DOTween is recommended for Friends UI animations. Install from Asset Store.",
                     MessageType.Warning);
 
-                if (GUILayout.Button("Open DOTween Asset Store", GUILayout.Height(22)))
-                {
-                    Application.OpenURL("https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676");
-                }
+                openDOTweenStore = GUILayout.Button("Open DOTween Asset Store", GUILayout.Height(22));
             }
+
+            // Process button actions after all GUI layout is complete
+            if (createConfig) EditorApplication.delayCall += CreateFriendsConfig;
+            if (createPrefabs) EditorApplication.delayCall += CreateFriendsPrefabs;
+            if (addToScene) EditorApplication.delayCall += AddFriendsUIToScene;
+            if (createDemoScene) CreateFriendsDemoScene();
+            if (openDOTweenStore) Application.OpenURL("https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676");
         }
 
         #endregion
@@ -1682,28 +1668,42 @@ namespace IntelliVerseX.Editor
 
         private void AddAuthCanvasToScene()
         {
-            var existing = GameObject.FindObjectOfType(GetTypeByName("IntelliVerseX.Auth.UI.IVXCanvasAuth"));
-            if (existing != null)
+            // Check if Auth Canvas already exists in scene
+            var canvasAuthType = GetTypeByName("IntelliVerseX.Auth.UI.IVXCanvasAuth");
+            if (canvasAuthType != null)
             {
-                Selection.activeGameObject = (existing as Component)?.gameObject;
-                Debug.Log("[IVXSDKSetupWizard] Auth Canvas already exists in scene");
-                return;
+                var existing = GameObject.FindObjectOfType(canvasAuthType);
+                if (existing != null)
+                {
+                    Selection.activeGameObject = (existing as Component)?.gameObject;
+                    Debug.Log("[IVXSDKSetupWizard] Auth Canvas already exists in scene");
+                    return;
+                }
             }
 
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(AUTH_PREFABS_PATH + "/IVX_AuthCanvas.prefab");
             if (prefab != null)
             {
                 var instance = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
-                Undo.RegisterCreatedObjectUndo(instance, "Add Auth Canvas");
-                Selection.activeGameObject = instance;
-                EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
-                Debug.Log("[IVXSDKSetupWizard] Added Auth Canvas to scene");
+                if (instance != null)
+                {
+                    Undo.RegisterCreatedObjectUndo(instance, "Add Auth Canvas");
+                    Selection.activeGameObject = instance;
+                    EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+                    Debug.Log("[IVXSDKSetupWizard] Added Auth Canvas to scene");
+                }
             }
             else
             {
-                // Create from builder if prefab doesn't exist
-                CreateAuthPrefabs();
-                AddAuthCanvasToScene();
+                // Auth Canvas prefab doesn't exist - show guidance
+                Debug.LogWarning("[IVXSDKSetupWizard] Auth Canvas prefab not found. Auth module may not be fully set up.");
+                EditorUtility.DisplayDialog("Auth Setup Required",
+                    "The Auth Canvas prefab doesn't exist yet.\n\n" +
+                    "To set up authentication:\n" +
+                    "1. Ensure the Auth module files exist in Assets/_IntelliVerseXSDK/Auth/\n" +
+                    "2. Use 'Create Auth Prefabs' button to generate prefabs\n" +
+                    "3. Or manually create an Auth Canvas with IVXCanvasAuth component",
+                    "OK");
             }
         }
 
