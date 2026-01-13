@@ -28,7 +28,7 @@
       "hash": "f4a8b05094a9572fce26bad4348879d4ba15e429"
     },
     "com.google.external-dependency-manager": {
-      "version": "file:C:/Office/Unity/intelliverse-x-games-platform-2/com.google.external-dependency-manager-1.2.186.tgz",
+      "version": "file:../com.google.external-dependency-manager-1.2.186.tgz",
       "depth": 0,
       "source": "local-tarball",
       "dependencies": {}

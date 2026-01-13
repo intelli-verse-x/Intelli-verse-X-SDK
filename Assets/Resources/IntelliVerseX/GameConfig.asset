@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6362361817105435d91028fe31f191ac, type: 3}
+  m_Name: GameConfig
+  m_EditorClassIdentifier: IntelliVerseX.Core::IntelliVerseX.Core.IntelliVerseXConfig
+  gameId: 
+  gameName: My Game
+  useSharedBackend: 1
+  nakamaScheme: https
+  nakamaHost: nakama-rest.intelli-verse-x.ai
+  nakamaPort: 443
+  nakamaServerKey: defaultkey
+  useCognitoAuthentication: 1
+  enablePhotonMultiplayer: 1
+  photonAppId: 
+  enableGuestAccounts: 1
+  enableAutoLogin: 1
+  enableLeaderboards: 1
+  enableWallets: 1
+  enableAds: 1
+  enableIAP: 1
+  enableMultiplayer: 0
+  adsConfig:
+    primaryNetwork: 1
+    fallbackNetwork: 2
+    ironSourceAppKeyIOS: 23edc7cf5
+    ironSourceAppKeyAndroid: 23ed37fb5
+    levelPlayRewardedIdIOS: x7vb2kx3gid5pdbl
+    levelPlayRewardedIdAndroid: 1ah2yohmmy0qqwbe
+    levelPlayInterstitialIdIOS: kotf16z0o9lwut9z
+    levelPlayInterstitialIdAndroid: 52tmiwawdpyj30rl
+    levelPlayBannerIdIOS: ocfoon8gno7yneas
+    levelPlayBannerIdAndroid: bampapqm2xqa97vh
+    admobAppIdIOS: ca-app-pub-3940256099942544~1458002511
+    admobAppIdAndroid: ca-app-pub-3940256099942544~3347511713
+    admobRewardedIdIOS: ca-app-pub-3940256099942544/1712485313
+    admobRewardedIdAndroid: ca-app-pub-3940256099942544/5224354917
+    admobInterstitialIdIOS: ca-app-pub-3940256099942544/4411468910
+    admobInterstitialIdAndroid: ca-app-pub-3940256099942544/1033173712
+    admobBannerIdIOS: ca-app-pub-3940256099942544/2934735716
+    admobBannerIdAndroid: ca-app-pub-3940256099942544/6300978111
+    appodealAppKeyIOS: 
+    appodealAppKeyAndroid: 
+    unityAdsGameIdIOS: 
+    unityAdsGameIdAndroid: 
+    unityAdsRewardedPlacement: Rewarded_iOS
+    unityAdsInterstitialPlacement: Interstitial_iOS
+    unityAdsBannerPlacement: Banner_iOS
+    enableMediation: 1
+    interstitialCooldown: 60
+    maxInterstitialsPerSession: 10
+    bannerRefreshRate: 30
+    testMode: 0
+    enableGDPRConsent: 1
+    enableCCPA: 1
+    enableCOPPA: 0
+  defaultLanguage: 10
+  supportedLanguages: 0a000000220000000e0000000f0000001c0000000600000016000000170000001e00000015000000090000001b000000
+  enableDebugLogs: 0
