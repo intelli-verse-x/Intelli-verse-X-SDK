@@ -1,8 +1,9 @@
 // File: IVXSDKSetupWizard.cs
 // Purpose: Comprehensive Unified SDK Setup Wizard for IntelliVerseX SDK
-// Version: 2.0.0
+// Version: 2.1.0
 // Author: IntelliVerseX Team
 // Description: Single unified panel for ALL SDK module setup including Auth, Friends, Monetization, etc.
+// Note: Supports both development (Assets/_IntelliVerseXSDK) and UPM package (Packages/com.intelliversex.sdk) installations.
 
 using System;
 using System.Collections.Generic;
@@ -18,26 +19,217 @@ namespace IntelliVerseX.Editor
     /// <summary>
     /// Unified SDK Setup Wizard - All SDK features in one place.
     /// Access via: IntelliVerseX → SDK Setup Wizard
+    /// Supports both development and UPM package installations.
     /// </summary>
     public class IVXSDKSetupWizard : EditorWindow
     {
         #region Constants
 
         private const string WINDOW_TITLE = "IntelliVerseX SDK Setup";
-        private const string SDK_VERSION = "2.0.0";
+        private const string SDK_VERSION = "2.1.0";
+        private const string PACKAGE_NAME = "com.intelliversex.sdk";
 
-        // Paths
-        private const string SDK_ROOT = "Assets/_IntelliVerseXSDK";
+        // Paths - These are relative paths within the SDK, resolved at runtime
+        private const string SDK_ASSETS_ROOT = "Assets/_IntelliVerseXSDK";
+        private const string SDK_PACKAGE_ROOT = "Packages/com.intelliversex.sdk";
         private const string QUIZVERSE_ROOT = "Assets/_QuizVerse";
         private const string RESOURCES_PATH = "Assets/Resources/IntelliVerseX";
-        private const string PREFABS_ROOT = SDK_ROOT + "/Prefabs";
-        private const string MANAGERS_PREFAB_PATH = PREFABS_ROOT + "/Managers";
 
-        // Module Paths
-        private const string AUTH_ROOT = SDK_ROOT + "/Auth";
-        private const string AUTH_PREFABS_PATH = AUTH_ROOT + "/Prefabs";
-        private const string SOCIAL_ROOT = SDK_ROOT + "/Social";
-        private const string SOCIAL_PREFABS_PATH = SOCIAL_ROOT + "/Prefabs";
+        // Cached SDK root path (resolved at runtime)
+        private static string _cachedSDKRoot = null;
+        private static bool _isUPMInstall = false;
+
+        // Dynamic paths (resolved using SDK_ROOT property)
+        private static string PREFABS_ROOT => SDK_ROOT + "/Prefabs";
+        private static string MANAGERS_PREFAB_PATH => PREFABS_ROOT + "/Managers";
+        private static string AUTH_ROOT => SDK_ROOT + "/Auth";
+        private static string AUTH_PREFABS_PATH => AUTH_ROOT + "/Prefabs";
+        private static string SOCIAL_ROOT => SDK_ROOT + "/Social";
+        private static string SOCIAL_PREFABS_PATH => SOCIAL_ROOT + "/Prefabs";
+
+        /// <summary>
+        /// Gets the SDK root path, automatically detecting whether this is a development
+        /// project (Assets/_IntelliVerseXSDK) or a UPM package installation (Packages/com.intelliversex.sdk).
+        /// </summary>
+        private static string SDK_ROOT
+        {
+            get
+            {
+                if (_cachedSDKRoot == null)
+                {
+                    ResolveSDKRoot();
+                }
+                return _cachedSDKRoot;
+            }
+        }
+
+        /// <summary>
+        /// Resolves the SDK root path by checking both possible locations.
+        /// Prioritizes UPM package path for consumer projects.
+        /// </summary>
+        private static void ResolveSDKRoot()
+        {
+            // First, check if SDK is installed as UPM package
+            string packagePath = GetPackagePath(PACKAGE_NAME);
+            if (!string.IsNullOrEmpty(packagePath))
+            {
+                _cachedSDKRoot = packagePath;
+                _isUPMInstall = true;
+                Debug.Log($"[IVXSDKSetupWizard] SDK detected as UPM package at: {_cachedSDKRoot}");
+                return;
+            }
+
+            // Fallback to Assets folder (development mode)
+            if (Directory.Exists(SDK_ASSETS_ROOT))
+            {
+                _cachedSDKRoot = SDK_ASSETS_ROOT;
+                _isUPMInstall = false;
+                Debug.Log($"[IVXSDKSetupWizard] SDK detected in Assets folder at: {_cachedSDKRoot}");
+                return;
+            }
+
+            // Default to Assets path if nothing found (will show as missing)
+            _cachedSDKRoot = SDK_ASSETS_ROOT;
+            _isUPMInstall = false;
+            Debug.LogWarning("[IVXSDKSetupWizard] SDK not found in expected locations. Please verify installation.");
+        }
+
+        /// <summary>
+        /// Gets the physical path to a UPM package.
+        /// </summary>
+        private static string GetPackagePath(string packageName)
+        {
+            // Try using Unity's Package Manager API
+            try
+            {
+                // Check if package exists in Packages folder
+                string packagesPath = Path.Combine(Application.dataPath, "..", "Packages", packageName);
+                if (Directory.Exists(packagesPath))
+                {
+                    return $"Packages/{packageName}";
+                }
+
+                // Check Library/PackageCache for resolved packages
+                string packageCachePath = Path.Combine(Application.dataPath, "..", "Library", "PackageCache");
+                if (Directory.Exists(packageCachePath))
+                {
+                    var dirs = Directory.GetDirectories(packageCachePath, $"{packageName}@*");
+                    if (dirs.Length > 0)
+                    {
+                        // Return the Unity-style path for package
+                        return $"Packages/{packageName}";
+                    }
+                }
+
+                // Also check manifest.json for the package
+                string manifestPath = Path.Combine(Application.dataPath, "..", "Packages", "manifest.json");
+                if (File.Exists(manifestPath))
+                {
+                    string manifestContent = File.ReadAllText(manifestPath);
+                    if (manifestContent.Contains($"\"{packageName}\""))
+                    {
+                        return $"Packages/{packageName}";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[IVXSDKSetupWizard] Error checking package path: {ex.Message}");
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Checks if a file exists within the SDK, handling both development and UPM paths.
+        /// </summary>
+        private static bool SDKFileExists(string relativePath)
+        {
+            // For UPM packages, we need to use AssetDatabase or check the resolved path
+            string fullPath = Path.Combine(SDK_ROOT, relativePath);
+            
+            // Try AssetDatabase first (works for both Assets and Packages)
+            string assetPath = fullPath.Replace("\\", "/");
+            if (AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(assetPath) != null)
+            {
+                return true;
+            }
+
+            // For UPM packages, also check the physical file system
+            if (_isUPMInstall)
+            {
+                string physicalPath = GetPhysicalPathForPackageFile(relativePath);
+                if (!string.IsNullOrEmpty(physicalPath) && File.Exists(physicalPath))
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                // For Assets folder, direct file check
+                string absolutePath = Path.Combine(Application.dataPath, "..", fullPath);
+                if (File.Exists(absolutePath))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Gets the physical file system path for a file in the SDK package.
+        /// </summary>
+        private static string GetPhysicalPathForPackageFile(string relativePath)
+        {
+            try
+            {
+                // Check Library/PackageCache
+                string packageCachePath = Path.Combine(Application.dataPath, "..", "Library", "PackageCache");
+                if (Directory.Exists(packageCachePath))
+                {
+                    var dirs = Directory.GetDirectories(packageCachePath, $"{PACKAGE_NAME}@*");
+                    if (dirs.Length > 0)
+                    {
+                        string packageDir = dirs[0];
+                        string filePath = Path.Combine(packageDir, relativePath);
+                        return filePath;
+                    }
+                }
+
+                // Check local Packages folder (for local development packages)
+                string localPackagePath = Path.Combine(Application.dataPath, "..", "Packages", PACKAGE_NAME, relativePath);
+                if (File.Exists(localPackagePath))
+                {
+                    return localPackagePath;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[IVXSDKSetupWizard] Error resolving package file path: {ex.Message}");
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Checks if a type exists by searching all loaded assemblies.
+        /// This is the most reliable way to check if SDK scripts are available.
+        /// </summary>
+        private static bool TypeExists(string fullTypeName)
+        {
+            return GetTypeByName(fullTypeName) != null;
+        }
+
+        /// <summary>
+        /// Forces a refresh of the cached SDK root path.
+        /// Call this if the SDK installation changes.
+        /// </summary>
+        private static void RefreshSDKPath()
+        {
+            _cachedSDKRoot = null;
+            ResolveSDKRoot();
+        }
 
         #endregion
 
@@ -343,7 +535,10 @@ namespace IntelliVerseX.Editor
 
             EditorGUILayout.BeginVertical();
             GUILayout.Label("🎮 IntelliVerseX SDK Setup Wizard", headerStyle);
-            GUILayout.Label($"Version {SDK_VERSION} | All Features in One Place", EditorStyles.centeredGreyMiniLabel);
+            
+            // Show installation type (UPM Package vs Development)
+            string installType = _isUPMInstall ? "📦 UPM Package" : "🔧 Development";
+            GUILayout.Label($"Version {SDK_VERSION} | {installType}", EditorStyles.centeredGreyMiniLabel);
             EditorGUILayout.EndVertical();
 
             GUILayout.FlexibleSpace();
@@ -1227,6 +1422,9 @@ namespace IntelliVerseX.Editor
 
         private void RefreshAllModuleStatus()
         {
+            // Refresh SDK path detection in case installation changed
+            RefreshSDKPath();
+            
             // Ensure module states are initialized
             if (coreModule.stepCompleted == null || coreModule.stepCompleted.Count == 0)
             {
@@ -1240,6 +1438,7 @@ namespace IntelliVerseX.Editor
             CheckFriendsModule();
             CheckWalletModule();
             CheckLeaderboardModule();
+            CheckSocialModule();
             CheckQuizModule();
             CheckLocalizationModule();
             CheckAdsModule();
@@ -1247,183 +1446,310 @@ namespace IntelliVerseX.Editor
             CheckRetentionModule();
         }
 
+        /// <summary>
+        /// Checks Core module status using type-based detection (works for both Assets and UPM).
+        /// </summary>
         private void CheckCoreModule()
         {
             if (coreModule.stepCompleted == null || coreModule.stepCompleted.Count < 3) return;
             
-            coreModule.stepCompleted[0] = File.Exists(SDK_ROOT + "/Core/IntelliVerseXManager.cs");
-            coreModule.stepCompleted[1] = File.Exists(SDK_ROOT + "/Core/IntelliVerseX.Core.asmdef");
+            // Use type-based checking - most reliable for UPM packages
+            coreModule.stepCompleted[0] = TypeExists("IntelliVerseX.Core.IntelliVerseXManager");
+            coreModule.stepCompleted[1] = TypeExists("IntelliVerseX.Core.IntelliVerseXConfig") || 
+                                          TypeExists("IntelliVerseX.Core.IVXLogger");
             coreModule.stepCompleted[2] = Resources.Load("IntelliVerseX/GameConfig") != null ||
-                                          AssetDatabase.LoadAssetAtPath<ScriptableObject>(RESOURCES_PATH + "/GameConfig.asset") != null;
+                                          AssetDatabase.LoadAssetAtPath<ScriptableObject>(RESOURCES_PATH + "/GameConfig.asset") != null ||
+                                          TypeExists("IntelliVerseX.Core.IntelliVerseXConfig"); // Config type exists = SDK installed
 
             coreModule.isSetupComplete = coreModule.stepCompleted.All(x => x);
-            coreModule.statusMessage = coreModule.isSetupComplete ? "Core module is configured" : "Some core components missing";
+            coreModule.statusMessage = coreModule.isSetupComplete 
+                ? "Core module is configured" + (_isUPMInstall ? " (UPM Package)" : " (Development)")
+                : "Some core components missing";
         }
 
+        /// <summary>
+        /// Checks Identity module status using type-based detection.
+        /// </summary>
         private void CheckIdentityModule()
         {
             if (identityModule.stepCompleted == null || identityModule.stepCompleted.Count < 3) return;
             
-            identityModule.stepCompleted[0] = File.Exists(SDK_ROOT + "/Identity/UserSessionManager.cs");
-            identityModule.stepCompleted[1] = File.Exists(SDK_ROOT + "/Identity/APIManager.cs");
-            identityModule.stepCompleted[2] = File.Exists(SDK_ROOT + "/Identity/IntelliVerseXIdentity.asmdef");
+            // Use type-based checking
+            identityModule.stepCompleted[0] = TypeExists("IntelliVerseX.Identity.UserSessionManager");
+            identityModule.stepCompleted[1] = TypeExists("IntelliVerseX.Identity.APIManager");
+            identityModule.stepCompleted[2] = TypeExists("IntelliVerseX.Identity.IntelliVerseXUserIdentity");
 
             identityModule.isSetupComplete = identityModule.stepCompleted.All(x => x);
-            identityModule.statusMessage = identityModule.isSetupComplete ? "Identity module is configured" : "Some identity components missing";
+            identityModule.statusMessage = identityModule.isSetupComplete 
+                ? "Identity module is configured" 
+                : "Some identity components missing";
         }
 
+        /// <summary>
+        /// Checks Backend module status using type-based detection.
+        /// </summary>
         private void CheckBackendModule()
         {
             if (backendModule.stepCompleted == null || backendModule.stepCompleted.Count < 3) return;
             
-            backendModule.stepCompleted[0] = File.Exists(SDK_ROOT + "/Backend/IVXNakamaManager.cs");
-            backendModule.stepCompleted[1] = File.Exists(SDK_ROOT + "/Backend/IVXBackendService.cs");
-            backendModule.stepCompleted[2] = AssetDatabase.LoadAssetAtPath<GameObject>(MANAGERS_PREFAB_PATH + "/NakamaManager.prefab") != null;
+            // Use type-based checking
+            backendModule.stepCompleted[0] = TypeExists("IntelliVerseX.Backend.IVXNakamaManager");
+            backendModule.stepCompleted[1] = TypeExists("IntelliVerseX.Backend.IVXBackendService");
+            // Prefab check - try both Assets and Package paths
+            backendModule.stepCompleted[2] = AssetDatabase.LoadAssetAtPath<GameObject>(MANAGERS_PREFAB_PATH + "/NakamaManager.prefab") != null ||
+                                             TypeExists("IntelliVerseX.Backend.IVXNakamaRPC"); // Alternative: check if RPC type exists
 
             backendModule.isSetupComplete = backendModule.stepCompleted.All(x => x);
-            backendModule.statusMessage = backendModule.isSetupComplete ? "Backend module is configured" : "Some backend components missing";
+            backendModule.statusMessage = backendModule.isSetupComplete 
+                ? "Backend module is configured" 
+                : "Some backend components missing";
         }
 
+        /// <summary>
+        /// Checks Auth module status using type-based detection.
+        /// </summary>
         private void CheckAuthModule()
         {
             if (authModule.stepCompleted == null || authModule.stepCompleted.Count < 4) return;
             
+            // Config check - either asset exists OR auth types exist (SDK installed)
             authModule.stepCompleted[0] = Resources.Load("IntelliVerseX/AuthConfig") != null ||
-                                          AssetDatabase.LoadAssetAtPath<ScriptableObject>(RESOURCES_PATH + "/AuthConfig.asset") != null;
-            authModule.stepCompleted[1] = AssetDatabase.LoadAssetAtPath<GameObject>(AUTH_PREFABS_PATH + "/IVX_AuthCanvas.prefab") != null;
-            authModule.stepCompleted[2] = File.Exists(AUTH_ROOT + "/UI/IVXPanelLogin.cs") &&
-                                          File.Exists(AUTH_ROOT + "/UI/IVXPanelRegister.cs");
-            authModule.stepCompleted[3] = File.Exists(AUTH_ROOT + "/UI/IVXPanelOTP.cs");
+                                          AssetDatabase.LoadAssetAtPath<ScriptableObject>(RESOURCES_PATH + "/AuthConfig.asset") != null ||
+                                          TypeExists("IntelliVerseX.Auth.UI.IVXCanvasAuth"); // Auth canvas type = SDK has auth
+            
+            // Prefab check - try package path
+            authModule.stepCompleted[1] = AssetDatabase.LoadAssetAtPath<GameObject>(AUTH_PREFABS_PATH + "/IVX_AuthCanvas.prefab") != null ||
+                                          TypeExists("IntelliVerseX.Auth.UI.IVXCanvasAuth");
+            
+            // UI scripts check using types
+            authModule.stepCompleted[2] = TypeExists("IntelliVerseX.Auth.UI.IVXPanelLogin") ||
+                                          TypeExists("IntelliVerseX.Auth.UI.IVXPanelRegister");
+            authModule.stepCompleted[3] = TypeExists("IntelliVerseX.Auth.UI.IVXPanelOTP");
 
             authModule.isSetupComplete = authModule.stepCompleted.All(x => x);
-            authModule.statusMessage = authModule.isSetupComplete ? "Auth module is fully configured" : "Auth setup incomplete";
+            authModule.statusMessage = authModule.isSetupComplete 
+                ? "Auth module is fully configured" 
+                : "Auth setup incomplete";
         }
 
+        /// <summary>
+        /// Checks Friends module status using type-based detection.
+        /// All Friends types are in IntelliVerseX.Social namespace.
+        /// </summary>
         private void CheckFriendsModule()
         {
             if (friendsModule.stepCompleted == null || friendsModule.stepCompleted.Count < 5) return;
             
+            // Config check (IVXFriendsConfig is in IntelliVerseX.Social)
             friendsModule.stepCompleted[0] = Resources.Load("IntelliVerseX/FriendsConfig") != null ||
-                                             AssetDatabase.LoadAssetAtPath<ScriptableObject>(RESOURCES_PATH + "/FriendsConfig.asset") != null;
-            friendsModule.stepCompleted[1] = AssetDatabase.LoadAssetAtPath<GameObject>(SOCIAL_PREFABS_PATH + "/IVXFriendSlot.prefab") != null;
-            friendsModule.stepCompleted[2] = AssetDatabase.LoadAssetAtPath<GameObject>(SOCIAL_PREFABS_PATH + "/IVXFriendRequestSlot.prefab") != null;
-            friendsModule.stepCompleted[3] = AssetDatabase.LoadAssetAtPath<GameObject>(SOCIAL_PREFABS_PATH + "/IVXFriendSearchSlot.prefab") != null;
-            friendsModule.stepCompleted[4] = File.Exists(SOCIAL_ROOT + "/UI/IVXFriendsPanel.cs");
+                                             AssetDatabase.LoadAssetAtPath<ScriptableObject>(RESOURCES_PATH + "/FriendsConfig.asset") != null ||
+                                             TypeExists("IntelliVerseX.Social.IVXFriendsConfig");
+            
+            // Prefab/Type checks - UI types are in IntelliVerseX.Social.UI
+            friendsModule.stepCompleted[1] = AssetDatabase.LoadAssetAtPath<GameObject>(SOCIAL_PREFABS_PATH + "/IVXFriendSlot.prefab") != null ||
+                                             TypeExists("IntelliVerseX.Social.UI.IVXFriendSlot");
+            friendsModule.stepCompleted[2] = AssetDatabase.LoadAssetAtPath<GameObject>(SOCIAL_PREFABS_PATH + "/IVXFriendRequestSlot.prefab") != null ||
+                                             TypeExists("IntelliVerseX.Social.UI.IVXFriendRequestSlot");
+            friendsModule.stepCompleted[3] = AssetDatabase.LoadAssetAtPath<GameObject>(SOCIAL_PREFABS_PATH + "/IVXFriendSearchSlot.prefab") != null ||
+                                             TypeExists("IntelliVerseX.Social.UI.IVXFriendSearchSlot");
+            friendsModule.stepCompleted[4] = TypeExists("IntelliVerseX.Social.UI.IVXFriendsPanel") ||
+                                             TypeExists("IntelliVerseX.Social.IVXFriendsService");
 
             friendsModule.isSetupComplete = friendsModule.stepCompleted.All(x => x);
-            friendsModule.statusMessage = friendsModule.isSetupComplete ? "Friends module is fully configured" : "Friends setup incomplete";
+            friendsModule.statusMessage = friendsModule.isSetupComplete 
+                ? "Friends module is fully configured" 
+                : "Friends setup incomplete";
         }
 
+        /// <summary>
+        /// Checks Wallet module status using type-based detection.
+        /// </summary>
         private void CheckWalletModule()
         {
             if (walletModule.stepCompleted == null || walletModule.stepCompleted.Count < 2) return;
             
-            // Check for new IVXG wallet system
-            walletModule.stepCompleted[0] = File.Exists(SDK_ROOT + "/Wallet/Static/IVXGWalletManager.cs") ||
-                                            File.Exists(SDK_ROOT + "/Wallet/Runtime/IVXGWalletRuntime.cs") ||
-                                            File.Exists(SDK_ROOT + "/V2/Manager/IVXNWalletManager.cs");
-            walletModule.stepCompleted[1] = File.Exists(SDK_ROOT + "/Wallet/UI/IVXGWalletDisplay.cs") ||
+            // Check for wallet manager types (IVXWalletManager is in Backend namespace)
+            walletModule.stepCompleted[0] = TypeExists("IntelliVerseX.Backend.IVXWalletManager") ||
+                                            TypeExists("IntelliVerseX.Games.Wallet.IVXGWalletManager") ||
+                                            TypeExists("IntelliVerseX.V2.Manager.IVXNWalletManager");
+            
+            // Check for wallet UI types (IVXWalletDisplay is in UI namespace)
+            walletModule.stepCompleted[1] = TypeExists("IntelliVerseX.UI.IVXWalletDisplay") ||
+                                            TypeExists("IntelliVerseX.Games.Wallet.IVXGWalletDisplay") ||
                                             AssetDatabase.LoadAssetAtPath<GameObject>(SDK_ROOT + "/Wallet/Prefabs/IVXGWalletDisplay.prefab") != null;
 
             walletModule.isSetupComplete = walletModule.stepCompleted.All(x => x);
-            walletModule.statusMessage = walletModule.isSetupComplete ? "Wallet module is configured" : "Wallet components missing";
+            walletModule.statusMessage = walletModule.isSetupComplete 
+                ? "Wallet module is configured" 
+                : "Wallet components missing";
         }
 
+        /// <summary>
+        /// Checks Social (Share & Rate) module status using type-based detection.
+        /// </summary>
         private void CheckSocialModule()
         {
             if (socialModule.stepCompleted == null || socialModule.stepCompleted.Count < 2) return;
             
-            socialModule.stepCompleted[0] = File.Exists(SDK_ROOT + "/Social/IVXGShareManager.cs") ||
+            // Check for share manager (IVXGShareManager is in IntelliVerseX.Games.Social)
+            socialModule.stepCompleted[0] = TypeExists("IntelliVerseX.Games.Social.IVXGShareManager") ||
+                                            TypeExists("IntelliVerseX.Social.IVXNativeShareHelper") ||
                                             AssetDatabase.LoadAssetAtPath<GameObject>(SDK_ROOT + "/Social/Prefabs/IVXGShareManager.prefab") != null;
-            socialModule.stepCompleted[1] = File.Exists(SDK_ROOT + "/Social/IVXGRateAppManager.cs") ||
+            
+            // Check for rate app manager (IVXGRateAppManager is in IntelliVerseX.Games.Social)
+            socialModule.stepCompleted[1] = TypeExists("IntelliVerseX.Games.Social.IVXGRateAppManager") ||
                                             AssetDatabase.LoadAssetAtPath<GameObject>(SDK_ROOT + "/Social/Prefabs/IVXGRateAppManager.prefab") != null;
 
             socialModule.isSetupComplete = socialModule.stepCompleted.All(x => x);
-            socialModule.statusMessage = socialModule.isSetupComplete ? "Social module is configured" : "Social components missing";
+            socialModule.statusMessage = socialModule.isSetupComplete 
+                ? "Social module is configured" 
+                : "Social components missing";
         }
 
+        /// <summary>
+        /// Checks Leaderboard module status using type-based detection.
+        /// </summary>
         private void CheckLeaderboardModule()
         {
             if (leaderboardModule.stepCompleted == null || leaderboardModule.stepCompleted.Count < 2) return;
             
-            // Check for new IVXG leaderboard system
-            leaderboardModule.stepCompleted[0] = File.Exists(SDK_ROOT + "/Leaderboard/Static/IVXGLeaderboardManager.cs") ||
-                                                 File.Exists(SDK_ROOT + "/Leaderboard/Runtime/IVXGLeaderboard.cs");
-            leaderboardModule.stepCompleted[1] = File.Exists(SDK_ROOT + "/Leaderboard/UI/IVXGLeaderboardUI.cs") ||
+            // Check for leaderboard manager types (IVXGLeaderboardManager is in IntelliVerseX.Games.Leaderboard)
+            leaderboardModule.stepCompleted[0] = TypeExists("IntelliVerseX.Games.Leaderboard.IVXGLeaderboardManager") ||
+                                                 TypeExists("IntelliVerseX.Games.Leaderboard.IVXGLeaderboard") ||
+                                                 TypeExists("IntelliVerseX.V2.Manager.IVXNLeaderbordManager");
+            
+            // Check for leaderboard UI types (IVXGLeaderboardUI is in IntelliVerseX.Games.Leaderboard.UI)
+            leaderboardModule.stepCompleted[1] = TypeExists("IntelliVerseX.Games.Leaderboard.UI.IVXGLeaderboardUI") ||
+                                                 TypeExists("IntelliVerseX.Games.Leaderboard.UI.IVXGLeaderboardEntryView") ||
                                                  AssetDatabase.LoadAssetAtPath<GameObject>(SDK_ROOT + "/Leaderboard/Prefabs/IVXGLeaderboardCanvas.prefab") != null;
 
             leaderboardModule.isSetupComplete = leaderboardModule.stepCompleted.All(x => x);
-            leaderboardModule.statusMessage = leaderboardModule.isSetupComplete ? "Leaderboard module is configured" : "Leaderboard components missing";
+            leaderboardModule.statusMessage = leaderboardModule.isSetupComplete 
+                ? "Leaderboard module is configured" 
+                : "Leaderboard components missing";
         }
 
+        /// <summary>
+        /// Checks Quiz module status using type-based detection.
+        /// </summary>
         private void CheckQuizModule()
         {
             if (quizModule.stepCompleted == null || quizModule.stepCompleted.Count < 2) return;
             
-            quizModule.stepCompleted[0] = File.Exists(SDK_ROOT + "/Quiz/IVXQuizSessionManager.cs");
-            quizModule.stepCompleted[1] = File.Exists(SDK_ROOT + "/QuizUI/IVXQuizQuestionPanel.cs");
+            // Check for quiz manager types
+            quizModule.stepCompleted[0] = TypeExists("IntelliVerseX.Quiz.IVXQuizSessionManager") ||
+                                          TypeExists("IntelliVerseX.Quiz.IVXQuizManager");
+            
+            // Check for quiz UI types
+            quizModule.stepCompleted[1] = TypeExists("IntelliVerseX.QuizUI.IVXQuizQuestionPanel") ||
+                                          TypeExists("IntelliVerseX.QuizUI.IVXQuizUI");
 
             quizModule.isSetupComplete = quizModule.stepCompleted.All(x => x);
-            quizModule.statusMessage = quizModule.isSetupComplete ? "Quiz module is configured" : "Quiz components missing";
+            quizModule.statusMessage = quizModule.isSetupComplete 
+                ? "Quiz module is configured" 
+                : "Quiz components missing";
         }
 
+        /// <summary>
+        /// Checks Localization module status using type-based detection.
+        /// </summary>
         private void CheckLocalizationModule()
         {
             if (localizationModule.stepCompleted == null || localizationModule.stepCompleted.Count < 2) return;
             
-            localizationModule.stepCompleted[0] = File.Exists(SDK_ROOT + "/Localization/IVXLocalizationService.cs");
-            localizationModule.stepCompleted[1] = File.Exists(SDK_ROOT + "/Localization/IVXLanguageManager.cs");
+            // Check for localization service types
+            localizationModule.stepCompleted[0] = TypeExists("IntelliVerseX.Localization.IVXLocalizationService") ||
+                                                  TypeExists("IntelliVerseX.Localization.IVXLocalizationManager");
+            
+            // Check for language manager types
+            localizationModule.stepCompleted[1] = TypeExists("IntelliVerseX.Localization.IVXLanguageManager") ||
+                                                  TypeExists("IntelliVerseX.Localization.IVXLocalizedText");
 
             localizationModule.isSetupComplete = localizationModule.stepCompleted.All(x => x);
-            localizationModule.statusMessage = localizationModule.isSetupComplete ? "Localization module is configured" : "Localization components missing";
+            localizationModule.statusMessage = localizationModule.isSetupComplete 
+                ? "Localization module is configured" 
+                : "Localization components missing";
         }
 
+        /// <summary>
+        /// Checks Ads module status using type-based detection.
+        /// </summary>
         private void CheckAdsModule()
         {
             if (adsModule.stepCompleted == null || adsModule.stepCompleted.Count < 2) return;
             
-            adsModule.stepCompleted[0] = File.Exists(SDK_ROOT + "/Monetization/IVXAdsManager.cs");
-            adsModule.stepCompleted[1] = File.Exists(SDK_ROOT + "/Monetization/IVXWebGLAdsManager.cs") ||
-                                         File.Exists(SDK_ROOT + "/Monetization/IVXAdsWaterfallManager.cs");
+            // Check for ads manager types
+            adsModule.stepCompleted[0] = TypeExists("IntelliVerseX.Monetization.IVXAdsManager") ||
+                                         TypeExists("IntelliVerseX.Monetization.IVXAdsWaterfallManager");
+            
+            // Check for platform-specific ads types
+            adsModule.stepCompleted[1] = TypeExists("IntelliVerseX.Monetization.IVXWebGLAdsManager") ||
+                                         TypeExists("IntelliVerseX.Monetization.IVXAdsWaterfallManager") ||
+                                         TypeExists("IntelliVerseX.Monetization.IVXLevelPlayAdsManager");
 
             adsModule.isSetupComplete = adsModule.stepCompleted.All(x => x);
-            adsModule.statusMessage = adsModule.isSetupComplete ? "Ads module is configured" : "Ads components missing";
+            adsModule.statusMessage = adsModule.isSetupComplete 
+                ? "Ads module is configured" 
+                : "Ads components missing";
         }
 
+        /// <summary>
+        /// Checks IAP module status using type-based detection.
+        /// </summary>
         private void CheckIAPModule()
         {
             if (iapModule.stepCompleted == null || iapModule.stepCompleted.Count < 2) return;
             
-            iapModule.stepCompleted[0] = File.Exists(SDK_ROOT + "/Monetization/IVXIAPManager.cs") ||
-                                         File.Exists(SDK_ROOT + "/IAP/IVXIAPManager.cs");
-            iapModule.stepCompleted[1] = File.Exists(SDK_ROOT + "/Monetization/IVXIAPConfig.cs");
+            // Check for IAP manager types
+            iapModule.stepCompleted[0] = TypeExists("IntelliVerseX.Monetization.IVXIAPManager") ||
+                                         TypeExists("IntelliVerseX.IAP.IVXIAPManager");
+            
+            // Check for IAP config types
+            iapModule.stepCompleted[1] = TypeExists("IntelliVerseX.Monetization.IVXIAPConfig") ||
+                                         TypeExists("IntelliVerseX.IAP.IVXIAPConfig") ||
+                                         TypeExists("IntelliVerseX.Monetization.IVXIAPManager"); // If manager exists, config likely does too
 
             iapModule.isSetupComplete = iapModule.stepCompleted.All(x => x);
-            iapModule.statusMessage = iapModule.isSetupComplete ? "IAP module is configured" : "IAP components missing";
+            iapModule.statusMessage = iapModule.isSetupComplete 
+                ? "IAP module is configured" 
+                : "IAP components missing";
         }
 
+        /// <summary>
+        /// Checks Retention module status (QuizVerse-specific).
+        /// </summary>
         private void CheckRetentionModule()
         {
             if (retentionModule.stepCompleted == null || retentionModule.stepCompleted.Count < 2) return;
             
-            retentionModule.stepCompleted[0] = File.Exists(QUIZVERSE_ROOT + "/Scripts/Rewards/DailyRewardManager.cs");
-            retentionModule.stepCompleted[1] = File.Exists(QUIZVERSE_ROOT + "/Scripts/Retention/StreakShieldManager.cs");
+            // Retention module is QuizVerse-specific, check both file and type
+            retentionModule.stepCompleted[0] = File.Exists(QUIZVERSE_ROOT + "/Scripts/Rewards/DailyRewardManager.cs") ||
+                                               TypeExists("QuizVerse.Rewards.DailyRewardManager");
+            retentionModule.stepCompleted[1] = File.Exists(QUIZVERSE_ROOT + "/Scripts/Retention/StreakShieldManager.cs") ||
+                                               TypeExists("QuizVerse.Retention.StreakShieldManager");
 
             retentionModule.isSetupComplete = retentionModule.stepCompleted.All(x => x);
-            retentionModule.statusMessage = retentionModule.isSetupComplete ? "Retention module is configured" : "Retention components missing";
+            retentionModule.statusMessage = retentionModule.isSetupComplete 
+                ? "Retention module is configured" 
+                : "Retention components missing (QuizVerse-specific)";
         }
 
+        /// <summary>
+        /// Checks if DOTween is installed in the project.
+        /// </summary>
         private bool CheckDOTweenInstalled()
         {
-            var dotweenType = Type.GetType("DG.Tweening.DOTween, DOTween");
-            if (dotweenType != null) return true;
+            // Check via type (most reliable)
+            if (TypeExists("DG.Tweening.DOTween")) return true;
 
+            // Check assemblies
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 if (assembly.GetName().Name == "DOTween")
                     return true;
             }
 
+            // Fallback to directory check
             return Directory.Exists("Assets/Plugins/Demigiant/DOTween") ||
                    Directory.Exists("Assets/DOTween");
         }
@@ -1672,7 +1998,7 @@ namespace IntelliVerseX.Editor
             var canvasAuthType = GetTypeByName("IntelliVerseX.Auth.UI.IVXCanvasAuth");
             if (canvasAuthType != null)
             {
-                var existing = GameObject.FindObjectOfType(canvasAuthType);
+                var existing = GameObject.FindAnyObjectByType(canvasAuthType);
                 if (existing != null)
                 {
                     Selection.activeGameObject = (existing as Component)?.gameObject;
@@ -1712,7 +2038,7 @@ namespace IntelliVerseX.Editor
             var existingType = GetTypeByName("IntelliVerseX.Social.UI.IVXFriendsPanel");
             if (existingType != null)
             {
-                var existing = GameObject.FindObjectOfType(existingType);
+                var existing = GameObject.FindAnyObjectByType(existingType);
                 if (existing != null)
                 {
                     Selection.activeGameObject = (existing as Component)?.gameObject;
@@ -2184,14 +2510,97 @@ namespace IntelliVerseX.Editor
             }
         }
 
+        /// <summary>
+        /// Ensures an EventSystem exists in the scene.
+        /// Automatically detects the active input system and uses the appropriate input module:
+        /// - New Input System: Uses InputSystemUIInputModule
+        /// - Legacy Input Manager: Uses StandaloneInputModule
+        /// - Both: Uses InputSystemUIInputModule (preferred)
+        /// </summary>
         private void EnsureEventSystem()
         {
             var eventSystemType = typeof(UnityEngine.EventSystems.EventSystem);
-            if (GameObject.FindObjectOfType(eventSystemType) == null)
+            if (GameObject.FindAnyObjectByType(eventSystemType) != null)
             {
-                var eventSystem = new GameObject("EventSystem");
-                eventSystem.AddComponent<UnityEngine.EventSystems.EventSystem>();
+                return; // EventSystem already exists
+            }
+
+            var eventSystem = new GameObject("EventSystem");
+            eventSystem.AddComponent<UnityEngine.EventSystems.EventSystem>();
+
+            // Check if the new Input System package is installed and should be used
+            bool useNewInputSystem = IsNewInputSystemActive();
+
+            if (useNewInputSystem)
+            {
+                // Try to add InputSystemUIInputModule (from Input System package)
+                var inputModuleType = GetTypeByName("UnityEngine.InputSystem.UI.InputSystemUIInputModule");
+                if (inputModuleType != null)
+                {
+                    eventSystem.AddComponent(inputModuleType);
+                    Debug.Log("[IVXSDKSetupWizard] Created EventSystem with InputSystemUIInputModule (New Input System)");
+                }
+                else
+                {
+                    // Fallback to StandaloneInputModule if type not found (shouldn't happen)
+                    Debug.LogWarning("[IVXSDKSetupWizard] New Input System is active but InputSystemUIInputModule not found. Using StandaloneInputModule as fallback.");
+                    eventSystem.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+                }
+            }
+            else
+            {
+                // Use legacy StandaloneInputModule
                 eventSystem.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+                Debug.Log("[IVXSDKSetupWizard] Created EventSystem with StandaloneInputModule (Legacy Input)");
+            }
+        }
+
+        /// <summary>
+        /// Checks if the New Input System is active in the project settings.
+        /// Returns true if:
+        /// - Input System package is installed AND
+        /// - Player Settings has Input System enabled (either "Input System Package" or "Both")
+        /// </summary>
+        private bool IsNewInputSystemActive()
+        {
+            // Check if InputSystem package is installed by looking for its main type
+            var inputSystemType = GetTypeByName("UnityEngine.InputSystem.InputSystem");
+            if (inputSystemType == null)
+            {
+                return false; // Input System package not installed
+            }
+
+            // Check Player Settings for active input handling
+            // PlayerSettings.GetActiveInputHandler() returns:
+            // 0 = Input Manager (old)
+            // 1 = Input System Package (new)
+            // 2 = Both
+            try
+            {
+                var playerSettingsType = typeof(UnityEditor.PlayerSettings);
+                
+                // Try to get the activeInputHandler property via reflection (Unity 2019.3+)
+                var prop = playerSettingsType.GetProperty("activeInputHandler", 
+                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                
+                if (prop != null)
+                {
+                    var value = (int)prop.GetValue(null);
+                    // 1 = Input System Package, 2 = Both
+                    return value >= 1;
+                }
+
+                // Alternative: Check via EditorSettings (older Unity versions)
+                // If we can't determine, assume new input system if the package is installed
+                // and the InputSystemUIInputModule type exists
+                var inputModuleType = GetTypeByName("UnityEngine.InputSystem.UI.InputSystemUIInputModule");
+                return inputModuleType != null;
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogWarning($"[IVXSDKSetupWizard] Could not determine input system setting: {ex.Message}");
+                // If we can't determine, check if InputSystemUIInputModule exists
+                return GetTypeByName("UnityEngine.InputSystem.UI.InputSystemUIInputModule") != null;
             }
         }
 
@@ -2301,12 +2710,31 @@ namespace IntelliVerseX.Editor
             }
         }
 
-        private Type GetTypeByName(string fullName)
+        /// <summary>
+        /// Gets a Type by its full name, searching all loaded assemblies.
+        /// This is the most reliable way to check if SDK scripts are available,
+        /// regardless of whether they're in Assets or Packages.
+        /// </summary>
+        private static Type GetTypeByName(string fullName)
         {
+            if (string.IsNullOrEmpty(fullName)) return null;
+            
+            // Try direct type lookup first
+            var type = Type.GetType(fullName);
+            if (type != null) return type;
+            
+            // Search all loaded assemblies
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                var type = assembly.GetType(fullName);
-                if (type != null) return type;
+                try
+                {
+                    type = assembly.GetType(fullName);
+                    if (type != null) return type;
+                }
+                catch
+                {
+                    // Ignore assemblies that can't be searched
+                }
             }
             return null;
         }

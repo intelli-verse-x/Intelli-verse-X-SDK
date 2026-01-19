@@ -196,7 +196,7 @@ namespace IntelliVerseX.Social.Editor
             {
                 var eventSystem = new GameObject("EventSystem");
                 eventSystem.AddComponent<UnityEngine.EventSystems.EventSystem>();
-                eventSystem.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+                AddAppropriateInputModule(eventSystem);
             }
 
             // Generate prefabs if needed
@@ -757,7 +757,7 @@ namespace IntelliVerseX.Social.Editor
             {
                 var eventSystem = new GameObject("EventSystem");
                 eventSystem.AddComponent<UnityEngine.EventSystems.EventSystem>();
-                eventSystem.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+                AddAppropriateInputModule(eventSystem);
             }
 
             // Create demo UI
@@ -898,6 +898,88 @@ namespace IntelliVerseX.Social.Editor
 
             // Fallback: try menu item
             EditorApplication.ExecuteMenuItem("Tools/Demigiant/DOTween Utility Panel");
+        }
+
+        /// <summary>
+        /// Adds the appropriate input module to an EventSystem based on the active input handling setting.
+        /// Supports both New Input System (InputSystemUIInputModule) and Legacy (StandaloneInputModule).
+        /// </summary>
+        private static void AddAppropriateInputModule(GameObject eventSystem)
+        {
+            // Check if the new Input System package is installed and should be used
+            bool useNewInputSystem = IsNewInputSystemActive();
+
+            if (useNewInputSystem)
+            {
+                // Try to add InputSystemUIInputModule (from Input System package)
+                var inputModuleType = GetTypeByName("UnityEngine.InputSystem.UI.InputSystemUIInputModule");
+                if (inputModuleType != null)
+                {
+                    eventSystem.AddComponent(inputModuleType);
+                    Debug.Log("[IVXFriendsSetupWizard] Created EventSystem with InputSystemUIInputModule (New Input System)");
+                    return;
+                }
+            }
+
+            // Fallback to legacy StandaloneInputModule
+            eventSystem.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+            Debug.Log("[IVXFriendsSetupWizard] Created EventSystem with StandaloneInputModule (Legacy Input)");
+        }
+
+        /// <summary>
+        /// Checks if the New Input System is active in the project settings.
+        /// </summary>
+        private static bool IsNewInputSystemActive()
+        {
+            // Check if InputSystem package is installed
+            var inputSystemType = GetTypeByName("UnityEngine.InputSystem.InputSystem");
+            if (inputSystemType == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                // Check Player Settings for active input handling
+                var playerSettingsType = typeof(UnityEditor.PlayerSettings);
+                var prop = playerSettingsType.GetProperty("activeInputHandler",
+                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+
+                if (prop != null)
+                {
+                    var value = (int)prop.GetValue(null);
+                    return value >= 1; // 1 = Input System Package, 2 = Both
+                }
+
+                // Fallback: if InputSystemUIInputModule exists, use it
+                return GetTypeByName("UnityEngine.InputSystem.UI.InputSystemUIInputModule") != null;
+            }
+            catch
+            {
+                return GetTypeByName("UnityEngine.InputSystem.UI.InputSystemUIInputModule") != null;
+            }
+        }
+
+        /// <summary>
+        /// Gets a Type by its full name from all loaded assemblies.
+        /// </summary>
+        private static Type GetTypeByName(string fullName)
+        {
+            if (string.IsNullOrEmpty(fullName)) return null;
+
+            var type = Type.GetType(fullName);
+            if (type != null) return type;
+
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                try
+                {
+                    type = assembly.GetType(fullName);
+                    if (type != null) return type;
+                }
+                catch { }
+            }
+            return null;
         }
 
         #endregion
