@@ -273,7 +273,10 @@ namespace IntelliVerseX.MoreOfUs.UI
             if (_placeholderIcon != null)
                 _appIcon.texture = _placeholderIcon.texture;
 
-            // Load from manager
+            // Load from manager safely
+            if (!IVXMoreOfUsManager.HasInstance)
+                return;
+                
             IVXMoreOfUsManager.Instance.LoadAppIcon(_appInfo, texture =>
             {
                 if (texture != null && this != null && _appIcon != null)
@@ -325,8 +328,11 @@ namespace IntelliVerseX.MoreOfUs.UI
 
             OnCardClicked?.Invoke(this, _appInfo);
             
-            // Open store page
-            IVXMoreOfUsManager.Instance.OpenStorePage(_appInfo);
+            // Open store page safely
+            if (IVXMoreOfUsManager.HasInstance)
+            {
+                IVXMoreOfUsManager.Instance.OpenStorePage(_appInfo);
+            }
         }
 
         private void OnInstallButtonClicked()
@@ -334,7 +340,11 @@ namespace IntelliVerseX.MoreOfUs.UI
             if (_appInfo == null)
                 return;
 
-            IVXMoreOfUsManager.Instance.OpenStorePage(_appInfo);
+            // Open store page safely
+            if (IVXMoreOfUsManager.HasInstance)
+            {
+                IVXMoreOfUsManager.Instance.OpenStorePage(_appInfo);
+            }
         }
 
         #endregion

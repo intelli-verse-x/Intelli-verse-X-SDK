@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-01-13",
+  "lastUpdated": "2026-01-20",
   "patterns": [
     {
       "id": "PAT-001",
@@ -41,6 +41,14 @@
       "template": "#region Constants, Serialized Fields, Private Fields, Properties, Unity Lifecycle, Public Methods, Private Methods",
       "usage": "All MonoBehaviour classes",
       "confidence": 1.0
+    },
+    {
+      "id": "PAT-006",
+      "name": "Cleanup-Safe Singleton Access",
+      "description": "Avoid creating instances during teardown by checking HasInstance before accessing Instance",
+      "template": "if (SomeManager.HasInstance) { var instance = SomeManager.Instance; if (instance != null) { /* cleanup */ } }",
+      "usage": "OnDestroy / shutdown paths where managers may be disposing",
+      "confidence": 0.9
     }
   ]
 }

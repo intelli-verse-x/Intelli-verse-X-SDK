@@ -9,6 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -26,8 +28,14 @@ namespace IntelliVerseX.Editor
         #region Constants
 
         private const string WINDOW_TITLE = "IntelliVerseX SDK Setup";
-        private const string SDK_VERSION = "2.1.0";
+        private const string SDK_VERSION = "3.0.0";
         private const string PACKAGE_NAME = "com.intelliversex.sdk";
+        
+        // Version check URLs
+        private const string GITHUB_RELEASES_API_URL = "https://api.github.com/repos/AkshayAdsworlds/Intelli-verse-X-Unity-SDK/releases/latest";
+        private const string GITHUB_RELEASES_PAGE_URL = "https://github.com/AkshayAdsworlds/Intelli-verse-X-Unity-SDK/releases";
+        private const string VERSION_CHECK_PREF_KEY = "IVX_LastVersionCheck";
+        private const double VERSION_CHECK_INTERVAL_HOURS = 1.0; // Check every hour
 
         // Paths - These are relative paths within the SDK, resolved at runtime
         private const string SDK_ASSETS_ROOT = "Assets/_IntelliVerseXSDK";
@@ -325,6 +333,14 @@ namespace IntelliVerseX.Editor
             "Test Scenes"
         };
 
+        // Version Check State
+        private static string _latestVersion = null;
+        private static bool _isCheckingVersion = false;
+        private static bool _updateAvailable = false;
+        private static string _releaseNotes = "";
+        private static string _releaseUrl = "";
+        private static DateTime _lastVersionCheck = DateTime.MinValue;
+
         // Styles
         private GUIStyle headerStyle;
         private GUIStyle subHeaderStyle;
@@ -360,6 +376,7 @@ namespace IntelliVerseX.Editor
                 if (this != null)
                 {
                     RefreshAllModuleStatus();
+                    CheckForUpdatesIfNeeded();
                     Repaint();
                 }
             };
@@ -586,7 +603,83 @@ namespace IntelliVerseX.Editor
             GUILayout.FlexibleSpace();
             EditorGUILayout.EndHorizontal();
 
+            // Version Check Status Banner
+            DrawVersionCheckBanner();
+
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+        }
+
+        /// <summary>
+        /// Draws the version check status banner showing current version and update availability.
+        /// </summary>
+        private void DrawVersionCheckBanner()
+        {
+            EditorGUILayout.Space(5);
+            
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+
+            if (_isCheckingVersion)
+            {
+                // Checking for updates
+                GUILayout.Label("🔄 Checking for updates...", EditorStyles.centeredGreyMiniLabel);
+            }
+            else if (_updateAvailable && !string.IsNullOrEmpty(_latestVersion))
+            {
+                // Update available - show prominent banner
+                Color oldBgColor = GUI.backgroundColor;
+                GUI.backgroundColor = new Color(1f, 0.8f, 0.2f, 0.8f); // Yellow/gold for update
+                
+                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                EditorGUILayout.BeginHorizontal();
+                
+                GUILayout.Label($"🆕 New Version Available: {_latestVersion}", EditorStyles.boldLabel);
+                
+                GUILayout.FlexibleSpace();
+                
+                if (GUILayout.Button("📥 Update", GUILayout.Width(80)))
+                {
+                    if (!string.IsNullOrEmpty(_releaseUrl))
+                    {
+                        Application.OpenURL(_releaseUrl);
+                    }
+                    else
+                    {
+                        Application.OpenURL(GITHUB_RELEASES_PAGE_URL);
+                    }
+                }
+                
+                if (GUILayout.Button("📋 Release Notes", GUILayout.Width(110)))
+                {
+                    Application.OpenURL(GITHUB_RELEASES_PAGE_URL);
+                }
+                
+                EditorGUILayout.EndHorizontal();
+                
+                if (!string.IsNullOrEmpty(_releaseNotes))
+                {
+                    EditorGUILayout.LabelField(_releaseNotes, EditorStyles.wordWrappedMiniLabel);
+                }
+                
+                EditorGUILayout.EndVertical();
+                GUI.backgroundColor = oldBgColor;
+            }
+            else if (_latestVersion != null)
+            {
+                // Up to date
+                GUILayout.Label($"✅ You're using the latest version ({SDK_VERSION})", EditorStyles.centeredGreyMiniLabel);
+            }
+            else
+            {
+                // Version check not performed or failed
+                if (GUILayout.Button("🔍 Check for Updates", EditorStyles.miniButton, GUILayout.Width(130)))
+                {
+                    CheckForUpdatesAsync();
+                }
+            }
+
+            GUILayout.FlexibleSpace();
+            EditorGUILayout.EndHorizontal();
         }
 
         private void DrawFooter()
@@ -613,6 +706,225 @@ namespace IntelliVerseX.Editor
             }
 
             EditorGUILayout.EndHorizontal();
+        }
+
+        #endregion
+
+        #region Version Check
+
+        /// <summary>
+        /// Checks for updates if enough time has passed since the last check.
+        /// </summary>
+        private void CheckForUpdatesIfNeeded()
+        {
+            // Load last check time from EditorPrefs
+            string lastCheckStr = EditorPrefs.GetString(VERSION_CHECK_PREF_KEY, "");
+            if (!string.IsNullOrEmpty(lastCheckStr) && DateTime.TryParse(lastCheckStr, out DateTime lastCheck))
+            {
+                _lastVersionCheck = lastCheck;
+            }
+
+            // Check if enough time has passed
+            if ((DateTime.Now - _lastVersionCheck).TotalHours >= VERSION_CHECK_INTERVAL_HOURS)
+            {
+                CheckForUpdatesAsync();
+            }
+        }
+
+        /// <summary>
+        /// Asynchronously checks for SDK updates from GitHub releases.
+        /// </summary>
+        private async void CheckForUpdatesAsync()
+        {
+            if (_isCheckingVersion)
+            {
+                return;
+            }
+
+            _isCheckingVersion = true;
+            _updateAvailable = false;
+            Repaint();
+
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    // GitHub API requires User-Agent header
+                    client.DefaultRequestHeaders.Add("User-Agent", "IntelliVerseX-SDK-Unity");
+                    client.Timeout = TimeSpan.FromSeconds(10);
+
+                    var response = await client.GetStringAsync(GITHUB_RELEASES_API_URL);
+                    ParseGitHubReleaseResponse(response);
+
+                    // Save last check time
+                    _lastVersionCheck = DateTime.Now;
+                    EditorPrefs.SetString(VERSION_CHECK_PREF_KEY, _lastVersionCheck.ToString("o"));
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Debug.LogWarning($"[IVXSDKSetupWizard] Failed to check for updates: {ex.Message}");
+                _latestVersion = null;
+            }
+            catch (TaskCanceledException)
+            {
+                Debug.LogWarning("[IVXSDKSetupWizard] Version check timed out.");
+                _latestVersion = null;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[IVXSDKSetupWizard] Error checking for updates: {ex.Message}");
+                _latestVersion = null;
+            }
+            finally
+            {
+                _isCheckingVersion = false;
+                // Schedule repaint on main thread
+                EditorApplication.delayCall += Repaint;
+            }
+        }
+
+        /// <summary>
+        /// Parses the GitHub API response to extract version information.
+        /// </summary>
+        private void ParseGitHubReleaseResponse(string jsonResponse)
+        {
+            try
+            {
+                // Simple JSON parsing without external dependencies
+                // Looking for "tag_name": "v3.0.0" or "tag_name": "3.0.0"
+                string tagName = ExtractJsonValue(jsonResponse, "tag_name");
+                string htmlUrl = ExtractJsonValue(jsonResponse, "html_url");
+                string body = ExtractJsonValue(jsonResponse, "body");
+
+                if (!string.IsNullOrEmpty(tagName))
+                {
+                    // Remove 'v' prefix if present
+                    _latestVersion = tagName.TrimStart('v', 'V');
+                    _releaseUrl = htmlUrl ?? GITHUB_RELEASES_PAGE_URL;
+                    
+                    // Truncate release notes to first 150 chars
+                    if (!string.IsNullOrEmpty(body))
+                    {
+                        body = body.Replace("\\r\\n", " ").Replace("\\n", " ").Replace("\\r", " ");
+                        _releaseNotes = body.Length > 150 ? body.Substring(0, 147) + "..." : body;
+                    }
+                    else
+                    {
+                        _releaseNotes = "";
+                    }
+
+                    // Compare versions
+                    _updateAvailable = IsNewerVersion(_latestVersion, SDK_VERSION);
+
+                    if (_updateAvailable)
+                    {
+                        Debug.Log($"[IVXSDKSetupWizard] New SDK version available: {_latestVersion} (current: {SDK_VERSION})");
+                    }
+                    else
+                    {
+                        Debug.Log($"[IVXSDKSetupWizard] SDK is up to date (version {SDK_VERSION})");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[IVXSDKSetupWizard] Error parsing release info: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Extracts a string value from JSON without external dependencies.
+        /// </summary>
+        private string ExtractJsonValue(string json, string key)
+        {
+            string searchPattern = $"\"{key}\"";
+            int keyIndex = json.IndexOf(searchPattern, StringComparison.OrdinalIgnoreCase);
+            if (keyIndex < 0) return null;
+
+            int colonIndex = json.IndexOf(':', keyIndex + searchPattern.Length);
+            if (colonIndex < 0) return null;
+
+            // Find the start of the value (skip whitespace)
+            int valueStart = colonIndex + 1;
+            while (valueStart < json.Length && char.IsWhiteSpace(json[valueStart]))
+            {
+                valueStart++;
+            }
+
+            if (valueStart >= json.Length) return null;
+
+            // Check if value is a string (starts with quote)
+            if (json[valueStart] == '"')
+            {
+                valueStart++;
+                int valueEnd = json.IndexOf('"', valueStart);
+                if (valueEnd < 0) return null;
+                return json.Substring(valueStart, valueEnd - valueStart);
+            }
+
+            // Handle non-string values (numbers, booleans, null)
+            int valueEnd2 = valueStart;
+            while (valueEnd2 < json.Length && json[valueEnd2] != ',' && json[valueEnd2] != '}' && json[valueEnd2] != ']')
+            {
+                valueEnd2++;
+            }
+            return json.Substring(valueStart, valueEnd2 - valueStart).Trim();
+        }
+
+        /// <summary>
+        /// Compares two semantic version strings.
+        /// </summary>
+        /// <param name="newVersion">The new version to check.</param>
+        /// <param name="currentVersion">The current version.</param>
+        /// <returns>True if newVersion is newer than currentVersion.</returns>
+        private bool IsNewerVersion(string newVersion, string currentVersion)
+        {
+            try
+            {
+                // Parse version parts (major.minor.patch)
+                var newParts = ParseVersionParts(newVersion);
+                var currentParts = ParseVersionParts(currentVersion);
+
+                // Compare major
+                if (newParts[0] > currentParts[0]) return true;
+                if (newParts[0] < currentParts[0]) return false;
+
+                // Compare minor
+                if (newParts[1] > currentParts[1]) return true;
+                if (newParts[1] < currentParts[1]) return false;
+
+                // Compare patch
+                if (newParts[2] > currentParts[2]) return true;
+
+                return false;
+            }
+            catch
+            {
+                // If parsing fails, do string comparison
+                return string.Compare(newVersion, currentVersion, StringComparison.OrdinalIgnoreCase) > 0;
+            }
+        }
+
+        /// <summary>
+        /// Parses version string into major, minor, patch parts.
+        /// </summary>
+        private int[] ParseVersionParts(string version)
+        {
+            var parts = version.Split('.');
+            int[] result = new int[3] { 0, 0, 0 };
+
+            for (int i = 0; i < Math.Min(parts.Length, 3); i++)
+            {
+                // Remove any suffix like "-beta", "-rc1", etc.
+                string part = parts[i].Split('-')[0];
+                if (int.TryParse(part, out int num))
+                {
+                    result[i] = num;
+                }
+            }
+
+            return result;
         }
 
         #endregion

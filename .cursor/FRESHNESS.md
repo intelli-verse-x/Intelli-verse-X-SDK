@@ -1,7 +1,7 @@
 # 📅 Context Freshness Tracker
 
 > **Purpose:** Track when context files were last verified and flag stale information.
-> **Last Updated:** 2026-01-13
+> **Last Updated:** 2026-01-20
 
 ---
 
@@ -10,12 +10,13 @@
 ### Core Context Files
 | File | Last Verified | Verified By | Status | Next Review |
 |------|---------------|-------------|--------|-------------|
-| `context.md` | 2026-01-13 | Initial Creation | 🟢 Fresh | 2026-02-13 |
+| `context.md` | 2026-01-20 | AI Update | 🟢 Fresh | 2026-02-19 |
 | `architecture.md` | 2026-01-13 | Initial Creation | 🟢 Fresh | 2026-02-13 |
 | `naming-and-style.md` | 2026-01-13 | Initial Creation | 🟢 Fresh | 2026-02-13 |
-| `assumptions.md` | 2026-01-13 | Initial Creation | 🟢 Fresh | 2026-02-13 |
+| `assumptions.md` | 2026-01-20 | AI Update | 🟢 Fresh | 2026-02-19 |
 | `NON_GOALS.md` | 2026-01-13 | Initial Creation | 🟢 Fresh | 2026-02-13 |
 | `.cursorrules` | 2026-01-13 | Initial Creation | 🟢 Fresh | 2026-02-13 |
+| `HOT_CONTEXT.md` | 2026-01-20 | AI Update | 🟢 Fresh | 2026-02-03 |
 
 ### Rules Files
 | File | Last Verified | Verified By | Status | Next Review |
@@ -26,8 +27,8 @@
 ### Memory Files
 | File | Last Verified | Verified By | Status | Next Review |
 |------|---------------|-------------|--------|-------------|
-| `memory/decisions.json` | 2026-01-13 | Initial Creation | 🟢 Fresh | Auto-decay |
-| `memory/patterns.json` | 2026-01-13 | Initial Creation | 🟢 Fresh | Auto-decay |
+| `memory/decisions.json` | 2026-01-20 | AI Update | 🟢 Fresh | Auto-decay |
+| `memory/patterns.json` | 2026-01-20 | AI Update | 🟢 Fresh | Auto-decay |
 | `memory/corrections.json` | 2026-01-13 | Initial Creation | 🟢 Fresh | Never |
 
 ### Project Files
@@ -80,6 +81,11 @@ When verifying a context file:
 | Date | File | Change | By |
 |------|------|--------|-----|
 | 2026-01-13 | All files | Initial context engineering system creation | Cursor AI |
+| 2026-01-20 | context.md | Added worklog for recent fixes + versioning | AI Update |
+| 2026-01-20 | assumptions.md | Added D3D11 stability + Editor build-target assumptions | AI Update |
+| 2026-01-20 | HOT_CONTEXT.md | Added MoreOfUs + setup wizard quick ops | AI Update |
+| 2026-01-20 | memory/decisions.json | Logged D3D11 fallback decision | AI Update |
+| 2026-01-20 | memory/patterns.json | Added cleanup-safe singleton pattern | AI Update |
 
 ---
 

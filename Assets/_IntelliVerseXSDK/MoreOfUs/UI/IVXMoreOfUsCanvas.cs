@@ -73,6 +73,10 @@ namespace IntelliVerseX.MoreOfUs.UI
         [SerializeField] private string _defaultSubtitle = "Check out our other games!";
         [SerializeField] private Color _backgroundColor = new Color(0.08f, 0.08f, 0.1f, 0.95f);
 
+        [Header("Debug / Testing")]
+        [Tooltip("If enabled, the panel will automatically show when Play mode starts (Editor only). Useful for testing.")]
+        [SerializeField] private bool _showOnStartInEditor = true;
+
         #endregion
 
         #region Private Fields
@@ -131,31 +135,74 @@ namespace IntelliVerseX.MoreOfUs.UI
 
         private void Start()
         {
-            // Subscribe to manager events
-            IVXMoreOfUsManager.Instance.OnCatalogLoaded += OnCatalogLoaded;
-            IVXMoreOfUsManager.Instance.OnLoadFailed += OnLoadFailed;
-            IVXMoreOfUsManager.Instance.OnAppSelected += OnAppSelectedInternal;
-
-            // Initial fetch if not already loaded
-            if (!IVXMoreOfUsManager.Instance.HasCachedData)
+            // Check platform support (in builds only - Editor always allows for testing)
+            if (!IsSupportedPlatform)
             {
-                ShowLoadingState();
-                IVXMoreOfUsManager.Instance.FetchCatalog();
+                Debug.Log("[IVXMoreOfUs] Canvas disabled - unsupported platform (only Android/iOS supported in builds)");
+                gameObject.SetActive(false);
+                return;
+            }
+
+#if UNITY_EDITOR
+            // Log build target info for debugging
+            var buildTarget = UnityEditor.EditorUserBuildSettings.activeBuildTarget;
+            if (buildTarget != UnityEditor.BuildTarget.Android && buildTarget != UnityEditor.BuildTarget.iOS)
+            {
+                Debug.Log($"[IVXMoreOfUs] Running in Editor with build target: {buildTarget}. Panel enabled for testing (would be disabled in non-mobile builds).");
+            }
+#endif
+
+            // Subscribe to manager events safely
+            if (IVXMoreOfUsManager.Instance != null)
+            {
+                IVXMoreOfUsManager.Instance.OnCatalogLoaded += OnCatalogLoaded;
+                IVXMoreOfUsManager.Instance.OnLoadFailed += OnLoadFailed;
+                IVXMoreOfUsManager.Instance.OnAppSelected += OnAppSelectedInternal;
+
+                // Initial fetch if not already loaded
+                if (!IVXMoreOfUsManager.Instance.HasCachedData)
+                {
+                    ShowLoadingState();
+                    IVXMoreOfUsManager.Instance.FetchCatalog();
+                }
+                else
+                {
+                    // Data already cached - populate cards immediately (useful for Editor testing)
+                    var apps = IVXMoreOfUsManager.Instance.GetAppsForCurrentPlatform();
+                    if (apps.Count > 0)
+                    {
+                        PopulateCards(apps);
+                    }
+                    else
+                    {
+                        ShowEmptyState();
+                    }
+                }
             }
         }
 
         private void OnDestroy()
         {
-            // Unsubscribe from manager events
-            if (IVXMoreOfUsManager.Instance != null)
+            // Stop any running coroutines first
+            StopAllCoroutines();
+            
+            // Use HasInstance to safely check without creating new instance during cleanup
+            if (IVXMoreOfUsManager.HasInstance)
             {
-                IVXMoreOfUsManager.Instance.OnCatalogLoaded -= OnCatalogLoaded;
-                IVXMoreOfUsManager.Instance.OnLoadFailed -= OnLoadFailed;
-                IVXMoreOfUsManager.Instance.OnAppSelected -= OnAppSelectedInternal;
+                var instance = IVXMoreOfUsManager.Instance;
+                if (instance != null)
+                {
+                    instance.OnCatalogLoaded -= OnCatalogLoaded;
+                    instance.OnLoadFailed -= OnLoadFailed;
+                    instance.OnAppSelected -= OnAppSelectedInternal;
+                }
             }
 
-            // Clean up cards
-            ClearCards();
+            // Clean up cards safely
+            if (_activeCards != null)
+            {
+                ClearCards();
+            }
         }
 
         private void Update()
@@ -212,10 +259,73 @@ namespace IntelliVerseX.MoreOfUs.UI
             if (_subtitleText != null)
                 _subtitleText.text = _defaultSubtitle;
 
-            // Initially hidden
+            // Initially hidden (unless in Editor with _showOnStartInEditor enabled)
+#if UNITY_EDITOR
+            if (!_showOnStartInEditor)
+            {
+                SetPanelVisible(false, immediate: true);
+            }
+            else
+            {
+                // Keep visible for Editor testing
+                SetPanelVisible(true, immediate: true);
+            }
+#else
             SetPanelVisible(false, immediate: true);
+#endif
+
+            // Ensure layout groups are configured correctly to avoid overlap/misalignment
+            // in older generated prefabs or hand-edited scenes.
+            EnsureLayoutConfiguration();
 
             _isInitialized = true;
+        }
+
+        private void EnsureLayoutConfiguration()
+        {
+            try
+            {
+                // MainPanel should be driven by VerticalLayoutGroup.
+                var mainPanel = transform.Find("MainPanel");
+                if (mainPanel != null)
+                {
+                    var vlg = mainPanel.GetComponent<VerticalLayoutGroup>();
+                    if (vlg != null)
+                    {
+                        // These must be enabled so children use LayoutElement sizing.
+                        vlg.childControlHeight = true;
+                        vlg.childControlWidth = true;
+                        vlg.childForceExpandHeight = false;
+                        vlg.childForceExpandWidth = true;
+                    }
+                }
+
+                // Header should be driven by HorizontalLayoutGroup.
+                var header = transform.Find("MainPanel/Header");
+                if (header != null)
+                {
+                    var hlg = header.GetComponent<HorizontalLayoutGroup>();
+                    if (hlg != null)
+                    {
+                        hlg.childControlHeight = true;
+                        hlg.childControlWidth = true;
+                        hlg.childForceExpandHeight = false;
+                        hlg.childForceExpandWidth = false;
+                    }
+                }
+
+                // Force a layout rebuild once.
+                Canvas.ForceUpdateCanvases();
+                var rootRect = transform as RectTransform;
+                if (rootRect != null)
+                {
+                    LayoutRebuilder.ForceRebuildLayoutImmediate(rootRect);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[IVXMoreOfUs] Layout configuration failed: {ex.Message}");
+            }
         }
 
         #endregion
@@ -223,25 +333,62 @@ namespace IntelliVerseX.MoreOfUs.UI
         #region Public Methods
 
         /// <summary>
-        /// Show the "More Of Us" panel
+        /// Check if current platform is supported (Android or iOS).
+        /// In Editor, always returns true to allow testing regardless of build target.
+        /// </summary>
+        public static bool IsSupportedPlatform
+        {
+            get
+            {
+#if UNITY_EDITOR
+                // Always allow in Editor for testing/preview purposes
+                return true;
+#elif UNITY_ANDROID
+                return true;
+#elif UNITY_IOS
+                return true;
+#else
+                return false;
+#endif
+            }
+        }
+
+        /// <summary>
+        /// Show the "More Of Us" panel.
+        /// Only shows on supported platforms (Android/iOS).
         /// </summary>
         public void Show()
         {
             if (_isVisible)
                 return;
 
+            // Check platform support
+            if (!IsSupportedPlatform)
+            {
+                Debug.Log("[IVXMoreOfUs] Panel not shown - unsupported platform. Only Android and iOS are supported.");
+                return;
+            }
+
             gameObject.SetActive(true);
             SetPanelVisible(true);
 
             // Populate cards if we have data
-            if (IVXMoreOfUsManager.Instance.HasCachedData)
+            if (IVXMoreOfUsManager.HasInstance && IVXMoreOfUsManager.Instance.HasCachedData)
             {
-                PopulateCards(IVXMoreOfUsManager.Instance.GetAppsForCurrentPlatform());
+                var apps = IVXMoreOfUsManager.Instance.GetAppsForCurrentPlatform();
+                if (apps.Count > 0)
+                {
+                    PopulateCards(apps);
+                }
+                else
+                {
+                    ShowEmptyState();
+                }
             }
             else
             {
                 ShowLoadingState();
-                IVXMoreOfUsManager.Instance.FetchCatalog();
+                IVXMoreOfUsManager.Instance?.FetchCatalog();
             }
 
             // Start auto-scroll

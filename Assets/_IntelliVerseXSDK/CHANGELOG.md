@@ -7,6 +7,53 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [3.0.0] - 2026-01-20
+
+### 🎯 Major Release - Platform Support & Version Management
+
+Production-ready release with improved platform support, version management, and stability fixes.
+
+### Added
+
+#### Version Management
+- **SDK Version Panel** - Shows current version in SDK Setup Wizard
+- **Auto-Update Check** - Checks for new SDK versions from GitHub releases
+- **Update Notification** - Displays update button when new version is available
+
+#### Platform Support
+- Platform-specific app filtering for "More Of Us" feature
+- iOS builds only show iOS apps, Android builds only show Android apps
+- Editor respects active build target for platform simulation
+- Unsupported platforms (Standalone, WebGL) return empty results gracefully
+
+### Fixed
+
+- **NullReferenceException** in IVXMoreOfUsManager singleton during scene cleanup
+- **"Objects not cleaned up"** error when closing scenes with MoreOfUsManager
+- Safe singleton pattern with `HasInstance` property for cleanup checks
+- `OnApplicationQuit` handler prevents singleton creation during app exit
+- Fixed event unsubscription in IVXMoreOfUsCanvas.OnDestroy
+- Fixed IVXAppCard safe access to MoreOfUsManager
+
+### Changed
+
+- Package version: **2.5.0 → 3.0.0**
+- Updated all SDK version constants to 3.0.0
+- Improved singleton lifecycle management across SDK
+- Changed `FindObjectOfType` to `FindFirstObjectByType` (Unity best practice)
+
+### Installation
+
+```json
+{
+  "dependencies": {
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v3.0.0"
+  }
+}
+```
+
+---
+
 ## [2.5.0] - 2026-01-13
 
 ### 🔐 Authentication & Ads Overhaul - Production Ready

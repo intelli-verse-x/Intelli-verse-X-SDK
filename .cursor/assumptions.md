@@ -2,7 +2,7 @@
 
 > **Authority:** Explicit assumptions that govern development decisions
 > **Version:** 1.0.0
-> **Last Updated:** 2026-01-13
+> **Last Updated:** 2026-01-20
 > **Rule:** Update this file instead of silently changing assumptions
 
 ---
@@ -27,6 +27,15 @@ This document captures **explicit assumptions** made during SDK development. Whe
 | Maximum tested version | 6000.2.8f1 | High | 2026-01-13 |
 
 **Rationale:** Unity 6 is the current major version. We support 2021.3 LTS as minimum for broad compatibility.
+
+### Editor GPU Backend (Stability)
+
+| Assumption | Value | Confidence | Last Verified |
+|------------|-------|------------|---------------|
+| D3D12 stability | Not reliable on some NVIDIA drivers | Medium | 2026-01-20 |
+| Recommended Editor backend | D3D11 via `-force-d3d11` when crashes occur | Medium | 2026-01-20 |
+
+**Rationale:** Unity 6 can crash on startup with D3D12 on certain NVIDIA drivers. D3D11 is a stable fallback for Editor sessions.
 
 ### Render Pipeline
 
@@ -65,6 +74,10 @@ This document captures **explicit assumptions** made during SDK development. Whe
 | Consoles | Not supported | Out of scope |
 
 ### Platform-Specific Assumptions
+
+#### Editor Platform Simulation
+- Platform-specific features (e.g., More Of Us filtering) use `UnityEditor.EditorUserBuildSettings.activeBuildTarget` in Editor to simulate Android/iOS behavior.
+- Non-Android/iOS build targets in Editor are treated as unsupported and may return empty data.
 
 #### Android
 - Google Play Services available

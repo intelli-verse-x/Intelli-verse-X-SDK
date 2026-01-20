@@ -2,7 +2,7 @@
 
 > **Authority:** Single source of truth for all AI and human decisions in this repository
 > **Version:** 1.0.0
-> **Last Updated:** 2026-01-13
+> **Last Updated:** 2026-01-20
 > **Status:** Active
 
 ---
@@ -251,6 +251,46 @@ public ReturnType MyMethod(ParamType paramName) { }
 ---
 
 ## 🎯 Context Lifecycle
+
+---
+
+## 🧾 Recent Worklog (2026-01-20)
+
+This section captures the latest multi-step work so the next chat can resume without archaeology.
+
+### Unity Editor Stability
+
+- **Issue:** Unity 6 project crash on open traced to D3D12/NVIDIA driver instability.
+- **Workaround:** Launch Unity with `-force-d3d11` to avoid the D3D12 crash path.
+
+### More Of Us (Cross-Promo) — Reliability + Platform Behavior
+
+- **Singleton cleanup:** Updated MoreOfUs manager + consumers to avoid instance creation during teardown.
+  - Added `HasInstance` and an application-quitting guard to prevent the "Some objects were not cleaned up" error.
+- **Platform filtering:** In Editor, platform-specific app filtering now uses `UnityEditor.EditorUserBuildSettings.activeBuildTarget`.
+  - Android build target → Android apps only
+  - iOS build target → iOS apps only
+  - Other build targets → empty list (by design)
+
+### More Of Us UI — Runtime Layout Fix
+
+- **Issue:** Runtime UI looked misaligned/overlapping due to layout groups not driving child sizing.
+- **Fix (source-of-truth):** Prefab generation updated so layout groups correctly control children.
+  - `VerticalLayoutGroup.childControlHeight/Width` enabled for the main panel.
+  - `HorizontalLayoutGroup.childControlWidth` enabled for the header.
+- **Fix (backwards-compatible):** Runtime self-heal added to correct old prefabs/scenes on startup.
+  - Forces a layout rebuild once to prevent overlap.
+
+### SDK Versioning + Setup Wizard Update Check
+
+- **Version bump:** SDK updated to `3.0.0` across the repo where version constants were used.
+- **Setup Wizard:** Added an update-check banner to the SDK Setup Wizard.
+  - Pulls latest release info from GitHub Releases API (no extra dependencies).
+  - Shows current version, “check for updates”, and an “update” action when a newer version exists.
+
+### Known Follow-Ups
+
+- Consumer-project missing modules/prefabs (Wallet/Friends) still needs investigation and a targeted fix.
 
 ### Before Any Work
 

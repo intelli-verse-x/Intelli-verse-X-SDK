@@ -36,9 +36,16 @@ namespace IntelliVerseX.MoreOfUs
         /// <summary>
         /// Show the "More Of Us" cross-promotion panel.
         /// Creates the canvas if it doesn't exist.
+        /// Only shows on supported platforms (Android/iOS).
         /// </summary>
         public static void Show()
         {
+            if (!IsSupportedPlatform)
+            {
+                Debug.Log("[IVXMoreOfUs] Not showing - unsupported platform. Only Android and iOS are supported.");
+                return;
+            }
+            
             GetOrCreateCanvas()?.Show();
         }
 
@@ -54,9 +61,16 @@ namespace IntelliVerseX.MoreOfUs
 
         /// <summary>
         /// Toggle the "More Of Us" panel visibility.
+        /// Only toggles on supported platforms (Android/iOS).
         /// </summary>
         public static void Toggle()
         {
+            if (!IsSupportedPlatform)
+            {
+                Debug.Log("[IVXMoreOfUs] Not toggling - unsupported platform. Only Android and iOS are supported.");
+                return;
+            }
+            
             var canvas = GetOrCreateCanvas();
             if (canvas != null)
                 canvas.Toggle();
@@ -77,20 +91,53 @@ namespace IntelliVerseX.MoreOfUs
         /// <summary>
         /// Pre-load app catalog data for faster display.
         /// Call this during loading screens or game initialization.
+        /// Only works on supported platforms (Android/iOS).
         /// </summary>
         public static void PreloadData()
         {
-            IVXMoreOfUsManager.Instance.FetchCatalog();
+            // Only preload on supported platforms
+            if (!IsSupportedPlatform)
+            {
+                Debug.Log("[IVXMoreOfUs] Skipping preload - unsupported platform");
+                return;
+            }
+            
+            IVXMoreOfUsManager.Instance?.FetchCatalog();
+        }
+
+        /// <summary>
+        /// Check if current platform is supported (Android or iOS).
+        /// </summary>
+        public static bool IsSupportedPlatform
+        {
+            get
+            {
+#if UNITY_ANDROID && !UNITY_EDITOR
+                return true;
+#elif UNITY_IOS && !UNITY_EDITOR
+                return true;
+#elif UNITY_EDITOR
+                var buildTarget = UnityEditor.EditorUserBuildSettings.activeBuildTarget;
+                return buildTarget == UnityEditor.BuildTarget.Android || 
+                       buildTarget == UnityEditor.BuildTarget.iOS;
+#else
+                return false;
+#endif
+            }
         }
 
         /// <summary>
         /// Get the total number of other apps available.
-        /// Returns 0 if data hasn't been loaded yet.
+        /// Returns 0 if data hasn't been loaded yet or platform is unsupported.
         /// </summary>
         public static int OtherAppsCount
         {
             get
             {
+                if (!IsSupportedPlatform)
+                    return 0;
+                if (!IVXMoreOfUsManager.HasInstance)
+                    return 0;
                 if (!IVXMoreOfUsManager.Instance.HasCachedData)
                     return 0;
                 return IVXMoreOfUsManager.Instance.GetAppsForCurrentPlatform().Count;
@@ -102,7 +149,10 @@ namespace IntelliVerseX.MoreOfUs
         /// </summary>
         public static void ClearCache()
         {
-            IVXMoreOfUsManager.Instance.ClearCache();
+            if (IVXMoreOfUsManager.HasInstance)
+            {
+                IVXMoreOfUsManager.Instance.ClearCache();
+            }
         }
 
         /// <summary>
@@ -112,7 +162,9 @@ namespace IntelliVerseX.MoreOfUs
         /// <param name="iosUrl">URL to iOS app catalog JSON</param>
         public static void ConfigureUrls(string androidUrl, string iosUrl)
         {
-            var config = IVXMoreOfUsManager.Instance.Config;
+            var config = IVXMoreOfUsManager.Instance?.Config;
+            if (config == null) return;
+            
             if (!string.IsNullOrEmpty(androidUrl))
                 config.androidCatalogUrl = androidUrl;
             if (!string.IsNullOrEmpty(iosUrl))
@@ -124,8 +176,16 @@ namespace IntelliVerseX.MoreOfUs
         /// </summary>
         public static event System.Action<IVXUnifiedAppInfo> OnAppSelected
         {
-            add => IVXMoreOfUsManager.Instance.OnAppSelected += value;
-            remove => IVXMoreOfUsManager.Instance.OnAppSelected -= value;
+            add
+            {
+                if (IVXMoreOfUsManager.HasInstance)
+                    IVXMoreOfUsManager.Instance.OnAppSelected += value;
+            }
+            remove
+            {
+                if (IVXMoreOfUsManager.HasInstance)
+                    IVXMoreOfUsManager.Instance.OnAppSelected -= value;
+            }
         }
 
         #region Private Methods

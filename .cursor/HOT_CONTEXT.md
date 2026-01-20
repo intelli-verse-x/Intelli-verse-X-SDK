@@ -1,7 +1,7 @@
 # 🔥 Hot Context - Quick Reference
 
 > **Purpose:** Fast-loading context for common operations. Load this FIRST, then AGENT.md only if needed.
-> **Last Updated:** 2026-01-13
+> **Last Updated:** 2026-01-20
 
 ---
 
@@ -41,6 +41,19 @@ if (IVXIdentityManager.Instance != null)
 }
 // OR
 IVXIdentityManager.Instance?.MethodName();
+```
+
+### Singleton Cleanup-Safe Access (Pattern)
+Use this pattern when objects can be destroyed during shutdown/scene unload.
+```csharp
+if (SomeManager.HasInstance)
+{
+    var instance = SomeManager.Instance;
+    if (instance != null)
+    {
+        // unsubscribe, stop work, etc.
+    }
+}
 ```
 
 ### Event Subscription (Memory Safe)
@@ -153,6 +166,29 @@ SDK Public API MUST NOT expose:
 | Package manifest | `Assets/_IntelliVerseXSDK/package.json` |
 | Changelog | `Assets/_IntelliVerseXSDK/CHANGELOG.md` |
 | Documentation | `Assets/_IntelliVerseXSDK/Documentation~/` |
+
+---
+
+## More Of Us (Cross-Promo) — Quick Ops
+
+**Key files**
+- UI controller: `Assets/_IntelliVerseXSDK/MoreOfUs/UI/IVXMoreOfUsCanvas.cs`
+- Prefab builder (Editor): `Assets/_IntelliVerseXSDK/MoreOfUs/Editor/IVXMoreOfUsPrefabBuilder.cs`
+
+**Prefab generation**
+- Menu: `IntelliVerseX → More Of Us → Build Canvas Prefab` (or `Build All Prefabs`)
+- Adds to scene: `IntelliVerseX → More Of Us → Add To Current Scene`
+
+**Editor platform simulation**
+- Uses `UnityEditor.EditorUserBuildSettings.activeBuildTarget` for Android vs iOS filtering.
+- If build target is Standalone/WebGL, expected behavior is “no apps” / panel not shown.
+
+---
+
+## Setup Wizard — Version Check
+
+- Setup Wizard: `Assets/_IntelliVerseXSDK/Editor/IVXSDKSetupWizard.cs`
+- Shows current SDK version and checks GitHub Releases for updates.
 
 ---
 

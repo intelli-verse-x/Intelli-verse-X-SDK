@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-01-13",
+  "lastUpdated": "2026-01-20",
   "decisions": [
     {
       "id": "DEC-20260113-001",
@@ -35,6 +35,18 @@
       "alternatives": [
         "Allow modifications (maintenance burden)",
         "Fork SDKs (version drift risk)"
+      ],
+      "outcome": "successful"
+    },
+    {
+      "id": "DEC-20260120-001",
+      "date": "2026-01-20",
+      "category": "workflow",
+      "decision": "Use -force-d3d11 as the recommended Unity Editor fallback when D3D12 is unstable on NVIDIA drivers",
+      "rationale": "Unity 6 projects can crash on startup under D3D12 for some NVIDIA driver versions. D3D11 provides a stable editor experience without code changes.",
+      "alternatives": [
+        "Keep D3D12 and require driver rollbacks",
+        "Disable hardware acceleration (performance regression)"
       ],
       "outcome": "successful"
     }

@@ -25,22 +25,42 @@ namespace IntelliVerseX.MoreOfUs
         #region Singleton
 
         private static IVXMoreOfUsManager _instance;
+        private static bool _isApplicationQuitting = false;
+        private static bool _isCreatingInstance = false;
         
         /// <summary>
-        /// Singleton instance
+        /// Checks if the instance exists without creating it.
+        /// Use this to safely check before accessing Instance during cleanup.
+        /// </summary>
+        public static bool HasInstance => _instance != null;
+        
+        /// <summary>
+        /// Singleton instance. Returns null if application is quitting.
         /// </summary>
         public static IVXMoreOfUsManager Instance
         {
             get
             {
-                if (_instance == null)
+                // Prevent creation during application quit or scene unload
+                if (_isApplicationQuitting)
+                    return null;
+                    
+                if (_instance == null && !_isCreatingInstance)
                 {
-                    _instance = FindObjectOfType<IVXMoreOfUsManager>();
-                    if (_instance == null)
+                    _isCreatingInstance = true;
+                    try
                     {
-                        var go = new GameObject("[IVX] MoreOfUsManager");
-                        _instance = go.AddComponent<IVXMoreOfUsManager>();
-                        DontDestroyOnLoad(go);
+                        _instance = FindFirstObjectByType<IVXMoreOfUsManager>();
+                        if (_instance == null)
+                        {
+                            var go = new GameObject("[IVX] MoreOfUsManager");
+                            _instance = go.AddComponent<IVXMoreOfUsManager>();
+                            DontDestroyOnLoad(go);
+                        }
+                    }
+                    finally
+                    {
+                        _isCreatingInstance = false;
                     }
                 }
                 return _instance;
@@ -147,16 +167,28 @@ namespace IntelliVerseX.MoreOfUs
 
         private void OnDestroy()
         {
-            // Clear icon cache
-            foreach (var tex in _iconCache.Values)
+            // Clear icon cache safely
+            if (_iconCache != null)
             {
-                if (tex != null)
-                    Destroy(tex);
+                foreach (var tex in _iconCache.Values)
+                {
+                    if (tex != null)
+                    {
+                        Destroy(tex);
+                    }
+                }
+                _iconCache.Clear();
             }
-            _iconCache.Clear();
 
             if (_instance == this)
+            {
                 _instance = null;
+            }
+        }
+
+        private void OnApplicationQuit()
+        {
+            _isApplicationQuitting = true;
         }
 
         #endregion

@@ -1,0 +1,17 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Context: Validate (CI)",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "tools/context/validate_context.py",
+        "--ci"
+      ],
+      "group": "test",
+      "problemMatcher": [],
+      "detail": "Runs context-engineering validation per .cursor/commands.json"
+    }
+  ]
+}

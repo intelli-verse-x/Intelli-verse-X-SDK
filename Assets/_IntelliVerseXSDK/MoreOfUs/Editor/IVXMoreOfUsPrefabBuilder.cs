@@ -393,7 +393,10 @@ namespace IntelliVerseX.MoreOfUs.Editor
                 mainPanelRect.offsetMax = new Vector2(-40, -40);
 
                 var mainLayout = mainPanel.AddComponent<VerticalLayoutGroup>();
-                mainLayout.childControlHeight = false;
+                // IMPORTANT: let the layout system drive child sizing/positioning.
+                // When disabled, children keep their default RectTransform sizes/positions,
+                // causing overlap/off-screen placement at runtime.
+                mainLayout.childControlHeight = true;
                 mainLayout.childControlWidth = true;
                 mainLayout.childForceExpandHeight = false;
                 mainLayout.childForceExpandWidth = true;
@@ -403,7 +406,7 @@ namespace IntelliVerseX.MoreOfUs.Editor
                 var header = CreateChild(mainPanel, "Header");
                 var headerLayout = header.AddComponent<HorizontalLayoutGroup>();
                 headerLayout.childControlHeight = true;
-                headerLayout.childControlWidth = false;
+                headerLayout.childControlWidth = true;
                 headerLayout.childForceExpandHeight = false;
                 headerLayout.childForceExpandWidth = false;
                 headerLayout.spacing = 20;

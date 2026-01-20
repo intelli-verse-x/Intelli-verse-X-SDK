@@ -3,7 +3,7 @@
     "com.appodeal.mediation": "https://github.com/appodeal/appodeal-unity-plugin-upm.git#v3.12.0",
     "com.boxqkrtm.ide.cursor": "https://github.com/boxqkrtm/com.unity.ide.cursor.git",
     "com.coplaydev.unity-mcp": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity",
-    "com.google.external-dependency-manager": "file:../com.google.external-dependency-manager-1.2.186.tgz",
+    "com.google.external-dependency-manager": "file:C:/Office/Unity/Main Branch of the quizverse/intelliverse-x-games-platform-2/com.google.external-dependency-manager-1.2.186.tgz",
     "com.unity.2d.animation": "12.0.3",
     "com.unity.2d.aseprite": "2.0.2",
     "com.unity.2d.psdimporter": "11.0.1",

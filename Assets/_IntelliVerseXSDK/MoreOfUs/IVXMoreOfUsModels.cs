@@ -294,17 +294,36 @@ namespace IntelliVerseX.MoreOfUs
         }
 
         /// <summary>
-        /// Get apps for the current platform
+        /// Get apps for the current platform.
+        /// Returns only Android apps on Android, only iOS apps on iOS.
+        /// In Editor, uses the active build target to simulate platform behavior.
+        /// Returns empty list on unsupported platforms (Standalone, WebGL, etc.).
         /// </summary>
         public List<IVXUnifiedAppInfo> GetAppsForCurrentPlatform()
         {
-#if UNITY_ANDROID
+#if UNITY_ANDROID && !UNITY_EDITOR
             return apps.FindAll(a => a.platform == IVXAppPlatform.Android && !a.IsCurrentApp());
-#elif UNITY_IOS
+#elif UNITY_IOS && !UNITY_EDITOR
             return apps.FindAll(a => a.platform == IVXAppPlatform.iOS && !a.IsCurrentApp());
+#elif UNITY_EDITOR
+            // In Editor, use the active build target to simulate platform behavior
+            var buildTarget = UnityEditor.EditorUserBuildSettings.activeBuildTarget;
+            if (buildTarget == UnityEditor.BuildTarget.Android)
+            {
+                return apps.FindAll(a => a.platform == IVXAppPlatform.Android && !a.IsCurrentApp());
+            }
+            else if (buildTarget == UnityEditor.BuildTarget.iOS)
+            {
+                return apps.FindAll(a => a.platform == IVXAppPlatform.iOS && !a.IsCurrentApp());
+            }
+            else
+            {
+                // Unsupported platform in Editor - return empty list
+                return new List<IVXUnifiedAppInfo>();
+            }
 #else
-            // In editor or standalone, show all
-            return GetOtherApps();
+            // Unsupported platforms (Standalone, WebGL, etc.) - return empty list
+            return new List<IVXUnifiedAppInfo>();
 #endif
         }
     }
