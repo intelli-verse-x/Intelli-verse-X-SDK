@@ -161,8 +161,28 @@ public static class APIManager
     public static float JitterPct = 0.15f;
     public static float BetweenCallsDelaySeconds = 0.12f;
     // public static string UserAgent = "QuizVerse-Unity/1.0";
+    
+    /// <summary>
+    /// Enable general debug logs. Set to false in production for better performance.
+    /// </summary>
     public static bool DebugLogs = true;
+    
+    /// <summary>
+    /// Enable verbose API request/response logging. Shows full payloads and responses.
+    /// WARNING: May expose sensitive data in logs. Use only for debugging.
+    /// </summary>
+    public static bool VerboseAPILogging = false;
+    
+    /// <summary>
+    /// Enable CURL command logging for easy debugging and replication.
+    /// </summary>
     public static bool EnableCurlLogging = true;
+    
+    /// <summary>
+    /// Maximum length of payload/response to log. Longer values are truncated.
+    /// </summary>
+    public static int MaxLogPayloadLength = 2000;
+    
     public static Action<string> OnLog;
     private static string _accessToken;
     private static DateTime _tokenExpiryUtc;
@@ -1522,6 +1542,128 @@ Do not include any other top-level keys. Do not include code fences.";
 
     private static void Log(string msg) { if (!DebugLogs) return; Debug.Log(msg); OnLog?.Invoke(msg); }
     private static void LogError(string msg) { if (!DebugLogs) return; Debug.LogError(msg); OnLog?.Invoke(msg); }
+    
+    /// <summary>
+    /// Log API request details with full payload (when VerboseAPILogging is enabled).
+    /// </summary>
+    public static void LogAPIRequest(string method, string url, string payload, Dictionary<string, string> headers = null)
+    {
+        if (!VerboseAPILogging) return;
+        
+        var sb = new StringBuilder();
+        sb.AppendLine($"\n========== [IVX-API REQUEST] ==========");
+        sb.AppendLine($"Method: {method}");
+        sb.AppendLine($"URL: {url}");
+        sb.AppendLine($"Time: {DateTime.Now:HH:mm:ss.fff}");
+        
+        if (headers != null && headers.Count > 0)
+        {
+            sb.AppendLine("Headers:");
+            foreach (var h in headers)
+            {
+                // Redact sensitive headers
+                string value = h.Key.Equals("Authorization", StringComparison.OrdinalIgnoreCase) 
+                    ? (h.Value.Length > 20 ? h.Value.Substring(0, 20) + "..." : "***") 
+                    : h.Value;
+                sb.AppendLine($"  {h.Key}: {value}");
+            }
+        }
+        
+        if (!string.IsNullOrEmpty(payload))
+        {
+            string displayPayload = payload;
+            if (displayPayload.Length > MaxLogPayloadLength)
+            {
+                displayPayload = displayPayload.Substring(0, MaxLogPayloadLength) + $"... (truncated, total {payload.Length} chars)";
+            }
+            // Redact common sensitive fields
+            displayPayload = Regex.Replace(displayPayload, "(\"password\"\\s*:\\s*\")([^\"]+)(\")", "$1****$3");
+            displayPayload = Regex.Replace(displayPayload, "(\"client_secret\"\\s*:\\s*\")([^\"]+)(\")", "$1****$3");
+            displayPayload = Regex.Replace(displayPayload, "(\"refreshToken\"\\s*:\\s*\")([^\"]+)(\")", "$1****$3");
+            sb.AppendLine($"Payload:\n{displayPayload}");
+        }
+        
+        sb.AppendLine("========================================");
+        Debug.Log(sb.ToString());
+        OnLog?.Invoke(sb.ToString());
+    }
+    
+    /// <summary>
+    /// Log API response details with full body (when VerboseAPILogging is enabled).
+    /// </summary>
+    public static void LogAPIResponse(string url, long statusCode, string responseBody, float durationMs = 0)
+    {
+        if (!VerboseAPILogging) return;
+        
+        var sb = new StringBuilder();
+        sb.AppendLine($"\n========== [IVX-API RESPONSE] ==========");
+        sb.AppendLine($"URL: {url}");
+        sb.AppendLine($"Status: {statusCode}");
+        sb.AppendLine($"Time: {DateTime.Now:HH:mm:ss.fff}");
+        if (durationMs > 0)
+        {
+            sb.AppendLine($"Duration: {durationMs:F0}ms");
+        }
+        
+        if (!string.IsNullOrEmpty(responseBody))
+        {
+            string displayBody = responseBody;
+            if (displayBody.Length > MaxLogPayloadLength)
+            {
+                displayBody = displayBody.Substring(0, MaxLogPayloadLength) + $"... (truncated, total {responseBody.Length} chars)";
+            }
+            // Redact common sensitive fields in response
+            displayBody = Regex.Replace(displayBody, "(\"accessToken\"\\s*:\\s*\")([^\"]{20})[^\"]*(\")","$1$2...REDACTED$3");
+            displayBody = Regex.Replace(displayBody, "(\"refreshToken\"\\s*:\\s*\")([^\"]{10})[^\"]*(\")","$1$2...REDACTED$3");
+            displayBody = Regex.Replace(displayBody, "(\"token\"\\s*:\\s*\")([^\"]{20})[^\"]*(\")","$1$2...REDACTED$3");
+            sb.AppendLine($"Body:\n{displayBody}");
+        }
+        else
+        {
+            sb.AppendLine("Body: (empty)");
+        }
+        
+        sb.AppendLine("========================================");
+        
+        // Use appropriate log level based on status code
+        if (statusCode >= 200 && statusCode < 300)
+        {
+            Debug.Log(sb.ToString());
+        }
+        else if (statusCode >= 400)
+        {
+            Debug.LogWarning(sb.ToString());
+        }
+        else
+        {
+            Debug.Log(sb.ToString());
+        }
+        OnLog?.Invoke(sb.ToString());
+    }
+    
+    /// <summary>
+    /// Log API error with context information.
+    /// </summary>
+    public static void LogAPIError(string url, string method, string errorMessage, Exception ex = null)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine($"\n========== [IVX-API ERROR] ==========");
+        sb.AppendLine($"Method: {method}");
+        sb.AppendLine($"URL: {url}");
+        sb.AppendLine($"Error: {errorMessage}");
+        if (ex != null)
+        {
+            sb.AppendLine($"Exception: {ex.GetType().Name}: {ex.Message}");
+            if (DebugLogs)
+            {
+                sb.AppendLine($"Stack: {ex.StackTrace}");
+            }
+        }
+        sb.AppendLine("======================================");
+        
+        Debug.LogError(sb.ToString());
+        OnLog?.Invoke(sb.ToString());
+    }
     #endregion
 
     #region HTTP Core
@@ -2164,13 +2306,15 @@ Do not include any other top-level keys. Do not include code fences.";
         string bodyJson = JsonUtility.ToJson(req);
         string maskedJson = MaskSensitiveFields(bodyJson, new[] { "password", "email" });
 
-        // Masked cURL preview
-        PrintCurl("POST", LoginUrl,
-            new Dictionary<string, string> {
+        // Verbose API logging
+        var requestHeaders = new Dictionary<string, string> {
             { "accept", "*/*" },
             { "Content-Type", "application/json" }
-            },
-            maskedJson);
+        };
+        LogAPIRequest("POST", LoginUrl, maskedJson, requestHeaders);
+
+        // Masked cURL preview
+        PrintCurl("POST", LoginUrl, requestHeaders, maskedJson);
 
         Exception lastErr = null;
 
@@ -2186,6 +2330,7 @@ Do not include any other top-level keys. Do not include code fences.";
 
             using (var uwr = new UnityWebRequest(LoginUrl, UnityWebRequest.kHttpVerbPOST))
             {
+                float requestStartTime = Time.realtimeSinceStartup;
                 try
                 {
                     uwr.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(bodyJson));
@@ -2219,7 +2364,12 @@ Do not include any other top-level keys. Do not include code fences.";
 #endif
                     long code = uwr.responseCode;
                     string text = uwr.downloadHandler?.text ?? "";
+                    float durationMs = (Time.realtimeSinceStartup - requestStartTime) * 1000f;
+                    
                     Log($"[HTTP] ← {code} {(string.IsNullOrEmpty(text) ? "" : (text.Length > 1500 ? text.Substring(0, 1500) + "...(truncated)" : text))}");
+                    
+                    // Verbose API response logging
+                    LogAPIResponse(LoginUrl, code, text, durationMs);
 
                     // Success (2xx)
                     if (!isNetErr && !isHttpErr && code >= 200 && code < 300)
@@ -2275,11 +2425,13 @@ Do not include any other top-level keys. Do not include code fences.";
                     if (retryable && attempt < MaxRetries)
                         continue;
 
+                    // Log error for failed requests
+                    LogAPIError(LoginUrl, "POST", $"Login failed: HTTP {code}", null);
                     throw new Exception($"Login failed: HTTP {code} - {(string.IsNullOrWhiteSpace(text) ? uwr.error : text)}");
                 }
                 catch (OperationCanceledException) { LogError("[HTTP] Login cancelled."); throw; }
-                catch (TimeoutException tex) { lastErr = tex; LogError($"[HTTP] Timeout (login): {tex.Message}"); if (attempt >= MaxRetries) throw; }
-                catch (Exception ex) { lastErr = ex; LogError($"[HTTP] Attempt (login) #{attempt} failed: {ex.GetType().Name} – {ex.Message}"); if (attempt >= MaxRetries) throw; }
+                catch (TimeoutException tex) { lastErr = tex; LogAPIError(LoginUrl, "POST", $"Timeout: {tex.Message}", tex); if (attempt >= MaxRetries) throw; }
+                catch (Exception ex) { lastErr = ex; LogAPIError(LoginUrl, "POST", $"Attempt #{attempt} failed: {ex.Message}", ex); if (attempt >= MaxRetries) throw; }
             }
         }
 

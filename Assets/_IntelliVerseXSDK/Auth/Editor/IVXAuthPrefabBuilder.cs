@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;
@@ -7,16 +9,58 @@ using IntelliVerseX.Auth.UI;
 namespace IntelliVerseX.Auth.Editor
 {
     /// <summary>
-    /// Editor utility for creating Auth prefabs.
+    /// Editor utility for creating Auth prefabs with proper UI wiring.
+    /// Supports both development and UPM package installations.
     /// </summary>
     public static class IVXAuthPrefabBuilder
     {
         #region Constants
 
-        private const string AUTH_PREFABS_PATH = "Assets/_IntelliVerseXSDK/Auth/Prefabs";
+        // Default path for development mode
+        private const string DEFAULT_AUTH_PREFABS_PATH = "Assets/_IntelliVerseXSDK/Auth/Prefabs";
+        // Writable path for UPM installs
+        private const string UPM_AUTH_PREFABS_PATH = "Assets/IntelliVerseX/Generated/Auth/Prefabs";
+        
         private static readonly Color AccentColor = new Color(0.25f, 0.52f, 0.96f);
         private static readonly Color DarkBackground = new Color(0.12f, 0.14f, 0.18f);
         private static readonly Color PanelBackground = new Color(0.18f, 0.20f, 0.25f);
+        private static readonly Color InputBackground = new Color(0.25f, 0.27f, 0.32f);
+        private static readonly Color ButtonSecondary = new Color(0.3f, 0.32f, 0.37f);
+
+        #endregion
+
+        #region Path Resolution
+
+        /// <summary>
+        /// Gets the appropriate writable path for auth prefabs.
+        /// Returns UPM path if SDK is installed as package, otherwise default path.
+        /// </summary>
+        private static string GetWritablePrefabPath()
+        {
+            // Check if SDK is installed as UPM package
+            string packagePath = Path.Combine(Application.dataPath, "..", "Library", "PackageCache");
+            bool isUPM = false;
+            
+            if (Directory.Exists(packagePath))
+            {
+                var dirs = Directory.GetDirectories(packagePath, "com.intelliversex.sdk@*");
+                isUPM = dirs.Length > 0;
+            }
+            
+            // Also check manifest.json
+            if (!isUPM)
+            {
+                string manifestPath = Path.Combine(Application.dataPath, "..", "Packages", "manifest.json");
+                if (File.Exists(manifestPath))
+                {
+                    string manifest = File.ReadAllText(manifestPath);
+                    isUPM = manifest.Contains("\"com.intelliversex.sdk\"") && 
+                            !Directory.Exists("Assets/_IntelliVerseXSDK");
+                }
+            }
+            
+            return isUPM ? UPM_AUTH_PREFABS_PATH : DEFAULT_AUTH_PREFABS_PATH;
+        }
 
         #endregion
 
@@ -25,18 +69,15 @@ namespace IntelliVerseX.Auth.Editor
         [MenuItem("IntelliVerseX/Auth/Create Auth Canvas Prefab", false, 100)]
         public static void CreateAuthCanvasPrefabMenuItem()
         {
-            var canvas = CreateAuthCanvasPrefab();
-            if (canvas != null)
-            {
-                SavePrefab(canvas, "IVX_AuthCanvas");
-                Debug.Log("[IVXAuthPrefabBuilder] Auth Canvas prefab created successfully");
-            }
+            string prefabPath = GetWritablePrefabPath();
+            CreateAuthCanvasPrefabAtPath(prefabPath);
+            Debug.Log($"[IVXAuthPrefabBuilder] Auth Canvas prefab created at: {prefabPath}");
         }
 
         [MenuItem("IntelliVerseX/Auth/Add Auth Canvas to Scene", false, 101)]
         public static void AddAuthCanvasToScene()
         {
-            var existingCanvas = Object.FindFirstObjectByType<IVXCanvasAuth>();
+            var existingCanvas = UnityEngine.Object.FindFirstObjectByType<IVXCanvasAuth>();
             if (existingCanvas != null)
             {
                 Selection.activeGameObject = existingCanvas.gameObject;
@@ -44,8 +85,20 @@ namespace IntelliVerseX.Auth.Editor
                 return;
             }
 
-            var prefabPath = AUTH_PREFABS_PATH + "/IVX_AuthCanvas.prefab";
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            // Try to load from various locations
+            string[] possiblePaths = new[]
+            {
+                GetWritablePrefabPath() + "/IVX_AuthCanvas.prefab",
+                DEFAULT_AUTH_PREFABS_PATH + "/IVX_AuthCanvas.prefab",
+                "Packages/com.intelliversex.sdk/Auth/Prefabs/IVX_AuthCanvas.prefab"
+            };
+
+            GameObject prefab = null;
+            foreach (var path in possiblePaths)
+            {
+                prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                if (prefab != null) break;
+            }
             
             if (prefab != null)
             {
@@ -69,7 +122,39 @@ namespace IntelliVerseX.Auth.Editor
         #region Public Methods
 
         /// <summary>
-        /// Create the Auth Canvas prefab in the scene
+        /// Create the Auth Canvas prefab at the specified path.
+        /// This is the preferred method for SDK setup wizard.
+        /// </summary>
+        public static void CreateAuthCanvasPrefabAtPath(string folderPath)
+        {
+            GameObject canvas = null;
+            try
+            {
+                EnsureDirectoryExists(folderPath);
+                
+                canvas = CreateAuthCanvasPrefab();
+                if (canvas != null)
+                {
+                    string prefabPath = Path.Combine(folderPath, "IVX_AuthCanvas.prefab").Replace("\\", "/");
+                    PrefabUtility.SaveAsPrefabAsset(canvas, prefabPath);
+                    UnityEngine.Object.DestroyImmediate(canvas);
+                    canvas = null;
+                    AssetDatabase.Refresh();
+                    Debug.Log($"[IVXAuthPrefabBuilder] Auth Canvas prefab saved: {prefabPath}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[IVXAuthPrefabBuilder] Failed to create Auth prefab: {ex.Message}");
+                if (canvas != null)
+                {
+                    try { UnityEngine.Object.DestroyImmediate(canvas); } catch { }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Create the Auth Canvas prefab in the scene with all UI properly wired.
         /// </summary>
         public static GameObject CreateAuthCanvasPrefab()
         {
@@ -89,21 +174,236 @@ namespace IntelliVerseX.Auth.Editor
             // Add IVXCanvasAuth component
             var canvasAuth = canvasGO.AddComponent<IVXCanvasAuth>();
 
-            // Create panels
+            // Create panels with proper wiring
             var loginPanel = CreateLoginPanel(canvasGO.transform);
             var registerPanel = CreateRegisterPanel(canvasGO.transform);
             var otpPanel = CreateOTPPanel(canvasGO.transform);
             var loadingPanel = CreateLoadingPanel(canvasGO.transform);
 
-            // Assign references via SerializedObject
+            // Wire up IVXCanvasAuth references
             AssignCanvasReferences(canvasAuth, loginPanel, registerPanel, otpPanel, loadingPanel);
+
+            // Wire up individual panel components
+            WireUpLoginPanel(loginPanel);
+            WireUpRegisterPanel(registerPanel);
+            WireUpOTPPanel(otpPanel);
 
             // Hide register and OTP panels by default
             registerPanel.SetActive(false);
             otpPanel.SetActive(false);
             loadingPanel.SetActive(false);
 
+            Debug.Log("[IVXAuthPrefabBuilder] Auth Canvas created with all UI properly wired");
             return canvasGO;
+        }
+
+        #endregion
+
+        #region UI Wiring Methods
+
+        /// <summary>
+        /// Wire up all serialized fields on IVXPanelLogin component.
+        /// </summary>
+        private static void WireUpLoginPanel(GameObject panel)
+        {
+            var loginComponent = panel.GetComponent<IVXPanelLogin>();
+            if (loginComponent == null) return;
+
+            var serializedObj = new SerializedObject(loginComponent);
+            var content = panel.transform.Find("Content");
+            if (content == null) return;
+
+            // Wire input fields
+            var emailInput = FindChildComponent<TMP_InputField>(content, "EmailInput");
+            var passwordInput = FindChildComponent<TMP_InputField>(content, "PasswordInput");
+            
+            if (emailInput != null)
+                serializedObj.FindProperty("_emailInput").objectReferenceValue = emailInput;
+            if (passwordInput != null)
+                serializedObj.FindProperty("_passwordInput").objectReferenceValue = passwordInput;
+
+            // Wire buttons
+            var loginButton = FindChildComponent<Button>(content, "LoginButton");
+            var registerLink = FindChildComponent<Button>(content, "RegisterLink");
+            var forgotPasswordLink = FindChildComponent<Button>(content, "ForgotPasswordLink");
+            
+            if (loginButton != null)
+                serializedObj.FindProperty("_loginButton").objectReferenceValue = loginButton;
+            if (registerLink != null)
+                serializedObj.FindProperty("_registerButton").objectReferenceValue = registerLink;
+            if (forgotPasswordLink != null)
+                serializedObj.FindProperty("_forgotPasswordButton").objectReferenceValue = forgotPasswordLink;
+
+            // Wire social buttons
+            var socialButtons = content.Find("SocialButtons");
+            if (socialButtons != null)
+            {
+                var googleBtn = FindChildComponent<Button>(socialButtons, "GoogleButton");
+                var appleBtn = FindChildComponent<Button>(socialButtons, "AppleButton");
+                var guestBtn = FindChildComponent<Button>(socialButtons, "GuestButton");
+                
+                if (googleBtn != null)
+                    serializedObj.FindProperty("_googleSignInButton").objectReferenceValue = googleBtn;
+                if (appleBtn != null)
+                    serializedObj.FindProperty("_appleSignInButton").objectReferenceValue = appleBtn;
+                if (guestBtn != null)
+                    serializedObj.FindProperty("_guestLoginButton").objectReferenceValue = guestBtn;
+            }
+
+            // Wire toggle
+            var rememberMe = FindChildComponent<Toggle>(content, "RememberMe");
+            if (rememberMe != null)
+                serializedObj.FindProperty("_rememberMeToggle").objectReferenceValue = rememberMe;
+
+            // Wire error text (create if not exists)
+            var errorText = CreateErrorText(content);
+            if (errorText != null)
+                serializedObj.FindProperty("_errorText").objectReferenceValue = errorText;
+
+            serializedObj.ApplyModifiedProperties();
+            Debug.Log("[IVXAuthPrefabBuilder] Login panel wired successfully");
+        }
+
+        /// <summary>
+        /// Wire up all serialized fields on IVXPanelRegister component.
+        /// </summary>
+        private static void WireUpRegisterPanel(GameObject panel)
+        {
+            var registerComponent = panel.GetComponent<IVXPanelRegister>();
+            if (registerComponent == null) return;
+
+            var serializedObj = new SerializedObject(registerComponent);
+            var content = panel.transform.Find("Content");
+            if (content == null) return;
+
+            // Wire input fields
+            var displayNameInput = FindChildComponent<TMP_InputField>(content, "DisplayNameInput");
+            var emailInput = FindChildComponent<TMP_InputField>(content, "EmailInput");
+            var passwordInput = FindChildComponent<TMP_InputField>(content, "PasswordInput");
+            var confirmPasswordInput = FindChildComponent<TMP_InputField>(content, "ConfirmPasswordInput");
+            
+            if (displayNameInput != null)
+                serializedObj.FindProperty("_displayNameInput").objectReferenceValue = displayNameInput;
+            if (emailInput != null)
+                serializedObj.FindProperty("_emailInput").objectReferenceValue = emailInput;
+            if (passwordInput != null)
+                serializedObj.FindProperty("_passwordInput").objectReferenceValue = passwordInput;
+            if (confirmPasswordInput != null)
+                serializedObj.FindProperty("_confirmPasswordInput").objectReferenceValue = confirmPasswordInput;
+
+            // Wire buttons
+            var registerButton = FindChildComponent<Button>(content, "RegisterButton");
+            var backToLoginLink = FindChildComponent<Button>(content, "BackToLoginLink");
+            
+            if (registerButton != null)
+                serializedObj.FindProperty("_registerButton").objectReferenceValue = registerButton;
+            if (backToLoginLink != null)
+                serializedObj.FindProperty("_backToLoginButton").objectReferenceValue = backToLoginLink;
+
+            // Wire toggle
+            var termsToggle = FindChildComponent<Toggle>(content, "TermsToggle");
+            if (termsToggle != null)
+                serializedObj.FindProperty("_termsToggle").objectReferenceValue = termsToggle;
+
+            // Wire error text
+            var errorText = CreateErrorText(content);
+            if (errorText != null)
+                serializedObj.FindProperty("_errorText").objectReferenceValue = errorText;
+
+            serializedObj.ApplyModifiedProperties();
+            Debug.Log("[IVXAuthPrefabBuilder] Register panel wired successfully");
+        }
+
+        /// <summary>
+        /// Wire up all serialized fields on IVXPanelOTP component.
+        /// </summary>
+        private static void WireUpOTPPanel(GameObject panel)
+        {
+            var otpComponent = panel.GetComponent<IVXPanelOTP>();
+            if (otpComponent == null) return;
+
+            var serializedObj = new SerializedObject(otpComponent);
+            var content = panel.transform.Find("Content");
+            if (content == null) return;
+
+            // Wire OTP input
+            var otpInput = FindChildComponent<TMP_InputField>(content, "OTPInput");
+            if (otpInput != null)
+                serializedObj.FindProperty("_singleOtpInput").objectReferenceValue = otpInput;
+
+            // Wire buttons
+            var verifyButton = FindChildComponent<Button>(content, "VerifyButton");
+            var resendLink = FindChildComponent<Button>(content, "ResendLink");
+            var backButton = FindChildComponent<Button>(content, "BackButton");
+            
+            if (verifyButton != null)
+                serializedObj.FindProperty("_verifyButton").objectReferenceValue = verifyButton;
+            if (resendLink != null)
+                serializedObj.FindProperty("_resendButton").objectReferenceValue = resendLink;
+            if (backButton != null)
+                serializedObj.FindProperty("_backButton").objectReferenceValue = backButton;
+
+            // Wire error text
+            var errorText = CreateErrorText(content);
+            if (errorText != null)
+                serializedObj.FindProperty("_errorText").objectReferenceValue = errorText;
+
+            serializedObj.ApplyModifiedProperties();
+            Debug.Log("[IVXAuthPrefabBuilder] OTP panel wired successfully");
+        }
+
+        /// <summary>
+        /// Helper to find a child component by name.
+        /// </summary>
+        private static T FindChildComponent<T>(Transform parent, string name) where T : Component
+        {
+            var child = parent.Find(name);
+            if (child != null)
+            {
+                return child.GetComponent<T>();
+            }
+            
+            // Search recursively
+            foreach (Transform t in parent)
+            {
+                if (t.name == name)
+                {
+                    return t.GetComponent<T>();
+                }
+                var result = FindChildComponent<T>(t, name);
+                if (result != null) return result;
+            }
+            
+            return null;
+        }
+
+        /// <summary>
+        /// Creates an error text element if it doesn't exist.
+        /// </summary>
+        private static TextMeshProUGUI CreateErrorText(Transform parent)
+        {
+            var existing = parent.Find("ErrorText");
+            if (existing != null)
+            {
+                return existing.GetComponent<TextMeshProUGUI>();
+            }
+
+            var errorGO = new GameObject("ErrorText");
+            errorGO.transform.SetParent(parent, false);
+            errorGO.transform.SetSiblingIndex(2); // After title/subtitle
+            
+            var rect = errorGO.AddComponent<RectTransform>();
+            rect.sizeDelta = new Vector2(0, 30);
+            
+            var tmp = errorGO.AddComponent<TextMeshProUGUI>();
+            tmp.text = "";
+            tmp.fontSize = 14;
+            tmp.color = new Color(1f, 0.3f, 0.3f); // Red color for errors
+            tmp.alignment = TextAlignmentOptions.Center;
+            
+            errorGO.SetActive(false); // Hidden by default
+            
+            return tmp;
         }
 
         #endregion
@@ -135,11 +435,11 @@ namespace IntelliVerseX.Auth.Editor
             // Divider
             CreateDivider(content.transform, "or continue with");
 
-            // Social buttons
+            // Social buttons - Using ASCII-safe icons instead of emojis
             var socialRow = CreateHorizontalGroup(content.transform, "SocialButtons");
             CreateSocialButton(socialRow.transform, "GoogleButton", "G");
-            CreateSocialButton(socialRow.transform, "AppleButton", "");
-            CreateSocialButton(socialRow.transform, "GuestButton", "👤");
+            CreateSocialButton(socialRow.transform, "AppleButton", "A");  // Changed from Apple logo emoji
+            CreateSocialButton(socialRow.transform, "GuestButton", "?");   // Changed from user emoji
 
             // Register link
             CreateLinkButton(content.transform, "RegisterLink", "Don't have an account? Sign Up");
@@ -204,7 +504,7 @@ namespace IntelliVerseX.Auth.Editor
             CreateLinkButton(content.transform, "ResendLink", "Didn't receive code? Resend");
 
             // Back button
-            CreateLinkButton(content.transform, "BackButton", "← Back");
+            CreateLinkButton(content.transform, "BackButton", "< Back");  // Changed from arrow emoji
 
             return panel;
         }
@@ -334,7 +634,7 @@ namespace IntelliVerseX.Auth.Editor
             rect.sizeDelta = new Vector2(0, 50);
 
             var image = inputGO.AddComponent<Image>();
-            image.color = new Color(0.25f, 0.27f, 0.32f);
+            image.color = InputBackground;
 
             var input = inputGO.AddComponent<TMP_InputField>();
             input.contentType = contentType;
@@ -472,7 +772,7 @@ namespace IntelliVerseX.Auth.Editor
             bgRect.sizeDelta = new Vector2(24, 24);
             
             var bgImage = bgGO.AddComponent<Image>();
-            bgImage.color = new Color(0.25f, 0.27f, 0.32f);
+            bgImage.color = InputBackground;
 
             // Checkmark
             var checkGO = new GameObject("Checkmark");
@@ -582,12 +882,12 @@ namespace IntelliVerseX.Auth.Editor
             rect.sizeDelta = new Vector2(60, 50);
 
             var image = buttonGO.AddComponent<Image>();
-            image.color = new Color(0.3f, 0.32f, 0.37f);
+            image.color = ButtonSecondary;
 
             var button = buttonGO.AddComponent<Button>();
             button.targetGraphic = image;
 
-            // Icon
+            // Icon (using ASCII-safe text)
             var iconGO = new GameObject("Icon");
             iconGO.transform.SetParent(buttonGO.transform, false);
             
@@ -600,6 +900,7 @@ namespace IntelliVerseX.Auth.Editor
             tmp.text = icon;
             tmp.alignment = TextAlignmentOptions.Center;
             tmp.fontSize = 24;
+            tmp.fontStyle = FontStyles.Bold;
             tmp.color = Color.white;
 
             return button;
@@ -621,30 +922,22 @@ namespace IntelliVerseX.Auth.Editor
             serializedObject.ApplyModifiedProperties();
         }
 
-        private static void SavePrefab(GameObject gameObject, string name)
+        private static void EnsureDirectoryExists(string path)
         {
-            // Ensure directory exists
-            if (!AssetDatabase.IsValidFolder(AUTH_PREFABS_PATH))
+            if (AssetDatabase.IsValidFolder(path)) return;
+
+            var parts = path.Split('/');
+            var currentPath = parts[0];
+
+            for (int i = 1; i < parts.Length; i++)
             {
-                var parts = AUTH_PREFABS_PATH.Split('/');
-                var currentPath = parts[0];
-                for (int i = 1; i < parts.Length; i++)
+                var nextPath = currentPath + "/" + parts[i];
+                if (!AssetDatabase.IsValidFolder(nextPath))
                 {
-                    var nextPath = currentPath + "/" + parts[i];
-                    if (!AssetDatabase.IsValidFolder(nextPath))
-                    {
-                        AssetDatabase.CreateFolder(currentPath, parts[i]);
-                    }
-                    currentPath = nextPath;
+                    AssetDatabase.CreateFolder(currentPath, parts[i]);
                 }
+                currentPath = nextPath;
             }
-
-            var prefabPath = $"{AUTH_PREFABS_PATH}/{name}.prefab";
-            PrefabUtility.SaveAsPrefabAsset(gameObject, prefabPath);
-            Object.DestroyImmediate(gameObject);
-            AssetDatabase.Refresh();
-
-            Debug.Log($"[IVXAuthPrefabBuilder] Prefab saved: {prefabPath}");
         }
 
         #endregion

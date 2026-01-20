@@ -761,8 +761,8 @@ namespace IntelliVerseX.Social.Editor
             actionsLayout.childControlHeight = false;
             actionsLayout.childControlWidth = false;
 
-            // Profile button
-            var profileBtn = CreateIconButton("ProfileButton", actionsContainer, "👤", 40, 40);
+            // Profile button (using ASCII-safe icon instead of emoji)
+            var profileBtn = CreateIconButton("ProfileButton", actionsContainer, "P", 40, 40);
             var profileBtnImage = profileBtn.GetComponent<Image>();
             profileBtnImage.color = TabInactiveColor;
 
@@ -1205,7 +1205,18 @@ namespace IntelliVerseX.Social.Editor
 
         private static void SavePrefab(GameObject go, string path)
         {
-            PrefabUtility.SaveAsPrefabAsset(go, path);
+            // Normalize path separators for Unity (always forward slashes)
+            string normalizedPath = path.Replace("\\", "/");
+            
+            try
+            {
+                PrefabUtility.SaveAsPrefabAsset(go, normalizedPath);
+                Debug.Log($"[IVXFriendsPrefabBuilder] Prefab saved: {normalizedPath}");
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[IVXFriendsPrefabBuilder] Failed to save prefab at {normalizedPath}: {ex.Message}");
+            }
         }
 
         #endregion

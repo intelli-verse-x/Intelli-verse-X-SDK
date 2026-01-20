@@ -34,18 +34,58 @@ namespace IntelliVerseX.Editor
         private const string SDK_PACKAGE_ROOT = "Packages/com.intelliversex.sdk";
         private const string QUIZVERSE_ROOT = "Assets/_QuizVerse";
         private const string RESOURCES_PATH = "Assets/Resources/IntelliVerseX";
+        
+        // Writable output path for UPM installs (prefabs, configs, generated assets)
+        private const string GENERATED_ASSETS_ROOT = "Assets/IntelliVerseX/Generated";
 
         // Cached SDK root path (resolved at runtime)
         private static string _cachedSDKRoot = null;
         private static bool _isUPMInstall = false;
 
         // Dynamic paths (resolved using SDK_ROOT property)
+        // For READ operations - use SDK_ROOT (works for both dev and UPM)
         private static string PREFABS_ROOT => SDK_ROOT + "/Prefabs";
         private static string MANAGERS_PREFAB_PATH => PREFABS_ROOT + "/Managers";
         private static string AUTH_ROOT => SDK_ROOT + "/Auth";
-        private static string AUTH_PREFABS_PATH => AUTH_ROOT + "/Prefabs";
         private static string SOCIAL_ROOT => SDK_ROOT + "/Social";
-        private static string SOCIAL_PREFABS_PATH => SOCIAL_ROOT + "/Prefabs";
+        
+        // For WRITE operations - use writable paths (Assets/ folder for UPM, SDK_ROOT for dev)
+        private static string WRITABLE_AUTH_PREFABS_PATH => GetWritablePath("Auth/Prefabs");
+        private static string WRITABLE_SOCIAL_PREFABS_PATH => GetWritablePath("Social/Prefabs");
+        private static string WRITABLE_MANAGERS_PATH => GetWritablePath("Managers");
+        
+        // Legacy paths (kept for backward compatibility, redirect to writable paths)
+        private static string AUTH_PREFABS_PATH => WRITABLE_AUTH_PREFABS_PATH;
+        private static string SOCIAL_PREFABS_PATH => WRITABLE_SOCIAL_PREFABS_PATH;
+        
+        /// <summary>
+        /// Gets a writable path for the given sub-folder.
+        /// For UPM installs: Assets/IntelliVerseX/Generated/{subFolder}
+        /// For dev installs: Assets/_IntelliVerseXSDK/{subFolder}
+        /// </summary>
+        private static string GetWritablePath(string subFolder)
+        {
+            if (_isUPMInstall)
+            {
+                return $"{GENERATED_ASSETS_ROOT}/{subFolder}";
+            }
+            return $"{SDK_ASSETS_ROOT}/{subFolder}";
+        }
+        
+        /// <summary>
+        /// Checks if we're in a UPM install context.
+        /// </summary>
+        public static bool IsUPMInstall
+        {
+            get
+            {
+                if (_cachedSDKRoot == null)
+                {
+                    ResolveSDKRoot();
+                }
+                return _isUPMInstall;
+            }
+        }
 
         /// <summary>
         /// Gets the SDK root path, automatically detecting whether this is a development
@@ -281,6 +321,7 @@ namespace IntelliVerseX.Editor
             "Auth & Social",
             "Features",
             "Monetization",
+            "More Of Us",
             "Test Scenes"
         };
 
@@ -520,7 +561,8 @@ namespace IntelliVerseX.Editor
                 case 2: DrawAuthSocialTab(); break;
                 case 3: DrawFeaturesTab(); break;
                 case 4: DrawMonetizationTab(); break;
-                case 5: DrawTestScenesTab(); break;
+                case 5: DrawMoreOfUsTab(); break;
+                case 6: DrawTestScenesTab(); break;
             }
 
             EditorGUILayout.EndScrollView();
@@ -668,7 +710,7 @@ namespace IntelliVerseX.Editor
             DrawModuleSection("🎯 Core Manager", coreModule, CheckCoreModule,
                 "Central SDK manager and configuration");
 
-            DrawModuleSection("👤 Identity System", identityModule, CheckIdentityModule,
+            DrawModuleSection("[ID] Identity System", identityModule, CheckIdentityModule,
                 "User session management and API integration");
 
             DrawModuleSection("🔗 Backend Services", backendModule, CheckBackendModule,
@@ -1160,6 +1202,154 @@ namespace IntelliVerseX.Editor
 
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndVertical();
+        }
+
+        #endregion
+
+        #region More Of Us Tab
+
+        private void DrawMoreOfUsTab()
+        {
+            EditorGUILayout.LabelField("More Of Us - Cross-Promotion", subHeaderStyle ?? EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox(
+                "The 'More Of Us' feature displays a Netflix-style carousel showcasing your other apps. " +
+                "It automatically fetches app data from your S3 catalog and displays them with smooth animations.",
+                MessageType.Info);
+
+            EditorGUILayout.Space(10);
+
+            // Configuration Section
+            EditorGUILayout.BeginVertical(moduleBoxStyle);
+            EditorGUILayout.LabelField("Configuration", EditorStyles.boldLabel);
+
+            EditorGUILayout.LabelField("Android Catalog URL:", EditorStyles.miniLabel);
+            EditorGUILayout.SelectableLabel(
+                "https://intelli-verse-x-media.s3.us-east-1.amazonaws.com/app-catalog/unified/intelliversex/android.json",
+                EditorStyles.textField, GUILayout.Height(20));
+
+            EditorGUILayout.Space(5);
+            EditorGUILayout.LabelField("iOS Catalog URL:", EditorStyles.miniLabel);
+            EditorGUILayout.SelectableLabel(
+                "https://intelli-verse-x-media.s3.us-east-1.amazonaws.com/app-catalog/unified/intelliversex/ios.json",
+                EditorStyles.textField, GUILayout.Height(20));
+
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.Space(10);
+
+            // Prefab Creation Section
+            EditorGUILayout.BeginVertical(moduleBoxStyle);
+            EditorGUILayout.LabelField("UI Prefabs", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(
+                "Create production-ready UI prefabs with Netflix-style hover animations and carousel scrolling.",
+                EditorStyles.wordWrappedMiniLabel);
+
+            EditorGUILayout.Space(10);
+            EditorGUILayout.BeginHorizontal();
+
+            GUI.backgroundColor = accentColor;
+            if (GUILayout.Button("Build All Prefabs", GUILayout.Height(35)))
+            {
+                try
+                {
+                    // Call the prefab builder
+                    var builderType = System.Type.GetType("IntelliVerseX.MoreOfUs.Editor.IVXMoreOfUsPrefabBuilder, IntelliVerseX.MoreOfUs.Editor");
+                    if (builderType != null)
+                    {
+                        var method = builderType.GetMethod("BuildAllPrefabs", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                        method?.Invoke(null, null);
+                    }
+                    else
+                    {
+                        EditorUtility.DisplayDialog("Info", "Please ensure the MoreOfUs assembly is compiled first.", "OK");
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogError($"[IVXSDKSetupWizard] Failed to build More Of Us prefabs: {ex.Message}");
+                    EditorUtility.DisplayDialog("Error", $"Failed to build prefabs: {ex.Message}", "OK");
+                }
+            }
+            GUI.backgroundColor = Color.white;
+
+            if (GUILayout.Button("Add To Scene", GUILayout.Height(35)))
+            {
+                try
+                {
+                    var builderType = System.Type.GetType("IntelliVerseX.MoreOfUs.Editor.IVXMoreOfUsPrefabBuilder, IntelliVerseX.MoreOfUs.Editor");
+                    if (builderType != null)
+                    {
+                        var method = builderType.GetMethod("AddToCurrentScene", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                        method?.Invoke(null, null);
+                    }
+                    else
+                    {
+                        EditorUtility.DisplayDialog("Info", "Please ensure the MoreOfUs assembly is compiled first.", "OK");
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogError($"[IVXSDKSetupWizard] Failed to add More Of Us canvas: {ex.Message}");
+                    EditorUtility.DisplayDialog("Error", $"Failed to add to scene: {ex.Message}", "OK");
+                }
+            }
+
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.Space(10);
+
+            // Features Overview
+            EditorGUILayout.BeginVertical(moduleBoxStyle);
+            EditorGUILayout.LabelField("Features", EditorStyles.boldLabel);
+
+            EditorGUILayout.LabelField("The More Of Us feature includes:", EditorStyles.wordWrappedLabel);
+            EditorGUILayout.Space(5);
+
+            DrawFeatureItem("Netflix-style horizontal carousel with smooth scrolling");
+            DrawFeatureItem("Hover animations with scale and detail reveal effects");
+            DrawFeatureItem("Automatic icon loading with caching");
+            DrawFeatureItem("Platform-aware display (shows Android apps on Android, iOS on iOS)");
+            DrawFeatureItem("Auto-scroll with configurable interval");
+            DrawFeatureItem("Navigation arrows for keyboard/controller support");
+            DrawFeatureItem("Offline cache for previously fetched data");
+            DrawFeatureItem("Loading and empty states with retry functionality");
+
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.Space(10);
+
+            // Usage Instructions
+            EditorGUILayout.BeginVertical(moduleBoxStyle);
+            EditorGUILayout.LabelField("Usage", EditorStyles.boldLabel);
+
+            EditorGUILayout.LabelField(
+                "1. Click 'Build All Prefabs' to create the UI components\n" +
+                "2. Click 'Add To Scene' to add the canvas to your current scene\n" +
+                "3. Call IVXMoreOfUsCanvas.Show() from your game to display the panel\n\n" +
+                "Example code:",
+                EditorStyles.wordWrappedLabel);
+
+            EditorGUILayout.Space(5);
+            EditorGUILayout.TextArea(
+                "// Show the More Of Us panel\n" +
+                "var canvas = FindObjectOfType<IVXMoreOfUsCanvas>();\n" +
+                "if (canvas != null)\n" +
+                "    canvas.Show();\n\n" +
+                "// Or create it programmatically\n" +
+                "var canvas = IVXMoreOfUsCanvas.Create();\n" +
+                "canvas.Show();",
+                EditorStyles.helpBox, GUILayout.Height(100));
+
+            EditorGUILayout.EndVertical();
+        }
+
+        private void DrawFeatureItem(string text)
+        {
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("  *", GUILayout.Width(20));
+            EditorGUILayout.LabelField(text, EditorStyles.wordWrappedLabel);
+            EditorGUILayout.EndHorizontal();
         }
 
         #endregion
@@ -1907,53 +2097,96 @@ namespace IntelliVerseX.Editor
 
         private void CreateAuthPrefabs()
         {
-            EnsureDirectoryExists(AUTH_PREFABS_PATH);
-
-            var builderType = GetTypeByName("IntelliVerseX.Auth.Editor.IVXAuthPrefabBuilder");
-            if (builderType != null)
+            GameObject canvas = null;
+            try
             {
-                var createMethod = builderType.GetMethod("CreateAuthCanvasPrefab",
-                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                // Use writable path (handles both UPM and dev installs)
+                string prefabPath = WRITABLE_AUTH_PREFABS_PATH;
+                EnsureDirectoryExists(prefabPath);
+                
+                Debug.Log($"[IVXSDKSetupWizard] Creating Auth prefabs at writable path: {prefabPath}");
 
-                if (createMethod != null)
+                var builderType = GetTypeByName("IntelliVerseX.Auth.Editor.IVXAuthPrefabBuilder");
+                if (builderType != null)
                 {
-                    var canvas = createMethod.Invoke(null, null) as GameObject;
-                    if (canvas != null)
+                    // Try the new method with path parameter first
+                    var createMethodWithPath = builderType.GetMethod("CreateAuthCanvasPrefabAtPath",
+                        System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                    
+                    if (createMethodWithPath != null)
                     {
-                        var prefabPath = AUTH_PREFABS_PATH + "/IVX_AuthCanvas.prefab";
-                        PrefabUtility.SaveAsPrefabAsset(canvas, prefabPath);
-                        DestroyImmediate(canvas);
+                        createMethodWithPath.Invoke(null, new object[] { prefabPath });
                         AssetDatabase.Refresh();
-                        Debug.Log($"[IVXSDKSetupWizard] Created Auth prefab at: {prefabPath}");
+                        Debug.Log($"[IVXSDKSetupWizard] Created Auth prefab at: {prefabPath}/IVX_AuthCanvas.prefab");
+                        return;
+                    }
+                    
+                    // Fallback to old method
+                    var createMethod = builderType.GetMethod("CreateAuthCanvasPrefab",
+                        System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+
+                    if (createMethod != null)
+                    {
+                        canvas = createMethod.Invoke(null, null) as GameObject;
+                        if (canvas != null)
+                        {
+                            var fullPrefabPath = prefabPath + "/IVX_AuthCanvas.prefab";
+                            PrefabUtility.SaveAsPrefabAsset(canvas, fullPrefabPath);
+                            DestroyImmediate(canvas);
+                            canvas = null;
+                            AssetDatabase.Refresh();
+                            Debug.Log($"[IVXSDKSetupWizard] Created Auth prefab at: {fullPrefabPath}");
+                        }
                     }
                 }
+                else
+                {
+                    Debug.LogWarning("[IVXSDKSetupWizard] IVXAuthPrefabBuilder not found");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Debug.LogWarning("[IVXSDKSetupWizard] IVXAuthPrefabBuilder not found");
+                Debug.LogError($"[IVXSDKSetupWizard] Auth prefab creation failed: {ex.Message}\n{ex.StackTrace}");
+                
+                // Clean up any partially created objects
+                if (canvas != null)
+                {
+                    try { DestroyImmediate(canvas); } catch { }
+                }
             }
         }
 
         private void CreateFriendsPrefabs()
         {
-            EnsureDirectoryExists(SOCIAL_PREFABS_PATH);
-
-            var builderType = GetTypeByName("IntelliVerseX.Social.Editor.IVXFriendsPrefabBuilder");
-            if (builderType != null)
+            try
             {
-                var saveMethod = builderType.GetMethod("SavePrefabs",
-                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                // Use writable path (handles both UPM and dev installs)
+                string prefabPath = WRITABLE_SOCIAL_PREFABS_PATH;
+                EnsureDirectoryExists(prefabPath);
+                
+                Debug.Log($"[IVXSDKSetupWizard] Creating Friends prefabs at writable path: {prefabPath}");
 
-                if (saveMethod != null)
+                var builderType = GetTypeByName("IntelliVerseX.Social.Editor.IVXFriendsPrefabBuilder");
+                if (builderType != null)
                 {
-                    saveMethod.Invoke(null, new object[] { SOCIAL_PREFABS_PATH });
-                    AssetDatabase.Refresh();
-                    Debug.Log($"[IVXSDKSetupWizard] Created Friends prefabs at: {SOCIAL_PREFABS_PATH}");
+                    var saveMethod = builderType.GetMethod("SavePrefabs",
+                        System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+
+                    if (saveMethod != null)
+                    {
+                        saveMethod.Invoke(null, new object[] { prefabPath });
+                        AssetDatabase.Refresh();
+                        Debug.Log($"[IVXSDKSetupWizard] Created Friends prefabs at: {prefabPath}");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("[IVXSDKSetupWizard] IVXFriendsPrefabBuilder not found");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                Debug.LogWarning("[IVXSDKSetupWizard] IVXFriendsPrefabBuilder not found");
+                Debug.LogError($"[IVXSDKSetupWizard] Friends prefab creation failed: {ex.Message}\n{ex.StackTrace}");
             }
         }
 

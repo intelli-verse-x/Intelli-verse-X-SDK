@@ -193,45 +193,92 @@ namespace IntelliVerseX.Editor
             InstallNextPackage();
         }
         
+        // Asset Store package links (cannot be installed programmatically)
+        private static readonly Dictionary<string, string> ASSET_STORE_LINKS = new Dictionary<string, string>
+        {
+            { "Photon PUN2", "https://assetstore.unity.com/packages/tools/network/pun-2-free-119922" },
+            { "Nakama", "https://assetstore.unity.com/packages/tools/network/nakama-81338" },
+            { "Apple Sign-In", "https://assetstore.unity.com/packages/tools/integration/sign-in-with-apple-plugin-for-unity-152088" },
+            { "DOTween", "https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676" }
+        };
+        
         private static void SetupComplete()
         {
             EditorPrefs.SetBool(SETUP_COMPLETE_KEY, true);
             isProcessing = false;
             
-            Debug.Log("\n═══════════════════════════════════════════════════════════════");
-            Debug.Log("[IVX SDK] ✅ AUTO-SETUP COMPLETE!");
-            Debug.Log("═══════════════════════════════════════════════════════════════");
+            Debug.Log("\n===============================================================================");
+            Debug.Log("[IVX SDK] AUTO-SETUP COMPLETE!");
+            Debug.Log("===============================================================================");
             Debug.Log("");
-            Debug.Log("📦 INSTALLED AUTOMATICALLY:");
-            Debug.Log("   • Newtonsoft.Json (JSON serialization)");
-            Debug.Log("   • TextMeshPro (UI text rendering)");
-            Debug.Log("   • Native Share (sharing functionality)");
+            Debug.Log("[INSTALLED AUTOMATICALLY]");
+            Debug.Log("   * Newtonsoft.Json (JSON serialization)");
+            Debug.Log("   * TextMeshPro (UI text rendering)");
+            Debug.Log("   * Native Share (sharing functionality)");
             Debug.Log("");
-            Debug.Log("⚠️ MANUAL INSTALLATION REQUIRED (External SDKs):");
-            Debug.Log("   • Nakama Unity SDK - Download: https://github.com/heroiclabs/nakama-unity");
-            Debug.Log("   • Photon PUN2 - Asset Store: https://assetstore.unity.com/packages/tools/network/pun-2-free-119922");
-            Debug.Log("   • DOTween - Download: http://dotween.demigiant.com/download.php");
-            Debug.Log("   • Apple Sign-In - Download: https://github.com/lupidan/apple-signin-unity");
+            Debug.Log("[MANUAL INSTALLATION REQUIRED - Asset Store Packages]");
+            Debug.Log("   These packages cannot be auto-installed. Please install from Asset Store:");
             Debug.Log("");
-            Debug.Log("📖 For full setup guide: Window → IntelliVerse-X SDK → Dependency Installer");
-            Debug.Log("═══════════════════════════════════════════════════════════════\n");
+            Debug.Log("   1. Nakama Unity SDK (Backend services)");
+            Debug.Log("      Asset Store: https://assetstore.unity.com/packages/tools/network/nakama-81338");
+            Debug.Log("      Or GitHub: https://github.com/heroiclabs/nakama-unity/releases");
+            Debug.Log("");
+            Debug.Log("   2. Photon PUN2 (Multiplayer - Optional)");
+            Debug.Log("      Asset Store: https://assetstore.unity.com/packages/tools/network/pun-2-free-119922");
+            Debug.Log("");
+            Debug.Log("   3. DOTween (UI Animations)");
+            Debug.Log("      Asset Store: https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676");
+            Debug.Log("      Or: http://dotween.demigiant.com/download.php");
+            Debug.Log("");
+            Debug.Log("   4. Sign in with Apple (iOS - Optional)");
+            Debug.Log("      Asset Store: https://assetstore.unity.com/packages/tools/integration/sign-in-with-apple-plugin-for-unity-152088");
+            Debug.Log("      Or GitHub: https://github.com/lupidan/apple-signin-unity/releases");
+            Debug.Log("");
+            Debug.Log("[QUICK INSTALL]");
+            Debug.Log("   Use: IntelliVerse-X SDK > Open Asset Store Links (menu)");
+            Debug.Log("   Or:  Window > IntelliVerse-X SDK > Dependency Installer");
+            Debug.Log("===============================================================================\n");
             
-            // Show dialog
-            EditorUtility.DisplayDialog(
+            // Show dialog with options
+            int choice = EditorUtility.DisplayDialogComplex(
                 "IVX SDK Setup Complete",
-                "✅ Core dependencies installed!\n\n" +
+                "Core dependencies installed!\n\n" +
                 "Installed automatically:\n" +
-                "• Newtonsoft.Json\n" +
-                "• TextMeshPro\n" +
-                "• Native Share\n\n" +
-                "⚠️ Still need manual install:\n" +
-                "• Nakama Unity SDK\n" +
-                "• Photon PUN2\n" +
-                "• DOTween\n" +
-                "• Apple Sign-In (iOS)\n\n" +
-                "Use: Window → IntelliVerse-X SDK → Dependency Installer",
-                "OK"
+                "* Newtonsoft.Json\n" +
+                "* TextMeshPro\n" +
+                "* Native Share\n\n" +
+                "Manual install required:\n" +
+                "* Nakama Unity SDK (backend)\n" +
+                "* Photon PUN2 (multiplayer)\n" +
+                "* DOTween (animations)\n" +
+                "* Apple Sign-In (iOS)\n\n" +
+                "Open Asset Store to install these packages?",
+                "Open Asset Store",
+                "Later",
+                "Check Status"
             );
+            
+            if (choice == 0) // Open Asset Store
+            {
+                OpenAssetStoreLinks();
+            }
+            else if (choice == 2) // Check Status
+            {
+                CheckSetupStatus();
+            }
+        }
+        
+        /// <summary>
+        /// Opens Asset Store links for required packages
+        /// </summary>
+        [MenuItem("IntelliVerse-X SDK/Open Asset Store Links", false, 103)]
+        public static void OpenAssetStoreLinks()
+        {
+            foreach (var kvp in ASSET_STORE_LINKS)
+            {
+                Application.OpenURL(kvp.Value);
+            }
+            Debug.Log("[IVX SDK] Opened Asset Store links for: " + string.Join(", ", ASSET_STORE_LINKS.Keys));
         }
         
         /// <summary>

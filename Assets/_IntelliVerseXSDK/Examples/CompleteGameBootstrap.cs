@@ -154,9 +154,9 @@ namespace IntelliVerseX.Examples
         private void ShowWelcomeMessage()
         {
             string language = IVXLanguageManager.GetLanguageName(IVXLanguageManager.CurrentLanguage);
-            Debug.Log($"🎮 Welcome to {sdkConfig.gameName}!");
-            Debug.Log($"👤 Playing as: {IntelliVerseXIdentity.Username}");
-            Debug.Log($"🌍 Language: {language}");
+            Debug.Log($"[GAME] Welcome to {sdkConfig.gameName}!");
+            Debug.Log($"[USER] Playing as: {IntelliVerseXIdentity.Username}");
+            Debug.Log($"[LANG] Language: {language}");
         }
 
         private void OnDestroy()

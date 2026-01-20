@@ -3,10 +3,66 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 
+namespace IntelliVerseX.Identity
+{
+    /// <summary>
+    /// Centralized storage for the entire auth payload so you can reference
+    /// refresh/access/id tokens and user details anywhere.
+    /// Provides session persistence, token management, and user identity storage.
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// // Check if user is logged in
+    /// if (IVXUserSession.HasSession)
+    /// {
+    ///     Debug.Log($"Logged in as: {IVXUserSession.Current.email}");
+    /// }
+    /// 
+    /// // Get access token for API calls
+    /// string token = IVXUserSession.AccessToken;
+    /// 
+    /// // Clear session on logout
+    /// IVXUserSession.Clear();
+    /// </code>
+    /// </example>
+    public static class IVXUserSession
+    {
+        /// <summary>Gets or sets the current user session.</summary>
+        public static UserSessionManager.UserSession Current
+        {
+            get => UserSessionManager.Current;
+            set => UserSessionManager.Current = value;
+        }
+
+        /// <summary>Gets the current access token, or null if not logged in.</summary>
+        public static string AccessToken => UserSessionManager.AccessToken;
+        
+        /// <summary>Returns true if a valid session exists.</summary>
+        public static bool HasSession => UserSessionManager.HasSession;
+        
+        /// <summary>Gets the path where the session is persisted.</summary>
+        public static string SessionPath => UserSessionManager.SessionPath;
+        
+        /// <summary>Saves the session to disk.</summary>
+        public static void Save(UserSessionManager.UserSession session) => UserSessionManager.Save(session);
+        
+        /// <summary>Loads the session from disk.</summary>
+        public static UserSessionManager.UserSession Load() => UserSessionManager.Load();
+        
+        /// <summary>Clears the session from memory and disk.</summary>
+        public static void Clear() => UserSessionManager.Clear();
+        
+        /// <summary>Checks if the access token is still valid.</summary>
+        public static bool IsAccessTokenFresh(int skewSeconds = 60) => UserSessionManager.IsAccessTokenFresh(skewSeconds);
+    }
+}
+
 /// <summary>
 /// Centralized storage for the entire auth payload so you can reference
 /// refresh/access/id tokens and user details anywhere.
 /// Swap the storage impl with your BinaryDataManager if you prefer.
+/// 
+/// NOTE: For new code, prefer using IntelliVerseX.Identity.IVXUserSession
 /// </summary>
 public static class UserSessionManager
 {
@@ -182,7 +238,7 @@ public static class UserSessionManager
     /// </summary>
     public static void ClearPersisted()
     {
-        // Alias for clarity—clears the cached session and the persisted JSON file.
+        // Alias for clarity - clears the cached session and the persisted JSON file.
         Clear();
     }
 
