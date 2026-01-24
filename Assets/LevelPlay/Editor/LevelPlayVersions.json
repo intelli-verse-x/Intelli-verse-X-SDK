@@ -3,6 +3,9 @@
     "displayName": "Unity Package",
     "packageURL": "https://github.com/ironsource-mobile/Unity-sdk/raw/master/${VERSION}/UnityLevelPlay_v${VERSION}.unitypackage",
     "versions": {
+      "9.3.0": {
+        "ironSourceSdkVersion": "[9.3.0, 10.0["
+      },
       "9.2.0": {
         "ironSourceSdkVersion": "[9.0.0, 10.0["
       },

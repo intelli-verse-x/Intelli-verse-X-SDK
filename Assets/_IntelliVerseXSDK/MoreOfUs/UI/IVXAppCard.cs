@@ -12,6 +12,10 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 
+#if DOTWEEN || DOTWEEN_ENABLED
+using DG.Tweening;
+#endif
+
 namespace IntelliVerseX.MoreOfUs.UI
 {
     /// <summary>
@@ -45,6 +49,12 @@ namespace IntelliVerseX.MoreOfUs.UI
         [SerializeField] private float _animationDuration = 0.25f;
         [SerializeField] private AnimationCurve _scaleCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
+        [Header("Hover Effects")]
+        [SerializeField] private float _hoverLift = 24f;
+        [SerializeField] private float _hoverTilt = -1.5f;
+        [SerializeField] private float _hoverPunchScale = 0.04f;
+        [SerializeField] private float _detailsSlideDistance = 20f;
+
         [Header("Visual Settings")]
         [SerializeField] private Color _normalBackgroundColor = new Color(0.15f, 0.15f, 0.18f, 1f);
         [SerializeField] private Color _hoverBackgroundColor = new Color(0.2f, 0.2f, 0.25f, 1f);
@@ -61,10 +71,20 @@ namespace IntelliVerseX.MoreOfUs.UI
         private IVXUnifiedAppInfo _appInfo;
         private RectTransform _rectTransform;
         private Vector3 _originalScale;
+        private Quaternion _originalRotation;
+        private Vector2 _originalAnchoredPosition;
+        private RectTransform _detailsRectTransform;
+        private Vector2 _detailsOriginalPosition;
         private Coroutine _animationCoroutine;
         private bool _isHovered;
         private bool _isInitialized;
         private int _cardIndex;
+        private int _originalSiblingIndex;
+
+    #if DOTWEEN || DOTWEEN_ENABLED
+        private Sequence _hoverSequence;
+        private Sequence _entranceSequence;
+    #endif
 
         #endregion
 
@@ -116,6 +136,13 @@ namespace IntelliVerseX.MoreOfUs.UI
         {
             _rectTransform = GetComponent<RectTransform>();
             _originalScale = transform.localScale;
+            _originalRotation = _rectTransform.localRotation;
+            _originalAnchoredPosition = _rectTransform.anchoredPosition;
+            _detailsRectTransform = _detailsPanel != null ? _detailsPanel.GetComponent<RectTransform>() : null;
+            if (_detailsRectTransform != null)
+            {
+                _detailsOriginalPosition = _detailsRectTransform.anchoredPosition;
+            }
 
             if (_installButton != null)
                 _installButton.onClick.AddListener(OnInstallButtonClicked);
@@ -139,6 +166,8 @@ namespace IntelliVerseX.MoreOfUs.UI
 
             if (_animationCoroutine != null)
                 StopCoroutine(_animationCoroutine);
+
+            KillTweens();
         }
 
         #endregion
@@ -185,6 +214,13 @@ namespace IntelliVerseX.MoreOfUs.UI
 
             SetLoadingState(true);
             transform.localScale = _originalScale;
+            _rectTransform.anchoredPosition = _originalAnchoredPosition;
+            _rectTransform.localRotation = _originalRotation;
+            if (_detailsRectTransform != null)
+            {
+                _detailsRectTransform.anchoredPosition = _detailsOriginalPosition;
+            }
+            RestoreSiblingIndex();
         }
 
         /// <summary>
@@ -192,6 +228,10 @@ namespace IntelliVerseX.MoreOfUs.UI
         /// </summary>
         public void PlayEntranceAnimation(float delay = 0f)
         {
+#if DOTWEEN || DOTWEEN_ENABLED
+            PlayEntranceAnimationDOTween(delay);
+            return;
+#endif
             StartCoroutine(EntranceAnimationCoroutine(delay));
         }
 
@@ -304,6 +344,13 @@ namespace IntelliVerseX.MoreOfUs.UI
 
             _isHovered = true;
             OnCardHoverEnter?.Invoke(this);
+
+            BringToFront();
+            if (_detailsPanel != null)
+            {
+                _detailsPanel.interactable = true;
+                _detailsPanel.blocksRaycasts = true;
+            }
             
             // Animate to hover state
             AnimateToState(true);
@@ -353,6 +400,10 @@ namespace IntelliVerseX.MoreOfUs.UI
 
         private void AnimateToState(bool hovered)
         {
+#if DOTWEEN || DOTWEEN_ENABLED
+            AnimateToStateDOTween(hovered);
+            return;
+#endif
             if (_animationCoroutine != null)
                 StopCoroutine(_animationCoroutine);
 
@@ -363,12 +414,25 @@ namespace IntelliVerseX.MoreOfUs.UI
         {
             Vector3 startScale = transform.localScale;
             Vector3 targetScale = hovered ? _originalScale * _hoverScale : _originalScale;
+
+            Vector2 startPosition = _rectTransform.anchoredPosition;
+            Vector2 targetPosition = hovered
+                ? _originalAnchoredPosition + new Vector2(0f, _hoverLift)
+                : _originalAnchoredPosition;
+
+            Quaternion startRotation = _rectTransform.localRotation;
+            Quaternion targetRotation = Quaternion.Euler(0f, 0f, hovered ? _hoverTilt : 0f);
             
             Color startColor = _cardBackground != null ? _cardBackground.color : _normalBackgroundColor;
             Color targetColor = hovered ? _hoverBackgroundColor : _normalBackgroundColor;
             
             float startAlpha = _detailsPanel != null ? _detailsPanel.alpha : 0;
             float targetAlpha = hovered ? 1f : 0f;
+
+            Vector2 detailsStartPosition = _detailsRectTransform != null ? _detailsRectTransform.anchoredPosition : Vector2.zero;
+            Vector2 detailsTargetPosition = _detailsRectTransform != null
+                ? _detailsOriginalPosition + (hovered ? new Vector2(0f, _detailsSlideDistance) : Vector2.zero)
+                : Vector2.zero;
 
             float elapsed = 0;
             while (elapsed < _animationDuration)
@@ -379,6 +443,10 @@ namespace IntelliVerseX.MoreOfUs.UI
                 // Scale
                 transform.localScale = Vector3.Lerp(startScale, targetScale, t);
 
+                // Position + tilt
+                _rectTransform.anchoredPosition = Vector2.Lerp(startPosition, targetPosition, t);
+                _rectTransform.localRotation = Quaternion.Lerp(startRotation, targetRotation, t);
+
                 // Background color
                 if (_cardBackground != null)
                     _cardBackground.color = Color.Lerp(startColor, targetColor, t);
@@ -387,11 +455,16 @@ namespace IntelliVerseX.MoreOfUs.UI
                 if (_detailsPanel != null)
                     _detailsPanel.alpha = Mathf.Lerp(startAlpha, targetAlpha, t);
 
+                if (_detailsRectTransform != null)
+                    _detailsRectTransform.anchoredPosition = Vector2.Lerp(detailsStartPosition, detailsTargetPosition, t);
+
                 yield return null;
             }
 
             // Ensure final values
             transform.localScale = targetScale;
+            _rectTransform.anchoredPosition = targetPosition;
+            _rectTransform.localRotation = targetRotation;
             if (_cardBackground != null)
                 _cardBackground.color = targetColor;
             if (_detailsPanel != null)
@@ -400,6 +473,12 @@ namespace IntelliVerseX.MoreOfUs.UI
                 _detailsPanel.interactable = hovered;
                 _detailsPanel.blocksRaycasts = hovered;
             }
+
+            if (_detailsRectTransform != null)
+                _detailsRectTransform.anchoredPosition = detailsTargetPosition;
+
+            if (!hovered)
+                RestoreSiblingIndex();
 
             _animationCoroutine = null;
         }
@@ -428,6 +507,178 @@ namespace IntelliVerseX.MoreOfUs.UI
             }
 
             transform.localScale = _originalScale;
+        }
+
+#if DOTWEEN || DOTWEEN_ENABLED
+        private void PlayEntranceAnimationDOTween(float delay)
+        {
+            KillTweens();
+
+            transform.localScale = Vector3.zero;
+
+            _entranceSequence = DOTween.Sequence().SetUpdate(true);
+            if (delay > 0f)
+            {
+                _entranceSequence.AppendInterval(delay);
+            }
+
+            _entranceSequence.Append(DOTween.To(
+                    () => _rectTransform.localScale,
+                    v => _rectTransform.localScale = v,
+                    _originalScale,
+                    _animationDuration * 1.5f)
+                .SetEase(Ease.OutBack)
+                .SetTarget(_rectTransform));
+
+            if (_hoverPunchScale > 0f)
+            {
+                Vector3 punchScale = _originalScale * (1f + (_hoverPunchScale * 0.75f));
+                _entranceSequence.Join(DOTween.To(
+                        () => _rectTransform.localScale,
+                        v => _rectTransform.localScale = v,
+                        punchScale,
+                        _animationDuration * 0.35f)
+                    .SetEase(Ease.OutQuad)
+                    .SetTarget(_rectTransform));
+            }
+        }
+#endif
+
+#if DOTWEEN || DOTWEEN_ENABLED
+        private void AnimateToStateDOTween(bool hovered)
+        {
+            KillTweens();
+
+            Vector3 targetScale = hovered ? _originalScale * _hoverScale : _originalScale;
+            Vector2 targetPosition = hovered
+                ? _originalAnchoredPosition + new Vector2(0f, _hoverLift)
+                : _originalAnchoredPosition;
+            float targetRotation = hovered ? _hoverTilt : 0f;
+            float targetAlpha = hovered ? 1f : 0f;
+
+            _hoverSequence = DOTween.Sequence().SetUpdate(true);
+
+            if (_rectTransform != null)
+            {
+                _hoverSequence.Join(DOTween.To(
+                        () => _rectTransform.localScale,
+                        v => _rectTransform.localScale = v,
+                        targetScale,
+                        _animationDuration)
+                    .SetEase(hovered ? Ease.OutBack : Ease.InOutQuad)
+                    .SetTarget(_rectTransform));
+                _hoverSequence.Join(DOTween.To(
+                        () => _rectTransform.anchoredPosition,
+                        v => _rectTransform.anchoredPosition = v,
+                        targetPosition,
+                        _animationDuration)
+                    .SetEase(hovered ? Ease.OutQuad : Ease.InOutQuad)
+                    .SetTarget(_rectTransform));
+                _hoverSequence.Join(DOTween.To(
+                        () => _rectTransform.localEulerAngles,
+                        v => _rectTransform.localEulerAngles = v,
+                        new Vector3(0f, 0f, targetRotation),
+                        _animationDuration)
+                    .SetEase(hovered ? Ease.OutQuad : Ease.InOutQuad)
+                    .SetTarget(_rectTransform));
+            }
+
+            if (_cardBackground != null)
+            {
+                _hoverSequence.Join(DOTween.To(
+                        () => _cardBackground.color,
+                        v => _cardBackground.color = v,
+                        hovered ? _hoverBackgroundColor : _normalBackgroundColor,
+                        _animationDuration)
+                    .SetEase(Ease.OutQuad)
+                    .SetTarget(_cardBackground));
+            }
+
+            if (_detailsRectTransform != null)
+            {
+                Vector2 detailsTarget = hovered
+                    ? _detailsOriginalPosition + new Vector2(0f, _detailsSlideDistance)
+                    : _detailsOriginalPosition;
+                _hoverSequence.Join(DOTween.To(
+                        () => _detailsRectTransform.anchoredPosition,
+                        v => _detailsRectTransform.anchoredPosition = v,
+                        detailsTarget,
+                        _animationDuration)
+                    .SetEase(hovered ? Ease.OutQuad : Ease.InOutQuad)
+                    .SetTarget(_detailsRectTransform));
+            }
+
+            if (_detailsPanel != null)
+            {
+                _hoverSequence.Join(DOTween.To(
+                        () => _detailsPanel.alpha,
+                        v => _detailsPanel.alpha = v,
+                        targetAlpha,
+                        _animationDuration * 0.9f)
+                    .SetEase(Ease.OutQuad)
+                    .SetTarget(_detailsPanel));
+            }
+
+            if (hovered && _hoverPunchScale > 0f && _rectTransform != null)
+            {
+                Vector3 punchScale = targetScale * (1f + _hoverPunchScale);
+                _hoverSequence.Append(DOTween.To(
+                        () => _rectTransform.localScale,
+                        v => _rectTransform.localScale = v,
+                        punchScale,
+                        _animationDuration * 0.35f)
+                    .SetEase(Ease.OutQuad)
+                    .SetTarget(_rectTransform));
+                _hoverSequence.Append(DOTween.To(
+                        () => _rectTransform.localScale,
+                        v => _rectTransform.localScale = v,
+                        targetScale,
+                        _animationDuration * 0.35f)
+                    .SetEase(Ease.OutQuad)
+                    .SetTarget(_rectTransform));
+            }
+
+            _hoverSequence.OnComplete(() =>
+            {
+                if (_detailsPanel != null)
+                {
+                    _detailsPanel.interactable = hovered;
+                    _detailsPanel.blocksRaycasts = hovered;
+                }
+
+                if (!hovered)
+                    RestoreSiblingIndex();
+            });
+        }
+#endif
+
+        private void KillTweens()
+        {
+#if DOTWEEN || DOTWEEN_ENABLED
+            if (_hoverSequence != null && _hoverSequence.IsActive())
+                _hoverSequence.Kill();
+            if (_entranceSequence != null && _entranceSequence.IsActive())
+                _entranceSequence.Kill();
+
+            DOTween.Kill(_rectTransform);
+            DOTween.Kill(_cardBackground);
+            DOTween.Kill(_detailsPanel);
+            DOTween.Kill(_detailsRectTransform);
+#endif
+        }
+
+        private void BringToFront()
+        {
+            _originalSiblingIndex = transform.GetSiblingIndex();
+            transform.SetAsLastSibling();
+        }
+
+        private void RestoreSiblingIndex()
+        {
+            if (_originalSiblingIndex < 0)
+                return;
+
+            transform.SetSiblingIndex(_originalSiblingIndex);
         }
 
         #endregion
@@ -460,6 +711,13 @@ namespace IntelliVerseX.MoreOfUs.UI
             if (_rectTransform == null)
                 _rectTransform = GetComponent<RectTransform>();
             _originalScale = transform.localScale;
+            _originalRotation = _rectTransform.localRotation;
+            _originalAnchoredPosition = _rectTransform.anchoredPosition;
+            _detailsRectTransform = _detailsPanel != null ? _detailsPanel.GetComponent<RectTransform>() : null;
+            if (_detailsRectTransform != null)
+            {
+                _detailsOriginalPosition = _detailsRectTransform.anchoredPosition;
+            }
         }
 #endif
 
