@@ -25,7 +25,7 @@
       "dependencies": {
         "com.unity.nuget.newtonsoft-json": "3.0.2"
       },
-      "hash": "aaf6308b331f6cbcc2a41f11d90ac2109154343e"
+      "hash": "c1d89c768056528dced1c224dbf584ebca6788c2"
     },
     "com.google.external-dependency-manager": {
       "version": "file:C:/Office/Unity/Main Branch of the quizverse/intelliverse-x-games-platform-2/com.google.external-dependency-manager-1.2.186.tgz",

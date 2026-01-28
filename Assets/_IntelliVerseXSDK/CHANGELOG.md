@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [3.0.1] - 2026-01-24
+
+### Fixed
+
+- SDK Setup Wizard now detects global `APIManager` and `UserSessionManager` types correctly.
+- Feature Setup status checks now work for both Assets-based and UPM package installs.
+- Friends prefab adder now locates prefabs from either Assets or Packages paths.
+
 ## [3.0.0] - 2026-01-20
 
 ### 🎯 Major Release - Platform Support & Version Management

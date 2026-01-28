@@ -21,6 +21,8 @@ namespace IntelliVerseX.Editor
         #region Constants
 
         private const string SDK_ROOT = "Assets/_IntelliVerseXSDK";
+        private const string PACKAGE_NAME = "com.intelliversex.sdk";
+        private const string SDK_PACKAGE_ROOT = "Packages/" + PACKAGE_NAME;
         private const string PREFABS_ROOT = SDK_ROOT + "/Prefabs";
         private const string SOCIAL_PREFABS = SDK_ROOT + "/Social/Prefabs";
 
@@ -158,10 +160,10 @@ namespace IntelliVerseX.Editor
             // Status check
             DrawStatusBox("Leaderboard Status", new[]
             {
-                ("IVXGLeaderboardManager.cs", File.Exists(Path.Combine(Application.dataPath, "_IntelliVerseXSDK/Leaderboard/Static/IVXGLeaderboardManager.cs"))),
-                ("IVXGLeaderboard.cs (Runtime)", File.Exists(Path.Combine(Application.dataPath, "_IntelliVerseXSDK/Leaderboard/Runtime/IVXGLeaderboard.cs"))),
-                ("IVXGLeaderboardUI.cs", File.Exists(Path.Combine(Application.dataPath, "_IntelliVerseXSDK/Leaderboard/UI/IVXGLeaderboardUI.cs"))),
-                ("Backend Service", File.Exists(Path.Combine(Application.dataPath, "_IntelliVerseXSDK/Backend/IVXBackendService.cs")))
+                ("IVXGLeaderboardManager.cs", SDKFileExists("Leaderboard/Static/IVXGLeaderboardManager.cs")),
+                ("IVXGLeaderboard.cs (Runtime)", SDKFileExists("Leaderboard/Runtime/IVXGLeaderboard.cs")),
+                ("IVXGLeaderboardUI.cs", SDKFileExists("Leaderboard/UI/IVXGLeaderboardUI.cs")),
+                ("Backend Service", SDKFileExists("Backend/IVXBackendService.cs"))
             });
 
             EditorGUILayout.Space(10);
@@ -261,10 +263,10 @@ int rank = await IVXGLeaderboardManager.GetPlayerRankAsync();");
             // Status check
             DrawStatusBox("Friends Status", new[]
             {
-                ("IVXFriendsService.cs", File.Exists(Path.Combine(Application.dataPath, "_IntelliVerseXSDK/Social/Runtime/IVXFriendsService.cs"))),
-                ("IVXFriendsConfig.cs", File.Exists(Path.Combine(Application.dataPath, "_IntelliVerseXSDK/Social/Runtime/IVXFriendsConfig.cs"))),
-                ("IVXFriendsPanel.cs", File.Exists(Path.Combine(Application.dataPath, "_IntelliVerseXSDK/Social/UI/IVXFriendsPanel.cs"))),
-                ("UI Prefabs", Directory.Exists(Path.Combine(Application.dataPath, "_IntelliVerseXSDK/Social/Prefabs")))
+                ("IVXFriendsService.cs", SDKFileExists("Social/Runtime/IVXFriendsService.cs")),
+                ("IVXFriendsConfig.cs", SDKFileExists("Social/Runtime/IVXFriendsConfig.cs")),
+                ("IVXFriendsPanel.cs", SDKFileExists("Social/UI/IVXFriendsPanel.cs")),
+                ("UI Prefabs", SDKFolderExists("Social/Prefabs"))
             });
 
             EditorGUILayout.Space(10);
@@ -361,20 +363,25 @@ foreach (var user in results)
 
         private void AddFriendsPrefabsToScene()
         {
-            var prefabsDir = Path.Combine(Application.dataPath, "_IntelliVerseXSDK/Social/Prefabs");
-            if (!Directory.Exists(prefabsDir))
+            if (!SDKFolderExists("Social/Prefabs"))
             {
                 EditorUtility.DisplayDialog("Error", "Friends prefabs folder not found", "OK");
                 return;
             }
 
-            var prefabFiles = Directory.GetFiles(prefabsDir, "*.prefab");
+            var searchRoots = new[]
+            {
+                $"{SDK_ROOT}/Social/Prefabs",
+                $"{SDK_PACKAGE_ROOT}/Social/Prefabs"
+            };
+
+            var prefabGuids = AssetDatabase.FindAssets("t:Prefab", searchRoots);
             var canvas = FindOrCreateCanvas();
 
             int added = 0;
-            foreach (var prefabPath in prefabFiles)
+            foreach (var prefabGuid in prefabGuids)
             {
-                var assetPath = "Assets" + prefabPath.Replace(Application.dataPath, "").Replace("\\", "/");
+                var assetPath = AssetDatabase.GUIDToAssetPath(prefabGuid);
                 var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
                 
                 if (prefab != null && !GameObject.Find(prefab.name))
@@ -407,8 +414,8 @@ foreach (var user in results)
             // Status check
             DrawStatusBox("Wallet Status", new[]
             {
-                ("IVXWalletManager.cs", File.Exists(Path.Combine(Application.dataPath, "_IntelliVerseXSDK/Backend/IVXWalletManager.cs"))),
-                ("IVXNWalletManager.cs (V2)", File.Exists(Path.Combine(Application.dataPath, "_IntelliVerseXSDK/V2/Manager/IVXNWalletManager.cs")))
+                ("IVXWalletManager.cs", SDKFileExists("Backend/IVXWalletManager.cs")),
+                ("IVXNWalletManager.cs (V2)", SDKFileExists("V2/Manager/IVXNWalletManager.cs"))
             });
 
             EditorGUILayout.Space(10);
@@ -461,9 +468,9 @@ await IVXNWalletManager.TransferGameToGlobalAsync(100, ""Withdraw"");");
 
             DrawStatusBox("Auth Status", new[]
             {
-                ("UserSessionManager.cs", File.Exists(Path.Combine(Application.dataPath, "_IntelliVerseXSDK/Identity/UserSessionManager.cs"))),
-                ("APIManager.cs", File.Exists(Path.Combine(Application.dataPath, "_IntelliVerseXSDK/Identity/APIManager.cs"))),
-                ("IntelliVerseXUserIdentity.cs", File.Exists(Path.Combine(Application.dataPath, "_IntelliVerseXSDK/Identity/IntelliVerseXUserIdentity.cs")))
+                ("UserSessionManager.cs", SDKFileExists("Identity/UserSessionManager.cs")),
+                ("APIManager.cs", SDKFileExists("Identity/APIManager.cs")),
+                ("IntelliVerseXUserIdentity.cs", SDKFileExists("Identity/IntelliVerseXUserIdentity.cs"))
             });
 
             EditorGUILayout.Space(10);
@@ -515,8 +522,8 @@ if (response.success)
 
             DrawStatusBox("Analytics Status", new[]
             {
-                ("IVXAnalyticsManager.cs", File.Exists(Path.Combine(Application.dataPath, "_IntelliVerseXSDK/Analytics/IVXAnalyticsManager.cs"))),
-                ("IVXAnalyticsService.cs", File.Exists(Path.Combine(Application.dataPath, "_IntelliVerseXSDK/Analytics/IVXAnalyticsService.cs")))
+                ("IVXAnalyticsManager.cs", SDKFileExists("Analytics/IVXAnalyticsManager.cs")),
+                ("IVXAnalyticsService.cs", SDKFileExists("Analytics/IVXAnalyticsService.cs"))
             });
 
             EditorGUILayout.Space(10);
@@ -554,8 +561,8 @@ IVXAnalyticsManager.TrackPurchase(""coin_pack_100"", 0.99m, ""USD"");");
 
             DrawStatusBox("Ads Status", new[]
             {
-                ("IVXAdsManager.cs", File.Exists(Path.Combine(Application.dataPath, "_IntelliVerseXSDK/Monetization/IVXAdsManager.cs"))),
-                ("IVXAdsWaterfallManager.cs", File.Exists(Path.Combine(Application.dataPath, "_IntelliVerseXSDK/Monetization/IVXAdsWaterfallManager.cs"))),
+                ("IVXAdsManager.cs", SDKFileExists("Monetization/IVXAdsManager.cs")),
+                ("IVXAdsWaterfallManager.cs", SDKFileExists("Monetization/IVXAdsWaterfallManager.cs")),
                 ("LevelPlay Package", CheckPackageInstalled("com.unity.services.levelplay"))
             });
 
@@ -590,6 +597,51 @@ IVXAdsManager.HideBanner();");
         #endregion
 
         #region Helper Methods
+
+        private static bool SDKFileExists(string relativePath)
+        {
+            string[] roots = { SDK_ROOT, SDK_PACKAGE_ROOT };
+
+            foreach (var root in roots)
+            {
+                string assetPath = $"{root}/{relativePath}".Replace("\\", "/");
+
+                if (AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(assetPath) != null)
+                {
+                    return true;
+                }
+
+                string absolutePath = Path.Combine(Application.dataPath, "..", assetPath);
+                if (File.Exists(absolutePath))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool SDKFolderExists(string relativePath)
+        {
+            string[] roots = { SDK_ROOT, SDK_PACKAGE_ROOT };
+
+            foreach (var root in roots)
+            {
+                string assetPath = $"{root}/{relativePath}".Replace("\\", "/");
+                if (AssetDatabase.IsValidFolder(assetPath))
+                {
+                    return true;
+                }
+
+                string absolutePath = Path.Combine(Application.dataPath, "..", assetPath);
+                if (Directory.Exists(absolutePath))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         private void DrawStatusBox(string title, (string name, bool exists)[] items)
         {

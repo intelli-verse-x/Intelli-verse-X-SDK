@@ -1977,9 +1977,14 @@ namespace IntelliVerseX.Editor
             if (identityModule.stepCompleted == null || identityModule.stepCompleted.Count < 3) return;
             
             // Use type-based checking
-            identityModule.stepCompleted[0] = TypeExists("IntelliVerseX.Identity.UserSessionManager");
-            identityModule.stepCompleted[1] = TypeExists("IntelliVerseX.Identity.APIManager");
-            identityModule.stepCompleted[2] = TypeExists("IntelliVerseX.Identity.IntelliVerseXUserIdentity");
+            identityModule.stepCompleted[0] = SDKFileExists("Identity/UserSessionManager.cs") ||
+                                              TypeExists("UserSessionManager") ||
+                                              TypeExists("IntelliVerseX.Identity.IVXUserSession");
+            identityModule.stepCompleted[1] = SDKFileExists("Identity/APIManager.cs") ||
+                                              TypeExists("APIManager") ||
+                                              TypeExists("IntelliVerseX.Identity.IVXAPIClient");
+            identityModule.stepCompleted[2] = SDKFileExists("Identity/IntelliVerseXUserIdentity.cs") ||
+                                              TypeExists("IntelliVerseX.Identity.IntelliVerseXUserIdentity");
 
             identityModule.isSetupComplete = identityModule.stepCompleted.All(x => x);
             identityModule.statusMessage = identityModule.isSetupComplete 
