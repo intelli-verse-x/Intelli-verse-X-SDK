@@ -195,7 +195,7 @@ namespace IntelliVerseX.MoreOfUs
             if (_cachedCanvas != null)
                 return _cachedCanvas;
 
-            _cachedCanvas = Object.FindObjectOfType<IVXMoreOfUsCanvas>();
+            _cachedCanvas = Object.FindAnyObjectByType<IVXMoreOfUsCanvas>();
             return _cachedCanvas;
         }
 

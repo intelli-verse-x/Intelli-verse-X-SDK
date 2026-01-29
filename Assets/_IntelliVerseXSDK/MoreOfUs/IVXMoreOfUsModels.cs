@@ -7,10 +7,44 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace IntelliVerseX.MoreOfUs
 {
+    // ========================================================================
+    // STATIC REGEX CACHE (avoids GC allocations)
+    // ========================================================================
+    
+    /// <summary>
+    /// Cached compiled regex patterns to avoid repeated allocations
+    /// </summary>
+    internal static class IVXHtmlUtils
+    {
+        private static readonly Regex HtmlTagRegex = new Regex("<.*?>", RegexOptions.Compiled);
+        private static readonly Regex WhitespaceRegex = new Regex("\\s+", RegexOptions.Compiled);
+        
+        /// <summary>
+        /// Strip HTML tags from text efficiently using cached regex
+        /// </summary>
+        public static string StripHtmlTags(string html)
+        {
+            if (string.IsNullOrEmpty(html)) 
+                return string.Empty;
+            
+            // Use compiled regex for performance
+            string result = HtmlTagRegex.Replace(html, " ");
+            result = result.Replace("&amp;", "&");
+            result = result.Replace("&#39;", "'");
+            result = result.Replace("&quot;", "\"");
+            result = result.Replace("&lt;", "<");
+            result = result.Replace("&gt;", ">");
+            result = result.Replace("&nbsp;", " ");
+            result = WhitespaceRegex.Replace(result, " ");
+            return result.Trim();
+        }
+    }
+
     // ========================================================================
     // ENUMS
     // ========================================================================
@@ -79,26 +113,13 @@ namespace IntelliVerseX.MoreOfUs
                 appId = appId,
                 bundleId = appId,
                 developerName = developerName,
-                description = StripHtmlTags(summary),
+                description = IVXHtmlUtils.StripHtmlTags(summary),
                 rating = score,
                 ratingCount = ParseRatingCount(ratings),
                 price = price,
                 isFree = free,
                 platform = IVXAppPlatform.Android
             };
-        }
-
-        private string StripHtmlTags(string html)
-        {
-            if (string.IsNullOrEmpty(html)) return string.Empty;
-            
-            // Simple HTML tag removal
-            string result = System.Text.RegularExpressions.Regex.Replace(html, "<.*?>", " ");
-            result = System.Text.RegularExpressions.Regex.Replace(result, "&amp;", "&");
-            result = System.Text.RegularExpressions.Regex.Replace(result, "&#39;", "'");
-            result = System.Text.RegularExpressions.Regex.Replace(result, "&quot;", "\"");
-            result = System.Text.RegularExpressions.Regex.Replace(result, "\\s+", " ");
-            return result.Trim();
         }
 
         private int ParseRatingCount(string ratings)

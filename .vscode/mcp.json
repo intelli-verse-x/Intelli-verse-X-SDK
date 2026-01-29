@@ -1,0 +1,11 @@
+{
+    "servers": {
+        "mcp-for-unity-server": {
+            "disabled": true
+        },
+        "intelliversex-unity-mcp": {
+            "url": "http://localhost:8090/mcp",
+            "type": "http"
+        }
+    }
+}

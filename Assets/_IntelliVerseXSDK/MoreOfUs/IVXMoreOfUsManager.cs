@@ -102,10 +102,11 @@ namespace IntelliVerseX.MoreOfUs
         #region State
 
         private IVXMergedAppCatalog _cachedCatalog;
-        private bool _isLoading;
+        private volatile bool _isLoading;
         private DateTime _lastFetchTime;
         private readonly Dictionary<string, Texture2D> _iconCache = new Dictionary<string, Texture2D>();
-        private readonly object _lockObject = new object();
+        private readonly HashSet<string> _iconsBeingLoaded = new HashSet<string>();
+        private Coroutine _fetchCoroutine;
 
         /// <summary>
         /// Is data currently being loaded?
@@ -167,6 +168,13 @@ namespace IntelliVerseX.MoreOfUs
 
         private void OnDestroy()
         {
+            // Stop all coroutines first to prevent callbacks after cleanup
+            StopAllCoroutines();
+            _fetchCoroutine = null;
+            
+            // Clear loading tracking set
+            _iconsBeingLoaded?.Clear();
+            
             // Clear icon cache safely
             if (_iconCache != null)
             {
@@ -179,6 +187,12 @@ namespace IntelliVerseX.MoreOfUs
                 }
                 _iconCache.Clear();
             }
+            
+            // Clear all event subscribers to prevent memory leaks
+            OnCatalogLoaded = null;
+            OnLoadFailed = null;
+            OnIconLoaded = null;
+            OnAppSelected = null;
 
             if (_instance == this)
             {
@@ -202,7 +216,14 @@ namespace IntelliVerseX.MoreOfUs
         /// <param name="forceRefresh">Force refresh even if cache is valid</param>
         public void FetchCatalog(bool forceRefresh = false)
         {
-            StartCoroutine(FetchCatalogCoroutine(forceRefresh));
+            // Prevent multiple concurrent fetches
+            if (_fetchCoroutine != null)
+            {
+                if (!forceRefresh)
+                    return;
+                StopCoroutine(_fetchCoroutine);
+            }
+            _fetchCoroutine = StartCoroutine(FetchCatalogCoroutine(forceRefresh));
         }
 
         /// <summary>
@@ -312,14 +333,41 @@ namespace IntelliVerseX.MoreOfUs
                 return;
             }
 
-            // Check cache
-            if (_iconCache.TryGetValue(appInfo.appIconUrl, out var cachedTex))
+            string url = appInfo.appIconUrl;
+            
+            // Check cache first
+            if (_iconCache.TryGetValue(url, out var cachedTex))
             {
                 onComplete?.Invoke(cachedTex);
                 return;
             }
 
-            StartCoroutine(LoadIconCoroutine(appInfo.appIconUrl, onComplete));
+            // Prevent duplicate concurrent requests for the same icon
+            if (_iconsBeingLoaded.Contains(url))
+            {
+                // Another request is already loading this icon, start a wait coroutine
+                StartCoroutine(WaitForIconCoroutine(url, onComplete));
+                return;
+            }
+
+            _iconsBeingLoaded.Add(url);
+            StartCoroutine(LoadIconCoroutine(url, onComplete));
+        }
+        
+        private System.Collections.IEnumerator WaitForIconCoroutine(string url, Action<Texture2D> onComplete)
+        {
+            // Wait up to 10 seconds for the icon to be loaded by another request
+            float timeout = 10f;
+            float elapsed = 0f;
+            
+            while (!_iconCache.ContainsKey(url) && elapsed < timeout)
+            {
+                yield return null;
+                elapsed += Time.unscaledDeltaTime;
+            }
+            
+            _iconCache.TryGetValue(url, out var texture);
+            onComplete?.Invoke(texture);
         }
 
         /// <summary>
@@ -546,6 +594,7 @@ namespace IntelliVerseX.MoreOfUs
             // Check cache again (might have been loaded by another call)
             if (_iconCache.TryGetValue(url, out var cachedTex))
             {
+                _iconsBeingLoaded.Remove(url);
                 onComplete?.Invoke(cachedTex);
                 yield break;
             }
@@ -555,15 +604,16 @@ namespace IntelliVerseX.MoreOfUs
                 request.timeout = 15;
                 yield return request.SendWebRequest();
 
+                // Remove from loading set first
+                _iconsBeingLoaded.Remove(url);
+
                 if (request.result == UnityWebRequest.Result.Success)
                 {
                     var texture = DownloadHandlerTexture.GetContent(request);
                     
-                    lock (_lockObject)
-                    {
-                        if (!_iconCache.ContainsKey(url))
-                            _iconCache[url] = texture;
-                    }
+                    // Unity main thread only - no lock needed
+                    if (!_iconCache.ContainsKey(url))
+                        _iconCache[url] = texture;
 
                     OnIconLoaded?.Invoke(url, texture);
                     onComplete?.Invoke(texture);

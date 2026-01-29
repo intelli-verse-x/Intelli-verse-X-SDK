@@ -57,6 +57,17 @@
       "dependencyXmlFileName": "ISUnityAdsAdapterDependencies.xml",
       "SKAdNetworkIdXmlURL": "https://s3.amazonaws.com/ssa.public/Unity/SKAdNetwork-IDs/All/skadnetworks.unityads.plist.xml",
       "versions": {
+        "5.5.0.0": {
+          "ironSourceSdkVersion": "[9.0.0, 10.0[",
+          "android": {
+            "adapterVersion": "5.5.0",
+            "adNetworkVersion": "4.16.6"
+          },
+          "ios": {
+            "adapterVersion": "5.5.0.0",
+            "adNetworkVersion": "4.16.6"
+          }
+        },
         "5.4.0.0": {
           "ironSourceSdkVersion": "[9.0.0, 10.0[",
           "android": {
@@ -896,6 +907,17 @@
       "dependencyXmlFileName": "ISMolocoAdapterDependencies.xml",
       "SKAdNetworkIdXmlURL": "https://s3.amazonaws.com/ssa.public/Unity/SKAdNetwork-IDs/All/skadnetworks.moloco.plist.xml",
       "versions": {
+        "5.9.0.0": {
+          "ironSourceSdkVersion": "[9.0.0, 10.0[",
+          "android": {
+            "adapterVersion": "5.6.0",
+            "adNetworkVersion": "4.5.0"
+          },
+          "ios": {
+            "adapterVersion": "5.5.0.0",
+            "adNetworkVersion": "4.3.0"
+          }
+        },
         "5.8.0.0": {
           "ironSourceSdkVersion": "[9.0.0, 10.0[",
           "android": {
@@ -1055,6 +1077,17 @@
       "dependencyXmlFileName": "ISPangleAdapterDependencies.xml",
       "SKAdNetworkIdXmlURL": "https://s3.amazonaws.com/ssa.public/Unity/SKAdNetwork-IDs/All/skadnetworks.pangle.plist.xml",
       "versions": {
+        "5.14.0.0": {
+          "ironSourceSdkVersion": "[9.0.0, 10.0[",
+          "android": {
+            "adapterVersion": "5.9.0",
+            "adNetworkVersion": "7.8.5.9"
+          },
+          "ios": {
+            "adapterVersion": "5.13.0.0",
+            "adNetworkVersion": "7.8.5.8"
+          }
+        },
         "5.13.0.0": {
           "ironSourceSdkVersion": "[9.0.0, 10.0[",
           "android": {

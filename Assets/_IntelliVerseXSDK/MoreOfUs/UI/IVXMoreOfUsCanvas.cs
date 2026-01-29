@@ -90,6 +90,12 @@ namespace IntelliVerseX.MoreOfUs.UI
         private bool _isDragging;
         private bool _isVisible;
         private bool _isInitialized;
+        
+        // Cached arrow states to avoid unnecessary updates
+        private bool _lastCanScrollLeft;
+        private bool _lastCanScrollRight;
+        private float _arrowUpdateTimer;
+        private const float ARROW_UPDATE_INTERVAL = 0.05f; // 20 FPS for arrows is plenty
 
         #endregion
 
@@ -207,6 +213,10 @@ namespace IntelliVerseX.MoreOfUs.UI
 
         private void Update()
         {
+            // Only update arrows when visible and we have cards
+            if (!_isVisible || _activeCards.Count == 0)
+                return;
+                
             UpdateNavigationArrows();
         }
 
@@ -237,13 +247,24 @@ namespace IntelliVerseX.MoreOfUs.UI
             if (_rightArrowButton != null)
                 _rightArrowButton.onClick.AddListener(ScrollRight);
 
-            // Setup scroll rect
+            // Setup scroll rect with optimized settings to prevent jitter
             if (_scrollRect != null)
             {
                 _scrollRect.onValueChanged.AddListener(OnScrollValueChanged);
+                
+                // Optimize scroll rect for smooth scrolling without jitter
+                _scrollRect.movementType = ScrollRect.MovementType.Elastic;
+                _scrollRect.elasticity = 0.1f;
+                _scrollRect.inertia = true;
+                _scrollRect.decelerationRate = 0.135f;
+                _scrollRect.scrollSensitivity = 1f;
+                
+                // Ensure horizontal only
+                _scrollRect.horizontal = true;
+                _scrollRect.vertical = false;
             }
 
-            // Setup layout
+            // Setup layout - CRITICAL: disable child force expand to prevent layout fighting
             if (_layoutGroup != null)
             {
                 _layoutGroup.spacing = _cardSpacing;
@@ -251,6 +272,7 @@ namespace IntelliVerseX.MoreOfUs.UI
                 _layoutGroup.childForceExpandHeight = false;
                 _layoutGroup.childControlWidth = false;
                 _layoutGroup.childControlHeight = false;
+                _layoutGroup.childAlignment = TextAnchor.MiddleLeft;
             }
 
             // Set default text
@@ -600,20 +622,36 @@ namespace IntelliVerseX.MoreOfUs.UI
             if (_leftArrowGroup == null || _rightArrowGroup == null)
                 return;
 
+            // Throttle arrow updates to reduce per-frame work
+            _arrowUpdateTimer += Time.unscaledDeltaTime;
+            
             bool canScrollLeft = _currentCardIndex > 0;
             bool canScrollRight = _currentCardIndex < _activeCards.Count - 1;
+            
+            // Only update interactable state when scroll state changes
+            if (canScrollLeft != _lastCanScrollLeft || canScrollRight != _lastCanScrollRight)
+            {
+                _lastCanScrollLeft = canScrollLeft;
+                _lastCanScrollRight = canScrollRight;
+                
+                if (_leftArrowButton != null)
+                    _leftArrowButton.interactable = canScrollLeft;
+                if (_rightArrowButton != null)
+                    _rightArrowButton.interactable = canScrollRight;
+            }
+
+            // Throttle alpha lerp updates
+            if (_arrowUpdateTimer < ARROW_UPDATE_INTERVAL)
+                return;
+            _arrowUpdateTimer = 0f;
 
             // Fade arrows
             float leftAlpha = canScrollLeft ? 1f : 0.3f;
             float rightAlpha = canScrollRight ? 1f : 0.3f;
 
-            _leftArrowGroup.alpha = Mathf.Lerp(_leftArrowGroup.alpha, leftAlpha, Time.unscaledDeltaTime * 10f);
-            _rightArrowGroup.alpha = Mathf.Lerp(_rightArrowGroup.alpha, rightAlpha, Time.unscaledDeltaTime * 10f);
-
-            if (_leftArrowButton != null)
-                _leftArrowButton.interactable = canScrollLeft;
-            if (_rightArrowButton != null)
-                _rightArrowButton.interactable = canScrollRight;
+            float lerpSpeed = ARROW_UPDATE_INTERVAL * 10f;
+            _leftArrowGroup.alpha = Mathf.Lerp(_leftArrowGroup.alpha, leftAlpha, lerpSpeed);
+            _rightArrowGroup.alpha = Mathf.Lerp(_rightArrowGroup.alpha, rightAlpha, lerpSpeed);
         }
 
         #endregion

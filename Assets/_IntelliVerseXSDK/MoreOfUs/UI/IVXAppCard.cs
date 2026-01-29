@@ -3,6 +3,11 @@
 // ============================================================================
 // IntelliVerseX SDK - Cross-Promotion Feature
 // Individual app card with hover animations and interactions
+// 
+// ARCHITECTURE: Layout Container + Visual Child pattern
+// - The card itself is a layout placeholder (never scales/moves)
+// - A child "VisualContainer" handles all visual scaling
+// - This prevents layout fighting with animations
 // ============================================================================
 
 using System;
@@ -19,14 +24,21 @@ using DG.Tweening;
 namespace IntelliVerseX.MoreOfUs.UI
 {
     /// <summary>
-    /// Individual app card component with Netflix-style hover effects
+    /// Individual app card component with Netflix-style hover effects.
+    /// Uses a Layout Container + Visual Child architecture to prevent
+    /// layout conflicts during animation.
     /// </summary>
     [RequireComponent(typeof(RectTransform))]
+    [RequireComponent(typeof(LayoutElement))]
     public class IVXAppCard : MonoBehaviour, 
         IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
     {
         #region Serialized Fields
 
+        [Header("Visual Container (REQUIRED)")]
+        [Tooltip("The child RectTransform that contains all visual elements. This is what gets scaled during hover.")]
+        [SerializeField] private RectTransform _visualContainer;
+        
         [Header("Required References")]
         [SerializeField] private RawImage _appIcon;
         [SerializeField] private TextMeshProUGUI _appNameText;
@@ -45,20 +57,13 @@ namespace IntelliVerseX.MoreOfUs.UI
         [SerializeField] private Sprite _starHalf;
 
         [Header("Animation Settings")]
-        [SerializeField] private float _hoverScale = 1.15f;
-        [SerializeField] private float _animationDuration = 0.25f;
+        [SerializeField] private float _hoverScale = 1.08f;
+        [SerializeField] private float _animationDuration = 0.15f;
         [SerializeField] private AnimationCurve _scaleCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
-
-        [Header("Hover Effects")]
-        [SerializeField] private float _hoverLift = 24f;
-        [SerializeField] private float _hoverTilt = -1.5f;
-        [SerializeField] private float _hoverPunchScale = 0.04f;
-        [SerializeField] private float _detailsSlideDistance = 20f;
 
         [Header("Visual Settings")]
         [SerializeField] private Color _normalBackgroundColor = new Color(0.15f, 0.15f, 0.18f, 1f);
         [SerializeField] private Color _hoverBackgroundColor = new Color(0.2f, 0.2f, 0.25f, 1f);
-        [SerializeField] private float _cornerRadius = 12f;
 
         [Header("Loading State")]
         [SerializeField] private GameObject _loadingSpinner;
@@ -70,20 +75,26 @@ namespace IntelliVerseX.MoreOfUs.UI
 
         private IVXUnifiedAppInfo _appInfo;
         private RectTransform _rectTransform;
-        private Vector3 _originalScale;
-        private Quaternion _originalRotation;
-        private Vector2 _originalAnchoredPosition;
-        private RectTransform _detailsRectTransform;
-        private Vector2 _detailsOriginalPosition;
+        private LayoutElement _layoutElement;
+        private Canvas _overrideCanvas;
+        private GraphicRaycaster _overrideRaycaster;
         private Coroutine _animationCoroutine;
         private bool _isHovered;
         private bool _isInitialized;
         private int _cardIndex;
-        private int _originalSiblingIndex;
+        private int _originalSortingOrder;
+        
+        // Cached star images to avoid GC allocations
+        private Image[] _cachedStarImages;
+        private bool _starsCached;
+        
+        // Animation state
+        private bool _isAnimating;
 
     #if DOTWEEN || DOTWEEN_ENABLED
-        private Sequence _hoverSequence;
-        private Sequence _entranceSequence;
+        private Tween _scaleTween;
+        private Tween _colorTween;
+        private Tween _alphaTween;
     #endif
 
         #endregion
@@ -135,14 +146,22 @@ namespace IntelliVerseX.MoreOfUs.UI
         private void Awake()
         {
             _rectTransform = GetComponent<RectTransform>();
-            _originalScale = transform.localScale;
-            _originalRotation = _rectTransform.localRotation;
-            _originalAnchoredPosition = _rectTransform.anchoredPosition;
-            _detailsRectTransform = _detailsPanel != null ? _detailsPanel.GetComponent<RectTransform>() : null;
-            if (_detailsRectTransform != null)
+            _layoutElement = GetComponent<LayoutElement>();
+            
+            // Ensure layout element exists and has proper settings
+            if (_layoutElement == null)
             {
-                _detailsOriginalPosition = _detailsRectTransform.anchoredPosition;
+                _layoutElement = gameObject.AddComponent<LayoutElement>();
             }
+            
+            // Ensure pivot is centered (0.5, 0.5) to prevent offset during scale
+            _rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            
+            // Setup visual container - create if not assigned
+            SetupVisualContainer();
+            
+            // Setup override canvas for z-ordering (disabled by default)
+            SetupOverrideCanvas();
 
             if (_installButton != null)
                 _installButton.onClick.AddListener(OnInstallButtonClicked);
@@ -161,13 +180,116 @@ namespace IntelliVerseX.MoreOfUs.UI
 
         private void OnDestroy()
         {
+            // Stop coroutines first
+            StopAllCoroutines();
+            _animationCoroutine = null;
+            
+            // Remove button listener
             if (_installButton != null)
                 _installButton.onClick.RemoveListener(OnInstallButtonClicked);
 
-            if (_animationCoroutine != null)
-                StopCoroutine(_animationCoroutine);
+            // Clear event subscribers to prevent memory leaks
+            OnCardClicked = null;
+            OnCardHoverEnter = null;
+            OnCardHoverExit = null;
+            
+            // Clear cached references
+            _cachedStarImages = null;
 
             KillTweens();
+        }
+
+        #endregion
+
+        #region Setup Methods
+
+        /// <summary>
+        /// Sets up the visual container for animations.
+        /// If not assigned, uses the first child or creates one.
+        /// </summary>
+        private void SetupVisualContainer()
+        {
+            if (_visualContainer != null)
+            {
+                // Ensure visual container has centered pivot
+                _visualContainer.pivot = new Vector2(0.5f, 0.5f);
+                _visualContainer.anchorMin = Vector2.zero;
+                _visualContainer.anchorMax = Vector2.one;
+                _visualContainer.offsetMin = Vector2.zero;
+                _visualContainer.offsetMax = Vector2.zero;
+                _visualContainer.localScale = Vector3.one;
+                return;
+            }
+
+            // Try to find existing visual container by name
+            var existingContainer = transform.Find("VisualContainer");
+            if (existingContainer != null)
+            {
+                _visualContainer = existingContainer as RectTransform;
+                if (_visualContainer != null)
+                {
+                    _visualContainer.pivot = new Vector2(0.5f, 0.5f);
+                    return;
+                }
+            }
+
+            // If first child exists and has children, use it as visual container
+            if (transform.childCount > 0)
+            {
+                var firstChild = transform.GetChild(0);
+                if (firstChild.childCount > 0)
+                {
+                    _visualContainer = firstChild as RectTransform;
+                    if (_visualContainer != null)
+                    {
+                        _visualContainer.pivot = new Vector2(0.5f, 0.5f);
+                        return;
+                    }
+                }
+            }
+
+            // Create visual container if none exists and reparent all children
+            var containerGO = new GameObject("VisualContainer", typeof(RectTransform));
+            _visualContainer = containerGO.GetComponent<RectTransform>();
+            _visualContainer.SetParent(transform, false);
+            _visualContainer.pivot = new Vector2(0.5f, 0.5f);
+            _visualContainer.anchorMin = Vector2.zero;
+            _visualContainer.anchorMax = Vector2.one;
+            _visualContainer.offsetMin = Vector2.zero;
+            _visualContainer.offsetMax = Vector2.zero;
+            _visualContainer.localScale = Vector3.one;
+
+            // Move all existing children into visual container
+            for (int i = transform.childCount - 1; i >= 0; i--)
+            {
+                var child = transform.GetChild(i);
+                if (child != _visualContainer.transform)
+                {
+                    child.SetParent(_visualContainer, true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sets up an override canvas for z-ordering during hover.
+        /// This allows the card to render on top of siblings.
+        /// </summary>
+        private void SetupOverrideCanvas()
+        {
+            // Add Canvas component for sorting override (disabled by default)
+            _overrideCanvas = GetComponent<Canvas>();
+            if (_overrideCanvas == null)
+            {
+                _overrideCanvas = gameObject.AddComponent<Canvas>();
+            }
+            _overrideCanvas.overrideSorting = false;
+            
+            // Add GraphicRaycaster so the card remains interactive
+            _overrideRaycaster = GetComponent<GraphicRaycaster>();
+            if (_overrideRaycaster == null)
+            {
+                _overrideRaycaster = gameObject.AddComponent<GraphicRaycaster>();
+            }
         }
 
         #endregion
@@ -204,6 +326,11 @@ namespace IntelliVerseX.MoreOfUs.UI
             _appInfo = null;
             _isInitialized = false;
             _isHovered = false;
+            _isAnimating = false;
+            
+            // Clear cached stars when card is recycled
+            _starsCached = false;
+            _cachedStarImages = null;
 
             if (_appNameText != null)
                 _appNameText.text = "";
@@ -213,14 +340,26 @@ namespace IntelliVerseX.MoreOfUs.UI
                 _appIcon.texture = null;
 
             SetLoadingState(true);
-            transform.localScale = _originalScale;
-            _rectTransform.anchoredPosition = _originalAnchoredPosition;
-            _rectTransform.localRotation = _originalRotation;
-            if (_detailsRectTransform != null)
+            
+            // Reset visual container scale
+            if (_visualContainer != null)
+                _visualContainer.localScale = Vector3.one;
+            
+            // Disable override canvas
+            if (_overrideCanvas != null)
+                _overrideCanvas.overrideSorting = false;
+            
+            // Reset details panel
+            if (_detailsPanel != null)
             {
-                _detailsRectTransform.anchoredPosition = _detailsOriginalPosition;
+                _detailsPanel.alpha = 0;
+                _detailsPanel.interactable = false;
+                _detailsPanel.blocksRaycasts = false;
             }
-            RestoreSiblingIndex();
+            
+            // Reset background color
+            if (_cardBackground != null)
+                _cardBackground.color = _normalBackgroundColor;
         }
 
         /// <summary>
@@ -228,11 +367,14 @@ namespace IntelliVerseX.MoreOfUs.UI
         /// </summary>
         public void PlayEntranceAnimation(float delay = 0f)
         {
+            if (_visualContainer == null)
+                return;
+
 #if DOTWEEN || DOTWEEN_ENABLED
             PlayEntranceAnimationDOTween(delay);
-            return;
-#endif
+#else
             StartCoroutine(EntranceAnimationCoroutine(delay));
+#endif
         }
 
         #endregion
@@ -284,16 +426,23 @@ namespace IntelliVerseX.MoreOfUs.UI
             if (_starsContainer == null || _starFilled == null || _starEmpty == null)
                 return;
 
-            var stars = _starsContainer.GetComponentsInChildren<Image>();
-            for (int i = 0; i < stars.Length && i < 5; i++)
+            // Cache star images once to avoid GC allocations
+            if (!_starsCached || _cachedStarImages == null)
+            {
+                _cachedStarImages = _starsContainer.GetComponentsInChildren<Image>();
+                _starsCached = true;
+            }
+
+            int starCount = Mathf.Min(_cachedStarImages.Length, 5);
+            for (int i = 0; i < starCount; i++)
             {
                 float starThreshold = i + 1;
                 if (rating >= starThreshold)
-                    stars[i].sprite = _starFilled;
+                    _cachedStarImages[i].sprite = _starFilled;
                 else if (rating >= starThreshold - 0.5f && _starHalf != null)
-                    stars[i].sprite = _starHalf;
+                    _cachedStarImages[i].sprite = _starHalf;
                 else
-                    stars[i].sprite = _starEmpty;
+                    _cachedStarImages[i].sprite = _starEmpty;
             }
         }
 
@@ -339,13 +488,15 @@ namespace IntelliVerseX.MoreOfUs.UI
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if (!_isInitialized)
+            if (!_isInitialized || _visualContainer == null)
                 return;
 
             _isHovered = true;
             OnCardHoverEnter?.Invoke(this);
 
+            // Bring to front using override canvas
             BringToFront();
+            
             if (_detailsPanel != null)
             {
                 _detailsPanel.interactable = true;
@@ -358,7 +509,7 @@ namespace IntelliVerseX.MoreOfUs.UI
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            if (!_isInitialized)
+            if (!_isInitialized || _visualContainer == null)
                 return;
 
             _isHovered = false;
@@ -400,28 +551,25 @@ namespace IntelliVerseX.MoreOfUs.UI
 
         private void AnimateToState(bool hovered)
         {
+            if (_visualContainer == null)
+                return;
+
+            _isAnimating = true;
+
 #if DOTWEEN || DOTWEEN_ENABLED
             AnimateToStateDOTween(hovered);
-            return;
-#endif
+#else
             if (_animationCoroutine != null)
                 StopCoroutine(_animationCoroutine);
 
             _animationCoroutine = StartCoroutine(AnimateCoroutine(hovered));
+#endif
         }
 
         private IEnumerator AnimateCoroutine(bool hovered)
         {
-            Vector3 startScale = transform.localScale;
-            Vector3 targetScale = hovered ? _originalScale * _hoverScale : _originalScale;
-
-            Vector2 startPosition = _rectTransform.anchoredPosition;
-            Vector2 targetPosition = hovered
-                ? _originalAnchoredPosition + new Vector2(0f, _hoverLift)
-                : _originalAnchoredPosition;
-
-            Quaternion startRotation = _rectTransform.localRotation;
-            Quaternion targetRotation = Quaternion.Euler(0f, 0f, hovered ? _hoverTilt : 0f);
+            Vector3 startScale = _visualContainer.localScale;
+            Vector3 targetScale = hovered ? Vector3.one * _hoverScale : Vector3.one;
             
             Color startColor = _cardBackground != null ? _cardBackground.color : _normalBackgroundColor;
             Color targetColor = hovered ? _hoverBackgroundColor : _normalBackgroundColor;
@@ -429,42 +577,28 @@ namespace IntelliVerseX.MoreOfUs.UI
             float startAlpha = _detailsPanel != null ? _detailsPanel.alpha : 0;
             float targetAlpha = hovered ? 1f : 0f;
 
-            Vector2 detailsStartPosition = _detailsRectTransform != null ? _detailsRectTransform.anchoredPosition : Vector2.zero;
-            Vector2 detailsTargetPosition = _detailsRectTransform != null
-                ? _detailsOriginalPosition + (hovered ? new Vector2(0f, _detailsSlideDistance) : Vector2.zero)
-                : Vector2.zero;
-
             float elapsed = 0;
             while (elapsed < _animationDuration)
             {
                 elapsed += Time.unscaledDeltaTime;
                 float t = _scaleCurve.Evaluate(elapsed / _animationDuration);
 
-                // Scale
-                transform.localScale = Vector3.Lerp(startScale, targetScale, t);
-
-                // Position + tilt
-                _rectTransform.anchoredPosition = Vector2.Lerp(startPosition, targetPosition, t);
-                _rectTransform.localRotation = Quaternion.Lerp(startRotation, targetRotation, t);
+                // Scale the VISUAL CONTAINER only (not the layout parent)
+                _visualContainer.localScale = Vector3.Lerp(startScale, targetScale, t);
 
                 // Background color
                 if (_cardBackground != null)
                     _cardBackground.color = Color.Lerp(startColor, targetColor, t);
 
-                // Details panel
+                // Details panel alpha
                 if (_detailsPanel != null)
                     _detailsPanel.alpha = Mathf.Lerp(startAlpha, targetAlpha, t);
-
-                if (_detailsRectTransform != null)
-                    _detailsRectTransform.anchoredPosition = Vector2.Lerp(detailsStartPosition, detailsTargetPosition, t);
 
                 yield return null;
             }
 
             // Ensure final values
-            transform.localScale = targetScale;
-            _rectTransform.anchoredPosition = targetPosition;
-            _rectTransform.localRotation = targetRotation;
+            _visualContainer.localScale = targetScale;
             if (_cardBackground != null)
                 _cardBackground.color = targetColor;
             if (_detailsPanel != null)
@@ -474,11 +608,10 @@ namespace IntelliVerseX.MoreOfUs.UI
                 _detailsPanel.blocksRaycasts = hovered;
             }
 
-            if (_detailsRectTransform != null)
-                _detailsRectTransform.anchoredPosition = detailsTargetPosition;
-
+            _isAnimating = false;
+            
             if (!hovered)
-                RestoreSiblingIndex();
+                SendToBack();
 
             _animationCoroutine = null;
         }
@@ -486,7 +619,7 @@ namespace IntelliVerseX.MoreOfUs.UI
         private IEnumerator EntranceAnimationCoroutine(float delay)
         {
             // Initial state
-            transform.localScale = Vector3.zero;
+            _visualContainer.localScale = Vector3.zero;
             
             if (delay > 0)
                 yield return new WaitForSeconds(delay);
@@ -499,14 +632,14 @@ namespace IntelliVerseX.MoreOfUs.UI
                 elapsed += Time.unscaledDeltaTime;
                 float t = _scaleCurve.Evaluate(elapsed / duration);
                 
-                // Overshoot effect
-                float overshoot = 1f + Mathf.Sin(t * Mathf.PI) * 0.1f;
-                transform.localScale = _originalScale * t * overshoot;
+                // Simple scale up with slight overshoot
+                float overshoot = 1f + Mathf.Sin(t * Mathf.PI) * 0.05f;
+                _visualContainer.localScale = Vector3.one * t * overshoot;
 
                 yield return null;
             }
 
-            transform.localScale = _originalScale;
+            _visualContainer.localScale = Vector3.one;
         }
 
 #if DOTWEEN || DOTWEEN_ENABLED
@@ -514,171 +647,105 @@ namespace IntelliVerseX.MoreOfUs.UI
         {
             KillTweens();
 
-            transform.localScale = Vector3.zero;
+            _visualContainer.localScale = Vector3.zero;
 
-            _entranceSequence = DOTween.Sequence().SetUpdate(true);
-            if (delay > 0f)
-            {
-                _entranceSequence.AppendInterval(delay);
-            }
-
-            _entranceSequence.Append(DOTween.To(
-                    () => _rectTransform.localScale,
-                    v => _rectTransform.localScale = v,
-                    _originalScale,
-                    _animationDuration * 1.5f)
+            _scaleTween = _visualContainer.DOScale(Vector3.one, _animationDuration * 1.5f)
+                .SetDelay(delay)
                 .SetEase(Ease.OutBack)
-                .SetTarget(_rectTransform));
-
-            if (_hoverPunchScale > 0f)
-            {
-                Vector3 punchScale = _originalScale * (1f + (_hoverPunchScale * 0.75f));
-                _entranceSequence.Join(DOTween.To(
-                        () => _rectTransform.localScale,
-                        v => _rectTransform.localScale = v,
-                        punchScale,
-                        _animationDuration * 0.35f)
-                    .SetEase(Ease.OutQuad)
-                    .SetTarget(_rectTransform));
-            }
+                .SetUpdate(true);
         }
-#endif
 
-#if DOTWEEN || DOTWEEN_ENABLED
         private void AnimateToStateDOTween(bool hovered)
         {
             KillTweens();
 
-            Vector3 targetScale = hovered ? _originalScale * _hoverScale : _originalScale;
-            Vector2 targetPosition = hovered
-                ? _originalAnchoredPosition + new Vector2(0f, _hoverLift)
-                : _originalAnchoredPosition;
-            float targetRotation = hovered ? _hoverTilt : 0f;
+            Vector3 targetScale = hovered ? Vector3.one * _hoverScale : Vector3.one;
             float targetAlpha = hovered ? 1f : 0f;
 
-            _hoverSequence = DOTween.Sequence().SetUpdate(true);
+            // Scale the VISUAL CONTAINER (not the card itself)
+            _scaleTween = _visualContainer.DOScale(targetScale, _animationDuration)
+                .SetEase(Ease.OutQuad)
+                .SetUpdate(true)
+                .OnComplete(() =>
+                {
+                    _isAnimating = false;
+                    if (!hovered)
+                        SendToBack();
+                });
 
-            if (_rectTransform != null)
-            {
-                _hoverSequence.Join(DOTween.To(
-                        () => _rectTransform.localScale,
-                        v => _rectTransform.localScale = v,
-                        targetScale,
-                        _animationDuration)
-                    .SetEase(hovered ? Ease.OutBack : Ease.InOutQuad)
-                    .SetTarget(_rectTransform));
-                _hoverSequence.Join(DOTween.To(
-                        () => _rectTransform.anchoredPosition,
-                        v => _rectTransform.anchoredPosition = v,
-                        targetPosition,
-                        _animationDuration)
-                    .SetEase(hovered ? Ease.OutQuad : Ease.InOutQuad)
-                    .SetTarget(_rectTransform));
-                _hoverSequence.Join(DOTween.To(
-                        () => _rectTransform.localEulerAngles,
-                        v => _rectTransform.localEulerAngles = v,
-                        new Vector3(0f, 0f, targetRotation),
-                        _animationDuration)
-                    .SetEase(hovered ? Ease.OutQuad : Ease.InOutQuad)
-                    .SetTarget(_rectTransform));
-            }
-
+            // Background color change using generic tweener (DOTween.Modules may not be available)
             if (_cardBackground != null)
             {
-                _hoverSequence.Join(DOTween.To(
+                Color targetColor = hovered ? _hoverBackgroundColor : _normalBackgroundColor;
+                _colorTween = DOTween.To(
                         () => _cardBackground.color,
                         v => _cardBackground.color = v,
-                        hovered ? _hoverBackgroundColor : _normalBackgroundColor,
+                        targetColor,
                         _animationDuration)
                     .SetEase(Ease.OutQuad)
-                    .SetTarget(_cardBackground));
+                    .SetUpdate(true);
             }
 
-            if (_detailsRectTransform != null)
-            {
-                Vector2 detailsTarget = hovered
-                    ? _detailsOriginalPosition + new Vector2(0f, _detailsSlideDistance)
-                    : _detailsOriginalPosition;
-                _hoverSequence.Join(DOTween.To(
-                        () => _detailsRectTransform.anchoredPosition,
-                        v => _detailsRectTransform.anchoredPosition = v,
-                        detailsTarget,
-                        _animationDuration)
-                    .SetEase(hovered ? Ease.OutQuad : Ease.InOutQuad)
-                    .SetTarget(_detailsRectTransform));
-            }
-
+            // Details panel alpha
             if (_detailsPanel != null)
             {
-                _hoverSequence.Join(DOTween.To(
+                _alphaTween = DOTween.To(
                         () => _detailsPanel.alpha,
                         v => _detailsPanel.alpha = v,
                         targetAlpha,
-                        _animationDuration * 0.9f)
+                        _animationDuration * 0.8f)
                     .SetEase(Ease.OutQuad)
-                    .SetTarget(_detailsPanel));
+                    .SetUpdate(true)
+                    .OnComplete(() =>
+                    {
+                        if (_detailsPanel != null)
+                        {
+                            _detailsPanel.interactable = hovered;
+                            _detailsPanel.blocksRaycasts = hovered;
+                        }
+                    });
             }
-
-            if (hovered && _hoverPunchScale > 0f && _rectTransform != null)
-            {
-                Vector3 punchScale = targetScale * (1f + _hoverPunchScale);
-                _hoverSequence.Append(DOTween.To(
-                        () => _rectTransform.localScale,
-                        v => _rectTransform.localScale = v,
-                        punchScale,
-                        _animationDuration * 0.35f)
-                    .SetEase(Ease.OutQuad)
-                    .SetTarget(_rectTransform));
-                _hoverSequence.Append(DOTween.To(
-                        () => _rectTransform.localScale,
-                        v => _rectTransform.localScale = v,
-                        targetScale,
-                        _animationDuration * 0.35f)
-                    .SetEase(Ease.OutQuad)
-                    .SetTarget(_rectTransform));
-            }
-
-            _hoverSequence.OnComplete(() =>
-            {
-                if (_detailsPanel != null)
-                {
-                    _detailsPanel.interactable = hovered;
-                    _detailsPanel.blocksRaycasts = hovered;
-                }
-
-                if (!hovered)
-                    RestoreSiblingIndex();
-            });
         }
 #endif
 
         private void KillTweens()
         {
 #if DOTWEEN || DOTWEEN_ENABLED
-            if (_hoverSequence != null && _hoverSequence.IsActive())
-                _hoverSequence.Kill();
-            if (_entranceSequence != null && _entranceSequence.IsActive())
-                _entranceSequence.Kill();
-
-            DOTween.Kill(_rectTransform);
-            DOTween.Kill(_cardBackground);
-            DOTween.Kill(_detailsPanel);
-            DOTween.Kill(_detailsRectTransform);
+            _scaleTween?.Kill();
+            _colorTween?.Kill();
+            _alphaTween?.Kill();
+            _scaleTween = null;
+            _colorTween = null;
+            _alphaTween = null;
 #endif
         }
 
+        /// <summary>
+        /// Brings this card to front by enabling override sorting
+        /// </summary>
         private void BringToFront()
         {
-            _originalSiblingIndex = transform.GetSiblingIndex();
-            transform.SetAsLastSibling();
-        }
-
-        private void RestoreSiblingIndex()
-        {
-            if (_originalSiblingIndex < 0)
+            if (_overrideCanvas == null)
                 return;
 
-            transform.SetSiblingIndex(_originalSiblingIndex);
+            // Get current canvas sorting order
+            var parentCanvas = GetComponentInParent<Canvas>();
+            _originalSortingOrder = parentCanvas != null ? parentCanvas.sortingOrder : 0;
+            
+            // Enable override with higher sorting order
+            _overrideCanvas.overrideSorting = true;
+            _overrideCanvas.sortingOrder = _originalSortingOrder + 100;
+        }
+
+        /// <summary>
+        /// Sends this card back to normal sorting
+        /// </summary>
+        private void SendToBack()
+        {
+            if (_overrideCanvas == null)
+                return;
+
+            _overrideCanvas.overrideSorting = false;
         }
 
         #endregion
@@ -689,9 +756,10 @@ namespace IntelliVerseX.MoreOfUs.UI
         [ContextMenu("Preview Hover State")]
         private void PreviewHoverState()
         {
+            if (_visualContainer != null)
+                _visualContainer.localScale = Vector3.one * _hoverScale;
             if (_cardBackground != null)
                 _cardBackground.color = _hoverBackgroundColor;
-            transform.localScale = _originalScale * _hoverScale;
             if (_detailsPanel != null)
                 _detailsPanel.alpha = 1f;
         }
@@ -699,24 +767,30 @@ namespace IntelliVerseX.MoreOfUs.UI
         [ContextMenu("Preview Normal State")]
         private void PreviewNormalState()
         {
+            if (_visualContainer != null)
+                _visualContainer.localScale = Vector3.one;
             if (_cardBackground != null)
                 _cardBackground.color = _normalBackgroundColor;
-            transform.localScale = _originalScale;
             if (_detailsPanel != null)
                 _detailsPanel.alpha = 0f;
+        }
+
+        [ContextMenu("Setup Visual Container")]
+        private void EditorSetupVisualContainer()
+        {
+            SetupVisualContainer();
+            UnityEditor.EditorUtility.SetDirty(this);
         }
 
         private void OnValidate()
         {
             if (_rectTransform == null)
                 _rectTransform = GetComponent<RectTransform>();
-            _originalScale = transform.localScale;
-            _originalRotation = _rectTransform.localRotation;
-            _originalAnchoredPosition = _rectTransform.anchoredPosition;
-            _detailsRectTransform = _detailsPanel != null ? _detailsPanel.GetComponent<RectTransform>() : null;
-            if (_detailsRectTransform != null)
+            
+            // Ensure pivot is centered
+            if (_rectTransform != null && _rectTransform.pivot != new Vector2(0.5f, 0.5f))
             {
-                _detailsOriginalPosition = _detailsRectTransform.anchoredPosition;
+                _rectTransform.pivot = new Vector2(0.5f, 0.5f);
             }
         }
 #endif
