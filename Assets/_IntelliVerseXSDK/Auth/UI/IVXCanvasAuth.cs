@@ -1,259 +1,152 @@
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.UI;
+using IntelliVerseX.Identity;
 
 namespace IntelliVerseX.Auth.UI
 {
-    /// <summary>
-    /// Main authentication canvas controller.
-    /// Manages login, register, OTP, and guest authentication panels.
-    /// </summary>
     public class IVXCanvasAuth : MonoBehaviour
     {
-        #region Serialized Fields
-
-        [Header("Panel References")]
+        [Header("Panels")]
         [SerializeField] private GameObject _loginPanel;
         [SerializeField] private GameObject _registerPanel;
         [SerializeField] private GameObject _otpPanel;
         [SerializeField] private GameObject _forgotPasswordPanel;
         [SerializeField] private GameObject _loadingPanel;
 
-        [Header("Configuration")]
-        [SerializeField] private bool _showOnStart = true;
+        [Header("Config")]
         [SerializeField] private bool _allowGuestLogin = true;
-        [SerializeField] private bool _enableSocialLogin = true;
 
-        [Header("Social Login")]
-        [SerializeField] private bool _enableGoogleSignIn = true;
-        [SerializeField] private bool _enableAppleSignIn = true;
-        [SerializeField] private bool _enableFacebookSignIn = false;
-
-        #endregion
-
-        #region Private Fields
-
-        private AuthPanel _currentPanel = AuthPanel.None;
-        private bool _isInitialized = false;
-
-        #endregion
-
-        #region Events
-
-        public static event Action<AuthResult> OnAuthSuccess;
-        public static event Action<string> OnAuthFailed;
-        public static event Action OnLogout;
-
-        #endregion
-
-        #region Properties
-
-        public bool IsInitialized => _isInitialized;
-        public AuthPanel CurrentPanel => _currentPanel;
+        // ===================== PUBLIC PROPERTIES =====================
         public bool AllowGuestLogin => _allowGuestLogin;
-        public bool EnableSocialLogin => _enableSocialLogin;
-        public bool EnableGoogleSignIn => _enableGoogleSignIn;
-        public bool EnableAppleSignIn => _enableAppleSignIn;
-        public bool EnableFacebookSignIn => _enableFacebookSignIn;
 
-        #endregion
+        // ===================== PANEL CONTROL =====================
 
-        #region Unity Lifecycle
-
-        private void Awake()
-        {
-            Initialize();
-        }
-
-        private void Start()
-        {
-            if (_showOnStart)
-            {
-                ShowLogin();
-            }
-            else
-            {
-                HideAllPanels();
-            }
-        }
-
-        #endregion
-
-        #region Public Methods
-
-        /// <summary>
-        /// Initialize the auth canvas
-        /// </summary>
-        public void Initialize()
-        {
-            if (_isInitialized) return;
-
-            ValidateReferences();
-            _isInitialized = true;
-            Debug.Log($"[{nameof(IVXCanvasAuth)}] Initialized");
-        }
-
-        /// <summary>
-        /// Show login panel
-        /// </summary>
         public void ShowLogin()
         {
-            HideAllPanels();
-            if (_loginPanel != null)
-            {
-                _loginPanel.SetActive(true);
-                _currentPanel = AuthPanel.Login;
-            }
+            HideAll();
+            if (_loginPanel) _loginPanel.SetActive(true);
         }
 
-        /// <summary>
-        /// Show register panel
-        /// </summary>
         public void ShowRegister()
         {
-            HideAllPanels();
-            if (_registerPanel != null)
-            {
-                _registerPanel.SetActive(true);
-                _currentPanel = AuthPanel.Register;
-            }
+            HideAll();
+            if (_registerPanel) _registerPanel.SetActive(true);
         }
 
-        /// <summary>
-        /// Show OTP verification panel
-        /// </summary>
         public void ShowOTP()
         {
-            HideAllPanels();
-            if (_otpPanel != null)
-            {
-                _otpPanel.SetActive(true);
-                _currentPanel = AuthPanel.OTP;
-            }
+            HideAll();
+            if (_otpPanel) _otpPanel.SetActive(true);
         }
 
-        /// <summary>
-        /// Show forgot password panel
-        /// </summary>
         public void ShowForgotPassword()
         {
-            HideAllPanels();
-            if (_forgotPasswordPanel != null)
-            {
-                _forgotPasswordPanel.SetActive(true);
-                _currentPanel = AuthPanel.ForgotPassword;
-            }
+            HideAll();
+            if (_forgotPasswordPanel) _forgotPasswordPanel.SetActive(true);
         }
 
-        /// <summary>
-        /// Show loading state
-        /// </summary>
         public void ShowLoading()
         {
-            if (_loadingPanel != null)
-            {
-                _loadingPanel.SetActive(true);
-            }
+            if (_loadingPanel) _loadingPanel.SetActive(true);
         }
 
-        /// <summary>
-        /// Hide loading state
-        /// </summary>
         public void HideLoading()
         {
-            if (_loadingPanel != null)
-            {
-                _loadingPanel.SetActive(false);
-            }
+            if (_loadingPanel) _loadingPanel.SetActive(false);
         }
 
-        /// <summary>
-        /// Hide all panels and close canvas
-        /// </summary>
-        public void Close()
+        private void HideAll()
         {
-            HideAllPanels();
-            gameObject.SetActive(false);
+            if (_loginPanel) _loginPanel.SetActive(false);
+            if (_registerPanel) _registerPanel.SetActive(false);
+            if (_otpPanel) _otpPanel.SetActive(false);
+            if (_forgotPasswordPanel) _forgotPasswordPanel.SetActive(false);
+            if (_loadingPanel) _loadingPanel.SetActive(false);
         }
 
-        /// <summary>
-        /// Login as guest
-        /// </summary>
-        public void LoginAsGuest()
+        // ===================== AUTH CALLBACKS =====================
+
+        public void NotifyAuthSuccess(AuthResult result)
+        {
+            HideLoading();
+            Debug.Log("AUTH SUCCESS: " + result.Email);
+        }
+
+        public void NotifyAuthFailed(string error)
+        {
+            HideLoading();
+            Debug.LogError("AUTH FAILED: " + error);
+        }
+
+        // ===================== GUEST LOGIN =====================
+
+        public async void LoginAsGuest()
         {
             if (!_allowGuestLogin)
             {
-                Debug.LogWarning($"[{nameof(IVXCanvasAuth)}] Guest login is disabled");
+                Debug.LogWarning("[IVXCanvasAuth] Guest login disabled");
                 return;
             }
 
             ShowLoading();
-            // TODO: Implement guest login with backend
-            Debug.Log($"[{nameof(IVXCanvasAuth)}] Guest login requested");
+
+            try
+            {
+                var response = await APIManager.GuestSignupAsync(
+                    role: "user",
+                    configureUserAuthOnSuccess: true,
+                    persistSession: true);
+
+                if (response?.data != null)
+                {
+                    var result = BuildAuthResultFromGuestResponse(response);
+                    NotifyAuthSuccess(result);
+                }
+                else
+                {
+                    NotifyAuthFailed(response?.message ?? "Guest signup failed");
+                }
+            }
+            catch (Exception ex)
+            {
+                NotifyAuthFailed(ex.Message);
+            }
         }
 
-        #endregion
-
-        #region Internal Methods
-
-        internal void NotifyAuthSuccess(AuthResult result)
+        private static AuthResult BuildAuthResultFromGuestResponse(APIManager.GuestSignupResponse response)
         {
-            HideLoading();
-            OnAuthSuccess?.Invoke(result);
-            Close();
+            var d = response.data;
+            var u = d?.user;
+            string userId = u != null && !string.IsNullOrEmpty(u.idpUsername) ? u.idpUsername : u?.id ?? string.Empty;
+            string access = d != null ? (!string.IsNullOrEmpty(d.accessToken) ? d.accessToken : d.token ?? string.Empty) : string.Empty;
+            long expEpoch = d != null
+                ? (DateTimeOffset.UtcNow.ToUnixTimeSeconds() + Math.Max(0, d.expiresIn <= 0 ? 1800 : d.expiresIn))
+                : DateTimeOffset.UtcNow.ToUnixTimeSeconds() + 1800;
+            DateTime expAt;
+            try
+            {
+                expAt = DateTimeOffset.FromUnixTimeSeconds(expEpoch).UtcDateTime;
+            }
+            catch
+            {
+                expAt = DateTime.UtcNow.AddMinutes(30);
+            }
+
+            return new AuthResult
+            {
+                UserId = userId,
+                Email = u?.email ?? "guest@local",
+                DisplayName = u?.userName ?? u?.firstName ?? "Guest",
+                AccessToken = access,
+                RefreshToken = d?.refreshToken ?? string.Empty,
+                IsGuest = true,
+                ExpiresAt = expAt
+            };
         }
-
-        internal void NotifyAuthFailed(string error)
-        {
-            HideLoading();
-            OnAuthFailed?.Invoke(error);
-        }
-
-        internal void NotifyLogout()
-        {
-            OnLogout?.Invoke();
-            ShowLogin();
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        private void HideAllPanels()
-        {
-            if (_loginPanel != null) _loginPanel.SetActive(false);
-            if (_registerPanel != null) _registerPanel.SetActive(false);
-            if (_otpPanel != null) _otpPanel.SetActive(false);
-            if (_forgotPasswordPanel != null) _forgotPasswordPanel.SetActive(false);
-            if (_loadingPanel != null) _loadingPanel.SetActive(false);
-            _currentPanel = AuthPanel.None;
-        }
-
-        private void ValidateReferences()
-        {
-            if (_loginPanel == null)
-                Debug.LogWarning($"[{nameof(IVXCanvasAuth)}] Login panel not assigned");
-            if (_registerPanel == null)
-                Debug.LogWarning($"[{nameof(IVXCanvasAuth)}] Register panel not assigned");
-        }
-
-        #endregion
     }
 
-    #region Enums
-
-    public enum AuthPanel
-    {
-        None,
-        Login,
-        Register,
-        OTP,
-        ForgotPassword
-    }
-
-    #endregion
-
-    #region Data Models
+    // ===================== DATA MODEL =====================
 
     [Serializable]
     public class AuthResult
@@ -266,6 +159,4 @@ namespace IntelliVerseX.Auth.UI
         public bool IsGuest;
         public DateTime ExpiresAt;
     }
-
-    #endregion
 }

@@ -3,7 +3,8 @@
     "rootNamespace": "IntelliVerseX.Auth",
     "references": [
         "Unity.TextMeshPro",
-        "IntelliVerseX.Core"
+        "IntelliVerseX.Core",
+        "IntelliVerseX.Identity"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

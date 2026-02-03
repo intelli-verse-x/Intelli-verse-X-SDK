@@ -1,293 +1,310 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using TMPro;
+using IntelliVerseX.Identity;
 
 namespace IntelliVerseX.Auth.UI
 {
     /// <summary>
-    /// OTP verification panel controller.
+    /// OTP verification panel. Calls real backend verify-otp API; on success configures session and notifies auth canvas.
+    /// TODO: OTP verification activates account and logs user in automatically.
+    /// This is a mandatory step - users cannot login until OTP is verified.
     /// </summary>
     public class IVXPanelOTP : MonoBehaviour
     {
-        #region Serialized Fields
+        private const int OTP_LENGTH = 6;
 
-        [Header("OTP Input")]
-        [SerializeField] private TMP_InputField[] _otpInputs;
-        [SerializeField] private TMP_InputField _singleOtpInput;
+        [Header("Input")]
+        [SerializeField] private TMP_InputField _otpInput;
 
         [Header("Buttons")]
         [SerializeField] private Button _verifyButton;
-        [SerializeField] private Button _resendButton;
-        [SerializeField] private Button _backButton;
 
-        [Header("UI Elements")]
+        [Header("UI")]
         [SerializeField] private TextMeshProUGUI _errorText;
-        [SerializeField] private TextMeshProUGUI _timerText;
-        [SerializeField] private TextMeshProUGUI _emailText;
 
-        [Header("Settings")]
-        [SerializeField] private int _otpLength = 6;
-        [SerializeField] private float _resendCooldown = 60f;
+        [Header("Scene Loading")]
+        [Tooltip("Name of the game scene to load after successful OTP verification. Leave empty to use default behavior.")]
+        [SerializeField] private string _gameSceneName = string.Empty;
 
-        #endregion
-
-        #region Private Fields
+        [Tooltip("If true, automatically load game scene after successful OTP verification.")]
+        [SerializeField] private bool _autoLoadGameScene = false;
 
         private IVXCanvasAuth _canvasAuth;
-        private bool _isProcessing = false;
-        private float _resendTimer = 0f;
-        private string _pendingEmail = "";
-
-        #endregion
-
-        #region Unity Lifecycle
+        private AuthService _authService;
+        private string _email;
+        private bool _isProcessing;
 
         private void Awake()
         {
             _canvasAuth = GetComponentInParent<IVXCanvasAuth>();
-            SetupButtons();
-            SetupOtpInputs();
+            TryFindAuthService();
+
+            if (_canvasAuth == null)
+                Debug.LogError("[IVXPanelOTP] IVXCanvasAuth not found in parent!");
+            // AuthService will be auto-created if not found, so no error needed
+
+            if (_verifyButton != null)
+                _verifyButton.onClick.AddListener(Verify);
         }
 
         private void OnEnable()
         {
-            ClearError();
-            ClearOtpInputs();
-            StartResendCooldown();
-        }
-
-        private void Update()
-        {
-            UpdateResendTimer();
-        }
-
-        #endregion
-
-        #region Public Methods
-
-        /// <summary>
-        /// Set the email being verified
-        /// </summary>
-        public void SetEmail(string email)
-        {
-            _pendingEmail = email;
-            if (_emailText != null)
+            // Try to find AuthService again in case it was added to the scene
+            if (_authService == null)
             {
-                _emailText.text = $"Enter the code sent to {MaskEmail(email)}";
+                TryFindAuthService();
             }
         }
 
         /// <summary>
-        /// Verify the entered OTP
+        /// Set the email used for OTP verification (called from register panel).
         /// </summary>
-        public void VerifyOTP()
+        public void SetEmail(string e)
+        {
+            _email = e ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Set the game scene name to load after successful OTP verification.
+        /// </summary>
+        /// <param name="sceneName">Name of the scene to load</param>
+        public void SetGameSceneName(string sceneName)
+        {
+            _gameSceneName = sceneName ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Enable or disable automatic scene loading after successful OTP verification.
+        /// </summary>
+        /// <param name="autoLoad">If true, automatically load game scene after verification</param>
+        public void SetAutoLoadGameScene(bool autoLoad)
+        {
+            _autoLoadGameScene = autoLoad;
+        }
+
+        /// <summary>
+        /// Verify OTP with backend. Validates 6 digits; on success configures APIManager and notifies auth success.
+        /// </summary>
+        public void Verify()
         {
             if (_isProcessing) return;
-
-            string otp = GetOtpValue();
-
-            if (string.IsNullOrEmpty(otp) || otp.Length != _otpLength)
+            
+            // Try to find AuthService if not already found
+            if (_authService == null)
             {
-                ShowError($"Please enter a {_otpLength}-digit code");
+                TryFindAuthService();
+            }
+            
+            if (_authService == null)
+            {
+                ShowError("Auth service not available. Please ensure AuthService component exists in the scene.");
+                return;
+            }
+
+            string otp = _otpInput != null ? _otpInput.text?.Trim() ?? string.Empty : string.Empty;
+
+            if (string.IsNullOrEmpty(_email))
+            {
+                ShowError("Email missing. Please start from registration.");
+                return;
+            }
+
+            if (otp.Length != OTP_LENGTH || !System.Text.RegularExpressions.Regex.IsMatch(otp, @"^\d{6}$"))
+            {
+                ShowError("Please enter a valid 6-digit code.");
                 return;
             }
 
             _isProcessing = true;
-            _canvasAuth?.ShowLoading();
             ClearError();
+            _canvasAuth?.ShowLoading();
 
-            Debug.Log($"[{nameof(IVXPanelOTP)}] Verifying OTP: {otp}");
-            ProcessVerificationAsync(otp);
+            _authService.VerifyOtp(
+                _email,
+                otp,
+                OnVerifySuccess,
+                OnVerifyError);
         }
 
         /// <summary>
-        /// Resend OTP code
+        /// Handles successful OTP verification.
+        /// OTP verification = Account activation + Automatic login.
+        /// User is logged in immediately after OTP verification.
         /// </summary>
-        public void ResendOTP()
+        private void OnVerifySuccess(APIManager.LoginResponse loginResp)
         {
-            if (_resendTimer > 0) return;
+            _isProcessing = false;
+            _canvasAuth?.HideLoading();
 
-            Debug.Log($"[{nameof(IVXPanelOTP)}] Resending OTP to {_pendingEmail}");
-            StartResendCooldown();
+            if (loginResp?.data?.user == null)
+            {
+                ShowError("Invalid response from server.");
+                return;
+            }
 
-            // TODO: Implement resend OTP with backend
+            Debug.Log($"[IVXPanelOTP] OTP verified successfully → Account activated → User logged in: {loginResp.data.user.email}");
+
+            // Configure user authentication with backend tokens
+            // This activates the account and logs the user in
+            APIManager.ConfigureUserAuthFromLoginResponse(loginResp, true);
+
+            // Build auth result and notify success (user is now logged in)
+            var result = BuildAuthResult(loginResp);
+            _canvasAuth?.NotifyAuthSuccess(result);
+
+            // Load game scene if auto-load is enabled and scene name is set
+            if (_autoLoadGameScene && !string.IsNullOrWhiteSpace(_gameSceneName))
+            {
+                LoadGameScene(_gameSceneName);
+            }
         }
 
         /// <summary>
-        /// Go back to previous panel
+        /// Loads the game scene after successful OTP verification.
+        /// Call this method manually if auto-load is disabled, or it will be called automatically if auto-load is enabled.
         /// </summary>
-        public void GoBack()
+        /// <param name="sceneName">Name of the scene to load. If null or empty, uses the configured game scene name.</param>
+        public void LoadGameSceneAfterVerification(string sceneName = null)
         {
-            _canvasAuth?.ShowRegister();
+            string targetScene = !string.IsNullOrWhiteSpace(sceneName) ? sceneName : _gameSceneName;
+
+            if (string.IsNullOrWhiteSpace(targetScene))
+            {
+                Debug.LogWarning("[IVXPanelOTP] No game scene name provided. Cannot load scene.");
+                return;
+            }
+
+            LoadGameScene(targetScene);
         }
 
-        #endregion
-
-        #region Private Methods
-
-        private void SetupButtons()
-        {
-            _verifyButton?.onClick.AddListener(VerifyOTP);
-            _resendButton?.onClick.AddListener(ResendOTP);
-            _backButton?.onClick.AddListener(GoBack);
-        }
-
-        private void SetupOtpInputs()
-        {
-            if (_otpInputs != null && _otpInputs.Length > 0)
-            {
-                for (int i = 0; i < _otpInputs.Length; i++)
-                {
-                    int index = i;
-                    var input = _otpInputs[i];
-                    if (input == null) continue;
-
-                    input.characterLimit = 1;
-                    input.contentType = TMP_InputField.ContentType.IntegerNumber;
-                    input.onValueChanged.AddListener((value) => OnOtpInputChanged(index, value));
-                }
-            }
-            else if (_singleOtpInput != null)
-            {
-                _singleOtpInput.characterLimit = _otpLength;
-                _singleOtpInput.contentType = TMP_InputField.ContentType.IntegerNumber;
-            }
-        }
-
-        private void OnOtpInputChanged(int index, string value)
-        {
-            if (_otpInputs == null) return;
-
-            // Auto-focus next input when digit entered
-            if (!string.IsNullOrEmpty(value) && index < _otpInputs.Length - 1)
-            {
-                _otpInputs[index + 1]?.Select();
-            }
-        }
-
-        private string GetOtpValue()
-        {
-            if (_singleOtpInput != null)
-            {
-                return _singleOtpInput.text?.Trim();
-            }
-
-            if (_otpInputs != null && _otpInputs.Length > 0)
-            {
-                var sb = new System.Text.StringBuilder();
-                foreach (var input in _otpInputs)
-                {
-                    if (input != null)
-                    {
-                        sb.Append(input.text);
-                    }
-                }
-                return sb.ToString();
-            }
-
-            return "";
-        }
-
-        private void ClearOtpInputs()
-        {
-            if (_singleOtpInput != null)
-            {
-                _singleOtpInput.text = "";
-            }
-
-            if (_otpInputs != null)
-            {
-                foreach (var input in _otpInputs)
-                {
-                    if (input != null)
-                    {
-                        input.text = "";
-                    }
-                }
-
-                // Focus first input
-                if (_otpInputs.Length > 0 && _otpInputs[0] != null)
-                {
-                    _otpInputs[0].Select();
-                }
-            }
-        }
-
-        private async void ProcessVerificationAsync(string otp)
+        /// <summary>
+        /// Loads the specified game scene.
+        /// </summary>
+        /// <param name="sceneName">Name of the scene to load</param>
+        private void LoadGameScene(string sceneName)
         {
             try
             {
-                // TODO: Replace with actual backend call
-                await System.Threading.Tasks.Task.Delay(1000);
-
-                var result = new AuthResult
+                // Check if scene exists in build settings
+                if (!SceneExists(sceneName))
                 {
-                    UserId = Guid.NewGuid().ToString(),
-                    Email = _pendingEmail,
-                    DisplayName = _pendingEmail.Split('@')[0],
-                    IsGuest = false,
-                    AccessToken = "mock_token",
-                    ExpiresAt = DateTime.UtcNow.AddDays(7)
-                };
+                    Debug.LogError($"[IVXPanelOTP] Scene '{sceneName}' not found in build settings. Please add it to Build Settings > Scenes in Build.");
+                    ShowError($"Scene '{sceneName}' not found. Please check build settings.");
+                    return;
+                }
 
-                _canvasAuth?.NotifyAuthSuccess(result);
+                Debug.Log($"[IVXPanelOTP] Loading game scene: {sceneName}");
+                SceneManager.LoadScene(sceneName);
             }
             catch (Exception ex)
             {
-                ShowError(ex.Message);
-                _canvasAuth?.NotifyAuthFailed(ex.Message);
-            }
-            finally
-            {
-                _isProcessing = false;
-                _canvasAuth?.HideLoading();
+                Debug.LogError($"[IVXPanelOTP] Failed to load scene '{sceneName}': {ex.Message}");
+                ShowError($"Failed to load scene: {ex.Message}");
             }
         }
 
-        private void StartResendCooldown()
+        /// <summary>
+        /// Checks if a scene exists in the build settings.
+        /// </summary>
+        /// <param name="sceneName">Name of the scene to check</param>
+        /// <returns>True if scene exists in build settings</returns>
+        private bool SceneExists(string sceneName)
         {
-            _resendTimer = _resendCooldown;
-            UpdateResendButtonState();
-        }
-
-        private void UpdateResendTimer()
-        {
-            if (_resendTimer > 0)
+            for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
             {
-                _resendTimer -= Time.deltaTime;
-                UpdateResendButtonState();
+                string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
+                string sceneNameFromPath = System.IO.Path.GetFileNameWithoutExtension(scenePath);
 
-                if (_timerText != null)
+                if (sceneNameFromPath.Equals(sceneName, StringComparison.OrdinalIgnoreCase))
                 {
-                    _timerText.text = $"Resend in {Mathf.CeilToInt(_resendTimer)}s";
+                    return true;
                 }
             }
-            else if (_timerText != null)
-            {
-                _timerText.text = "";
-            }
+            return false;
         }
 
-        private void UpdateResendButtonState()
+        /// <summary>
+        /// Handles OTP verification error from backend.
+        /// Extracts error message from backend JSON response.
+        /// </summary>
+        private void OnVerifyError(string message)
         {
-            if (_resendButton != null)
+            _isProcessing = false;
+            _canvasAuth?.HideLoading();
+            
+            // Extract and display backend error message
+            string errorMsg = message ?? "OTP verification failed";
+            
+            // Check for specific backend error messages
+            if (!string.IsNullOrEmpty(message))
             {
-                _resendButton.interactable = _resendTimer <= 0;
+                if (message.Contains("invalid") || message.Contains("incorrect") || message.Contains("wrong"))
+                {
+                    errorMsg = "Invalid OTP code. Please check your email and try again.";
+                }
+                else if (message.Contains("expired"))
+                {
+                    errorMsg = "OTP code has expired. Please register again to receive a new code.";
+                }
+                else if (message.Contains("not found") || message.Contains("does not exist"))
+                {
+                    errorMsg = "OTP verification failed. Please start from registration.";
+                }
             }
+            
+            Debug.LogWarning($"[IVXPanelOTP] OTP verification failed: {errorMsg}");
+            ShowError(errorMsg);
         }
 
-        private string MaskEmail(string email)
+        private static AuthResult BuildAuthResult(APIManager.LoginResponse loginResp)
         {
-            if (string.IsNullOrEmpty(email) || !email.Contains("@"))
-                return email;
+            var d = loginResp.data;
+            var u = d.user;
+            string userId = !string.IsNullOrEmpty(u.idpUsername) ? u.idpUsername : u.id ?? string.Empty;
+            string access = !string.IsNullOrEmpty(d.accessToken) ? d.accessToken : d.token ?? string.Empty;
+            long expEpoch = DateTimeOffset.UtcNow.ToUnixTimeSeconds() + Math.Max(0, d.expiresIn <= 0 ? 1800 : d.expiresIn);
+            DateTime expAt;
+            try
+            {
+                expAt = DateTimeOffset.FromUnixTimeSeconds(expEpoch).UtcDateTime;
+            }
+            catch
+            {
+                expAt = DateTime.UtcNow.AddMinutes(30);
+            }
 
-            var parts = email.Split('@');
-            if (parts[0].Length <= 2)
-                return email;
+            return new AuthResult
+            {
+                UserId = userId,
+                Email = u.email ?? string.Empty,
+                DisplayName = u.userName ?? u.firstName ?? string.Empty,
+                AccessToken = access,
+                RefreshToken = d.refreshToken ?? string.Empty,
+                IsGuest = false,
+                ExpiresAt = expAt
+            };
+        }
 
-            var masked = parts[0][0] + "***" + parts[0][parts[0].Length - 1] + "@" + parts[1];
-            return masked;
+        private void TryFindAuthService()
+        {
+            if (_authService == null)
+            {
+                _authService = FindObjectOfType<AuthService>();
+                if (_authService == null)
+                {
+                    // Automatically create AuthService GameObject if it doesn't exist
+                    GameObject authServiceObj = new GameObject("AuthService");
+                    _authService = authServiceObj.AddComponent<AuthService>();
+                    Debug.Log("[IVXPanelOTP] AuthService automatically created in scene.");
+                }
+                else
+                {
+                    Debug.Log("[IVXPanelOTP] AuthService found successfully.");
+                }
+            }
         }
 
         private void ShowError(string message)
@@ -303,11 +320,9 @@ namespace IntelliVerseX.Auth.UI
         {
             if (_errorText != null)
             {
-                _errorText.text = "";
+                _errorText.text = string.Empty;
                 _errorText.gameObject.SetActive(false);
             }
         }
-
-        #endregion
     }
 }

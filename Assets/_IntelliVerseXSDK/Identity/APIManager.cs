@@ -1,4 +1,4 @@
-using System;
+ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -1298,17 +1298,17 @@ Do not include any other top-level keys. Do not include code fences.";
         var d = resp.data;
         var u = d.user;
 
-        // Populate fields used by your UserAuthConfigured property
         _userIdpUsername = string.IsNullOrWhiteSpace(u.idpUsername)
             ? (u.email ?? string.Empty)
             : u.idpUsername;
 
         _userRefreshToken = d.refreshToken ?? string.Empty;
 
-        // Optional: if you have these fields, hydrate them too:
-        // _userAccessToken = !string.IsNullOrWhiteSpace(d.accessToken) ? d.accessToken : d.token;
-        // _userAccessTokenExpiryEpoch = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
-        //                              + Math.Max(0, d.expiresIn <= 0 ? 1800 : d.expiresIn);
+        string access = !string.IsNullOrWhiteSpace(d.accessToken) ? d.accessToken : d.token;
+        _userAccessToken = string.IsNullOrWhiteSpace(access) ? null : access.Trim();
+        long expEpoch = DateTimeOffset.UtcNow.ToUnixTimeSeconds() + Math.Max(0, d.expiresIn <= 0 ? 1800 : d.expiresIn);
+        try { _userAccessExpiryUtc = DateTimeOffset.FromUnixTimeSeconds(expEpoch).UtcDateTime; }
+        catch { _userAccessExpiryUtc = DateTime.UtcNow.AddMinutes(30); }
 
         _useUserAuthToken = true;
 
