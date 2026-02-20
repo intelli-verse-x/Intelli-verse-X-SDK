@@ -21,7 +21,9 @@ namespace IntelliVerseX.Monetization.Ads.Editor
 
         #region Menu Items
 
-        [MenuItem("IntelliVerse-X/Ads/Create Ads Bootstrap Prefab", false, 100)]
+        // REMOVED: Menu items consolidated into SDK Setup Wizard
+        // [MenuItem("IntelliVerse-X SDK/Ads/Create Ads Bootstrap Prefab", false, 100)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Monetization tab
         public static void CreateAdsBootstrapPrefab()
         {
             EnsureFolderExists();
@@ -92,7 +94,8 @@ namespace IntelliVerseX.Monetization.Ads.Editor
             }
         }
 
-        [MenuItem("IntelliVerse-X/Ads/Add Ads Bootstrap to Scene", false, 101)]
+        // [MenuItem("IntelliVerse-X SDK/Ads/Add Ads Bootstrap to Scene", false, 101)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Monetization tab
         public static void AddAdsBootstrapToScene()
         {
             // Check if already exists in scene
@@ -159,7 +162,8 @@ namespace IntelliVerseX.Monetization.Ads.Editor
             }
         }
 
-        [MenuItem("IntelliVerse-X/Ads/Validate Ads Setup", false, 102)]
+        // [MenuItem("IntelliVerse-X SDK/Ads/Validate Ads Setup", false, 102)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Monetization tab
         public static void ValidateAdsSetup()
         {
             Debug.Log("[IVXAdsPrefabBuilder] ========== Ads Setup Validation ==========");

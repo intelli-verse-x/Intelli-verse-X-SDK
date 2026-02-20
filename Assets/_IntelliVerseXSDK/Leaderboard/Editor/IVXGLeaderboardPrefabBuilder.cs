@@ -23,7 +23,9 @@ namespace IntelliVerseX.Games.Leaderboard.Editor
         /// <summary>
         /// Create a leaderboard entry prefab.
         /// </summary>
-        [MenuItem("IntelliVerseX/Leaderboard/Create Entry Prefab")]
+        // REMOVED: Menu items consolidated into SDK Setup Wizard
+        // [MenuItem("IntelliVerse-X SDK/Leaderboard/Create Entry Prefab")]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Features tab
         public static GameObject CreateLeaderboardEntryPrefab()
         {
             // Root
@@ -91,7 +93,8 @@ namespace IntelliVerseX.Games.Leaderboard.Editor
         /// <summary>
         /// Create a complete leaderboard UI canvas.
         /// </summary>
-        [MenuItem("IntelliVerseX/Leaderboard/Create Leaderboard Canvas")]
+        // [MenuItem("IntelliVerse-X SDK/Leaderboard/Create Leaderboard Canvas")]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Features tab
         public static GameObject CreateLeaderboardCanvas()
         {
             // Canvas
@@ -183,7 +186,8 @@ namespace IntelliVerseX.Games.Leaderboard.Editor
         /// <summary>
         /// Create and save all leaderboard prefabs.
         /// </summary>
-        [MenuItem("IntelliVerseX/Leaderboard/Create All Prefabs")]
+        // [MenuItem("IntelliVerse-X SDK/Leaderboard/Create All Prefabs")]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Features tab
         public static void CreateAllPrefabs()
         {
             EnsureDirectoryExists(PREFABS_PATH);
@@ -214,7 +218,8 @@ namespace IntelliVerseX.Games.Leaderboard.Editor
         /// <summary>
         /// Add leaderboard canvas to current scene.
         /// </summary>
-        [MenuItem("IntelliVerseX/Leaderboard/Add to Scene")]
+        // [MenuItem("IntelliVerse-X SDK/Leaderboard/Add to Scene")]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Features tab
         public static void AddLeaderboardToScene()
         {
             var prefabPath = $"{PREFABS_PATH}/IVXGLeaderboardCanvas.prefab";

@@ -25,13 +25,11 @@ namespace IntelliVerseX.Editor
         private static bool? _nakamaInstalled;
         private static bool? _nakamaFolderExists;
         
-        [MenuItem("IntelliVerseX/Check Dependencies", priority = 1)]
-        public static void CheckDependencies()
-        {
-            ShowWindow();
-        }
+        // REMOVED: Menu items consolidated into SDK Setup Wizard
+        // [MenuItem("IntelliVerse-X SDK/Check Dependencies", priority = 1)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Dependencies tab
         
-        [MenuItem("IntelliVerseX/Check Dependencies (Console)", priority = 2)]
+        // [MenuItem("IntelliVerse-X SDK/Check Dependencies (Console)", priority = 2)]
         public static void CheckDependenciesConsole()
         {
             Debug.Log("========================================");

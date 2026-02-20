@@ -15,7 +15,9 @@ namespace IntelliVerseX.Games.Social.Editor
 
         #region Menu Items
 
-        [MenuItem("IntelliVerseX/Social/Create Share Manager Prefab")]
+        // REMOVED: Menu items consolidated into SDK Setup Wizard
+        // [MenuItem("IntelliVerse-X SDK/Social/Create Share Manager Prefab")]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Features tab
         public static GameObject CreateShareManagerPrefab()
         {
             EnsurePrefabsDirectory();
@@ -36,7 +38,8 @@ namespace IntelliVerseX.Games.Social.Editor
             return prefab;
         }
 
-        [MenuItem("IntelliVerseX/Social/Create Rate App Manager Prefab")]
+        // [MenuItem("IntelliVerse-X SDK/Social/Create Rate App Manager Prefab")]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Features tab
         public static GameObject CreateRateAppManagerPrefab()
         {
             EnsurePrefabsDirectory();
@@ -57,7 +60,8 @@ namespace IntelliVerseX.Games.Social.Editor
             return prefab;
         }
 
-        [MenuItem("IntelliVerseX/Social/Create All Social Prefabs")]
+        // [MenuItem("IntelliVerse-X SDK/Social/Create All Social Prefabs")]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Features tab
         public static void CreateAllPrefabs()
         {
             CreateShareManagerPrefab();
@@ -71,7 +75,8 @@ namespace IntelliVerseX.Games.Social.Editor
                 "OK");
         }
 
-        [MenuItem("IntelliVerseX/Social/Add Share to Scene")]
+        // [MenuItem("IntelliVerse-X SDK/Social/Add Share to Scene")]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Features tab
         public static void AddShareToScene()
         {
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PREFABS_PATH}/IVXGShareManager.prefab");
@@ -100,7 +105,8 @@ namespace IntelliVerseX.Games.Social.Editor
             ShowShareUsage();
         }
 
-        [MenuItem("IntelliVerseX/Social/Add Rate App to Scene")]
+        // [MenuItem("IntelliVerse-X SDK/Social/Add Rate App to Scene")]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Features tab
         public static void AddRateAppToScene()
         {
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PREFABS_PATH}/IVXGRateAppManager.prefab");
@@ -129,7 +135,8 @@ namespace IntelliVerseX.Games.Social.Editor
             ShowRateUsage();
         }
 
-        [MenuItem("IntelliVerseX/Social/Add All Social Features to Scene")]
+        // [MenuItem("IntelliVerse-X SDK/Social/Add All Social Features to Scene")]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Features tab
         public static void AddAllToScene()
         {
             AddShareToScene();

@@ -66,7 +66,10 @@ namespace IntelliVerseX.Auth.Editor
 
         #region Menu Items
 
-        [MenuItem("IntelliVerseX/Auth/Create Auth Canvas Prefab", false, 100)]
+        // REMOVED: Menu items consolidated into SDK Setup Wizard
+        // [MenuItem("IntelliVerse-X SDK/Auth/Create Auth Canvas Prefab", false, 100)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Auth & Social tab
+        
         public static void CreateAuthCanvasPrefabMenuItem()
         {
             string prefabPath = GetWritablePrefabPath();
@@ -74,7 +77,8 @@ namespace IntelliVerseX.Auth.Editor
             Debug.Log($"[IVXAuthPrefabBuilder] Auth Canvas prefab created at: {prefabPath}");
         }
 
-        [MenuItem("IntelliVerseX/Auth/Add Auth Canvas to Scene", false, 101)]
+        // [MenuItem("IntelliVerse-X SDK/Auth/Add Auth Canvas to Scene", false, 101)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Auth & Social tab
         public static void AddAuthCanvasToScene()
         {
             var existingCanvas = UnityEngine.Object.FindFirstObjectByType<IVXCanvasAuth>();
@@ -130,6 +134,12 @@ namespace IntelliVerseX.Auth.Editor
             GameObject canvas = null;
             try
             {
+                if (string.IsNullOrEmpty(folderPath))
+                {
+                    Debug.LogError("[IVXAuthPrefabBuilder] Folder path is null or empty");
+                    return;
+                }
+                
                 EnsureDirectoryExists(folderPath);
                 
                 canvas = CreateAuthCanvasPrefab();
@@ -142,10 +152,14 @@ namespace IntelliVerseX.Auth.Editor
                     AssetDatabase.Refresh();
                     Debug.Log($"[IVXAuthPrefabBuilder] Auth Canvas prefab saved: {prefabPath}");
                 }
+                else
+                {
+                    Debug.LogWarning("[IVXAuthPrefabBuilder] CreateAuthCanvasPrefab returned null. Auth UI types may be missing or have compilation errors.");
+                }
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[IVXAuthPrefabBuilder] Failed to create Auth prefab: {ex.Message}");
+                Debug.LogError($"[IVXAuthPrefabBuilder] Failed to create Auth prefab: {ex.Message}\n{ex.StackTrace}");
                 if (canvas != null)
                 {
                     try { UnityEngine.Object.DestroyImmediate(canvas); } catch { }
@@ -158,43 +172,68 @@ namespace IntelliVerseX.Auth.Editor
         /// </summary>
         public static GameObject CreateAuthCanvasPrefab()
         {
-            // Create Canvas
-            var canvasGO = new GameObject("IVX_AuthCanvas");
-            var canvas = canvasGO.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.sortingOrder = 100;
+            GameObject canvasGO = null;
+            try
+            {
+                // Create Canvas
+                canvasGO = new GameObject("IVX_AuthCanvas");
+                var canvas = canvasGO.AddComponent<Canvas>();
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                canvas.sortingOrder = 100;
 
-            var scaler = canvasGO.AddComponent<CanvasScaler>();
-            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1080, 1920);
-            scaler.matchWidthOrHeight = 0.5f;
+                var scaler = canvasGO.AddComponent<CanvasScaler>();
+                scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                scaler.referenceResolution = new Vector2(1080, 1920);
+                scaler.matchWidthOrHeight = 0.5f;
 
-            canvasGO.AddComponent<GraphicRaycaster>();
+                canvasGO.AddComponent<GraphicRaycaster>();
 
-            // Add IVXCanvasAuth component
-            var canvasAuth = canvasGO.AddComponent<IVXCanvasAuth>();
+                // Add IVXCanvasAuth component
+                var canvasAuth = canvasGO.AddComponent<IVXCanvasAuth>();
+                if (canvasAuth == null)
+                {
+                    Debug.LogError("[IVXAuthPrefabBuilder] Failed to add IVXCanvasAuth component");
+                    UnityEngine.Object.DestroyImmediate(canvasGO);
+                    return null;
+                }
 
-            // Create panels with proper wiring
-            var loginPanel = CreateLoginPanel(canvasGO.transform);
-            var registerPanel = CreateRegisterPanel(canvasGO.transform);
-            var otpPanel = CreateOTPPanel(canvasGO.transform);
-            var loadingPanel = CreateLoadingPanel(canvasGO.transform);
+                // Create panels with proper wiring
+                var loginPanel = CreateLoginPanel(canvasGO.transform);
+                var registerPanel = CreateRegisterPanel(canvasGO.transform);
+                var otpPanel = CreateOTPPanel(canvasGO.transform);
+                var loadingPanel = CreateLoadingPanel(canvasGO.transform);
 
-            // Wire up IVXCanvasAuth references
-            AssignCanvasReferences(canvasAuth, loginPanel, registerPanel, otpPanel, loadingPanel);
+                // Validate panels were created
+                if (loginPanel == null || registerPanel == null || otpPanel == null || loadingPanel == null)
+                {
+                    Debug.LogWarning("[IVXAuthPrefabBuilder] Some panels could not be created, but continuing with partial setup");
+                }
 
-            // Wire up individual panel components
-            WireUpLoginPanel(loginPanel);
-            WireUpRegisterPanel(registerPanel);
-            WireUpOTPPanel(otpPanel);
+                // Wire up IVXCanvasAuth references
+                AssignCanvasReferences(canvasAuth, loginPanel, registerPanel, otpPanel, loadingPanel);
 
-            // Hide register and OTP panels by default
-            registerPanel.SetActive(false);
-            otpPanel.SetActive(false);
-            loadingPanel.SetActive(false);
+                // Wire up individual panel components
+                if (loginPanel != null) WireUpLoginPanel(loginPanel);
+                if (registerPanel != null) WireUpRegisterPanel(registerPanel);
+                if (otpPanel != null) WireUpOTPPanel(otpPanel);
 
-            Debug.Log("[IVXAuthPrefabBuilder] Auth Canvas created with all UI properly wired");
-            return canvasGO;
+                // Hide register and OTP panels by default
+                if (registerPanel != null) registerPanel.SetActive(false);
+                if (otpPanel != null) otpPanel.SetActive(false);
+                if (loadingPanel != null) loadingPanel.SetActive(false);
+
+                Debug.Log("[IVXAuthPrefabBuilder] Auth Canvas created with all UI properly wired");
+                return canvasGO;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[IVXAuthPrefabBuilder] Failed to create Auth Canvas: {ex.Message}\n{ex.StackTrace}");
+                if (canvasGO != null)
+                {
+                    UnityEngine.Object.DestroyImmediate(canvasGO);
+                }
+                return null;
+            }
         }
 
         #endregion

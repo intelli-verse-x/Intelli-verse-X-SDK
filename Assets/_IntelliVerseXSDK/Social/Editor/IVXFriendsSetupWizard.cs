@@ -71,7 +71,7 @@ namespace IntelliVerseX.Social.Editor
                 "Would you like to open the main wizard?",
                 "Open SDK Wizard", "Open Legacy Wizard"))
             {
-                EditorApplication.ExecuteMenuItem("IntelliVerseX/SDK Setup Wizard");
+                EditorApplication.ExecuteMenuItem("IntelliVerse-X SDK/SDK Setup Wizard");
                 return;
             }
             
@@ -81,7 +81,9 @@ namespace IntelliVerseX.Social.Editor
             window.RefreshStatus();
         }
 
-        [MenuItem("Tools/IntelliVerse-X/Add Friends UI to Scene", false, 101)]
+        // REMOVED: Menu item consolidated into SDK Setup Wizard
+        // [MenuItem("IntelliVerse-X SDK/Friends/Add Friends UI to Scene", false, 101)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Features tab
         public static void AddFriendsUIToScene()
         {
             // Check if Friends UI already exists
@@ -147,7 +149,8 @@ namespace IntelliVerseX.Social.Editor
             Debug.Log("[IVXFriends] Added Friends UI to current scene. Call IVXFriendsPanel.Instance.Open() to show it.");
         }
 
-        [MenuItem("Tools/IntelliVerse-X/Regenerate Friends Prefabs", false, 102)]
+        // [MenuItem("IntelliVerse-X SDK/Friends/Regenerate Friends Prefabs", false, 102)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Features tab
         public static void RegeneratePrefabs()
         {
             string prefabsPath = "Assets/_IntelliVerseXSDK/Social/Prefabs";
@@ -157,7 +160,8 @@ namespace IntelliVerseX.Social.Editor
                 $"Friends prefabs have been regenerated at:\n{prefabsPath}", "OK");
         }
 
-        [MenuItem("Tools/IntelliVerse-X/Create Friends Demo Scene", false, 103)]
+        // [MenuItem("IntelliVerse-X SDK/Friends/Create Friends Demo Scene", false, 103)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Test Scenes tab
         public static void CreateFriendsDemoSceneMenuItem()
         {
             CreateFriendsDemoScene();

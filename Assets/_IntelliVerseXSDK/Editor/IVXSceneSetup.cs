@@ -29,7 +29,10 @@ namespace IntelliVerseX.Editor
 
         #region Menu Items
 
-        [MenuItem("IntelliVerseX/Scene Setup/Setup Current Scene (Full)", false, 100)]
+        // REMOVED: Menu items consolidated into SDK Setup Wizard
+        // [MenuItem("IntelliVerse-X SDK/Scene Setup/Setup Current Scene (Full)", false, 100)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Core tab
+        
         public static void SetupCurrentSceneFull()
         {
             var scene = EditorSceneManager.GetActiveScene();
@@ -42,20 +45,23 @@ namespace IntelliVerseX.Editor
             SetupScene(scene, SceneSetupOptions.Full);
         }
 
-        [MenuItem("IntelliVerseX/Scene Setup/Setup Current Scene (Minimal)", false, 101)]
+        // [MenuItem("IntelliVerse-X SDK/Scene Setup/Setup Current Scene (Minimal)", false, 101)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Core tab
         public static void SetupCurrentSceneMinimal()
         {
             var scene = EditorSceneManager.GetActiveScene();
             SetupScene(scene, SceneSetupOptions.Minimal);
         }
 
-        [MenuItem("IntelliVerseX/Scene Setup/Create Intro Scene", false, 150)]
+        // [MenuItem("IntelliVerse-X SDK/Scene Setup/Create Intro Scene", false, 150)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Test Scenes tab
         public static void CreateIntroScene()
         {
             CreateIntroSceneFromTemplate();
         }
 
-        [MenuItem("IntelliVerseX/Scene Setup/Verify Scene Setup", false, 200)]
+        // [MenuItem("IntelliVerse-X SDK/Scene Setup/Verify Scene Setup", false, 200)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Core tab
         public static void VerifyCurrentSceneSetup()
         {
             var scene = EditorSceneManager.GetActiveScene();

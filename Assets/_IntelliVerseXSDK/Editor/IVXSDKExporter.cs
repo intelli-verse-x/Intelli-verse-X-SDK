@@ -170,7 +170,7 @@ namespace IntelliVerseX.Editor
 
         #region Menu Items
 
-        [MenuItem("IntelliVerseX/Export SDK/Export Wizard", false, 500)]
+        [MenuItem("IntelliVerse-X SDK/Export SDK/Export Wizard", false, 500)]
         public static void ShowWindow()
         {
             var window = GetWindow<IVXSDKExporter>("SDK Exporter");
@@ -178,7 +178,7 @@ namespace IntelliVerseX.Editor
             window.Show();
         }
 
-        [MenuItem("IntelliVerseX/Export SDK/Check Export Dependencies", false, 501)]
+        [MenuItem("IntelliVerse-X SDK/Export SDK/Check Export Dependencies", false, 501)]
         public static void CheckDependenciesMenu()
         {
             var result = CheckAllDependencies();

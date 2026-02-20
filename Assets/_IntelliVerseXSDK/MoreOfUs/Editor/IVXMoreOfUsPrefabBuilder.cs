@@ -40,7 +40,9 @@ namespace IntelliVerseX.MoreOfUs.Editor
 
         #region Menu Items
 
-        [MenuItem("IntelliVerseX/More Of Us/Build All Prefabs", priority = 100)]
+        // REMOVED: Menu items consolidated into SDK Setup Wizard
+        // [MenuItem("IntelliVerse-X SDK/More Of Us/Build All Prefabs", priority = 100)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > More Of Us tab
         public static void BuildAllPrefabs()
         {
             string savePath = GetWritablePrefabPath();
@@ -54,7 +56,8 @@ namespace IntelliVerseX.MoreOfUs.Editor
             EditorUtility.DisplayDialog("Success", $"More Of Us prefabs created in:\n{savePath}", "OK");
         }
 
-        [MenuItem("IntelliVerseX/More Of Us/Build App Card Prefab", priority = 101)]
+        // [MenuItem("IntelliVerse-X SDK/More Of Us/Build App Card Prefab", priority = 101)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > More Of Us tab
         public static void BuildAppCardPrefabMenu()
         {
             string savePath = GetWritablePrefabPath();
@@ -63,7 +66,8 @@ namespace IntelliVerseX.MoreOfUs.Editor
             AssetDatabase.Refresh();
         }
 
-        [MenuItem("IntelliVerseX/More Of Us/Build Canvas Prefab", priority = 102)]
+        // [MenuItem("IntelliVerse-X SDK/More Of Us/Build Canvas Prefab", priority = 102)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > More Of Us tab
         public static void BuildCanvasPrefabMenu()
         {
             string savePath = GetWritablePrefabPath();
@@ -72,7 +76,8 @@ namespace IntelliVerseX.MoreOfUs.Editor
             AssetDatabase.Refresh();
         }
 
-        [MenuItem("IntelliVerseX/More Of Us/Add To Current Scene", priority = 200)]
+        // [MenuItem("IntelliVerse-X SDK/More Of Us/Add To Current Scene", priority = 200)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > More Of Us tab
         public static void AddToCurrentScene()
         {
             // Try to find existing prefab

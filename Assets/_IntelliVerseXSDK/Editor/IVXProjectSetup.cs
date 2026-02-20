@@ -20,7 +20,7 @@ namespace IntelliVerseX.Editor
     {
         #region Constants
         
-        private const string SDK_VERSION = "3.0.0";
+        private const string SDK_VERSION = "4.0.0";
         private const string PREFS_SETUP_COMPLETE = "IVX_ProjectSetupComplete";
         private const string PREFS_SETUP_VERSION = "IVX_ProjectSetupVersion";
         
@@ -78,15 +78,11 @@ namespace IntelliVerseX.Editor
         
         #region Menu Items
         
-        [MenuItem("IntelliVerseX/Project Setup && Validation", priority = 10)]
-        public static void ShowWindow()
-        {
-            var window = GetWindow<IVXProjectSetup>("IVX Project Setup");
-            window.minSize = new Vector2(650, 550);
-            window.Show();
-        }
+        // REMOVED: Menu items consolidated into SDK Setup Wizard
+        // [MenuItem("IntelliVerse-X SDK/Project Setup && Validation", priority = 10)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Platform Validation tab
         
-        [MenuItem("IntelliVerseX/Quick Validate", priority = 11)]
+        // [MenuItem("IntelliVerse-X SDK/Quick Validate", priority = 11)]
         public static void QuickValidate()
         {
             var results = RunValidation();
@@ -690,16 +686,17 @@ namespace IntelliVerseX.Editor
                     {
                         if (EditorUtility.DisplayDialog("IntelliVerseX SDK",
                             "Welcome to IntelliVerseX SDK!\n\n" +
-                            "Would you like to run the Project Setup wizard now?\n\n" +
+                            "Would you like to run the SDK Setup Wizard now?\n\n" +
                             "This will configure your project with the required settings.",
                             "Run Setup", "Later"))
                         {
-                            ShowWindow();
+                            // Open the unified SDK Setup Wizard
+                            IVXSDKSetupWizard.ShowWindow();
                         }
                     }
                     else if (setupVersion != SDK_VERSION)
                     {
-                        Debug.Log($"[IVX] SDK updated to {SDK_VERSION}. Run IntelliVerseX > Project Setup to apply new settings.");
+                        Debug.Log($"[IVX] SDK updated to {SDK_VERSION}. Run IntelliVerse-X SDK > SDK Setup Wizard to apply new settings.");
                     }
                 };
             }

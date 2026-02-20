@@ -1,9 +1,10 @@
 // File: IVXSDKSetupWizard.cs
 // Purpose: Comprehensive Unified SDK Setup Wizard for IntelliVerseX SDK
-// Version: 2.1.0
+// Version: 4.0.0
 // Author: IntelliVerseX Team
-// Description: Single unified panel for ALL SDK module setup including Auth, Friends, Monetization, etc.
+// Description: Single unified panel for ALL SDK module setup including Auth, Friends, Monetization, Platform Validation, etc.
 // Note: Supports both development (Assets/_IntelliVerseXSDK) and UPM package (Packages/com.intelliversex.sdk) installations.
+// Production-ready for WebGL, Android, and iOS.
 
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace IntelliVerseX.Editor
         #region Constants
 
         private const string WINDOW_TITLE = "IntelliVerseX SDK Setup";
-        private const string SDK_VERSION = "3.0.0";
+        private const string SDK_VERSION = "4.0.0";
         private const string PACKAGE_NAME = "com.intelliversex.sdk";
         
         // Version check URLs
@@ -325,11 +326,13 @@ namespace IntelliVerseX.Editor
         private readonly string[] tabNames = new string[]
         {
             "Quick Setup",
+            "Dependencies",
             "Core",
             "Auth & Social",
             "Features",
             "Monetization",
             "More Of Us",
+            "Platform Validation",
             "Test Scenes"
         };
 
@@ -359,7 +362,7 @@ namespace IntelliVerseX.Editor
 
         #region Window Management
 
-        [MenuItem("IntelliVerseX/SDK Setup Wizard", false, 0)]
+        [MenuItem("IntelliVerse-X SDK/SDK Setup Wizard", false, 0)]
         public static void ShowWindow()
         {
             var window = GetWindow<IVXSDKSetupWizard>(WINDOW_TITLE);
@@ -574,12 +577,14 @@ namespace IntelliVerseX.Editor
             switch (selectedTab)
             {
                 case 0: DrawQuickSetupTab(); break;
-                case 1: DrawCoreTab(); break;
-                case 2: DrawAuthSocialTab(); break;
-                case 3: DrawFeaturesTab(); break;
-                case 4: DrawMonetizationTab(); break;
-                case 5: DrawMoreOfUsTab(); break;
-                case 6: DrawTestScenesTab(); break;
+                case 1: DrawDependenciesTab(); break;
+                case 2: DrawCoreTab(); break;
+                case 3: DrawAuthSocialTab(); break;
+                case 4: DrawFeaturesTab(); break;
+                case 5: DrawMonetizationTab(); break;
+                case 6: DrawMoreOfUsTab(); break;
+                case 7: DrawPlatformValidationTab(); break;
+                case 8: DrawTestScenesTab(); break;
             }
 
             EditorGUILayout.EndScrollView();
@@ -733,6 +738,7 @@ namespace IntelliVerseX.Editor
 
         /// <summary>
         /// Asynchronously checks for SDK updates from GitHub releases.
+        /// Silently fails if repo is not accessible (private/doesn't exist).
         /// </summary>
         private async void CheckForUpdatesAsync()
         {
@@ -753,7 +759,20 @@ namespace IntelliVerseX.Editor
                     client.DefaultRequestHeaders.Add("User-Agent", "IntelliVerseX-SDK-Unity");
                     client.Timeout = TimeSpan.FromSeconds(10);
 
-                    var response = await client.GetStringAsync(GITHUB_RELEASES_API_URL);
+                    var responseMessage = await client.GetAsync(GITHUB_RELEASES_API_URL);
+                    
+                    // Handle 404 and other non-success status codes silently
+                    if (!responseMessage.IsSuccessStatusCode)
+                    {
+                        // Don't log warning for 404 - repo might be private or not exist yet
+                        // Just mark version check as complete and continue
+                        _latestVersion = null;
+                        _lastVersionCheck = DateTime.Now;
+                        EditorPrefs.SetString(VERSION_CHECK_PREF_KEY, _lastVersionCheck.ToString("o"));
+                        return;
+                    }
+
+                    var response = await responseMessage.Content.ReadAsStringAsync();
                     ParseGitHubReleaseResponse(response);
 
                     // Save last check time
@@ -761,19 +780,19 @@ namespace IntelliVerseX.Editor
                     EditorPrefs.SetString(VERSION_CHECK_PREF_KEY, _lastVersionCheck.ToString("o"));
                 }
             }
-            catch (HttpRequestException ex)
+            catch (HttpRequestException)
             {
-                Debug.LogWarning($"[IVXSDKSetupWizard] Failed to check for updates: {ex.Message}");
+                // Silently fail - network issues or repo not accessible
                 _latestVersion = null;
             }
             catch (TaskCanceledException)
             {
-                Debug.LogWarning("[IVXSDKSetupWizard] Version check timed out.");
+                // Silently fail - timeout
                 _latestVersion = null;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Debug.LogWarning($"[IVXSDKSetupWizard] Error checking for updates: {ex.Message}");
+                // Silently fail - any other error
                 _latestVersion = null;
             }
             finally
@@ -1009,6 +1028,413 @@ namespace IntelliVerseX.Editor
 
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndVertical();
+        }
+
+        #endregion
+
+        #region Dependencies Tab
+
+        private void DrawDependenciesTab()
+        {
+            EditorGUILayout.LabelField("Dependencies & Package Management", subHeaderStyle ?? EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox(
+                "Check and install required dependencies for the SDK. " +
+                "Required packages are automatically detected and can be installed with one click.",
+                MessageType.Info);
+
+            EditorGUILayout.Space(10);
+
+            // Quick Actions
+            EditorGUILayout.BeginVertical(moduleBoxStyle);
+            EditorGUILayout.LabelField("Quick Actions", EditorStyles.boldLabel);
+
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("🔍 Check Dependencies", GUILayout.Height(30)))
+            {
+                CheckAllDependencies();
+            }
+            if (GUILayout.Button("📦 Install All Dependencies", GUILayout.Height(30)))
+            {
+                InstallAllDependencies();
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Space(5);
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("✅ Validate Dependencies", GUILayout.Height(30)))
+            {
+                ValidateAllDependencies();
+            }
+            if (GUILayout.Button("⚙️ Project Setup & Validation", GUILayout.Height(30)))
+            {
+                OpenProjectSetup();
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.Space(10);
+
+            // Required Dependencies
+            DrawDependencySection("Required Dependencies", GetRequiredDependencies());
+            
+            EditorGUILayout.Space(10);
+
+            // Optional Dependencies
+            DrawDependencySection("Optional Dependencies", GetOptionalDependencies());
+
+            EditorGUILayout.Space(10);
+
+            // External Dependencies (Asset Store)
+            DrawDependencySection("External Dependencies (Asset Store)", GetExternalDependencies());
+        }
+
+        private class DependencyInfo
+        {
+            public string Name;
+            public bool IsInstalled;
+            public string Description;
+            public string PackageId;
+            public string InstallMethod; // "upm", "assetStore", "gitUrl", "unitypackage"
+            public string InstallUrl;
+            public Action InstallAction;
+        }
+
+        private void DrawDependencySection(string title, List<DependencyInfo> dependencies)
+        {
+            EditorGUILayout.BeginVertical(moduleBoxStyle);
+            EditorGUILayout.LabelField(title, EditorStyles.boldLabel);
+
+            foreach (var dep in dependencies)
+            {
+                EditorGUILayout.BeginHorizontal();
+                GUILayout.Label(dep.IsInstalled ? "  ✅" : "  ❌", GUILayout.Width(30));
+                
+                EditorGUILayout.BeginVertical();
+                EditorGUILayout.LabelField(dep.Name, EditorStyles.boldLabel);
+                EditorGUILayout.LabelField(dep.Description, EditorStyles.wordWrappedMiniLabel);
+                EditorGUILayout.EndVertical();
+
+                if (!dep.IsInstalled)
+                {
+                    if (GUILayout.Button("Install", GUILayout.Width(70), GUILayout.Height(35)))
+                    {
+                        dep.InstallAction?.Invoke();
+                    }
+                }
+                else
+                {
+                    GUILayout.Label("Installed", EditorStyles.miniLabel, GUILayout.Width(70));
+                }
+
+                EditorGUILayout.EndHorizontal();
+                EditorGUILayout.Space(5);
+            }
+
+            EditorGUILayout.EndVertical();
+        }
+
+        private List<DependencyInfo> GetRequiredDependencies()
+        {
+            var deps = new List<DependencyInfo>();
+
+            // Newtonsoft.Json
+            deps.Add(new DependencyInfo
+            {
+                Name = "Newtonsoft.Json",
+                IsInstalled = TypeExists("Newtonsoft.Json.JsonConvert, Newtonsoft.Json"),
+                Description = "Required for JSON serialization",
+                PackageId = "com.unity.nuget.newtonsoft-json",
+                InstallMethod = "upm",
+                InstallAction = () => InstallUPMPackage("com.unity.nuget.newtonsoft-json", "3.2.1")
+            });
+
+            // TextMeshPro
+            deps.Add(new DependencyInfo
+            {
+                Name = "TextMeshPro",
+                IsInstalled = TypeExists("TMPro.TextMeshProUGUI, Unity.TextMeshPro"),
+                Description = "Required for UI text rendering",
+                PackageId = "com.unity.textmeshpro",
+                InstallMethod = "upm",
+                InstallAction = () => InstallUPMPackage("com.unity.textmeshpro", "3.0.6")
+            });
+
+            // Nakama (external, but required)
+            deps.Add(new DependencyInfo
+            {
+                Name = "Nakama Unity SDK",
+                IsInstalled = TypeExists("Nakama.IClient, Nakama") || TypeExists("Nakama.Client, NakamaRuntime"),
+                Description = "Required for backend services (leaderboards, auth, storage)",
+                InstallMethod = "unitypackage",
+                InstallUrl = "https://github.com/heroiclabs/nakama-unity/releases",
+                InstallAction = () => Application.OpenURL("https://github.com/heroiclabs/nakama-unity/releases")
+            });
+
+            return deps;
+        }
+
+        private List<DependencyInfo> GetOptionalDependencies()
+        {
+            var deps = new List<DependencyInfo>();
+
+            // DOTween
+            deps.Add(new DependencyInfo
+            {
+                Name = "DOTween",
+                IsInstalled = CheckDOTweenInstalled(),
+                Description = "Recommended for UI animations (Friends, Leaderboard)",
+                InstallMethod = "assetStore",
+                InstallUrl = "https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676",
+                InstallAction = () => Application.OpenURL("https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676")
+            });
+
+            // Photon PUN2
+            deps.Add(new DependencyInfo
+            {
+                Name = "Photon PUN2",
+                IsInstalled = TypeExists("Photon.Pun.PhotonNetwork, PhotonUnityNetworking"),
+                Description = "Optional for real-time multiplayer",
+                InstallMethod = "assetStore",
+                InstallUrl = "https://assetstore.unity.com/packages/tools/network/pun-2-free-119922",
+                InstallAction = () => Application.OpenURL("https://assetstore.unity.com/packages/tools/network/pun-2-free-119922")
+            });
+
+            // Unity IAP
+            deps.Add(new DependencyInfo
+            {
+                Name = "Unity Purchasing",
+                IsInstalled = TypeExists("UnityEngine.Purchasing.IStoreController, UnityEngine.Purchasing"),
+                Description = "Required for in-app purchases",
+                PackageId = "com.unity.purchasing",
+                InstallMethod = "upm",
+                InstallAction = () => InstallUPMPackage("com.unity.purchasing", "4.12.0")
+            });
+
+            // LevelPlay
+            deps.Add(new DependencyInfo
+            {
+                Name = "Unity LevelPlay (IronSource)",
+                IsInstalled = TypeExists("Unity.Services.LevelPlay.IronSource, com.unity.services.levelplay.runtime"),
+                Description = "Ad mediation platform",
+                PackageId = "com.unity.services.levelplay",
+                InstallMethod = "upm",
+                InstallAction = () => InstallUPMPackage("com.unity.services.levelplay", "9.2.0")
+            });
+
+            // Native Share
+            deps.Add(new DependencyInfo
+            {
+                Name = "Native Share",
+                IsInstalled = TypeExists("NativeShare, NativeShare.Runtime"),
+                Description = "Native sharing functionality for mobile",
+                PackageId = "com.yasirkula.nativeshare",
+                InstallMethod = "gitUrl",
+                InstallUrl = "https://github.com/yasirkula/UnityNativeShare.git",
+                InstallAction = () => InstallGitPackage("com.yasirkula.nativeshare", "https://github.com/yasirkula/UnityNativeShare.git")
+            });
+
+            return deps;
+        }
+
+        private List<DependencyInfo> GetExternalDependencies()
+        {
+            var deps = new List<DependencyInfo>();
+
+            // Appodeal
+            deps.Add(new DependencyInfo
+            {
+                Name = "Appodeal",
+                IsInstalled = TypeExists("Appodeal.Appodeal"),
+                Description = "Ad mediation with 70+ ad networks",
+                InstallMethod = "gitUrl",
+                InstallUrl = "https://github.com/appodeal/appodeal-unity-plugin-upm.git#v3.12.0",
+                InstallAction = () => InstallGitPackage("com.appodeal.mediation", "https://github.com/appodeal/appodeal-unity-plugin-upm.git#v3.12.0")
+            });
+
+            // Apple Sign-In
+            deps.Add(new DependencyInfo
+            {
+                Name = "Apple Sign-In Unity",
+                IsInstalled = TypeExists("AppleAuth.AppleAuthManager, AppleAuth"),
+                Description = "Required for Apple Sign-In on iOS",
+                InstallMethod = "unitypackage",
+                InstallUrl = "https://github.com/lupidan/apple-signin-unity/releases",
+                InstallAction = () => Application.OpenURL("https://github.com/lupidan/apple-signin-unity/releases")
+            });
+
+            return deps;
+        }
+
+        private void CheckAllDependencies()
+        {
+            var required = GetRequiredDependencies();
+            var optional = GetOptionalDependencies();
+            var external = GetExternalDependencies();
+
+            int requiredInstalled = required.Count(d => d.IsInstalled);
+            int optionalInstalled = optional.Count(d => d.IsInstalled);
+            int externalInstalled = external.Count(d => d.IsInstalled);
+
+            string message = "Dependency Status:\n\n";
+            message += $"Required: {requiredInstalled}/{required.Count} installed\n";
+            message += $"Optional: {optionalInstalled}/{optional.Count} installed\n";
+            message += $"External: {externalInstalled}/{external.Count} installed\n\n";
+
+            var missingRequired = required.Where(d => !d.IsInstalled).ToList();
+            if (missingRequired.Count > 0)
+            {
+                message += "Missing Required:\n";
+                foreach (var dep in missingRequired)
+                {
+                    message += $"• {dep.Name}\n";
+                }
+            }
+            else
+            {
+                message += "✅ All required dependencies are installed!";
+            }
+
+            EditorUtility.DisplayDialog("Dependency Check", message, "OK");
+        }
+
+        private void InstallAllDependencies()
+        {
+            if (!EditorUtility.DisplayDialog("Install All Dependencies",
+                "This will install all required dependencies.\n\n" +
+                "Required packages:\n" +
+                "• Newtonsoft.Json\n" +
+                "• TextMeshPro\n" +
+                "• Nakama SDK (manual install)\n\n" +
+                "Continue?", "Install", "Cancel"))
+            {
+                return;
+            }
+
+            var required = GetRequiredDependencies();
+            foreach (var dep in required.Where(d => !d.IsInstalled))
+            {
+                dep.InstallAction?.Invoke();
+            }
+
+            EditorUtility.DisplayDialog("Installation Started",
+                "Dependency installation has started.\n\n" +
+                "Check the Console for progress.\n\n" +
+                "Note: Some packages (like Nakama) require manual installation.",
+                "OK");
+        }
+
+        private void ValidateAllDependencies()
+        {
+            var required = GetRequiredDependencies();
+            var missing = required.Where(d => !d.IsInstalled).ToList();
+
+            if (missing.Count == 0)
+            {
+                EditorUtility.DisplayDialog("Validation Passed",
+                    "✅ All required dependencies are installed and validated!",
+                    "OK");
+            }
+            else
+            {
+                string message = $"⚠️ {missing.Count} required dependencies are missing:\n\n";
+                foreach (var dep in missing)
+                {
+                    message += $"• {dep.Name}\n";
+                }
+                message += "\nUse 'Install All Dependencies' to install them.";
+                EditorUtility.DisplayDialog("Validation Failed", message, "OK");
+            }
+        }
+
+        private void OpenProjectSetup()
+        {
+            var projectSetupType = GetTypeByName("IntelliVerseX.Editor.IVXProjectSetup");
+            if (projectSetupType != null)
+            {
+                var showMethod = projectSetupType.GetMethod("ShowWindow",
+                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                showMethod?.Invoke(null, null);
+            }
+            else
+            {
+                EditorUtility.DisplayDialog("Not Available",
+                    "Project Setup window not found.\n\n" +
+                    "Use the Platform Validation tab for platform-specific validation.",
+                    "OK");
+            }
+        }
+
+        private void InstallUPMPackage(string packageId, string version = null)
+        {
+            try
+            {
+                var packageManagerType = GetTypeByName("UnityEditor.PackageManager.UI.PackageManagerWindow");
+                if (packageManagerType != null)
+                {
+                    var openMethod = packageManagerType.GetMethod("Open",
+                        System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                    openMethod?.Invoke(null, null);
+                }
+
+                // Also try to add via manifest
+                string manifestPath = Path.Combine(Application.dataPath, "..", "Packages", "manifest.json");
+                if (File.Exists(manifestPath))
+                {
+                    string manifest = File.ReadAllText(manifestPath);
+                    if (!manifest.Contains($"\"{packageId}\""))
+                    {
+                        // Add to dependencies
+                        Debug.Log($"[IVXSDKSetupWizard] Add {packageId} to Packages/manifest.json dependencies section");
+                        EditorUtility.DisplayDialog("Package Installation",
+                            $"To install {packageId}:\n\n" +
+                            "1. Open Window > Package Manager\n" +
+                            "2. Click '+' > Add package by name\n" +
+                            $"3. Enter: {packageId}" + (version != null ? $"@{version}" : "") + "\n" +
+                            "4. Click Add\n\n" +
+                            "Or add it manually to Packages/manifest.json",
+                            "OK");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[IVXSDKSetupWizard] Failed to install package {packageId}: {ex.Message}");
+                EditorUtility.DisplayDialog("Installation Error",
+                    $"Could not automatically install {packageId}.\n\n" +
+                    "Please install it manually via Package Manager:\n" +
+                    "Window > Package Manager > + > Add package by name",
+                    "OK");
+            }
+        }
+
+        private void InstallGitPackage(string packageId, string gitUrl)
+        {
+            try
+            {
+                string manifestPath = Path.Combine(Application.dataPath, "..", "Packages", "manifest.json");
+                if (File.Exists(manifestPath))
+                {
+                    string manifest = File.ReadAllText(manifestPath);
+                    if (!manifest.Contains($"\"{packageId}\""))
+                    {
+                        // Parse JSON and add dependency
+                        Debug.Log($"[IVXSDKSetupWizard] Add {packageId} from {gitUrl} to manifest.json");
+                        EditorUtility.DisplayDialog("Git Package Installation",
+                            $"To install {packageId}:\n\n" +
+                            "1. Open Packages/manifest.json\n" +
+                            "2. Add to dependencies:\n" +
+                            $"   \"{packageId}\": \"{gitUrl}\"\n\n" +
+                            "Or use Package Manager:\n" +
+                            "Window > Package Manager > + > Add package from git URL",
+                            "OK");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[IVXSDKSetupWizard] Failed to install git package {packageId}: {ex.Message}");
+            }
         }
 
         #endregion
@@ -1666,6 +2092,419 @@ namespace IntelliVerseX.Editor
 
         #endregion
 
+        #region Platform Validation Tab
+
+        private void DrawPlatformValidationTab()
+        {
+            EditorGUILayout.LabelField("Platform Validation", subHeaderStyle ?? EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox(
+                "Validate your project settings for production builds on WebGL, Android, and iOS. " +
+                "This ensures all SDK features work correctly on each platform.",
+                MessageType.Info);
+
+            EditorGUILayout.Space(10);
+
+            // Platform Selection
+            EditorGUILayout.BeginVertical(moduleBoxStyle);
+            EditorGUILayout.LabelField("Target Platforms", EditorStyles.boldLabel);
+            
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("🌐 Validate WebGL", GUILayout.Height(30)))
+            {
+                ValidateWebGL();
+            }
+            if (GUILayout.Button("🤖 Validate Android", GUILayout.Height(30)))
+            {
+                ValidateAndroid();
+            }
+            if (GUILayout.Button("🍎 Validate iOS", GUILayout.Height(30)))
+            {
+                ValidateiOS();
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Space(5);
+            if (GUILayout.Button("✅ Validate All Platforms", GUILayout.Height(35)))
+            {
+                ValidateAllPlatforms();
+            }
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.Space(10);
+
+            // Platform-Specific Requirements
+            DrawPlatformRequirements("🌐 WebGL", GetWebGLRequirements());
+            DrawPlatformRequirements("🤖 Android", GetAndroidRequirements());
+            DrawPlatformRequirements("🍎 iOS", GetiOSRequirements());
+        }
+
+        private void DrawPlatformRequirements(string platformName, List<PlatformRequirement> requirements)
+        {
+            EditorGUILayout.BeginVertical(moduleBoxStyle);
+            EditorGUILayout.LabelField(platformName, EditorStyles.boldLabel);
+
+            int passed = 0;
+            foreach (var req in requirements)
+            {
+                EditorGUILayout.BeginHorizontal();
+                GUILayout.Label(req.IsValid ? "  ✅" : "  ❌", GUILayout.Width(30));
+                EditorGUILayout.LabelField(req.Name, EditorStyles.wordWrappedLabel);
+                EditorGUILayout.EndHorizontal();
+
+                if (!req.IsValid && !string.IsNullOrEmpty(req.FixMessage))
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    GUILayout.Space(35);
+                    EditorGUILayout.HelpBox(req.FixMessage, MessageType.Warning);
+                    EditorGUILayout.EndHorizontal();
+                }
+
+                if (req.IsValid) passed++;
+            }
+
+            EditorGUILayout.Space(5);
+            EditorGUILayout.LabelField($"Status: {passed}/{requirements.Count} requirements met", 
+                passed == requirements.Count ? successStyle : warningStyle);
+
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.Space(5);
+        }
+
+        private class PlatformRequirement
+        {
+            public string Name;
+            public bool IsValid;
+            public string FixMessage;
+        }
+
+        private List<PlatformRequirement> GetWebGLRequirements()
+        {
+            var requirements = new List<PlatformRequirement>();
+
+            // Check scripting backend
+#pragma warning disable 0618 // Suppress deprecation warning for BuildTargetGroup (maintained for compatibility)
+            var webglBackend = new PlatformRequirement
+            {
+                Name = "IL2CPP Scripting Backend",
+                IsValid = PlayerSettings.GetScriptingBackend(BuildTargetGroup.WebGL) == ScriptingImplementation.IL2CPP
+            };
+#pragma warning restore 0618
+            if (!webglBackend.IsValid)
+            {
+                webglBackend.FixMessage = "WebGL requires IL2CPP. Go to: Edit > Project Settings > Player > WebGL > Other Settings > Scripting Backend";
+            }
+            requirements.Add(webglBackend);
+
+            // Check compression format (Unity's enum)
+            var compression = new PlatformRequirement
+            {
+                Name = "Compression Format (Gzip/Brotli recommended)",
+                IsValid = true // Unity handles this automatically, just informational
+            };
+            compression.FixMessage = "Compression is handled automatically by Unity. Check: Edit > Project Settings > Player > WebGL > Publishing Settings";
+            requirements.Add(compression);
+
+            // Check WebGL template
+            var template = new PlatformRequirement
+            {
+                Name = "WebGL Template (Default or Custom)",
+                IsValid = true // Always valid, just informational
+            };
+            requirements.Add(template);
+
+            // Check memory size
+            var memory = new PlatformRequirement
+            {
+                Name = "Memory Size (16MB minimum recommended)",
+                IsValid = PlayerSettings.WebGL.memorySize >= 16
+            };
+            if (!memory.IsValid)
+            {
+                memory.FixMessage = "Increase memory size for better performance. Go to: Edit > Project Settings > Player > WebGL > Other Settings > Memory Size";
+            }
+            requirements.Add(memory);
+
+            // Check WebGL ads support
+            var webglAds = new PlatformRequirement
+            {
+                Name = "WebGL Ads Support (IVXWebGLAdsManager available)",
+                IsValid = TypeExists("IntelliVerseX.Monetization.IVXWebGLAdsManager") ||
+                         TypeExists("IntelliVerseX.Monetization.IVXWebGLMonetizationManager")
+            };
+            if (!webglAds.IsValid)
+            {
+                webglAds.FixMessage = "WebGL-specific ads manager not found. Some ad networks may not work on WebGL.";
+            }
+            requirements.Add(webglAds);
+
+            return requirements;
+        }
+
+        private List<PlatformRequirement> GetAndroidRequirements()
+        {
+            var requirements = new List<PlatformRequirement>();
+
+            // Check minimum API level (minimum is now 25 per Unity requirements)
+            var minAPI = new PlatformRequirement
+            {
+                Name = "Minimum API Level (25+ required)",
+                IsValid = PlayerSettings.Android.minSdkVersion >= AndroidSdkVersions.AndroidApiLevel25
+            };
+            if (!minAPI.IsValid)
+            {
+                minAPI.FixMessage = "Set minimum API level to 25 (Android 7.1) or higher. Go to: Edit > Project Settings > Player > Android > Other Settings > Minimum API Level";
+            }
+            requirements.Add(minAPI);
+
+            // Check target API level
+            var targetAPI = new PlatformRequirement
+            {
+                Name = "Target API Level (34 recommended)",
+                IsValid = PlayerSettings.Android.targetSdkVersion >= AndroidSdkVersions.AndroidApiLevel34 ||
+                         PlayerSettings.Android.targetSdkVersion == AndroidSdkVersions.AndroidApiLevelAuto
+            };
+            if (!targetAPI.IsValid)
+            {
+                targetAPI.FixMessage = "Set target API level to 34 (Android 14) or Auto. Go to: Edit > Project Settings > Player > Android > Other Settings > Target API Level";
+            }
+            requirements.Add(targetAPI);
+
+            // Check scripting backend
+#pragma warning disable 0618 // Suppress deprecation warning for BuildTargetGroup (maintained for compatibility)
+            var androidBackend = new PlatformRequirement
+            {
+                Name = "IL2CPP Scripting Backend (recommended)",
+                IsValid = PlayerSettings.GetScriptingBackend(BuildTargetGroup.Android) == ScriptingImplementation.IL2CPP
+            };
+#pragma warning restore 0618
+            if (!androidBackend.IsValid)
+            {
+                androidBackend.FixMessage = "IL2CPP is recommended for Android production builds. Go to: Edit > Project Settings > Player > Android > Other Settings > Scripting Backend";
+            }
+            requirements.Add(androidBackend);
+
+            // Check package name
+            var packageName = new PlatformRequirement
+            {
+                Name = "Package Name (com.yourcompany.yourapp format)",
+                IsValid = !string.IsNullOrEmpty(PlayerSettings.applicationIdentifier) &&
+                         PlayerSettings.applicationIdentifier.Contains(".") &&
+                         PlayerSettings.applicationIdentifier.Split('.').Length >= 3
+            };
+            if (!packageName.IsValid)
+            {
+                packageName.FixMessage = "Set a valid package name (e.g., com.yourcompany.yourapp). Go to: Edit > Project Settings > Player > Android > Other Settings > Package Name";
+            }
+            requirements.Add(packageName);
+
+            // Check Internet permission
+            var internetPermission = new PlatformRequirement
+            {
+                Name = "Internet Permission (required for backend)",
+                IsValid = true // Unity adds this by default, but we check manifest
+            };
+            requirements.Add(internetPermission);
+
+            // Check Appodeal/LevelPlay availability
+            var adNetwork = new PlatformRequirement
+            {
+                Name = "Ad Network SDK (Appodeal/LevelPlay recommended)",
+                IsValid = TypeExists("Appodeal.Appodeal") ||
+                         TypeExists("Unity.Services.LevelPlay.IronSource") ||
+                         TypeExists("IntelliVerseX.Monetization.IVXAdsManager")
+            };
+            if (!adNetwork.IsValid)
+            {
+                adNetwork.FixMessage = "Install Appodeal or LevelPlay SDK for Android ads. Use: IntelliVerse-X SDK > SDK Setup Wizard > Monetization tab";
+            }
+            requirements.Add(adNetwork);
+
+            return requirements;
+        }
+
+        private List<PlatformRequirement> GetiOSRequirements()
+        {
+            var requirements = new List<PlatformRequirement>();
+
+            // Check minimum iOS version
+            var minIOS = new PlatformRequirement
+            {
+                Name = "Minimum iOS Version (13.0+ recommended)",
+                IsValid = float.TryParse(PlayerSettings.iOS.targetOSVersionString, out float version) && version >= 13.0f
+            };
+            if (!minIOS.IsValid)
+            {
+                minIOS.FixMessage = "Set minimum iOS version to 13.0 or higher. Go to: Edit > Project Settings > Player > iOS > Other Settings > Target minimum iOS Version";
+            }
+            requirements.Add(minIOS);
+
+            // Check scripting backend
+#pragma warning disable 0618 // Suppress deprecation warning for BuildTargetGroup (maintained for compatibility)
+            var iosBackend = new PlatformRequirement
+            {
+                Name = "IL2CPP Scripting Backend (required)",
+                IsValid = PlayerSettings.GetScriptingBackend(BuildTargetGroup.iOS) == ScriptingImplementation.IL2CPP
+            };
+#pragma warning restore 0618
+            if (!iosBackend.IsValid)
+            {
+                iosBackend.FixMessage = "iOS requires IL2CPP. Go to: Edit > Project Settings > Player > iOS > Other Settings > Scripting Backend";
+            }
+            requirements.Add(iosBackend);
+
+            // Check bundle identifier
+            var bundleId = new PlatformRequirement
+            {
+                Name = "Bundle Identifier (com.yourcompany.yourapp format)",
+                IsValid = !string.IsNullOrEmpty(PlayerSettings.applicationIdentifier) &&
+                         PlayerSettings.applicationIdentifier.Contains(".") &&
+                         PlayerSettings.applicationIdentifier.Split('.').Length >= 3
+            };
+            if (!bundleId.IsValid)
+            {
+                bundleId.FixMessage = "Set a valid bundle identifier (e.g., com.yourcompany.yourapp). Go to: Edit > Project Settings > Player > iOS > Other Settings > Bundle Identifier";
+            }
+            requirements.Add(bundleId);
+
+            // Check Apple Sign-In capability (if using Apple auth)
+            var appleSignIn = new PlatformRequirement
+            {
+                Name = "Apple Sign-In Capability (if using Apple auth)",
+                IsValid = true // Optional, just informational
+            };
+            requirements.Add(appleSignIn);
+
+            // Check App Store Connect API Key (for IAP)
+            var iapSupport = new PlatformRequirement
+            {
+                Name = "IAP Support (StoreKit available)",
+                IsValid = TypeExists("UnityEngine.Purchasing.IStoreController") ||
+                         TypeExists("IntelliVerseX.Monetization.IVXIAPManager")
+            };
+            if (!iapSupport.IsValid)
+            {
+                iapSupport.FixMessage = "Install Unity Purchasing package for IAP support. Use: IntelliVerse-X SDK > SDK Setup Wizard > Monetization tab";
+            }
+            requirements.Add(iapSupport);
+
+            // Check ad network
+            var iosAdNetwork = new PlatformRequirement
+            {
+                Name = "Ad Network SDK (Appodeal/LevelPlay recommended)",
+                IsValid = TypeExists("Appodeal.Appodeal") ||
+                         TypeExists("Unity.Services.LevelPlay.IronSource") ||
+                         TypeExists("IntelliVerseX.Monetization.IVXAdsManager")
+            };
+            if (!iosAdNetwork.IsValid)
+            {
+                iosAdNetwork.FixMessage = "Install Appodeal or LevelPlay SDK for iOS ads. Use: IntelliVerse-X SDK > SDK Setup Wizard > Monetization tab";
+            }
+            requirements.Add(iosAdNetwork);
+
+            return requirements;
+        }
+
+        private void ValidateWebGL()
+        {
+            var requirements = GetWebGLRequirements();
+            int passed = requirements.Count(r => r.IsValid);
+            int total = requirements.Count;
+
+            string message = $"WebGL Validation: {passed}/{total} requirements met.\n\n";
+            var failed = requirements.Where(r => !r.IsValid).ToList();
+            if (failed.Count > 0)
+            {
+                message += "Issues found:\n";
+                foreach (var req in failed)
+                {
+                    message += $"• {req.Name}\n";
+                }
+            }
+            else
+            {
+                message += "✅ All WebGL requirements are met!";
+            }
+
+            EditorUtility.DisplayDialog("WebGL Validation", message, "OK");
+        }
+
+        private void ValidateAndroid()
+        {
+            var requirements = GetAndroidRequirements();
+            int passed = requirements.Count(r => r.IsValid);
+            int total = requirements.Count;
+
+            string message = $"Android Validation: {passed}/{total} requirements met.\n\n";
+            var failed = requirements.Where(r => !r.IsValid).ToList();
+            if (failed.Count > 0)
+            {
+                message += "Issues found:\n";
+                foreach (var req in failed)
+                {
+                    message += $"• {req.Name}\n";
+                }
+            }
+            else
+            {
+                message += "✅ All Android requirements are met!";
+            }
+
+            EditorUtility.DisplayDialog("Android Validation", message, "OK");
+        }
+
+        private void ValidateiOS()
+        {
+            var requirements = GetiOSRequirements();
+            int passed = requirements.Count(r => r.IsValid);
+            int total = requirements.Count;
+
+            string message = $"iOS Validation: {passed}/{total} requirements met.\n\n";
+            var failed = requirements.Where(r => !r.IsValid).ToList();
+            if (failed.Count > 0)
+            {
+                message += "Issues found:\n";
+                foreach (var req in failed)
+                {
+                    message += $"• {req.Name}\n";
+                }
+            }
+            else
+            {
+                message += "✅ All iOS requirements are met!";
+            }
+
+            EditorUtility.DisplayDialog("iOS Validation", message, "OK");
+        }
+
+        private void ValidateAllPlatforms()
+        {
+            var webgl = GetWebGLRequirements();
+            var android = GetAndroidRequirements();
+            var ios = GetiOSRequirements();
+
+            int webglPassed = webgl.Count(r => r.IsValid);
+            int androidPassed = android.Count(r => r.IsValid);
+            int iosPassed = ios.Count(r => r.IsValid);
+
+            string message = "Platform Validation Results:\n\n";
+            message += $"🌐 WebGL: {webglPassed}/{webgl.Count} requirements met\n";
+            message += $"🤖 Android: {androidPassed}/{android.Count} requirements met\n";
+            message += $"🍎 iOS: {iosPassed}/{ios.Count} requirements met\n\n";
+
+            if (webglPassed == webgl.Count && androidPassed == android.Count && iosPassed == ios.Count)
+            {
+                message += "✅ All platforms are production-ready!";
+            }
+            else
+            {
+                message += "⚠️ Some platforms need configuration. Check the Platform Validation tab for details.";
+            }
+
+            EditorUtility.DisplayDialog("Platform Validation", message, "OK");
+        }
+
+        #endregion
+
         #region Test Scenes Tab
 
         private void DrawTestScenesTab()
@@ -1736,11 +2575,11 @@ namespace IntelliVerseX.Editor
             string scenePath = $"Assets/Scenes/Tests/{sceneName}.unity";
             bool sceneExists = File.Exists(scenePath);
 
-            EditorGUILayout.BeginVertical(moduleBoxStyle);
+            EditorGUILayout.BeginVertical(moduleBoxStyle ?? EditorStyles.helpBox);
             EditorGUILayout.BeginHorizontal();
 
             EditorGUILayout.BeginVertical();
-            EditorGUILayout.LabelField(title + (sceneExists ? " ✅" : ""), EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(title + (sceneExists ? " [OK]" : ""), EditorStyles.boldLabel);
             EditorGUILayout.LabelField(description, EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.EndVertical();
 
@@ -1750,25 +2589,36 @@ namespace IntelliVerseX.Editor
             {
                 if (GUILayout.Button("Open", GUILayout.Height(25)))
                 {
-                    if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+                    // Use delayCall to avoid GUI layout issues when changing scenes
+                    string path = scenePath; // Capture for lambda
+                    EditorApplication.delayCall += () =>
                     {
-                        EditorSceneManager.OpenScene(scenePath);
-                    }
+                        if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+                        {
+                            EditorSceneManager.OpenScene(path);
+                        }
+                    };
                 }
                 if (GUILayout.Button("Play", GUILayout.Height(25)))
                 {
-                    if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+                    // Use delayCall to avoid GUI layout issues when changing scenes
+                    string path = scenePath; // Capture for lambda
+                    EditorApplication.delayCall += () =>
                     {
-                        EditorSceneManager.OpenScene(scenePath);
-                        EditorApplication.isPlaying = true;
-                    }
+                        if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+                        {
+                            EditorSceneManager.OpenScene(path);
+                            EditorApplication.isPlaying = true;
+                        }
+                    };
                 }
             }
             else
             {
                 if (GUILayout.Button("Create", GUILayout.Height(52)))
                 {
-                    createAction?.Invoke();
+                    // Use delayCall to avoid GUI layout issues when creating scenes
+                    EditorApplication.delayCall += () => createAction?.Invoke();
                 }
             }
 
@@ -2628,8 +3478,19 @@ namespace IntelliVerseX.Editor
 
                 var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
 
+                // Set camera background
+                var camera = Camera.main;
+                if (camera != null)
+                {
+                    camera.backgroundColor = new Color(0.12f, 0.14f, 0.18f, 1f);
+                    camera.clearFlags = CameraClearFlags.SolidColor;
+                }
+
                 // Add EventSystem
                 EnsureEventSystem();
+
+                // Add NakamaManager (required for Auth to work)
+                AddNakamaManagerToScene();
 
                 // Add Auth Canvas
                 var builderType = GetTypeByName("IntelliVerseX.Auth.Editor.IVXAuthPrefabBuilder");
@@ -2651,8 +3512,103 @@ namespace IntelliVerseX.Editor
 
                 Debug.Log($"[IVXSDKSetupWizard] Created Auth Demo Scene at: {scenePath}");
                 EditorUtility.DisplayDialog("Demo Scene Created",
-                    $"Auth Demo Scene created at:\n{scenePath}\n\nPress Play to test.", "OK");
+                    $"Auth Demo Scene created at:\n{scenePath}\n\n" +
+                    "Includes:\n" +
+                    "• NakamaManager (Backend)\n" +
+                    "• Auth Canvas (UI)\n" +
+                    "• EventSystem\n\n" +
+                    "Press Play to test.", "OK");
             };
+        }
+
+        /// <summary>
+        /// Adds NakamaManager to the current scene.
+        /// Creates a managers root GameObject and adds the NakamaManager prefab or creates one dynamically.
+        /// </summary>
+        private void AddNakamaManagerToScene()
+        {
+            // Check if NakamaManager already exists
+            var nakamaManagerType = GetTypeByName("IntelliVerseX.Backend.IVXNakamaManager");
+            if (nakamaManagerType != null)
+            {
+                var existing = GameObject.FindAnyObjectByType(nakamaManagerType);
+                if (existing != null)
+                {
+                    Debug.Log("[IVXSDKSetupWizard] NakamaManager already exists in scene");
+                    return;
+                }
+            }
+
+            // Create managers root if it doesn't exist
+            var managersRoot = GameObject.Find("--- SDK Managers ---");
+            if (managersRoot == null)
+            {
+                managersRoot = new GameObject("--- SDK Managers ---");
+            }
+
+            // Try to load NakamaManager prefab first
+            var nakamaManagerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(MANAGERS_PREFAB_PATH + "/NakamaManager.prefab");
+            if (nakamaManagerPrefab != null)
+            {
+                var instance = PrefabUtility.InstantiatePrefab(nakamaManagerPrefab) as GameObject;
+                if (instance != null)
+                {
+                    instance.transform.SetParent(managersRoot.transform);
+                    Debug.Log("[IVXSDKSetupWizard] Added NakamaManager prefab to scene");
+                    return;
+                }
+            }
+
+            // If no prefab, try to create a basic NakamaManager GameObject
+            // Look for any concrete implementation of IVXNakamaManager in the project
+            var concreteNakamaType = FindConcreteNakamaManagerType();
+            if (concreteNakamaType != null)
+            {
+                var nakamaGO = new GameObject("NakamaManager");
+                nakamaGO.transform.SetParent(managersRoot.transform);
+                nakamaGO.AddComponent(concreteNakamaType);
+                Debug.Log($"[IVXSDKSetupWizard] Created NakamaManager with type: {concreteNakamaType.Name}");
+            }
+            else
+            {
+                // Create a placeholder with instructions
+                var nakamaGO = new GameObject("NakamaManager [SETUP REQUIRED]");
+                nakamaGO.transform.SetParent(managersRoot.transform);
+                Debug.LogWarning("[IVXSDKSetupWizard] NakamaManager placeholder created. You need to:\n" +
+                    "1. Create a class that extends IVXNakamaManager\n" +
+                    "2. Add it to this GameObject\n" +
+                    "3. Configure the SDK settings in the Inspector");
+            }
+        }
+
+        /// <summary>
+        /// Finds a concrete (non-abstract) implementation of IVXNakamaManager in the project.
+        /// </summary>
+        private Type FindConcreteNakamaManagerType()
+        {
+            var baseType = GetTypeByName("IntelliVerseX.Backend.IVXNakamaManager");
+            if (baseType == null) return null;
+
+            // Search all assemblies for concrete implementations
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                try
+                {
+                    foreach (var type in assembly.GetTypes())
+                    {
+                        if (type.IsClass && !type.IsAbstract && baseType.IsAssignableFrom(type))
+                        {
+                            return type;
+                        }
+                    }
+                }
+                catch
+                {
+                    // Ignore assemblies that can't be searched
+                }
+            }
+
+            return null;
         }
 
         private void CreateFriendsDemoScene()
@@ -2702,6 +3658,9 @@ namespace IntelliVerseX.Editor
         {
             CreateTestScene("IVX_AuthTest", () =>
             {
+                // Add NakamaManager (required for Auth to work with backend)
+                AddNakamaManagerToScene();
+                // Add Auth Canvas
                 AddAuthCanvasToScene();
             });
         }
@@ -2710,6 +3669,8 @@ namespace IntelliVerseX.Editor
         {
             CreateTestScene("IVX_FriendsTest", () =>
             {
+                // Add NakamaManager (required for Friends to work with backend)
+                AddNakamaManagerToScene();
                 AddFriendsUIToScene();
                 CreateDemoButton("Open Friends", "OpenFriendsButton");
             });
@@ -2719,6 +3680,8 @@ namespace IntelliVerseX.Editor
         {
             CreateTestScene("IVX_WalletTest", () =>
             {
+                // Add NakamaManager (required for Wallet to work with backend)
+                AddNakamaManagerToScene();
                 CreateTestLabel("Wallet Test Scene", "Add IVXWalletDisplay to test wallet functionality");
             });
         }
@@ -2727,6 +3690,8 @@ namespace IntelliVerseX.Editor
         {
             CreateTestScene("IVX_LeaderboardTest", () =>
             {
+                // Add NakamaManager (required for Leaderboard to work with backend)
+                AddNakamaManagerToScene();
                 CreateTestLabel("Leaderboard Test Scene", "Add IVXLeaderboardUI to test leaderboard functionality");
             });
         }

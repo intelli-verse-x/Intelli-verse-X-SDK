@@ -268,7 +268,7 @@ namespace IntelliVerseX.Monetization
         #region Constants
 
         private const string LOG_PREFIX = "[IVXWebGLMonetization]";
-        private const string VERSION = "3.0.0";
+        private const string VERSION = "4.0.0";
         private const int MAX_CALLBACK_AGE_SECONDS = 300;
 
         #endregion

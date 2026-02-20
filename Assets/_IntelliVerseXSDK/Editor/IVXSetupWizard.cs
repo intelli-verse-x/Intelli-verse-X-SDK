@@ -34,7 +34,9 @@ namespace IntelliVerseX.Editor
         private bool nakamaInstalled = false;
         private Vector2 scrollPosition;
         
-        [MenuItem("IntelliVerseX/Setup Wizard", priority = 0)]
+        // REMOVED: Duplicate menu item - use "SDK Setup Wizard" instead
+        // [MenuItem("IntelliVerse-X SDK/Setup Wizard", priority = 0)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard
         public static void ShowWizard()
         {
             var window = GetWindow<IVXSetupWizard>("SDK Setup Wizard");

@@ -106,7 +106,10 @@ namespace IntelliVerseX.Editor
 
         #region Menu Items
 
-        [MenuItem("IntelliVerseX/Prefabs/Create All Manager Prefabs", false, 200)]
+        // REMOVED: Menu items consolidated into SDK Setup Wizard
+        // [MenuItem("IntelliVerse-X SDK/Prefabs/Create All Manager Prefabs", false, 200)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Core tab
+        
         public static void CreateAllManagerPrefabs()
         {
             EnsureDirectories();
@@ -129,7 +132,8 @@ namespace IntelliVerseX.Editor
                 $"Created: {created}\nSkipped (already exist): {skipped}", "OK");
         }
 
-        [MenuItem("IntelliVerseX/Prefabs/Create NakamaManager Prefab", false, 201)]
+        // [MenuItem("IntelliVerse-X SDK/Prefabs/Create NakamaManager Prefab", false, 201)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Core tab
         public static void CreateNakamaManagerPrefab()
         {
             var def = AllPrefabs.FirstOrDefault(p => p.Name == "NakamaManager");
@@ -140,7 +144,8 @@ namespace IntelliVerseX.Editor
             }
         }
 
-        [MenuItem("IntelliVerseX/Prefabs/Create UserData Prefab", false, 202)]
+        // [MenuItem("IntelliVerse-X SDK/Prefabs/Create UserData Prefab", false, 202)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Core tab
         public static void CreateUserDataPrefab()
         {
             var def = AllPrefabs.FirstOrDefault(p => p.Name == "UserData");
@@ -151,7 +156,8 @@ namespace IntelliVerseX.Editor
             }
         }
 
-        [MenuItem("IntelliVerseX/Scene Setup/Add All Managers to Scene", false, 300)]
+        // [MenuItem("IntelliVerse-X SDK/Scene Setup/Add All Managers to Scene", false, 300)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Core tab
         public static void AddAllManagersToScene()
         {
             var managersRoot = GetOrCreateRootObject("--- SDK Managers ---");
@@ -166,14 +172,16 @@ namespace IntelliVerseX.Editor
             Debug.Log($"[IVXPrefabBuilder] Added {added} managers to scene");
         }
 
-        [MenuItem("IntelliVerseX/Scene Setup/Add NakamaManager to Scene", false, 301)]
+        // [MenuItem("IntelliVerse-X SDK/Scene Setup/Add NakamaManager to Scene", false, 301)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Core tab
         public static void AddNakamaManagerToScene()
         {
             var managersRoot = GetOrCreateRootObject("--- SDK Managers ---");
             InstantiatePrefabInScene("NakamaManager", managersRoot.transform);
         }
 
-        [MenuItem("IntelliVerseX/Scene Setup/Add UserData to Scene", false, 302)]
+        // [MenuItem("IntelliVerse-X SDK/Scene Setup/Add UserData to Scene", false, 302)]
+        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Core tab
         public static void AddUserDataToScene()
         {
             var managersRoot = GetOrCreateRootObject("--- SDK Managers ---");
