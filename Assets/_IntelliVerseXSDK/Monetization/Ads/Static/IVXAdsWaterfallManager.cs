@@ -357,16 +357,6 @@ namespace IntelliVerseX.Monetization
     }
 
     /// <summary>
-    /// Ad type enum
-    /// </summary>
-    public enum IVXAdType
-    {
-        Rewarded,
-        Interstitial,
-        Banner
-    }
-
-    /// <summary>
     /// Network performance statistics
     /// </summary>
     public class IVXNetworkStats

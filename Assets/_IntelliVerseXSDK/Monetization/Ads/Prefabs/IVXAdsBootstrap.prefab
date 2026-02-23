@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5286102426502458175
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2528487852195375941}
+  - component: {fileID: 3538306821740579265}
+  m_Layer: 0
+  m_Name: IVXAdsBootstrap
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2528487852195375941
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5286102426502458175}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3538306821740579265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5286102426502458175}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eac8de97d9cd45e4cbdb9afaa31621e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: IntelliVerseX.Monetization::IntelliVerseX.Monetization.Ads.IVXAdsBootstrap
+  configAsset: {fileID: 11400000, guid: cc4aac54f2341ef47a84bb9369a69ca8, type: 2}
+  overridePrimary: 1
+  keyAdsControlJson: ads_control_json
+  keyAbPrimary: ads_primary_network
+  remoteConfigTimeoutSeconds: 10
+  maxConsentWaitSeconds: 8
+  forceInitWithoutConsent: 1
+  preloadIntervalSeconds: 30

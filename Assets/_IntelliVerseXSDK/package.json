@@ -58,6 +58,11 @@
       "path": "Samples~/GettingStarted"
     },
     {
+      "displayName": "Test Scenes",
+      "description": "Pre-built test scenes for Ads, Auth, Leaderboard, Wallet, and Weekly Quiz",
+      "path": "Samples~/TestScenes"
+    },
+    {
       "displayName": "Authentication Demo",
       "description": "Complete authentication flow with login, register, OTP, and social auth",
       "path": "Samples~/Authentication"

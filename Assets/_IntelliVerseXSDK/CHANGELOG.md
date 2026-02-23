@@ -7,6 +7,67 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [4.0.0] - 2026-02-23
+
+### 🎯 Major Release - Production Ready SDK
+
+Complete production-ready release with enhanced authentication, ads integration, weekly quiz system, and test scenes.
+
+### Added
+
+#### Authentication Module Enhancements
+- **IVXPanelForgotPassword** - Complete forgot password UI panel with email validation
+- **IVXPanelReferral** - Referral code entry and validation panel
+- **IVXAuthSceneBuilder** - Editor tool for creating complete auth test scenes
+
+#### Weekly Quiz System (New Module)
+- **IVXWeeklyQuizManager** - Complete weekly quiz management with timer support
+- **IVXWeeklyQuizService** - Backend service integration for quiz data
+- **IVXWeeklyQuizDataModels** - Data models for quiz questions, categories, prizes
+- **IVXWeeklyQuizPrefabBuilder** - Editor tool for creating quiz UI prefabs
+- **IVXWeeklyQuizTestController** - Test controller for demo scenes
+
+#### Ads System
+- **IVXAdsTestController** - Comprehensive ads testing controller
+- **IVXAdsBootstrap** prefab - Ready-to-use ads initialization prefab
+- **IVXAdsTestUI** prefab - Complete UI for testing all ad types
+
+#### Test Scenes (Importable Samples)
+- **IVX_AdsTest** - Complete ads integration test scene
+- **IVX_AuthTest** - Authentication flow test scene
+- **IVX_LeaderboardTest** - Leaderboard integration test scene
+- **IVX_WalletTest** - Wallet/IAP test scene
+- **IVX_WeeklyQuizTest** - Weekly quiz system test scene
+
+#### Prefabs
+- **NakamaManager** prefab - Pre-configured Nakama backend manager
+
+### Changed
+
+- Updated all Auth UI panels with improved validation and edge case handling
+- Enhanced IVXAdsWaterfallManager with better ad network fallback logic
+- Improved IVXGeolocationService with error handling
+- Updated assembly definitions for better modularity
+
+### Fixed
+
+- Auth canvas panel transitions and state management
+- OTP panel auto-focus and resend cooldown edge cases
+- Registration panel validation messaging
+- Login panel social auth button states
+
+### Installation
+
+```json
+{
+  "dependencies": {
+    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v4.0.0"
+  }
+}
+```
+
+---
+
 ## [3.0.1] - 2026-01-24
 
 ### Fixed

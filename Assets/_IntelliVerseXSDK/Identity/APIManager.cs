@@ -2215,6 +2215,261 @@ Do not include any other top-level keys. Do not include code fences.";
 
     #endregion
 
+    #region Auth V2: Forgot Password
+
+    // === Endpoints ===
+    public static string ForgotPasswordUrl = "https://api.intelli-verse-x.ai/api/user/auth_v_2/forgot-password";
+    public static string ResetPasswordUrl = "https://api.intelli-verse-x.ai/api/user/auth_v_2/reset-password";
+
+    // === DTOs ===
+    [Serializable]
+    public class ForgotPasswordRequest
+    {
+        public string email;
+    }
+
+    [Serializable]
+    public class ForgotPasswordResponse
+    {
+        public bool status;
+        public string message;
+    }
+
+    [Serializable]
+    public class ResetPasswordRequest
+    {
+        public string email;
+        public string otp;
+        public string newPassword;
+    }
+
+    [Serializable]
+    public class ResetPasswordResponse
+    {
+        public bool status;
+        public string message;
+    }
+
+    /// <summary>
+    /// Request a password reset OTP to be sent to the user's email.
+    /// </summary>
+    public static async Task<ForgotPasswordResponse> ForgotPasswordAsync(
+        string email,
+        CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            throw new ArgumentException("Email is required.", nameof(email));
+        if (!IsValidEmail(email))
+            throw new ArgumentException("Email format is invalid.", nameof(email));
+
+        var request = new ForgotPasswordRequest { email = email.Trim().ToLowerInvariant() };
+        string bodyJson = JsonUtility.ToJson(request);
+        string maskedJson = MaskSensitiveFields(bodyJson, new[] { "email" });
+
+        PrintCurl("POST", ForgotPasswordUrl,
+            new Dictionary<string, string> {
+                { "accept", "*/*" },
+                { "Content-Type", "application/json" }
+            },
+            maskedJson);
+
+        Exception lastErr = null;
+
+        for (int attempt = 0; attempt <= MaxRetries; attempt++)
+        {
+            if (attempt > 0)
+            {
+                var jitter = 1f + (float)((_rng.NextDouble() * 2 - 1) * JitterPct);
+                float delaySec = RetryBackoffBaseSeconds * Mathf.Pow(2f, attempt) * jitter;
+                Log($"[HTTP] Retry (forgot-password) #{attempt} after backoff {delaySec:0.00}s …");
+                await Task.Delay(TimeSpan.FromSeconds(delaySec), ct);
+            }
+
+            using (var req = new UnityWebRequest(ForgotPasswordUrl, UnityWebRequest.kHttpVerbPOST))
+            {
+                try
+                {
+                    byte[] data = System.Text.Encoding.UTF8.GetBytes(bodyJson);
+                    req.uploadHandler = new UploadHandlerRaw(data);
+                    req.downloadHandler = new DownloadHandlerBuffer();
+                    req.SetRequestHeader("accept", "*/*");
+                    req.SetRequestHeader("Content-Type", "application/json");
+                    req.timeout = RequestTimeoutSeconds;
+
+                    Log($"[HTTP] POST {ForgotPasswordUrl} (forgot-password)");
+
+                    var op = req.SendWebRequest();
+                    float start = Time.realtimeSinceStartup;
+
+                    while (!op.isDone)
+                    {
+                        if (ct.IsCancellationRequested) { req.Abort(); ct.ThrowIfCancellationRequested(); }
+                        if (Time.realtimeSinceStartup - start > RequestTimeoutSeconds)
+                        {
+                            req.Abort();
+                            throw new TimeoutException($"HTTP request timed out ({RequestTimeoutSeconds}s).");
+                        }
+                        await Task.Yield();
+                    }
+
+#if UNITY_2020_1_OR_NEWER
+                    bool isNetErr = req.result == UnityWebRequest.Result.ConnectionError;
+                    bool isHttpErr = req.result == UnityWebRequest.Result.ProtocolError;
+#else
+                    bool isNetErr = req.isNetworkError;
+                    bool isHttpErr = req.isHttpError;
+#endif
+                    long code = req.responseCode;
+                    string text = req.downloadHandler?.text ?? "";
+
+                    Log($"[HTTP] ← {code} {text}");
+
+                    if (!isNetErr && !isHttpErr && code >= 200 && code < 300)
+                    {
+                        var resp = JsonUtility.FromJson<ForgotPasswordResponse>(text);
+                        if (resp == null)
+                            resp = new ForgotPasswordResponse { status = true, message = "OTP sent successfully." };
+                        return resp;
+                    }
+
+                    // Parse error response
+                    ForgotPasswordResponse errResp = null;
+                    try { errResp = JsonUtility.FromJson<ForgotPasswordResponse>(text); } catch { }
+
+                    if (errResp != null && !errResp.status)
+                        return errResp;
+
+                    bool retryable = code == 408 || code == 429 || (code >= 500 && code <= 599) || isNetErr;
+                    if (retryable && attempt < MaxRetries) continue;
+
+                    return new ForgotPasswordResponse { status = false, message = $"Request failed: HTTP {code}" };
+                }
+                catch (OperationCanceledException) { throw; }
+                catch (TimeoutException tex) { lastErr = tex; if (attempt >= MaxRetries) throw; }
+                catch (Exception ex) { lastErr = ex; if (attempt >= MaxRetries) throw; }
+            }
+        }
+
+        throw lastErr ?? new Exception("Unknown forgot-password error");
+    }
+
+    /// <summary>
+    /// Reset password using the OTP received via email.
+    /// </summary>
+    public static async Task<ResetPasswordResponse> ResetPasswordAsync(
+        string email,
+        string otp,
+        string newPassword,
+        CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            throw new ArgumentException("Email is required.", nameof(email));
+        if (!IsValidEmail(email))
+            throw new ArgumentException("Email format is invalid.", nameof(email));
+        if (string.IsNullOrWhiteSpace(otp))
+            throw new ArgumentException("OTP is required.", nameof(otp));
+        if (string.IsNullOrWhiteSpace(newPassword))
+            throw new ArgumentException("New password is required.", nameof(newPassword));
+        ValidatePassword(newPassword);
+
+        var request = new ResetPasswordRequest
+        {
+            email = email.Trim().ToLowerInvariant(),
+            otp = otp.Trim(),
+            newPassword = newPassword
+        };
+        string bodyJson = JsonUtility.ToJson(request);
+        string maskedJson = MaskSensitiveFields(bodyJson, new[] { "email", "otp", "newPassword" });
+
+        PrintCurl("POST", ResetPasswordUrl,
+            new Dictionary<string, string> {
+                { "accept", "*/*" },
+                { "Content-Type", "application/json" }
+            },
+            maskedJson);
+
+        Exception lastErr = null;
+
+        for (int attempt = 0; attempt <= MaxRetries; attempt++)
+        {
+            if (attempt > 0)
+            {
+                var jitter = 1f + (float)((_rng.NextDouble() * 2 - 1) * JitterPct);
+                float delaySec = RetryBackoffBaseSeconds * Mathf.Pow(2f, attempt) * jitter;
+                Log($"[HTTP] Retry (reset-password) #{attempt} after backoff {delaySec:0.00}s …");
+                await Task.Delay(TimeSpan.FromSeconds(delaySec), ct);
+            }
+
+            using (var req = new UnityWebRequest(ResetPasswordUrl, UnityWebRequest.kHttpVerbPOST))
+            {
+                try
+                {
+                    byte[] data = System.Text.Encoding.UTF8.GetBytes(bodyJson);
+                    req.uploadHandler = new UploadHandlerRaw(data);
+                    req.downloadHandler = new DownloadHandlerBuffer();
+                    req.SetRequestHeader("accept", "*/*");
+                    req.SetRequestHeader("Content-Type", "application/json");
+                    req.timeout = RequestTimeoutSeconds;
+
+                    Log($"[HTTP] POST {ResetPasswordUrl} (reset-password)");
+
+                    var op = req.SendWebRequest();
+                    float start = Time.realtimeSinceStartup;
+
+                    while (!op.isDone)
+                    {
+                        if (ct.IsCancellationRequested) { req.Abort(); ct.ThrowIfCancellationRequested(); }
+                        if (Time.realtimeSinceStartup - start > RequestTimeoutSeconds)
+                        {
+                            req.Abort();
+                            throw new TimeoutException($"HTTP request timed out ({RequestTimeoutSeconds}s).");
+                        }
+                        await Task.Yield();
+                    }
+
+#if UNITY_2020_1_OR_NEWER
+                    bool isNetErr = req.result == UnityWebRequest.Result.ConnectionError;
+                    bool isHttpErr = req.result == UnityWebRequest.Result.ProtocolError;
+#else
+                    bool isNetErr = req.isNetworkError;
+                    bool isHttpErr = req.isHttpError;
+#endif
+                    long code = req.responseCode;
+                    string text = req.downloadHandler?.text ?? "";
+
+                    Log($"[HTTP] ← {code} {text}");
+
+                    if (!isNetErr && !isHttpErr && code >= 200 && code < 300)
+                    {
+                        var resp = JsonUtility.FromJson<ResetPasswordResponse>(text);
+                        if (resp == null)
+                            resp = new ResetPasswordResponse { status = true, message = "Password reset successfully." };
+                        return resp;
+                    }
+
+                    // Parse error response
+                    ResetPasswordResponse errResp = null;
+                    try { errResp = JsonUtility.FromJson<ResetPasswordResponse>(text); } catch { }
+
+                    if (errResp != null && !errResp.status)
+                        return errResp;
+
+                    bool retryable = code == 408 || code == 429 || (code >= 500 && code <= 599) || isNetErr;
+                    if (retryable && attempt < MaxRetries) continue;
+
+                    return new ResetPasswordResponse { status = false, message = $"Request failed: HTTP {code}" };
+                }
+                catch (OperationCanceledException) { throw; }
+                catch (TimeoutException tex) { lastErr = tex; if (attempt >= MaxRetries) throw; }
+                catch (Exception ex) { lastErr = ex; if (attempt >= MaxRetries) throw; }
+            }
+        }
+
+        throw lastErr ?? new Exception("Unknown reset-password error");
+    }
+
+    #endregion
+
     #region Auth V2: Login (Cognito)
 
     // === Base URL ===

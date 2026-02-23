@@ -50,11 +50,13 @@ namespace IntelliVerseX.Editor
             {
                 Name = "NakamaManager",
                 Category = "Managers",
-                Description = "Nakama backend manager with geolocation",
+                Description = "Complete Nakama backend manager with geolocation and user runtime",
                 ComponentTypes = new List<string>
                 {
-                    "IntelliVerseX.Backend.IVXNManager",
-                    "IntelliVerseX.Services.GeoLocationService"
+                    "IntelliVerseX.Backend.Nakama.IVXNManager",
+                    "IntelliVerseX.Services.GeoLocationService",
+                    "IntelliVerseX.Backend.IVXGeolocationService",
+                    "IntelliVerseX.Backend.Nakama.IVXNUserRuntime"
                 }
             },
             new PrefabDefinition
@@ -88,7 +90,77 @@ namespace IntelliVerseX.Editor
                 }
             },
             
-            // ========== UI PREFABS ==========
+            // ========== AUTH UI PREFABS ==========
+            new PrefabDefinition
+            {
+                Name = "IVX_AuthCanvas",
+                Category = "UI",
+                Description = "Complete authentication canvas with all auth panels",
+                ComponentTypes = new List<string>
+                {
+                    "UnityEngine.Canvas",
+                    "UnityEngine.UI.CanvasScaler",
+                    "UnityEngine.UI.GraphicRaycaster",
+                    "IntelliVerseX.Auth.UI.IVXCanvasAuth"
+                }
+            },
+            new PrefabDefinition
+            {
+                Name = "LoginPanel",
+                Category = "UI",
+                Description = "Login panel with email/password, social login, and remember me",
+                ComponentTypes = new List<string>
+                {
+                    "UnityEngine.CanvasGroup",
+                    "IntelliVerseX.Auth.UI.IVXPanelLogin"
+                }
+            },
+            new PrefabDefinition
+            {
+                Name = "RegisterPanel",
+                Category = "UI",
+                Description = "Registration panel with validation and referral support",
+                ComponentTypes = new List<string>
+                {
+                    "UnityEngine.CanvasGroup",
+                    "IntelliVerseX.Auth.UI.IVXPanelRegister"
+                }
+            },
+            new PrefabDefinition
+            {
+                Name = "OTPPanel",
+                Category = "UI",
+                Description = "OTP verification panel with resend timer",
+                ComponentTypes = new List<string>
+                {
+                    "UnityEngine.CanvasGroup",
+                    "IntelliVerseX.Auth.UI.IVXPanelOTP"
+                }
+            },
+            new PrefabDefinition
+            {
+                Name = "ForgotPasswordPanel",
+                Category = "UI",
+                Description = "Forgot password panel with OTP reset flow",
+                ComponentTypes = new List<string>
+                {
+                    "UnityEngine.CanvasGroup",
+                    "IntelliVerseX.Auth.UI.IVXPanelForgotPassword"
+                }
+            },
+            new PrefabDefinition
+            {
+                Name = "ReferralPanel",
+                Category = "UI",
+                Description = "Referral code popup panel",
+                ComponentTypes = new List<string>
+                {
+                    "UnityEngine.CanvasGroup",
+                    "IntelliVerseX.Auth.UI.IVXPanelReferral"
+                }
+            },
+            
+            // ========== UTILITY UI PREFABS ==========
             new PrefabDefinition
             {
                 Name = "LoadingOverlay",
@@ -465,6 +537,161 @@ namespace IntelliVerseX.Editor
             if (field != null)
             {
                 field.SetValue(component, value);
+            }
+        }
+
+        #endregion
+
+        #region Auth Scene Setup
+
+        /// <summary>
+        /// Creates a complete auth scene with all required components
+        /// </summary>
+        public static void CreateAuthScene()
+        {
+            // Create managers root
+            var managersRoot = GetOrCreateRootObject("--- SDK Managers ---");
+            
+            // Add NakamaManager if not exists
+            InstantiatePrefabInScene("NakamaManager", managersRoot.transform);
+            
+            // Create auth canvas
+            CreateAuthCanvas();
+            
+            Debug.Log("[IVXPrefabBuilder] Auth scene setup complete");
+        }
+
+        /// <summary>
+        /// Creates the auth canvas with all panels
+        /// </summary>
+        public static GameObject CreateAuthCanvas()
+        {
+            // Check if already exists
+            var existing = GameObject.Find("IVX_AuthCanvas");
+            if (existing != null)
+            {
+                Debug.Log("[IVXPrefabBuilder] IVX_AuthCanvas already exists in scene");
+                return existing;
+            }
+
+            // Create canvas
+            var canvasGO = new GameObject("IVX_AuthCanvas");
+            var canvas = canvasGO.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 100;
+
+            var scaler = canvasGO.AddComponent<UnityEngine.UI.CanvasScaler>();
+            scaler.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1080, 1920);
+            scaler.screenMatchMode = UnityEngine.UI.CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+            scaler.matchWidthOrHeight = 0.5f;
+
+            canvasGO.AddComponent<UnityEngine.UI.GraphicRaycaster>();
+
+            var canvasAuth = canvasGO.AddComponent<IntelliVerseX.Auth.UI.IVXCanvasAuth>();
+
+            // Create panels
+            var loginPanel = CreateAuthPanel("LoginPanel", canvasGO.transform, typeof(IntelliVerseX.Auth.UI.IVXPanelLogin));
+            var registerPanel = CreateAuthPanel("RegisterPanel", canvasGO.transform, typeof(IntelliVerseX.Auth.UI.IVXPanelRegister));
+            var otpPanel = CreateAuthPanel("OTPPanel", canvasGO.transform, typeof(IntelliVerseX.Auth.UI.IVXPanelOTP));
+            var forgotPanel = CreateAuthPanel("ForgotPasswordPanel", canvasGO.transform, typeof(IntelliVerseX.Auth.UI.IVXPanelForgotPassword));
+            var referralPanel = CreateAuthPanel("ReferralPanel", canvasGO.transform, typeof(IntelliVerseX.Auth.UI.IVXPanelReferral));
+            var loadingPanel = CreateAuthPanel("LoadingPanel", canvasGO.transform, null);
+
+            // Wire up references using SerializedObject
+            var so = new SerializedObject(canvasAuth);
+            SetSerializedField(so, "_loginPanel", loginPanel.GetComponent<IntelliVerseX.Auth.UI.IVXPanelLogin>());
+            SetSerializedField(so, "_registerPanel", registerPanel.GetComponent<IntelliVerseX.Auth.UI.IVXPanelRegister>());
+            SetSerializedField(so, "_otpPanel", otpPanel.GetComponent<IntelliVerseX.Auth.UI.IVXPanelOTP>());
+            SetSerializedField(so, "_forgotPasswordPanel", forgotPanel.GetComponent<IntelliVerseX.Auth.UI.IVXPanelForgotPassword>());
+            SetSerializedField(so, "_referralPanel", referralPanel.GetComponent<IntelliVerseX.Auth.UI.IVXPanelReferral>());
+            SetSerializedField(so, "_loadingPanel", loadingPanel);
+            so.ApplyModifiedProperties();
+
+            Undo.RegisterCreatedObjectUndo(canvasGO, "Create Auth Canvas");
+            Debug.Log("[IVXPrefabBuilder] Created IVX_AuthCanvas with all panels");
+
+            return canvasGO;
+        }
+
+        private static GameObject CreateAuthPanel(string name, Transform parent, Type componentType)
+        {
+            var panel = new GameObject(name);
+            panel.transform.SetParent(parent);
+
+            var rect = panel.AddComponent<RectTransform>();
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+
+            panel.AddComponent<CanvasGroup>();
+
+            if (componentType != null)
+            {
+                panel.AddComponent(componentType);
+            }
+
+            // Start with panel inactive except login
+            if (name != "LoginPanel")
+            {
+                panel.SetActive(false);
+            }
+
+            return panel;
+        }
+
+        private static void SetSerializedField(SerializedObject so, string fieldName, UnityEngine.Object value)
+        {
+            var prop = so.FindProperty(fieldName);
+            if (prop != null)
+            {
+                prop.objectReferenceValue = value;
+            }
+        }
+
+        /// <summary>
+        /// Auto-wires an existing IVXCanvasAuth by finding child panels
+        /// </summary>
+        public static void AutoWireAuthCanvas(GameObject canvasGO)
+        {
+            if (canvasGO == null) return;
+
+            var canvasAuth = canvasGO.GetComponent<IntelliVerseX.Auth.UI.IVXCanvasAuth>();
+            if (canvasAuth == null)
+            {
+                Debug.LogWarning("[IVXPrefabBuilder] No IVXCanvasAuth component found");
+                return;
+            }
+
+            var so = new SerializedObject(canvasAuth);
+
+            // Find and wire panels
+            WireChildComponent<IntelliVerseX.Auth.UI.IVXPanelLogin>(canvasGO, so, "_loginPanel");
+            WireChildComponent<IntelliVerseX.Auth.UI.IVXPanelRegister>(canvasGO, so, "_registerPanel");
+            WireChildComponent<IntelliVerseX.Auth.UI.IVXPanelOTP>(canvasGO, so, "_otpPanel");
+            WireChildComponent<IntelliVerseX.Auth.UI.IVXPanelForgotPassword>(canvasGO, so, "_forgotPasswordPanel");
+            WireChildComponent<IntelliVerseX.Auth.UI.IVXPanelReferral>(canvasGO, so, "_referralPanel");
+
+            // Find loading panel by name
+            var loadingPanel = canvasGO.transform.Find("LoadingPanel");
+            if (loadingPanel != null)
+            {
+                SetSerializedField(so, "_loadingPanel", loadingPanel.gameObject);
+            }
+
+            so.ApplyModifiedProperties();
+            EditorUtility.SetDirty(canvasAuth);
+
+            Debug.Log("[IVXPrefabBuilder] Auto-wired IVXCanvasAuth panels");
+        }
+
+        private static void WireChildComponent<T>(GameObject root, SerializedObject so, string fieldName) where T : Component
+        {
+            var component = root.GetComponentInChildren<T>(true);
+            if (component != null)
+            {
+                SetSerializedField(so, fieldName, component);
             }
         }
 

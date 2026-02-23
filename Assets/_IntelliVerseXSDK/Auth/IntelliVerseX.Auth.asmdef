@@ -4,7 +4,10 @@
     "references": [
         "Unity.TextMeshPro",
         "IntelliVerseX.Core",
-        "IntelliVerseX.Identity"
+        "IntelliVerseX.Identity",
+        "IntelliVerseX.Backend",
+        "IntelliVerseX.V2",
+        "DOTween.Modules"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

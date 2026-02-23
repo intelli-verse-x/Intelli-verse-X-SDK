@@ -1098,20 +1098,436 @@ namespace IntelliVerseX.Editor
             public string InstallMethod; // "upm", "assetStore", "gitUrl", "unitypackage"
             public string InstallUrl;
             public Action InstallAction;
+            public string InstalledVersion;
+            public string[] AlternativeTypeNames;
+            public string[] AlternativePackageIds;
         }
+
+        #region Robust Dependency Detection System
+
+        private static Dictionary<string, bool> _dependencyCache = new Dictionary<string, bool>();
+        private static Dictionary<string, string> _packageVersionCache = new Dictionary<string, string>();
+        private static bool _dependencyCacheInitialized = false;
+        private static double _lastCacheRefresh = 0;
+        private const double CACHE_REFRESH_INTERVAL = 5.0;
+
+        private static void RefreshDependencyCacheIfNeeded()
+        {
+            double currentTime = EditorApplication.timeSinceStartup;
+            if (!_dependencyCacheInitialized || (currentTime - _lastCacheRefresh) > CACHE_REFRESH_INTERVAL)
+            {
+                _dependencyCache.Clear();
+                _packageVersionCache.Clear();
+                _dependencyCacheInitialized = true;
+                _lastCacheRefresh = currentTime;
+            }
+        }
+
+        private static bool CheckPackageInstalledByManifest(string packageId)
+        {
+            if (string.IsNullOrEmpty(packageId)) return false;
+
+            string cacheKey = $"manifest_{packageId}";
+            if (_dependencyCache.TryGetValue(cacheKey, out bool cached))
+                return cached;
+
+            try
+            {
+                string manifestPath = Path.Combine(Application.dataPath, "..", "Packages", "manifest.json");
+                if (File.Exists(manifestPath))
+                {
+                    string manifest = File.ReadAllText(manifestPath);
+                    bool found = manifest.Contains($"\"{packageId}\"");
+                    _dependencyCache[cacheKey] = found;
+
+                    if (found)
+                    {
+                        int startIdx = manifest.IndexOf($"\"{packageId}\"");
+                        if (startIdx >= 0)
+                        {
+                            int colonIdx = manifest.IndexOf(":", startIdx);
+                            int quoteStart = manifest.IndexOf("\"", colonIdx);
+                            int quoteEnd = manifest.IndexOf("\"", quoteStart + 1);
+                            if (quoteEnd > quoteStart)
+                            {
+                                string version = manifest.Substring(quoteStart + 1, quoteEnd - quoteStart - 1);
+                                _packageVersionCache[packageId] = version;
+                            }
+                        }
+                    }
+                    return found;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[IVXSDKSetupWizard] Error checking manifest for {packageId}: {ex.Message}");
+            }
+
+            _dependencyCache[cacheKey] = false;
+            return false;
+        }
+
+        private static bool CheckPackageInstalledByPackageCache(string packageId)
+        {
+            if (string.IsNullOrEmpty(packageId)) return false;
+
+            string cacheKey = $"cache_{packageId}";
+            if (_dependencyCache.TryGetValue(cacheKey, out bool cached))
+                return cached;
+
+            try
+            {
+                string packageCachePath = Path.Combine(Application.dataPath, "..", "Library", "PackageCache");
+                if (Directory.Exists(packageCachePath))
+                {
+                    var dirs = Directory.GetDirectories(packageCachePath, $"{packageId}@*");
+                    bool found = dirs.Length > 0;
+                    _dependencyCache[cacheKey] = found;
+
+                    if (found && dirs.Length > 0)
+                    {
+                        string dirName = Path.GetFileName(dirs[0]);
+                        int atIdx = dirName.IndexOf('@');
+                        if (atIdx >= 0)
+                        {
+                            _packageVersionCache[packageId] = dirName.Substring(atIdx + 1);
+                        }
+                    }
+                    return found;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[IVXSDKSetupWizard] Error checking package cache for {packageId}: {ex.Message}");
+            }
+
+            _dependencyCache[cacheKey] = false;
+            return false;
+        }
+
+        private static bool CheckTypeExistsRobust(params string[] typeNames)
+        {
+            if (typeNames == null || typeNames.Length == 0) return false;
+
+            foreach (string typeName in typeNames)
+            {
+                if (string.IsNullOrEmpty(typeName)) continue;
+
+                string cacheKey = $"type_{typeName}";
+                if (_dependencyCache.TryGetValue(cacheKey, out bool cached))
+                {
+                    if (cached) return true;
+                    continue;
+                }
+
+                bool found = false;
+                try
+                {
+                    var type = Type.GetType(typeName);
+                    if (type != null)
+                    {
+                        found = true;
+                    }
+                    else
+                    {
+                        string typeNameOnly = typeName.Contains(",") 
+                            ? typeName.Substring(0, typeName.IndexOf(",")).Trim() 
+                            : typeName;
+
+                        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+                        {
+                            try
+                            {
+                                type = assembly.GetType(typeNameOnly);
+                                if (type != null)
+                                {
+                                    found = true;
+                                    break;
+                                }
+
+                                if (typeNameOnly.Contains("."))
+                                {
+                                    string shortName = typeNameOnly.Substring(typeNameOnly.LastIndexOf('.') + 1);
+                                    var types = assembly.GetTypes().Where(t => t.Name == shortName).ToArray();
+                                    if (types.Length > 0)
+                                    {
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            catch
+                            {
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                }
+
+                _dependencyCache[cacheKey] = found;
+                if (found) return true;
+            }
+
+            return false;
+        }
+
+        private static bool CheckAssemblyExists(params string[] assemblyNames)
+        {
+            if (assemblyNames == null || assemblyNames.Length == 0) return false;
+
+            foreach (string assemblyName in assemblyNames)
+            {
+                if (string.IsNullOrEmpty(assemblyName)) continue;
+
+                string cacheKey = $"assembly_{assemblyName}";
+                if (_dependencyCache.TryGetValue(cacheKey, out bool cached))
+                {
+                    if (cached) return true;
+                    continue;
+                }
+
+                bool found = false;
+                try
+                {
+                    foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+                    {
+                        string asmName = assembly.GetName().Name;
+                        if (asmName.Equals(assemblyName, StringComparison.OrdinalIgnoreCase) ||
+                            asmName.StartsWith(assemblyName + ".", StringComparison.OrdinalIgnoreCase) ||
+                            asmName.StartsWith(assemblyName + ",", StringComparison.OrdinalIgnoreCase))
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                catch
+                {
+                }
+
+                _dependencyCache[cacheKey] = found;
+                if (found) return true;
+            }
+
+            return false;
+        }
+
+        private static bool CheckDirectoryExists(params string[] paths)
+        {
+            if (paths == null || paths.Length == 0) return false;
+
+            foreach (string path in paths)
+            {
+                if (string.IsNullOrEmpty(path)) continue;
+
+                string cacheKey = $"dir_{path}";
+                if (_dependencyCache.TryGetValue(cacheKey, out bool cached))
+                {
+                    if (cached) return true;
+                    continue;
+                }
+
+                bool found = Directory.Exists(path);
+                _dependencyCache[cacheKey] = found;
+                if (found) return true;
+            }
+
+            return false;
+        }
+
+        private static bool CheckFileExists(params string[] paths)
+        {
+            if (paths == null || paths.Length == 0) return false;
+
+            foreach (string path in paths)
+            {
+                if (string.IsNullOrEmpty(path)) continue;
+
+                string cacheKey = $"file_{path}";
+                if (_dependencyCache.TryGetValue(cacheKey, out bool cached))
+                {
+                    if (cached) return true;
+                    continue;
+                }
+
+                bool found = File.Exists(path);
+                _dependencyCache[cacheKey] = found;
+                if (found) return true;
+            }
+
+            return false;
+        }
+
+        private static string GetInstalledVersion(string packageId)
+        {
+            if (_packageVersionCache.TryGetValue(packageId, out string version))
+                return version;
+            return null;
+        }
+
+        private static bool CheckUnityPurchasingInstalled()
+        {
+            RefreshDependencyCacheIfNeeded();
+
+            if (CheckPackageInstalledByManifest("com.unity.purchasing")) return true;
+            if (CheckPackageInstalledByPackageCache("com.unity.purchasing")) return true;
+
+            if (CheckTypeExistsRobust(
+                "UnityEngine.Purchasing.IStoreController",
+                "UnityEngine.Purchasing.Product",
+                "UnityEngine.Purchasing.PurchasingModule",
+                "UnityEngine.Purchasing.StandardPurchasingModule",
+                "Unity.Services.Core.UnityServices"))
+                return true;
+
+            if (CheckAssemblyExists(
+                "UnityEngine.Purchasing",
+                "Unity.Purchasing",
+                "UnityEngine.Purchasing.Stores",
+                "Unity.Services.Core"))
+                return true;
+
+            return false;
+        }
+
+        private static bool CheckLevelPlayInstalled()
+        {
+            RefreshDependencyCacheIfNeeded();
+
+            if (CheckPackageInstalledByManifest("com.unity.services.levelplay")) return true;
+            if (CheckPackageInstalledByPackageCache("com.unity.services.levelplay")) return true;
+
+            if (CheckTypeExistsRobust(
+                "Unity.Services.LevelPlay.IronSource",
+                "IronSource",
+                "IronSourceEvents",
+                "LevelPlay",
+                "Unity.Services.LevelPlay.LevelPlayInitRequest"))
+                return true;
+
+            if (CheckAssemblyExists(
+                "com.unity.services.levelplay.runtime",
+                "Unity.Services.LevelPlay",
+                "IronSource"))
+                return true;
+
+            if (CheckDirectoryExists(
+                "Assets/LevelPlay",
+                "Assets/IronSource"))
+                return true;
+
+            return false;
+        }
+
+        private static bool CheckNativeShareInstalled()
+        {
+            RefreshDependencyCacheIfNeeded();
+
+            if (CheckPackageInstalledByManifest("com.yasirkula.nativeshare")) return true;
+            if (CheckPackageInstalledByPackageCache("com.yasirkula.nativeshare")) return true;
+
+            if (CheckTypeExistsRobust(
+                "NativeShare",
+                "NativeShareNamespace.NativeShare"))
+                return true;
+
+            if (CheckAssemblyExists(
+                "NativeShare",
+                "NativeShare.Runtime",
+                "yasirkula.NativeShare"))
+                return true;
+
+            if (CheckDirectoryExists(
+                "Assets/Plugins/NativeShare",
+                "Assets/NativeShare"))
+                return true;
+
+            string packagesPath = Path.Combine(Application.dataPath, "..", "Packages", "com.yasirkula.nativeshare");
+            if (Directory.Exists(packagesPath)) return true;
+
+            return false;
+        }
+
+        private static bool CheckAppodealInstalled()
+        {
+            RefreshDependencyCacheIfNeeded();
+
+            if (CheckPackageInstalledByManifest("com.appodeal.mediation")) return true;
+            if (CheckPackageInstalledByPackageCache("com.appodeal.mediation")) return true;
+
+            if (CheckTypeExistsRobust(
+                "AppodealStack.Mediation.Common.Appodeal",
+                "AppodealAds.Unity.Api.Appodeal",
+                "Appodeal",
+                "AppodealInc.Mediation.PluginSettings.Editor.AppodealSettings"))
+                return true;
+
+            if (CheckAssemblyExists(
+                "Appodeal",
+                "AppodealStack.Mediation.Common",
+                "AppodealAds.Unity.Api",
+                "AppodealInc.Mediation"))
+                return true;
+
+            if (CheckDirectoryExists(
+                "Assets/Appodeal",
+                "Assets/Plugins/Appodeal"))
+                return true;
+
+            string packagesPath = Path.Combine(Application.dataPath, "..", "Packages", "com.appodeal.mediation");
+            if (Directory.Exists(packagesPath)) return true;
+
+            return false;
+        }
+
+        public static void ForceRefreshDependencyCache()
+        {
+            _dependencyCache.Clear();
+            _packageVersionCache.Clear();
+            _dependencyCacheInitialized = false;
+            _lastCacheRefresh = 0;
+        }
+
+        #endregion
 
         private void DrawDependencySection(string title, List<DependencyInfo> dependencies)
         {
             EditorGUILayout.BeginVertical(moduleBoxStyle);
+            
+            EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField(title, EditorStyles.boldLabel);
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Refresh", EditorStyles.miniButton, GUILayout.Width(60)))
+            {
+                ForceRefreshDependencyCache();
+                Repaint();
+            }
+            EditorGUILayout.EndHorizontal();
 
             foreach (var dep in dependencies)
             {
                 EditorGUILayout.BeginHorizontal();
-                GUILayout.Label(dep.IsInstalled ? "  ✅" : "  ❌", GUILayout.Width(30));
+                
+                GUIStyle statusStyle = new GUIStyle(EditorStyles.label);
+                statusStyle.fontSize = 14;
+                statusStyle.alignment = TextAnchor.MiddleCenter;
+                GUILayout.Label(dep.IsInstalled ? "  ✓" : "  ✗", statusStyle, GUILayout.Width(30));
                 
                 EditorGUILayout.BeginVertical();
+                
+                EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField(dep.Name, EditorStyles.boldLabel);
+                if (dep.IsInstalled && !string.IsNullOrEmpty(dep.InstalledVersion))
+                {
+                    GUIStyle versionStyle = new GUIStyle(EditorStyles.miniLabel);
+                    versionStyle.normal.textColor = new Color(0.4f, 0.7f, 0.4f);
+                    GUILayout.Label($"v{dep.InstalledVersion}", versionStyle, GUILayout.Width(80));
+                }
+                GUILayout.FlexibleSpace();
+                EditorGUILayout.EndHorizontal();
+                
                 EditorGUILayout.LabelField(dep.Description, EditorStyles.wordWrappedMiniLabel);
                 EditorGUILayout.EndVertical();
 
@@ -1124,7 +1540,10 @@ namespace IntelliVerseX.Editor
                 }
                 else
                 {
-                    GUILayout.Label("Installed", EditorStyles.miniLabel, GUILayout.Width(70));
+                    GUIStyle installedStyle = new GUIStyle(EditorStyles.miniLabel);
+                    installedStyle.normal.textColor = new Color(0.3f, 0.8f, 0.3f);
+                    installedStyle.alignment = TextAnchor.MiddleCenter;
+                    GUILayout.Label("Installed", installedStyle, GUILayout.Width(70), GUILayout.Height(35));
                 }
 
                 EditorGUILayout.EndHorizontal();
@@ -1136,35 +1555,68 @@ namespace IntelliVerseX.Editor
 
         private List<DependencyInfo> GetRequiredDependencies()
         {
+            RefreshDependencyCacheIfNeeded();
             var deps = new List<DependencyInfo>();
 
-            // Newtonsoft.Json
+            // Newtonsoft.Json (robust detection)
+            bool newtonsoftInstalled = CheckPackageInstalledByManifest("com.unity.nuget.newtonsoft-json") ||
+                CheckPackageInstalledByPackageCache("com.unity.nuget.newtonsoft-json") ||
+                CheckTypeExistsRobust(
+                    "Newtonsoft.Json.JsonConvert",
+                    "Newtonsoft.Json.Linq.JObject") ||
+                CheckAssemblyExists("Newtonsoft.Json", "Unity.Newtonsoft.Json");
+            
+            string newtonsoftVersion = GetInstalledVersion("com.unity.nuget.newtonsoft-json");
             deps.Add(new DependencyInfo
             {
                 Name = "Newtonsoft.Json",
-                IsInstalled = TypeExists("Newtonsoft.Json.JsonConvert, Newtonsoft.Json"),
-                Description = "Required for JSON serialization",
+                IsInstalled = newtonsoftInstalled,
+                InstalledVersion = newtonsoftVersion,
+                Description = newtonsoftInstalled && !string.IsNullOrEmpty(newtonsoftVersion)
+                    ? $"Required for JSON serialization (v{newtonsoftVersion})"
+                    : "Required for JSON serialization",
                 PackageId = "com.unity.nuget.newtonsoft-json",
                 InstallMethod = "upm",
-                InstallAction = () => InstallUPMPackage("com.unity.nuget.newtonsoft-json", "3.2.1")
+                InstallAction = () => InstallUPMPackage("com.unity.nuget.newtonsoft-json", "3.2.2")
             });
 
-            // TextMeshPro
+            // TextMeshPro (robust detection)
+            bool tmpInstalled = CheckPackageInstalledByManifest("com.unity.textmeshpro") ||
+                CheckPackageInstalledByPackageCache("com.unity.textmeshpro") ||
+                CheckTypeExistsRobust(
+                    "TMPro.TextMeshProUGUI",
+                    "TMPro.TextMeshPro",
+                    "TMPro.TMP_Text") ||
+                CheckAssemblyExists("Unity.TextMeshPro", "TextMeshPro");
+            
+            string tmpVersion = GetInstalledVersion("com.unity.textmeshpro");
             deps.Add(new DependencyInfo
             {
                 Name = "TextMeshPro",
-                IsInstalled = TypeExists("TMPro.TextMeshProUGUI, Unity.TextMeshPro"),
-                Description = "Required for UI text rendering",
+                IsInstalled = tmpInstalled,
+                InstalledVersion = tmpVersion,
+                Description = tmpInstalled && !string.IsNullOrEmpty(tmpVersion)
+                    ? $"Required for UI text rendering (v{tmpVersion})"
+                    : "Required for UI text rendering",
                 PackageId = "com.unity.textmeshpro",
                 InstallMethod = "upm",
-                InstallAction = () => InstallUPMPackage("com.unity.textmeshpro", "3.0.6")
+                InstallAction = () => InstallUPMPackage("com.unity.textmeshpro", "3.0.9")
             });
 
-            // Nakama (external, but required)
+            // Nakama (robust detection)
+            bool nakamaInstalled = CheckTypeExistsRobust(
+                "Nakama.IClient",
+                "Nakama.Client",
+                "Nakama.ISession",
+                "Nakama.IApiAccount") ||
+                CheckAssemblyExists("Nakama", "NakamaRuntime", "Nakama.Runtime") ||
+                CheckDirectoryExists("Assets/Nakama", "Assets/Plugins/Nakama") ||
+                CheckPackageInstalledByManifest("com.heroiclabs.nakama-unity");
+            
             deps.Add(new DependencyInfo
             {
                 Name = "Nakama Unity SDK",
-                IsInstalled = TypeExists("Nakama.IClient, Nakama") || TypeExists("Nakama.Client, NakamaRuntime"),
+                IsInstalled = nakamaInstalled,
                 Description = "Required for backend services (leaderboards, auth, storage)",
                 InstallMethod = "unitypackage",
                 InstallUrl = "https://github.com/heroiclabs/nakama-unity/releases",
@@ -1176,6 +1628,7 @@ namespace IntelliVerseX.Editor
 
         private List<DependencyInfo> GetOptionalDependencies()
         {
+            RefreshDependencyCacheIfNeeded();
             var deps = new List<DependencyInfo>();
 
             // DOTween
@@ -1190,43 +1643,61 @@ namespace IntelliVerseX.Editor
             });
 
             // Photon PUN2
+            bool photonInstalled = CheckTypeExistsRobust(
+                "Photon.Pun.PhotonNetwork",
+                "Photon.Realtime.Player",
+                "PhotonNetwork") ||
+                CheckAssemblyExists("PhotonUnityNetworking", "Photon.Pun", "PhotonRealtime") ||
+                CheckDirectoryExists("Assets/Photon", "Assets/Photon Unity Networking");
+            
             deps.Add(new DependencyInfo
             {
                 Name = "Photon PUN2",
-                IsInstalled = TypeExists("Photon.Pun.PhotonNetwork, PhotonUnityNetworking"),
+                IsInstalled = photonInstalled,
                 Description = "Optional for real-time multiplayer",
                 InstallMethod = "assetStore",
                 InstallUrl = "https://assetstore.unity.com/packages/tools/network/pun-2-free-119922",
                 InstallAction = () => Application.OpenURL("https://assetstore.unity.com/packages/tools/network/pun-2-free-119922")
             });
 
-            // Unity IAP
+            // Unity IAP (using robust detection)
+            bool purchasingInstalled = CheckUnityPurchasingInstalled();
+            string purchasingVersion = GetInstalledVersion("com.unity.purchasing");
             deps.Add(new DependencyInfo
             {
                 Name = "Unity Purchasing",
-                IsInstalled = TypeExists("UnityEngine.Purchasing.IStoreController, UnityEngine.Purchasing"),
-                Description = "Required for in-app purchases",
+                IsInstalled = purchasingInstalled,
+                InstalledVersion = purchasingVersion,
+                Description = purchasingInstalled && !string.IsNullOrEmpty(purchasingVersion) 
+                    ? $"Required for in-app purchases (v{purchasingVersion})" 
+                    : "Required for in-app purchases",
                 PackageId = "com.unity.purchasing",
                 InstallMethod = "upm",
-                InstallAction = () => InstallUPMPackage("com.unity.purchasing", "4.12.0")
+                InstallAction = () => InstallUPMPackage("com.unity.purchasing", "5.1.2")
             });
 
-            // LevelPlay
+            // LevelPlay (using robust detection)
+            bool levelPlayInstalled = CheckLevelPlayInstalled();
+            string levelPlayVersion = GetInstalledVersion("com.unity.services.levelplay");
             deps.Add(new DependencyInfo
             {
                 Name = "Unity LevelPlay (IronSource)",
-                IsInstalled = TypeExists("Unity.Services.LevelPlay.IronSource, com.unity.services.levelplay.runtime"),
-                Description = "Ad mediation platform",
+                IsInstalled = levelPlayInstalled,
+                InstalledVersion = levelPlayVersion,
+                Description = levelPlayInstalled && !string.IsNullOrEmpty(levelPlayVersion) 
+                    ? $"Ad mediation platform (v{levelPlayVersion})" 
+                    : "Ad mediation platform",
                 PackageId = "com.unity.services.levelplay",
                 InstallMethod = "upm",
-                InstallAction = () => InstallUPMPackage("com.unity.services.levelplay", "9.2.0")
+                InstallAction = () => InstallUPMPackage("com.unity.services.levelplay", "9.3.0")
             });
 
-            // Native Share
+            // Native Share (using robust detection)
+            bool nativeShareInstalled = CheckNativeShareInstalled();
             deps.Add(new DependencyInfo
             {
                 Name = "Native Share",
-                IsInstalled = TypeExists("NativeShare, NativeShare.Runtime"),
+                IsInstalled = nativeShareInstalled,
                 Description = "Native sharing functionality for mobile",
                 PackageId = "com.yasirkula.nativeshare",
                 InstallMethod = "gitUrl",
@@ -1239,24 +1710,38 @@ namespace IntelliVerseX.Editor
 
         private List<DependencyInfo> GetExternalDependencies()
         {
+            RefreshDependencyCacheIfNeeded();
             var deps = new List<DependencyInfo>();
 
-            // Appodeal
+            // Appodeal (using robust detection)
+            bool appodealInstalled = CheckAppodealInstalled();
+            string appodealVersion = GetInstalledVersion("com.appodeal.mediation");
             deps.Add(new DependencyInfo
             {
                 Name = "Appodeal",
-                IsInstalled = TypeExists("Appodeal.Appodeal"),
-                Description = "Ad mediation with 70+ ad networks",
+                IsInstalled = appodealInstalled,
+                InstalledVersion = appodealVersion,
+                Description = appodealInstalled && !string.IsNullOrEmpty(appodealVersion) 
+                    ? $"Ad mediation with 70+ ad networks (v{appodealVersion})" 
+                    : "Ad mediation with 70+ ad networks",
+                PackageId = "com.appodeal.mediation",
                 InstallMethod = "gitUrl",
                 InstallUrl = "https://github.com/appodeal/appodeal-unity-plugin-upm.git#v3.12.0",
                 InstallAction = () => InstallGitPackage("com.appodeal.mediation", "https://github.com/appodeal/appodeal-unity-plugin-upm.git#v3.12.0")
             });
 
-            // Apple Sign-In
+            // Apple Sign-In (using robust detection)
+            bool appleAuthInstalled = CheckTypeExistsRobust(
+                "AppleAuth.AppleAuthManager",
+                "AppleAuth.IAppleAuthManager",
+                "AppleAuth.Enums.LoginOptions") ||
+                CheckAssemblyExists("AppleAuth", "AppleAuth.Runtime") ||
+                CheckDirectoryExists("Assets/AppleAuth", "Assets/Plugins/AppleAuth");
+            
             deps.Add(new DependencyInfo
             {
                 Name = "Apple Sign-In Unity",
-                IsInstalled = TypeExists("AppleAuth.AppleAuthManager, AppleAuth"),
+                IsInstalled = appleAuthInstalled,
                 Description = "Required for Apple Sign-In on iOS",
                 InstallMethod = "unitypackage",
                 InstallUrl = "https://github.com/lupidan/apple-signin-unity/releases",
@@ -3093,22 +3578,32 @@ namespace IntelliVerseX.Editor
 
         /// <summary>
         /// Checks if DOTween is installed in the project.
+        /// Uses robust multi-layered detection for reliability.
         /// </summary>
         private bool CheckDOTweenInstalled()
         {
-            // Check via type (most reliable)
-            if (TypeExists("DG.Tweening.DOTween")) return true;
+            RefreshDependencyCacheIfNeeded();
+            
+            if (CheckTypeExistsRobust(
+                "DG.Tweening.DOTween",
+                "DG.Tweening.Tween",
+                "DG.Tweening.Sequence",
+                "DG.Tweening.Core.TweenerCore"))
+                return true;
 
-            // Check assemblies
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                if (assembly.GetName().Name == "DOTween")
-                    return true;
-            }
+            if (CheckAssemblyExists(
+                "DOTween",
+                "DOTweenPro",
+                "DG.Tweening"))
+                return true;
 
-            // Fallback to directory check
-            return Directory.Exists("Assets/Plugins/Demigiant/DOTween") ||
-                   Directory.Exists("Assets/DOTween");
+            if (CheckDirectoryExists(
+                "Assets/Plugins/Demigiant/DOTween",
+                "Assets/DOTween",
+                "Assets/Demigiant/DOTween"))
+                return true;
+
+            return false;
         }
 
         #endregion

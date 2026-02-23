@@ -29,6 +29,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Tests/IVX_FullTest.unity
     guid: e90fe346ebba67441a736e9f15be0c01
+  - enabled: 1
+    path: Assets/Scenes/Tests/IVX_WeeklyQuizTest.unity
+    guid: 4c0d724ad5af6db47a7231d6ac0313fd
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

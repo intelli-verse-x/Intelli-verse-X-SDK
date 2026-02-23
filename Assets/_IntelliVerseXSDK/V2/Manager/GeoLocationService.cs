@@ -1,21 +1,58 @@
+// GeoLocationService.cs
+// Lightweight geolocation facade for IntelliVerse-X SDK V2
+// Delegates to IVXGeolocationService for core functionality
+// Version: 2.0.0
+
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
-using IntelliVerseX.Backend.Nakama;
+using IntelliVerseX.Backend;
 
 namespace IntelliVerseX.Services
 {
     /// <summary>
-    /// Geolocation service for manual location operations and events. 
-    /// Main geolocation is handled automatically by IVXNManager during initialization.
-    /// This service provides additional utilities and events. 
+    /// Lightweight geolocation facade providing Unity events and simplified API.
+    /// Delegates heavy lifting to IVXGeolocationService to avoid code duplication.
+    /// 
+    /// Use this for:
+    /// - UnityEvent-based workflows
+    /// - Inspector-configurable callbacks
+    /// - Simplified access patterns
+    /// 
+    /// For advanced control, use IVXGeolocationService directly.
     /// </summary>
+    [DefaultExecutionOrder(-50)]
     public class GeoLocationService : MonoBehaviour
     {
-        #region Singleton
+        #region Singleton (Thread-Safe)
 
-        public static GeoLocationService Instance { get; private set; }
+        private static GeoLocationService _instance;
+        private static readonly object _instanceLock = new object();
+        private static bool _isQuitting;
+
+        public static GeoLocationService Instance
+        {
+            get
+            {
+                if (_isQuitting) return null;
+
+                if (_instance == null)
+                {
+                    lock (_instanceLock)
+                    {
+                        if (_instance == null)
+                        {
+                            _instance = FindFirstObjectByType<GeoLocationService>();
+                        }
+                    }
+                }
+                return _instance;
+            }
+        }
+
+        public static bool HasInstance => _instance != null && !_isQuitting;
 
         #endregion
 
@@ -23,7 +60,7 @@ namespace IntelliVerseX.Services
 
         [Header("Events")]
         [Tooltip("Fired when geolocation is successfully captured")]
-        public UnityEvent<GeolocationResult> OnGeolocationCaptured;
+        public UnityEvent<GeoLocationResult> OnGeolocationCaptured;
 
         [Tooltip("Fired when geolocation capture fails")]
         public UnityEvent<string> OnGeolocationFailed;
@@ -40,52 +77,33 @@ namespace IntelliVerseX.Services
 
         [Header("Configuration")]
         [Tooltip("Automatically check location on start")]
-        [SerializeField] private bool checkOnStart = false;
+        [SerializeField] private bool _checkOnStart;
 
-        [Tooltip("Show warning dialog if location is blocked")]
-        [SerializeField] private bool showBlockedWarning = true;
+        [Tooltip("Delay before initial check (seconds)")]
+        [SerializeField, Range(0f, 10f)] private float _startDelay = 1f;
 
-        [Tooltip("Minimum time between location updates (seconds)")]
-        [SerializeField] private float minUpdateInterval = 60f;
+        [Tooltip("Minimum time between updates (seconds)")]
+        [SerializeField, Range(10f, 3600f)] private float _minUpdateInterval = 60f;
+
+        [Tooltip("Show warning in console for blocked regions")]
+        [SerializeField] private bool _logBlockedWarning = true;
 
         #endregion
 
         #region State
 
         private DateTime _lastUpdateTime = DateTime.MinValue;
-        private bool _isUpdating = false;
-        private GeolocationResult _cachedResult;
+        private GeoLocationResult _cachedResult;
+        private CancellationTokenSource _startupCts;
+        private bool _isInitialized;
 
         #endregion
 
-        #region Data Classes
+        #region Properties
 
-        [Serializable]
-        public class GeolocationResult
-        {
-            public bool Success;
-            public double Latitude;
-            public double Longitude;
-            public string Country;
-            public string CountryCode;
-            public string Region;
-            public string City;
-            public string Timezone;
-            public bool IsAllowed;
-            public string BlockReason;
-            public string DeviceModel;
-            public string Platform;
-            public DateTime Timestamp;
-            public string Error;
-
-            public override string ToString()
-            {
-                if (!Success)
-                    return $"GeolocationResult(Failed: {Error})";
-
-                return $"GeolocationResult({City}, {Region}, {Country} [{CountryCode}] | {Latitude:F4}, {Longitude:F4})";
-            }
-        }
+        public bool IsInitialized => _isInitialized;
+        public bool HasCachedResult => _cachedResult != null && _cachedResult.Success;
+        public GeoLocationResult CachedResult => _cachedResult;
 
         #endregion
 
@@ -93,89 +111,174 @@ namespace IntelliVerseX.Services
 
         private void Awake()
         {
-            if (Instance != null && Instance != this)
+            lock (_instanceLock)
             {
-                Debug.LogWarning("[GeoLocationService] Duplicate instance, destroying this one.");
-                Destroy(gameObject);
-                return;
+                if (_instance == null)
+                {
+                    _instance = this;
+                    DontDestroyOnLoad(gameObject);
+                }
+                else if (_instance != this)
+                {
+                    Debug.LogWarning("[GeoLocationService] Duplicate instance destroyed");
+                    Destroy(gameObject);
+                    return;
+                }
             }
 
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
+            InitializeEvents();
         }
 
         private async void Start()
         {
-            if (IVXNManager.Instance == null)
-            {
-                Debug.LogError("[GeoLocationService] IVXNManager instance not found!");
-                return;
-            }
-
-            Debug.Log("[GeoLocationService] Initialized.  Geolocation is managed by IVXNManager.");
-
-            // Subscribe to IVXNManager events
-            IVXNManager.Instance.OnMetadataSyncSuccess += HandleMetadataSyncSuccess;
-            IVXNManager.Instance.OnMetadataSyncFailed += HandleMetadataSyncFailed;
-
-            if (checkOnStart)
-            {
-                await Task.Delay(1000); // Wait for IVXNManager to initialize
-                await RefreshGeolocationAsync();
-            }
+            await InitializeAsync();
         }
 
         private void OnDestroy()
         {
-            if (IVXNManager.Instance != null)
+            CleanupSubscriptions();
+
+            _startupCts?.Cancel();
+            _startupCts?.Dispose();
+            _startupCts = null;
+
+            if (_instance == this)
             {
-                IVXNManager.Instance.OnMetadataSyncSuccess -= HandleMetadataSyncSuccess;
-                IVXNManager.Instance.OnMetadataSyncFailed -= HandleMetadataSyncFailed;
+                lock (_instanceLock)
+                {
+                    _instance = null;
+                }
             }
+        }
+
+        private void OnApplicationQuit()
+        {
+            _isQuitting = true;
+            _startupCts?.Cancel();
+        }
+
+        #endregion
+
+        #region Initialization
+
+        private void InitializeEvents()
+        {
+            OnGeolocationCaptured ??= new UnityEvent<GeoLocationResult>();
+            OnGeolocationFailed ??= new UnityEvent<string>();
+            OnRegionBlocked ??= new UnityEvent<string>();
+            OnLocationPermissionDenied ??= new UnityEvent();
+        }
+
+        private async Task InitializeAsync()
+        {
+            if (_isInitialized) return;
+
+            _startupCts = new CancellationTokenSource();
+
+            try
+            {
+                SubscribeToGeolocationService();
+                _isInitialized = true;
+
+                if (_checkOnStart)
+                {
+                    if (_startDelay > 0)
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(_startDelay), _startupCts.Token);
+                    }
+
+                    await RefreshGeolocationAsync(_startupCts.Token);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[GeoLocationService] Init failed: {ex.Message}");
+            }
+        }
+
+        private void SubscribeToGeolocationService()
+        {
+            if (!IVXGeolocationService.HasInstance) return;
+
+            var geoService = IVXGeolocationService.Instance;
+            if (geoService == null) return;
+
+            geoService.OnLocationChecked += HandleLocationChecked;
+            geoService.OnLocationError += HandleLocationError;
+            geoService.OnRegionBlocked += HandleRegionBlocked;
+        }
+
+        private void CleanupSubscriptions()
+        {
+            if (!IVXGeolocationService.HasInstance) return;
+
+            var geoService = IVXGeolocationService.Instance;
+            if (geoService == null) return;
+
+            geoService.OnLocationChecked -= HandleLocationChecked;
+            geoService.OnLocationError -= HandleLocationError;
+            geoService.OnRegionBlocked -= HandleRegionBlocked;
         }
 
         #endregion
 
         #region Event Handlers
 
-        private void HandleMetadataSyncSuccess()
+        private void HandleLocationChecked(GeolocationResult result)
         {
-            // Update cached result from IVXNManager
-            UpdateCachedResultFromManager();
-        }
+            if (result == null) return;
 
-        private void HandleMetadataSyncFailed(string error)
-        {
-            Debug.LogWarning($"[GeoLocationService] Metadata sync failed: {error}");
-        }
+            _cachedResult = ConvertToLocalResult(result);
+            _lastUpdateTime = DateTime.UtcNow;
 
-        private void UpdateCachedResultFromManager()
-        {
-            if (IVXNManager.Instance == null) return;
-
-            var geoInfo = IVXNManager.Instance.GetCachedGeolocation();
-            var deviceInfo = IVXNManager.Instance.GetDeviceInfo();
-
-            if (geoInfo != null)
+            try
             {
-                _cachedResult = new GeolocationResult
-                {
-                    Success = true,
-                    Latitude = geoInfo.Latitude,
-                    Longitude = geoInfo.Longitude,
-                    Country = geoInfo.Country,
-                    CountryCode = geoInfo.CountryCode,
-                    Region = geoInfo.Region,
-                    City = geoInfo.City,
-                    Timezone = geoInfo.Timezone,
-                    IsAllowed = geoInfo.IsAllowed,
-                    BlockReason = geoInfo.BlockReason,
-                    DeviceModel = deviceInfo?.DeviceModel ?? "Unknown",
-                    Platform = deviceInfo?.Platform ?? "Unknown",
-                    Timestamp = geoInfo.CapturedAt
-                };
+                OnGeolocationCaptured?.Invoke(_cachedResult);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[GeoLocationService] Event handler error: {ex.Message}");
+            }
+        }
 
-                Debug.Log($"[GeoLocationService] Cached: {_cachedResult}");
+        private void HandleLocationError(string error)
+        {
+            try
+            {
+                if (error?.Contains("permission") == true || error?.Contains("denied") == true)
+                {
+                    OnLocationPermissionDenied?.Invoke();
+                }
+                
+                OnGeolocationFailed?.Invoke(error ?? "Unknown error");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[GeoLocationService] Event handler error: {ex.Message}");
+            }
+        }
+
+        private void HandleRegionBlocked(GeolocationResult result)
+        {
+            if (result == null) return;
+
+            var reason = result.BlockReason ?? $"Region blocked: {result.Country}";
+
+            if (_logBlockedWarning)
+            {
+                Debug.LogWarning($"[GeoLocationService] BLOCKED: {result.Country} ({result.CountryCode}) - {reason}");
+            }
+
+            try
+            {
+                OnRegionBlocked?.Invoke(reason);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[GeoLocationService] Event handler error: {ex.Message}");
             }
         }
 
@@ -184,15 +287,24 @@ namespace IntelliVerseX.Services
         #region Public API
 
         /// <summary>
-        /// Get the current cached geolocation result
+        /// Get cached geolocation result
         /// </summary>
-        public GeolocationResult GetCachedGeolocation()
+        public GeoLocationResult GetCachedGeolocation()
         {
-            if (_cachedResult == null)
+            if (_cachedResult != null)
+                return _cachedResult;
+
+            if (IVXGeolocationService.HasInstance)
             {
-                UpdateCachedResultFromManager();
+                var coreResult = IVXGeolocationService.Instance?.GetCachedLocation();
+                if (coreResult != null)
+                {
+                    _cachedResult = ConvertToLocalResult(coreResult);
+                    return _cachedResult;
+                }
             }
-            return _cachedResult;
+
+            return null;
         }
 
         /// <summary>
@@ -200,70 +312,53 @@ namespace IntelliVerseX.Services
         /// </summary>
         public bool IsLocationServicesEnabled()
         {
+#if UNITY_EDITOR
+            return true;
+#else
             return Input.location.isEnabledByUser;
+#endif
         }
 
         /// <summary>
         /// Get country code (e.g., "US", "IN", "DE")
         /// </summary>
-        public string GetCountryCode()
-        {
-            return _cachedResult?.CountryCode;
-        }
+        public string GetCountryCode() => _cachedResult?.CountryCode;
 
         /// <summary>
         /// Get full country name
         /// </summary>
-        public string GetCountry()
-        {
-            return _cachedResult?.Country;
-        }
+        public string GetCountry() => _cachedResult?.Country;
 
         /// <summary>
         /// Get region/state name
         /// </summary>
-        public string GetRegion()
-        {
-            return _cachedResult?.Region;
-        }
+        public string GetRegion() => _cachedResult?.Region;
 
         /// <summary>
         /// Get city name
         /// </summary>
-        public string GetCity()
-        {
-            return _cachedResult?.City;
-        }
+        public string GetCity() => _cachedResult?.City;
 
         /// <summary>
-        /// Get device model name
+        /// Get device model
         /// </summary>
-        public string GetDeviceModel()
-        {
-            return _cachedResult?.DeviceModel ?? IVXNManager.Instance?.GetDeviceInfo()?.DeviceModel ?? SystemInfo.deviceModel;
-        }
+        public string GetDeviceModel() => SystemInfo.deviceModel;
 
         /// <summary>
         /// Get platform name
         /// </summary>
-        public string GetPlatform()
-        {
-            return _cachedResult?.Platform ?? IVXNManager.Instance?.GetDeviceInfo()?.Platform ?? Application.platform.ToString();
-        }
+        public string GetPlatform() => Application.platform.ToString();
 
         /// <summary>
         /// Check if current location is allowed
         /// </summary>
         public bool IsLocationAllowed()
         {
-            if (_cachedResult == null)
-                return true; // Assume allowed if no data
-
-            return _cachedResult.IsAllowed;
+            return _cachedResult?.IsAllowed ?? true;
         }
 
         /// <summary>
-        /// Get reason for location block (null if allowed)
+        /// Get block reason (null if allowed)
         /// </summary>
         public string GetBlockReason()
         {
@@ -274,133 +369,45 @@ namespace IntelliVerseX.Services
         }
 
         /// <summary>
-        /// Refresh geolocation (capture new GPS and resolve via server)
+        /// Refresh geolocation
         /// </summary>
-        public async Task<GeolocationResult> RefreshGeolocationAsync()
+        public async Task<GeoLocationResult> RefreshGeolocationAsync(CancellationToken ct = default)
         {
-            // Rate limiting
             var timeSinceLastUpdate = (DateTime.UtcNow - _lastUpdateTime).TotalSeconds;
-            if (timeSinceLastUpdate < minUpdateInterval && _cachedResult != null && _cachedResult.Success)
+            if (timeSinceLastUpdate < _minUpdateInterval && _cachedResult != null && _cachedResult.Success)
             {
-                Debug.Log($"[GeoLocationService] Using cached result (last update was {timeSinceLastUpdate:F0}s ago)");
                 return _cachedResult;
             }
 
-            // Prevent concurrent updates
-            if (_isUpdating)
+            if (!IVXGeolocationService.HasInstance)
             {
-                Debug.LogWarning("[GeoLocationService] Update already in progress");
-                return _cachedResult;
+                var error = "Geolocation service not available";
+                OnGeolocationFailed?.Invoke(error);
+                return CreateErrorResult(error);
             }
-
-            _isUpdating = true;
 
             try
             {
-                // Check prerequisites
-                if (IVXNManager.Instance == null || !IVXNManager.Instance.IsInitialized)
+                bool forceRefresh = timeSinceLastUpdate >= _minUpdateInterval;
+                var result = await IVXGeolocationService.Instance.CheckAndUpdateLocationAsync(forceRefresh, ct);
+                
+                if (result != null && result.Success)
                 {
-                    var error = "IVXNManager not initialized";
-                    Debug.LogError($"[GeoLocationService] {error}");
-                    OnGeolocationFailed?.Invoke(error);
-
-                    return new GeolocationResult
-                    {
-                        Success = false,
-                        Error = error,
-                        Timestamp = DateTime.UtcNow
-                    };
+                    _cachedResult = ConvertToLocalResult(result);
+                    _lastUpdateTime = DateTime.UtcNow;
                 }
 
-                // Check location permission
-                if (!Input.location.isEnabledByUser)
-                {
-                    Debug.LogWarning("[GeoLocationService] Location services not enabled");
-                    OnLocationPermissionDenied?.Invoke();
-
-                    return new GeolocationResult
-                    {
-                        Success = false,
-                        Error = "Location services not enabled",
-                        Timestamp = DateTime.UtcNow
-                    };
-                }
-
-                // Capture and resolve location
-                Debug.Log("[GeoLocationService] Refreshing geolocation.. .");
-                var geoInfo = await IVXNManager.Instance.RefreshGeolocationAsync();
-
-                if (geoInfo == null)
-                {
-                    var error = "Failed to capture geolocation";
-                    Debug.LogWarning($"[GeoLocationService] {error}");
-                    OnGeolocationFailed?.Invoke(error);
-
-                    return new GeolocationResult
-                    {
-                        Success = false,
-                        Error = error,
-                        Timestamp = DateTime.UtcNow
-                    };
-                }
-
-                // Get device info
-                var deviceInfo = IVXNManager.Instance.GetDeviceInfo();
-
-                // Build result
-                var result = new GeolocationResult
-                {
-                    Success = true,
-                    Latitude = geoInfo.Latitude,
-                    Longitude = geoInfo.Longitude,
-                    Country = geoInfo.Country,
-                    CountryCode = geoInfo.CountryCode,
-                    Region = geoInfo.Region,
-                    City = geoInfo.City,
-                    Timezone = geoInfo.Timezone,
-                    IsAllowed = geoInfo.IsAllowed,
-                    BlockReason = geoInfo.BlockReason,
-                    DeviceModel = deviceInfo?.DeviceModel ?? "Unknown",
-                    Platform = deviceInfo?.Platform ?? "Unknown",
-                    Timestamp = DateTime.UtcNow
-                };
-
-                // Update cache
-                _cachedResult = result;
-                _lastUpdateTime = DateTime.UtcNow;
-
-                Debug.Log($"[GeoLocationService] ✓ Location refreshed: {result}");
-
-                // Fire events
-                OnGeolocationCaptured?.Invoke(result);
-
-                if (!result.IsAllowed)
-                {
-                    OnRegionBlocked?.Invoke(result.BlockReason);
-
-                    if (showBlockedWarning)
-                    {
-                        ShowBlockedRegionWarning(result);
-                    }
-                }
-
-                return result;
+                return _cachedResult ?? CreateErrorResult("Failed to get location");
+            }
+            catch (OperationCanceledException)
+            {
+                return CreateErrorResult("Operation cancelled");
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[GeoLocationService] Exception: {ex.Message}");
-                OnGeolocationFailed?.Invoke(ex.Message);
-
-                return new GeolocationResult
-                {
-                    Success = false,
-                    Error = ex.Message,
-                    Timestamp = DateTime.UtcNow
-                };
-            }
-            finally
-            {
-                _isUpdating = false;
+                var error = ex.Message;
+                OnGeolocationFailed?.Invoke(error);
+                return CreateErrorResult(error);
             }
         }
 
@@ -413,66 +420,73 @@ namespace IntelliVerseX.Services
                 return "Unknown Location";
 
             if (!string.IsNullOrEmpty(_cachedResult.City))
-            {
                 return $"{_cachedResult.City}, {_cachedResult.Region}, {_cachedResult.Country}";
-            }
-            else if (!string.IsNullOrEmpty(_cachedResult.Region))
-            {
+
+            if (!string.IsNullOrEmpty(_cachedResult.Region))
                 return $"{_cachedResult.Region}, {_cachedResult.Country}";
-            }
-            else if (!string.IsNullOrEmpty(_cachedResult.Country))
-            {
+
+            if (!string.IsNullOrEmpty(_cachedResult.Country))
                 return _cachedResult.Country;
-            }
 
             return $"{_cachedResult.Latitude:F4}, {_cachedResult.Longitude:F4}";
         }
 
         /// <summary>
-        /// Get device info summary string
+        /// Get device info summary
         /// </summary>
         public string GetDeviceInfoSummary()
         {
-            var info = IVXNManager.Instance?.GetDeviceInfo();
-            if (info == null)
-                return $"{SystemInfo.deviceModel} | {Application.platform}";
-
-            return $"{info.DeviceModel} | {info.Platform} | {info.OsVersion}";
+            return $"{SystemInfo.deviceModel} | {Application.platform} | {SystemInfo.operatingSystem}";
         }
 
         #endregion
 
-        #region Private Methods
+        #region Helpers
 
-        private void ShowBlockedRegionWarning(GeolocationResult result)
+        private static GeoLocationResult ConvertToLocalResult(GeolocationResult source)
         {
-            // You can replace this with your own UI dialog
-            Debug.LogWarning($"[GeoLocationService] ⚠ BLOCKED REGION: {result.Country} ({result.CountryCode})\nReason: {result.BlockReason}");
+            if (source == null) return null;
 
-            // Example: Show a popup dialog
-            // UIManager.Instance?. ShowDialog(
-            //     "Region Not Supported",
-            //     $"Sorry, this game is not available in {result.Country}.\n\nReason: {result. BlockReason}",
-            //     "OK"
-            // );
+            return new GeoLocationResult
+            {
+                Success = source.Success,
+                Latitude = source.Latitude,
+                Longitude = source.Longitude,
+                Country = source.Country,
+                CountryCode = source.CountryCode,
+                Region = source.Region,
+                City = source.City,
+                IsAllowed = source.IsAllowed,
+                BlockReason = source.BlockReason,
+                DeviceModel = SystemInfo.deviceModel,
+                Platform = Application.platform.ToString(),
+                Timestamp = source.Timestamp,
+                Error = source.Error
+            };
+        }
+
+        private static GeoLocationResult CreateErrorResult(string error)
+        {
+            return new GeoLocationResult
+            {
+                Success = false,
+                IsAllowed = false,
+                Error = error,
+                Timestamp = DateTime.UtcNow
+            };
         }
 
         #endregion
 
-        #region Debug / Inspector
+        #region Debug
 
         [ContextMenu("Log Current Location")]
         private void DebugLogLocation()
         {
             var result = GetCachedGeolocation();
-            if (result != null)
-            {
-                Debug.Log($"[GeoLocationService] Current: {result}");
-            }
-            else
-            {
-                Debug.Log("[GeoLocationService] No cached location");
-            }
+            Debug.Log(result != null 
+                ? $"[GeoLocationService] {result}" 
+                : "[GeoLocationService] No cached location");
         }
 
         [ContextMenu("Log Device Info")]
@@ -481,13 +495,56 @@ namespace IntelliVerseX.Services
             Debug.Log($"[GeoLocationService] Device: {GetDeviceInfoSummary()}");
         }
 
-        [ContextMenu("Force Refresh Location")]
+        [ContextMenu("Force Refresh")]
         private async void DebugForceRefresh()
         {
+            _lastUpdateTime = DateTime.MinValue;
             var result = await RefreshGeolocationAsync();
-            Debug.Log($"[GeoLocationService] Refresh result: {result}");
+            Debug.Log($"[GeoLocationService] Refresh: {result}");
         }
 
         #endregion
     }
+
+    #region Data Classes
+
+    /// <summary>
+    /// Geolocation result for GeoLocationService
+    /// </summary>
+    [Serializable]
+    public class GeoLocationResult
+    {
+        public bool Success;
+        public double Latitude;
+        public double Longitude;
+        public string Country;
+        public string CountryCode;
+        public string Region;
+        public string City;
+        public string Timezone;
+        public bool IsAllowed;
+        public string BlockReason;
+        public string DeviceModel;
+        public string Platform;
+        public DateTime Timestamp;
+        public string Error;
+
+        public override string ToString()
+        {
+            if (!Success)
+                return $"GeoLocationResult(Failed: {Error})";
+
+            return $"GeoLocationResult({City}, {Region}, {Country} [{CountryCode}] | {Latitude:F4}, {Longitude:F4})";
+        }
+
+        public static GeoLocationResult Empty => new GeoLocationResult
+        {
+            Success = false,
+            IsAllowed = false,
+            Error = "Not initialized",
+            Timestamp = DateTime.UtcNow
+        };
+    }
+
+    #endregion
 }

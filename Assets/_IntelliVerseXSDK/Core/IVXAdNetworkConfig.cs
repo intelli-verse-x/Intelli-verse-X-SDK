@@ -357,6 +357,46 @@ namespace IntelliVerseX.Core
         public static bool ENABLE_AUTO_OPTIMIZATION => true;
 
         /// <summary>
+        /// Enable COPPA for child-directed apps
+        /// </summary>
+        public static bool ENABLE_COPPA
+        {
+            get
+            {
+                if (_loadedConfig != null)
+                    return _loadedConfig.adsConfig.enableCOPPA;
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Unity Ads test mode
+        /// </summary>
+        public static bool UNITY_ADS_TEST_MODE => TEST_MODE;
+
+        /// <summary>
+        /// Appodeal auto cache enabled
+        /// </summary>
+        public static bool APPODEAL_AUTO_CACHE => true;
+
+        /// <summary>
+        /// Appodeal ad types to initialize (rewarded + interstitial + banner)
+        /// </summary>
+        public static int AD_TYPES
+        {
+            get
+            {
+#if APPODEAL
+                return AppodealStack.Monetization.Common.AppodealAdType.RewardedVideo 
+                     | AppodealStack.Monetization.Common.AppodealAdType.Interstitial 
+                     | AppodealStack.Monetization.Common.AppodealAdType.Banner;
+#else
+                return 0;
+#endif
+            }
+        }
+
+        /// <summary>
         /// Enable ad logging
         /// </summary>
         public static bool ENABLE_AD_LOGGING
