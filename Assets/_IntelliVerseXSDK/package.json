@@ -40,7 +40,9 @@
     "identity",
     "webgl",
     "mobile",
-    "crossplatform"
+    "crossplatform",
+    "emoji",
+    "textmeshpro"
   ],
   "author": {
     "name": "IntelliVerse-X",

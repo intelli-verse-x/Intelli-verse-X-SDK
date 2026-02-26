@@ -4,7 +4,8 @@
     "references": [
         "IntelliVerseX.V2",
         "IntelliVerseX.Core",
-        "IntelliVerseX.Backend"
+        "IntelliVerseX.Backend",
+        "IntelliVerseX.Identity"
     ],
     "includePlatforms": [
         "Editor"

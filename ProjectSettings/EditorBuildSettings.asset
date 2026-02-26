@@ -5,33 +5,27 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/SampleScene.unity
-    guid: 8c9cfa26abfee488c85f1582747f6a02
-  - enabled: 1
-    path: Assets/_IntelliVerseXSDK/Auth/Scenes/IVX_AuthDemo.unity
-    guid: 2fb58b85ae7984d49ae875bb717f8a71
   - enabled: 1
     path: Assets/Scenes/Tests/IVX_AuthTest.unity
-    guid: 6cb624fecd048fa40916bed16d9be2e0
+    guid: c9c607eb4d27e6249a73a54fc2b176fc
   - enabled: 1
-    path: Assets/Scenes/Tests/IVX_FriendsTest.unity
-    guid: 9846d1094c7a0874daf6f1fa693c58b0
+    path: Assets/Scenes/Tests/IVX_HomeScreen.unity
+    guid: aad8f8d1728ca8747a1074f6bada4572
   - enabled: 1
     path: Assets/Scenes/Tests/IVX_WalletTest.unity
-    guid: acc795e8b94284f4c9d15866482c6ab0
+    guid: ee1c3f7b10232484899a37d0ce79c518
   - enabled: 1
     path: Assets/Scenes/Tests/IVX_LeaderboardTest.unity
-    guid: 854ca29ed657e694d98dbc975ff06cd7
+    guid: 1b99c55e630959643bd4ca0a47b6c866
   - enabled: 1
     path: Assets/Scenes/Tests/IVX_AdsTest.unity
-    guid: 0e91ba6b67e277043815ab75ddcae932
-  - enabled: 1
-    path: Assets/Scenes/Tests/IVX_FullTest.unity
-    guid: e90fe346ebba67441a736e9f15be0c01
+    guid: 3773811c36cfca345aa94975240d9b26
   - enabled: 1
     path: Assets/Scenes/Tests/IVX_WeeklyQuizTest.unity
     guid: 4c0d724ad5af6db47a7231d6ac0313fd
+  - enabled: 1
+    path: Assets/Scenes/Tests/IVX_MoreOfUs.unity
+    guid: ca99ddef7231b5d4384b0e5b158c91cd
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

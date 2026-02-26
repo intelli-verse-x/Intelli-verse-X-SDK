@@ -400,14 +400,31 @@ namespace IntelliVerseX.Games.Leaderboard
 
                 if (mgr == null)
                 {
-                    SetError("Nakama manager not available", "IVXNManager.Instance is null");
-                    return false;
+                    // Bootstrap manager for standalone test scenes that do not include auth bootstrap.
+                    if (typeof(MonoBehaviour).IsAssignableFrom(mgrType))
+                    {
+                        var bootstrapGo = new GameObject("IVXNManager");
+                        bootstrapGo.AddComponent(mgrType);
+                        await Task.Yield();
+                        mgr = instanceProp?.GetValue(null);
+                    }
+
+                    if (mgr == null)
+                    {
+                        SetError("Nakama manager not available", "IVXNManager.Instance is null");
+                        return false;
+                    }
                 }
 
-                var initMethod = mgrType.GetMethod("InitializeForCurrentUserAsync");
+                var initMethod = mgrType.GetMethod(
+                    "InitializeForCurrentUserAsync",
+                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance,
+                    null,
+                    new[] { typeof(bool) },
+                    null);
                 if (initMethod != null)
                 {
-                    var task = initMethod.Invoke(mgr, null) as Task<bool>;
+                    var task = initMethod.Invoke(mgr, new object[] { false }) as Task<bool>;
                     if (task != null)
                     {
                         bool success = await task;
@@ -423,6 +440,26 @@ namespace IntelliVerseX.Games.Leaderboard
                             SetError("Failed to initialize Nakama", "InitializeForCurrentUserAsync returned false");
                         }
 
+                        return success;
+                    }
+                }
+
+                // Backward compatibility for older signatures without forceReauth parameter.
+                initMethod = mgrType.GetMethod(
+                    "InitializeForCurrentUserAsync",
+                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance,
+                    null,
+                    Type.EmptyTypes,
+                    null);
+                if (initMethod != null)
+                {
+                    var task = initMethod.Invoke(mgr, null) as Task<bool>;
+                    if (task != null)
+                    {
+                        bool success = await task;
+                        RefreshStatusSnapshot();
+                        if (success) ClearError();
+                        else SetError("Failed to initialize Nakama", "InitializeForCurrentUserAsync returned false");
                         return success;
                     }
                 }

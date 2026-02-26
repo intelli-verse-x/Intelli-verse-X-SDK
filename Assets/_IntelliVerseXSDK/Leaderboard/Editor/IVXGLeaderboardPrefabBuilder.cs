@@ -210,8 +210,8 @@ namespace IntelliVerseX.Games.Leaderboard.Editor
 
             EditorUtility.DisplayDialog("Prefabs Created",
                 $"Leaderboard prefabs created at:\n{PREFABS_PATH}\n\n" +
-                "• IVXGLeaderboardEntry.prefab\n" +
-                "• IVXGLeaderboardCanvas.prefab",
+                "- IVXGLeaderboardEntry.prefab\n" +
+                "- IVXGLeaderboardCanvas.prefab",
                 "OK");
         }
 
@@ -296,7 +296,7 @@ namespace IntelliVerseX.Games.Leaderboard.Editor
             var closeBtn = closeGO.AddComponent<Button>();
             closeBtn.targetGraphic = closeImage;
 
-            var closeTxtGO = CreateTextElement("Text", "✕", closeRect, new Vector2(60, 60));
+            var closeTxtGO = CreateTextElement("Text", "X", closeRect, new Vector2(60, 60));
             var closeTMP = closeTxtGO.GetComponent<TextMeshProUGUI>();
             closeTMP.fontSize = 32;
             closeTMP.alignment = TextAlignmentOptions.Center;
@@ -324,7 +324,7 @@ namespace IntelliVerseX.Games.Leaderboard.Editor
             CreatePeriodButton("Weekly", buttonsRect);
             CreatePeriodButton("Monthly", buttonsRect);
             CreatePeriodButton("All-Time", buttonsRect);
-            CreatePeriodButton("↻", buttonsRect, 60); // Refresh button
+            CreatePeriodButton("Refresh", buttonsRect, 120);
 
             return buttonsGO;
         }

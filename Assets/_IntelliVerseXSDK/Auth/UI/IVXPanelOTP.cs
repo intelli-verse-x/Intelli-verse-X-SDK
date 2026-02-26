@@ -74,6 +74,7 @@ namespace IntelliVerseX.Auth.UI
         private CancellationTokenSource _cts;
         private Coroutine _timerCoroutine;
         private bool _isProcessing;
+        private int _panelTransitionVersion;
 
         private string _email;
         private string _password;
@@ -84,8 +85,6 @@ namespace IntelliVerseX.Auth.UI
 
         private const string FIXED_ROLE = "user";
         private const string FIXED_FCM_TOKEN = "";
-        private const string FIXED_FROM_DEVICE = "machine";
-        private const string FIXED_MAC = "00:1A:2B:3C:4D:5E";
 
         #endregion
 
@@ -142,6 +141,11 @@ namespace IntelliVerseX.Auth.UI
         public void Open()
         {
             if (_panel == null) return;
+            _panelTransitionVersion++;
+#if DOTWEEN_ENABLED || DOTWEEN
+            _canvasGroup?.DOKill();
+            _panel.transform.DOKill();
+#endif
             _panel.SetActive(true);
             FadeIn();
             SetStatus("");
@@ -155,7 +159,17 @@ namespace IntelliVerseX.Auth.UI
         public void Close()
         {
             if (_panel == null) return;
-            FadeOut(() => _panel.SetActive(false));
+            _panelTransitionVersion++;
+            int closeVersion = _panelTransitionVersion;
+#if DOTWEEN_ENABLED || DOTWEEN
+            _canvasGroup?.DOKill();
+            _panel.transform.DOKill();
+#endif
+            FadeOut(() =>
+            {
+                if (closeVersion != _panelTransitionVersion) return;
+                _panel.SetActive(false);
+            });
         }
 
         /// <summary>
@@ -302,6 +316,10 @@ namespace IntelliVerseX.Auth.UI
 
             try
             {
+                DeviceInfoHelper.GetLoginDeviceFields(out string fromDevice, out string macAddress);
+                // Registration confirm endpoint expects web-style device identity.
+                fromDevice = "web";
+
                 var req = new APIManager.SignupConfirmRequest
                 {
                     email = _email,
@@ -311,9 +329,9 @@ namespace IntelliVerseX.Auth.UI
                     lastName = _lastName,
                     otp = otp,
                     role = FIXED_ROLE,
-                    fcmToken = FIXED_FCM_TOKEN,
-                    fromDevice = FIXED_FROM_DEVICE,
-                    macAddress = FIXED_MAC,
+                    fcmToken = string.IsNullOrWhiteSpace(FIXED_FCM_TOKEN) ? macAddress : FIXED_FCM_TOKEN,
+                    fromDevice = fromDevice,
+                    macAddress = macAddress,
                     referralCode = _referralCode
                 };
 

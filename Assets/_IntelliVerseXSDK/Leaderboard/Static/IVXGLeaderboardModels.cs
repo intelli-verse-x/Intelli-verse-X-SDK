@@ -98,11 +98,23 @@ namespace IntelliVerseX.Games.Leaderboard
             string alltimeKey = $"{gameId}_alltime";
             string globalKey = "global_alltime";
 
+            string dailyKeyAlt = $"leaderboard_{gameId}_daily";
+            string weeklyKeyAlt = $"leaderboard_{gameId}_weekly";
+            string monthlyKeyAlt = $"leaderboard_{gameId}_monthly";
+            string alltimeKeyAlt = $"leaderboard_{gameId}_alltime";
+            string globalKeyAlt = "leaderboard_global_alltime";
+
             leaderboards.TryGetValue(dailyKey, out daily);
             leaderboards.TryGetValue(weeklyKey, out weekly);
             leaderboards.TryGetValue(monthlyKey, out monthly);
             leaderboards.TryGetValue(alltimeKey, out alltime);
             leaderboards.TryGetValue(globalKey, out global_alltime);
+
+            if (daily == null) leaderboards.TryGetValue(dailyKeyAlt, out daily);
+            if (weekly == null) leaderboards.TryGetValue(weeklyKeyAlt, out weekly);
+            if (monthly == null) leaderboards.TryGetValue(monthlyKeyAlt, out monthly);
+            if (alltime == null) leaderboards.TryGetValue(alltimeKeyAlt, out alltime);
+            if (global_alltime == null) leaderboards.TryGetValue(globalKeyAlt, out global_alltime);
 
             // Fallback: try without game prefix for global
             if (global_alltime == null)

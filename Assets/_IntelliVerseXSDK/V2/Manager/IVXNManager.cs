@@ -17,6 +17,7 @@ namespace IntelliVerseX.Backend.Nakama
     {
         #region Configuration
         public static IVXNManager Instance { get; private set; }
+        private static bool _isQuitting;
 
         [Header("SDK Configuration")]
         [SerializeField] private IntelliVerseXConfig sdkConfig;
@@ -66,6 +67,9 @@ namespace IntelliVerseX.Backend.Nakama
         public event Action<bool> OnInitialized;
         public event Action<string> OnMetadataSyncFailed;
         public event Action OnMetadataSyncSuccess;
+        public event Action<IVXNProfileManager.IVXNProfileSnapshot> OnProfileLoaded;
+        public event Action<IVXNProfileManager.IVXNProfileSnapshot> OnProfileUpdated;
+        public event Action<string> OnProfileError;
 
         private const string LOGTAG = "[IVXNManager]";
 
@@ -87,6 +91,11 @@ namespace IntelliVerseX.Backend.Nakama
 
         private void Awake()
         {
+            if (_isQuitting)
+            {
+                return;
+            }
+
             if (Instance != null && Instance != this)
             {
                 Log("Duplicate instance detected.  Destroying this one.", isWarning: true);
@@ -95,6 +104,11 @@ namespace IntelliVerseX.Backend.Nakama
             }
 
             Instance = this;
+            if (transform.parent != null)
+            {
+                Log("Manager was parented in scene hierarchy. Detaching before DontDestroyOnLoad.", isWarning: true);
+                transform.SetParent(null, true);
+            }
             DontDestroyOnLoad(gameObject);
 
             try
@@ -104,6 +118,14 @@ namespace IntelliVerseX.Backend.Nakama
 
                 IVXNWalletManager.RefreshFromServerAsync = RefreshWalletFromServerAsync;
                 IVXNWalletManager.ApplyOperationOnServerAsync = ApplyWalletOperationOnServerAsync;
+
+                IVXNProfileManager.EnableDebugLogs = enableDebugLogs;
+                IVXNProfileManager.OnProfileLoaded -= HandleProfileLoaded;
+                IVXNProfileManager.OnProfileUpdated -= HandleProfileUpdated;
+                IVXNProfileManager.OnProfileError -= HandleProfileError;
+                IVXNProfileManager.OnProfileLoaded += HandleProfileLoaded;
+                IVXNProfileManager.OnProfileUpdated += HandleProfileUpdated;
+                IVXNProfileManager.OnProfileError += HandleProfileError;
             }
             catch (Exception ex)
             {
@@ -113,6 +135,23 @@ namespace IntelliVerseX.Backend.Nakama
             if (initializeOnAwake)
             {
                 StartCoroutine(InitializeAsync());
+            }
+        }
+
+        private void OnApplicationQuit()
+        {
+            _isQuitting = true;
+        }
+
+        private void OnDestroy()
+        {
+            IVXNProfileManager.OnProfileLoaded -= HandleProfileLoaded;
+            IVXNProfileManager.OnProfileUpdated -= HandleProfileUpdated;
+            IVXNProfileManager.OnProfileError -= HandleProfileError;
+
+            if (Instance == this)
+            {
+                Instance = null;
             }
         }
 
@@ -355,6 +394,23 @@ private void CreateClientIfNeeded()
             {
                 Log($"ClearNakamaSession error: {ex.Message}", isError: true);
             }
+        }
+
+        public Task<IVXNProfileManager.IVXNProfileFetchResult> FetchProfileAsync(CancellationToken cancellationToken = default)
+        {
+            return IVXNProfileManager.FetchProfileAsync(cancellationToken);
+        }
+
+        public Task<IVXNProfileManager.IVXNProfileUpdateResult> UpdateProfileAsync(
+            IVXNProfileManager.IVXNProfileUpdateRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            return IVXNProfileManager.UpdateProfileAsync(request, cancellationToken);
+        }
+
+        public Task<IVXNProfileManager.IVXNProfilePortfolioResult> FetchPortfolioAsync(CancellationToken cancellationToken = default)
+        {
+            return IVXNProfileManager.FetchPortfolioAsync(cancellationToken);
         }
 
         #endregion
@@ -620,6 +676,13 @@ private void CreateClientIfNeeded()
                 else
                 {
                     Log("[Sync] Step 5/5: Location already resolved, skipping server geocoding");
+                }
+
+                Log("[Sync] Step 6/6: Refreshing profile snapshot cache...");
+                var profileRefreshSuccess = await IVXNProfileManager.RefreshProfileAfterAuthAsync();
+                if (!profileRefreshSuccess)
+                {
+                    Log("[Sync] ⚠ Profile snapshot refresh failed after auth sync", isWarning: true);
                 }
 
                 var syncDuration = (DateTime.UtcNow - syncStartTime).TotalMilliseconds;
@@ -1580,6 +1643,42 @@ private void CreateClientIfNeeded()
             catch (Exception ex)
             {
                 Log($"Error in OnInitialized: {ex.Message}", isWarning: true);
+            }
+        }
+
+        private void HandleProfileLoaded(IVXNProfileManager.IVXNProfileSnapshot snapshot)
+        {
+            try
+            {
+                OnProfileLoaded?.Invoke(snapshot);
+            }
+            catch (Exception ex)
+            {
+                Log($"Error in OnProfileLoaded handler: {ex.Message}", isWarning: true);
+            }
+        }
+
+        private void HandleProfileUpdated(IVXNProfileManager.IVXNProfileSnapshot snapshot)
+        {
+            try
+            {
+                OnProfileUpdated?.Invoke(snapshot);
+            }
+            catch (Exception ex)
+            {
+                Log($"Error in OnProfileUpdated handler: {ex.Message}", isWarning: true);
+            }
+        }
+
+        private void HandleProfileError(string errorMessage)
+        {
+            try
+            {
+                OnProfileError?.Invoke(errorMessage);
+            }
+            catch (Exception ex)
+            {
+                Log($"Error in OnProfileError handler: {ex.Message}", isWarning: true);
             }
         }
 
@@ -2630,7 +2729,7 @@ private void CreateClientIfNeeded()
         new GeoEndpoint
         {
             Url = "https://ipapi.co/json/",
-            Provider = "ipapi. co",
+            Provider = "ipapi.co",
             TimeoutSeconds = 10,
             IsHttps = true
         },
@@ -2638,7 +2737,7 @@ private void CreateClientIfNeeded()
         // Secondary: ipinfo.io - Free tier: 50k requests/month, HTTPS supported
         new GeoEndpoint
         {
-            Url = "https://ipinfo. io/json",
+            Url = "https://ipinfo.io/json",
             Provider = "ipinfo.io",
             TimeoutSeconds = 10,
             IsHttps = true
@@ -2647,8 +2746,8 @@ private void CreateClientIfNeeded()
         // Tertiary: ipwhois.app - Free tier: 10k requests/month, HTTPS supported
         new GeoEndpoint
         {
-            Url = "https://ipwhois. app/json/",
-            Provider = "ipwhois. app",
+            Url = "https://ipwhois.app/json/",
+            Provider = "ipwhois.app",
             TimeoutSeconds = 10,
             IsHttps = true
         },
@@ -2656,8 +2755,8 @@ private void CreateClientIfNeeded()
         // Quaternary: ipdata.co - Free tier: 1500 requests/day, HTTPS supported (no API key needed for basic)
         new GeoEndpoint
         {
-            Url = "https://api.ipdata.co? api-key=test",
-            Provider = "ipdata.co",
+            Url = "https://ipapi.co/json/",
+            Provider = "ipapi.co",
             TimeoutSeconds = 10,
             IsHttps = true
         },
@@ -2772,7 +2871,7 @@ private void CreateClientIfNeeded()
             // All endpoints failed
             result.Success = false;
             result.Error = $"All {maxAttempts} IP geolocation services failed";
-            Log($"[Geolocation] ✗ {result.Error}", isError: true);
+            Log($"[Geolocation] ✗ {result.Error}", isWarning: true);
 
             return result;
         }
@@ -2791,7 +2890,7 @@ private void CreateClientIfNeeded()
             {
                 switch (provider.ToLowerInvariant())
                 {
-                    case "ipapi. co":
+                    case "ipapi.co":
                         return ParseIpApiCoResponse(json, result);
 
                     case "ipinfo.io":
@@ -2803,7 +2902,7 @@ private void CreateClientIfNeeded()
                     case "ipdata.co":
                         return ParseIpDataResponse(json, result);
 
-                    case "ip-api. com":
+                    case "ip-api.com":
                         return ParseIpApiComResponse(json, result);
 
                     default:
@@ -3040,7 +3139,7 @@ private void CreateClientIfNeeded()
             public string country_name;         // Full name: "India"
             public string country_capital;
             public string country_tld;
-            public int country_area;
+            public double country_area;
             public long country_population;
             public string continent_code;
             public bool in_eu;

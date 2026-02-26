@@ -333,7 +333,8 @@ namespace IntelliVerseX.Editor
             "Monetization",
             "More Of Us",
             "Platform Validation",
-            "Test Scenes"
+            "Test Scenes",
+            "Local Data"
         };
 
         // Version Check State
@@ -585,6 +586,7 @@ namespace IntelliVerseX.Editor
                 case 6: DrawMoreOfUsTab(); break;
                 case 7: DrawPlatformValidationTab(); break;
                 case 8: DrawTestScenesTab(); break;
+                case 9: DrawLocalDataTab(); break;
             }
 
             EditorGUILayout.EndScrollView();
@@ -3002,6 +3004,11 @@ namespace IntelliVerseX.Editor
 
             EditorGUILayout.Space(10);
 
+            DrawTestSceneButton("🏠 Home Screen Test Scene",
+                "Central home for navigating all IVX feature test scenes",
+                "IVX_Homescreen",
+                CreateHomeScreenTestScene);
+
             // Test Scene Buttons
             DrawTestSceneButton("🔐 Auth Test Scene",
                 "Test login, register, OTP, guest, and social auth flows",
@@ -3052,6 +3059,29 @@ namespace IntelliVerseX.Editor
             }
 
             EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+
+            if (GUILayout.Button("Setup Home Navigation For All", GUILayout.Height(25)))
+            {
+                EditorApplication.ExecuteMenuItem("IntelliVerse-X SDK/Tools/Test Scenes/Setup Home Navigation");
+            }
+
+            if (GUILayout.Button("Re-import To Consumer Assets", GUILayout.Height(25)))
+            {
+                IVXSceneImporter.ForceReimportScenes();
+            }
+
+            EditorGUILayout.EndHorizontal();
+
+            if (GUILayout.Button("Open Consumer Scenes Folder", GUILayout.Height(25)))
+            {
+                IVXSceneImporter.OpenScenesFolder();
+            }
+
+            EditorGUILayout.Space(6);
+            EditorGUILayout.LabelField("Source (SDK package): Samples~/TestScenes", EditorStyles.miniLabel);
+            EditorGUILayout.LabelField("Consumer copy path: Assets/IntelliVerseX Scenes", EditorStyles.miniLabel);
             EditorGUILayout.EndVertical();
         }
 
@@ -3109,6 +3139,32 @@ namespace IntelliVerseX.Editor
 
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
+            EditorGUILayout.EndVertical();
+        }
+
+        private void DrawLocalDataTab()
+        {
+            EditorGUILayout.LabelField("Local Data Tools", subHeaderStyle ?? EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox(
+                "Use this tab to clear local login/session data used by IntelliVerseX SDK during testing.\n" +
+                "This runs in Editor mode (Play Mode not required).",
+                MessageType.Info);
+
+            EditorGUILayout.Space(10);
+
+            EditorGUILayout.BeginVertical(moduleBoxStyle ?? EditorStyles.helpBox);
+            EditorGUILayout.LabelField("Clear Local Login Data", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Shortcut: Ctrl/Cmd + Shift + K", EditorStyles.miniLabel);
+            EditorGUILayout.LabelField(
+                "Clears PlayerPrefs and supported session/identity stores (IVXUserSession, UserSessionManager, IntelliVerseXIdentity).",
+                EditorStyles.wordWrappedMiniLabel);
+
+            EditorGUILayout.Space(8);
+            if (GUILayout.Button("Wipe Local SDK Data Now", GUILayout.Height(30)))
+            {
+                IVXLocalDataWiperTool.WipeLocalSdkData();
+            }
+
             EditorGUILayout.EndVertical();
         }
 
@@ -4149,12 +4205,24 @@ namespace IntelliVerseX.Editor
 
         #region Test Scene Creation
 
+        private void CreateHomeScreenTestScene()
+        {
+            CreateTestScene("IVX_Homescreen", () =>
+            {
+                EnsureHomeNavigatorInScene();
+                CreateTestLabel(
+                    "IntelliVerseX Home Screen",
+                    "Use the IVX Test Navigation panel to open Ads, Leaderboard, Wallet, Weekly Quiz, Auth, and more.");
+            });
+        }
+
         private void CreateAuthTestScene()
         {
             CreateTestScene("IVX_AuthTest", () =>
             {
                 // Add NakamaManager (required for Auth to work with backend)
                 AddNakamaManagerToScene();
+                EnsureHomeNavigatorInScene();
                 // Add Auth Canvas
                 AddAuthCanvasToScene();
             });
@@ -4166,6 +4234,7 @@ namespace IntelliVerseX.Editor
             {
                 // Add NakamaManager (required for Friends to work with backend)
                 AddNakamaManagerToScene();
+                EnsureHomeNavigatorInScene();
                 AddFriendsUIToScene();
                 CreateDemoButton("Open Friends", "OpenFriendsButton");
             });
@@ -4177,6 +4246,7 @@ namespace IntelliVerseX.Editor
             {
                 // Add NakamaManager (required for Wallet to work with backend)
                 AddNakamaManagerToScene();
+                EnsureHomeNavigatorInScene();
                 CreateTestLabel("Wallet Test Scene", "Add IVXWalletDisplay to test wallet functionality");
             });
         }
@@ -4187,6 +4257,7 @@ namespace IntelliVerseX.Editor
             {
                 // Add NakamaManager (required for Leaderboard to work with backend)
                 AddNakamaManagerToScene();
+                EnsureHomeNavigatorInScene();
                 CreateTestLabel("Leaderboard Test Scene", "Add IVXLeaderboardUI to test leaderboard functionality");
             });
         }
@@ -4195,6 +4266,7 @@ namespace IntelliVerseX.Editor
         {
             CreateTestScene("IVX_AdsTest", () =>
             {
+                EnsureHomeNavigatorInScene();
                 CreateTestLabel("Ads Test Scene", "Test ad loading, display, and rewards");
                 CreateDemoButton("Show Rewarded Ad", "ShowRewardedAdButton");
                 CreateDemoButton("Show Interstitial", "ShowInterstitialButton", new Vector2(0, -80));
@@ -4208,6 +4280,7 @@ namespace IntelliVerseX.Editor
                 AddManagersToCurrentScene();
                 AddAuthCanvasToScene();
                 AddFriendsUIToScene();
+                EnsureHomeNavigatorInScene();
                 CreateTestLabel("Full Integration Test", "All SDK features available for testing");
             });
         }
@@ -4563,6 +4636,24 @@ namespace IntelliVerseX.Editor
                 eventSystem.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
                 Debug.Log("[IVXSDKSetupWizard] Created EventSystem with StandaloneInputModule (Legacy Input)");
             }
+        }
+
+        private void EnsureHomeNavigatorInScene()
+        {
+            var navType = GetTypeByName("IntelliVerseX.Core.IVXTestSceneNavigator");
+            if (navType == null)
+            {
+                Debug.LogWarning("[IVXSDKSetupWizard] IVXTestSceneNavigator type not found.");
+                return;
+            }
+
+            if (GameObject.FindAnyObjectByType(navType) != null)
+            {
+                return;
+            }
+
+            var navObject = new GameObject("IVX_TestSceneNavigator");
+            navObject.AddComponent(navType);
         }
 
         /// <summary>

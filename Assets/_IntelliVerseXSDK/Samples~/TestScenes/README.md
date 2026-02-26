@@ -42,6 +42,14 @@ Weekly quiz system test scene with:
 - Score tracking
 - Prize display
 
+### IVX_ProfileTest
+Production-ready profile flow scene covering:
+- Post-auth profile bootstrap via `IVXNProfileManager`
+- Profile fetch/update with validation and version-conflict handling
+- Portfolio fetch with game/global wallet snapshots
+- Error mapping for `AUTH_REQUIRED`, `RATE_LIMITED`, `VERSION_CONFLICT`, and upstream failures
+- IMGUI fallback UI so the sample works without extra Canvas setup
+
 ## Usage
 
 1. Import this sample from Package Manager
@@ -54,3 +62,9 @@ Weekly quiz system test scene with:
 - IntelliVerseX SDK Core module
 - Relevant feature modules for each test (Auth, Monetization, etc.)
 - Backend services configured (for Auth, Leaderboard tests)
+- Nakama profile RPCs available:
+  - `create_or_sync_user`
+  - `rpc_update_player_metadata`
+  - `get_player_metadata`
+  - `get_player_portfolio`
+  - `check_geo_and_update_profile`

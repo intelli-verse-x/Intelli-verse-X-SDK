@@ -84,6 +84,7 @@ namespace IntelliVerseX.Auth.UI
         private bool _isProcessing;
         private bool _passwordVisible;
         private string _storedEmail;
+        private int _panelTransitionVersion;
 
         #endregion
 
@@ -135,6 +136,11 @@ namespace IntelliVerseX.Auth.UI
         public void Open()
         {
             if (_panel == null) return;
+            _panelTransitionVersion++;
+#if DOTWEEN_ENABLED || DOTWEEN
+            _canvasGroup?.DOKill();
+            _panel.transform.DOKill();
+#endif
             _panel.SetActive(true);
             FadeIn();
             SetStatus("");
@@ -147,7 +153,17 @@ namespace IntelliVerseX.Auth.UI
         public void Close()
         {
             if (_panel == null) return;
-            FadeOut(() => _panel.SetActive(false));
+            _panelTransitionVersion++;
+            int closeVersion = _panelTransitionVersion;
+#if DOTWEEN_ENABLED || DOTWEEN
+            _canvasGroup?.DOKill();
+            _panel.transform.DOKill();
+#endif
+            FadeOut(() =>
+            {
+                if (closeVersion != _panelTransitionVersion) return;
+                _panel.SetActive(false);
+            });
         }
 
         #endregion

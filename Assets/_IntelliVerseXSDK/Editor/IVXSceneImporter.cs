@@ -18,16 +18,19 @@ namespace IntelliVerseX.Editor
     [InitializeOnLoad]
     public static class IVXSceneImporter
     {
-        private const string SCENES_IMPORTED_KEY = "IVX_SCENES_IMPORTED_V3";
+        private const string SCENES_IMPORTED_KEY = "IVX_SCENES_IMPORTED_V4";
         private const string CONSUMER_SCENES_FOLDER = "Assets/IntelliVerseX Scenes";
         private const string PACKAGE_NAME = "com.intelliversex.sdk";
         
-        // Test scenes to copy (relative to SDK root)
+        // Test scenes to copy to consumer Assets folder.
         private static readonly string[] TEST_SCENES = new string[]
         {
-            "Auth/Scenes/IVX_AuthDemo.unity",
-            "Auth/Scenes/Game.unity",
-            "IntroScene/IntroScene.unity"
+            "IVX_Homescreen.unity",
+            "IVX_AuthTest.unity",
+            "IVX_AdsTest.unity",
+            "IVX_LeaderboardTest.unity",
+            "IVX_WalletTest.unity",
+            "IVX_WeeklyQuizTest.unity"
         };
         
         static IVXSceneImporter()
@@ -150,16 +153,15 @@ namespace IntelliVerseX.Editor
                 Debug.Log("[IVX Scene Importer] 🎬 Importing test scenes...");
                 Debug.Log("═══════════════════════════════════════════════════════════════");
                 
-                foreach (string sceneRelativePath in TEST_SCENES)
+                foreach (string sceneFileName in TEST_SCENES)
                 {
-                    string sourcePath = Path.Combine(sdkRoot, sceneRelativePath);
-                    string sceneFileName = Path.GetFileName(sceneRelativePath);
+                    string sourcePath = ResolveTestSceneSourcePath(sdkRoot, sceneFileName);
                     string destPath = Path.Combine(destFolder, sceneFileName);
                     
                     // Check if source exists
-                    if (!File.Exists(sourcePath))
+                    if (string.IsNullOrEmpty(sourcePath) || !File.Exists(sourcePath))
                     {
-                        Debug.LogWarning($"[IVX Scene Importer] ⚠️ Scene not found: {sceneRelativePath}");
+                        Debug.LogWarning($"[IVX Scene Importer] ⚠️ Scene not found in package: {sceneFileName}");
                         skippedCount++;
                         continue;
                     }
@@ -281,6 +283,32 @@ namespace IntelliVerseX.Editor
                 Selection.activeObject = folder;
                 EditorGUIUtility.PingObject(folder);
             }
+        }
+
+        private static string ResolveTestSceneSourcePath(string sdkRoot, string sceneFileName)
+        {
+            if (string.IsNullOrWhiteSpace(sdkRoot) || string.IsNullOrWhiteSpace(sceneFileName))
+            {
+                return null;
+            }
+
+            string[] candidateRelativePaths =
+            {
+                $"Samples~/TestScenes/{sceneFileName}",
+                $"Scenes/Tests/{sceneFileName}",
+                $"Auth/Scenes/{sceneFileName}"
+            };
+
+            for (int i = 0; i < candidateRelativePaths.Length; i++)
+            {
+                string path = Path.Combine(sdkRoot, candidateRelativePaths[i]);
+                if (File.Exists(path))
+                {
+                    return path;
+                }
+            }
+
+            return null;
         }
     }
 }

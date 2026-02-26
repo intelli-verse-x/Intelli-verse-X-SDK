@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 using IntelliVerseX.Identity;
+using IntelliVerseX.Core;
 #if DOTWEEN_ENABLED || DOTWEEN
 using DG.Tweening;
 #endif
@@ -91,6 +92,7 @@ namespace IntelliVerseX.Auth.UI
         private CancellationTokenSource _cts;
         private bool _isProcessing;
         private bool _passwordVisible;
+        private int _panelTransitionVersion;
 
         private const string PP_REMEMBER = "IVX_auth.remember";
         private const string PP_LAST_EMAIL = "IVX_auth.last_email";
@@ -150,6 +152,11 @@ namespace IntelliVerseX.Auth.UI
         public void Open()
         {
             if (_panel == null) return;
+            _panelTransitionVersion++;
+#if DOTWEEN_ENABLED || DOTWEEN
+            _canvasGroup?.DOKill();
+            _panel.transform.DOKill();
+#endif
             _panel.SetActive(true);
             FadeIn();
             SetStatus("");
@@ -161,7 +168,17 @@ namespace IntelliVerseX.Auth.UI
         public void Close()
         {
             if (_panel == null) return;
-            FadeOut(() => _panel.SetActive(false));
+            _panelTransitionVersion++;
+            int closeVersion = _panelTransitionVersion;
+#if DOTWEEN_ENABLED || DOTWEEN
+            _canvasGroup?.DOKill();
+            _panel.transform.DOKill();
+#endif
+            FadeOut(() =>
+            {
+                if (closeVersion != _panelTransitionVersion) return;
+                _panel.SetActive(false);
+            });
         }
 
         /// <summary>
@@ -365,6 +382,9 @@ namespace IntelliVerseX.Auth.UI
 
                     if (resp != null && resp.status && resp.data != null)
                     {
+                        SyncCoreIdentityFromLoginResponse(resp);
+                        TryRefreshRuntimeSnapshot();
+
                         if (remember)
                         {
                             PlayerPrefs.SetInt(PP_PERSIST_FLAG, 1);
@@ -442,19 +462,13 @@ namespace IntelliVerseX.Auth.UI
                 if (ok)
                 {
                     Debug.Log($"[{nameof(IVXPanelLogin)}] Nakama initialization complete.");
-                    try
-                    {
-                        global::IntelliVerseX.Backend.Nakama.IVXNUserRuntime.Instance?.RefreshFromGlobals();
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogWarning($"[{nameof(IVXPanelLogin)}] Runtime refresh failed: {e.Message}");
-                    }
                 }
                 else
                 {
                     Debug.LogWarning($"[{nameof(IVXPanelLogin)}] Nakama initialization returned false.");
                 }
+
+                TryRefreshRuntimeSnapshot();
 
                 return ok;
             }
@@ -494,6 +508,73 @@ namespace IntelliVerseX.Auth.UI
                 IsGuest = false,
                 ExpiresAt = expAt
             };
+        }
+
+        private static void SyncCoreIdentityFromLoginResponse(APIManager.LoginResponse loginResp)
+        {
+            try
+            {
+                if (loginResp?.data?.user == null)
+                    return;
+
+                var d = loginResp.data;
+                var u = d.user;
+                var existing = IntelliVerseXIdentity.GetUser();
+                long expEpoch = DateTimeOffset.UtcNow.ToUnixTimeSeconds() + Math.Max(0, d.expiresIn <= 0 ? 1800 : d.expiresIn);
+
+                var mapped = new IntelliVerseXUser
+                {
+                    Username = u.userName ?? existing?.Username ?? u.firstName ?? string.Empty,
+                    DeviceId = existing?.DeviceId ?? string.Empty,
+                    GameId = existing?.GameId ?? string.Empty,
+
+                    CognitoUserId = !string.IsNullOrWhiteSpace(u.idpUsername) ? u.idpUsername : (u.id ?? string.Empty),
+                    Email = u.email ?? string.Empty,
+                    IdpUsername = u.idpUsername ?? string.Empty,
+                    FirstName = u.firstName ?? string.Empty,
+                    LastName = u.lastName ?? string.Empty,
+
+                    AccessToken = !string.IsNullOrWhiteSpace(d.accessToken) ? d.accessToken : (d.token ?? string.Empty),
+                    IdToken = d.idToken ?? string.Empty,
+                    RefreshToken = d.refreshToken ?? string.Empty,
+                    AccessTokenExpiryEpoch = expEpoch,
+
+                    GameWalletId = existing?.GameWalletId ?? string.Empty,
+                    GlobalWalletId = existing?.GlobalWalletId ?? string.Empty,
+                    GameWalletBalance = existing?.GameWalletBalance ?? 0,
+                    GlobalWalletBalance = existing?.GlobalWalletBalance ?? 0,
+                    GameWalletCurrency = string.IsNullOrWhiteSpace(existing?.GameWalletCurrency) ? "coins" : existing.GameWalletCurrency,
+                    GlobalWalletCurrency = string.IsNullOrWhiteSpace(existing?.GlobalWalletCurrency) ? "gems" : existing.GlobalWalletCurrency,
+                    WalletAddress = u.walletAddress ?? string.Empty,
+
+                    Role = u.role ?? "user",
+                    IsAdult = u.isAdult ? "True" : "False",
+                    LoginType = u.loginType ?? "email",
+                    AccountStatus = u.accountStatus ?? string.Empty,
+                    KycStatus = u.kycStatus ?? string.Empty,
+
+                    IsGuestUser = false,
+                    GuestCreatedEpoch = 0
+                };
+
+                IntelliVerseXIdentity.SetCurrentUser(mapped);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[{nameof(IVXPanelLogin)}] Core identity sync failed: {ex.Message}");
+            }
+        }
+
+        private static void TryRefreshRuntimeSnapshot()
+        {
+            try
+            {
+                global::IntelliVerseX.Backend.Nakama.IVXNUserRuntime.Instance?.RefreshFromGlobals();
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[{nameof(IVXPanelLogin)}] Runtime refresh failed: {e.Message}");
+            }
         }
 
         #endregion

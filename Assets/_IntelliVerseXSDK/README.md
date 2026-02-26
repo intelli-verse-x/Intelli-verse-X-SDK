@@ -23,6 +23,7 @@
 | 👥 **Social** | Friends, sharing, referrals |
 | 🎲 **Quiz System** | Complete quiz game framework |
 | 🎨 **UI Components** | Production-ready UI utilities |
+| 😀 **Emoji Support** | TMP emoji conversion + production import hardening |
 
 ---
 
@@ -104,6 +105,26 @@ async void Start()
     Debug.Log($"Backend: {(connected ? "Connected" : "Offline")}");
 }
 ```
+
+### 4. (Optional) Enable Emoji Support
+
+```csharp
+using IntelliVerseX.Core;
+using TMPro;
+
+public class EmojiTextSample : MonoBehaviour
+{
+    public TMP_Text uiLabel;
+    public TMP_SpriteAsset emojiSpriteAsset;
+
+    void Start()
+    {
+        uiLabel.SetTextWithEmojiSprites("Welcome 😀 ❤️ 🚀", emojiSpriteAsset);
+    }
+}
+```
+
+Use `IntelliVerseX > Emoji > Setup & Validate` to configure emoji atlas texture settings for production platforms.
 
 ---
 

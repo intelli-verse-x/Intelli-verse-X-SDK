@@ -19,6 +19,7 @@ namespace IntelliVerseX.Games.Leaderboard
 
         private const string RPC_SUBMIT_SCORE_AND_SYNC = "submit_score_and_sync";
         private const string RPC_GET_ALL_LEADERBOARDS = "get_all_leaderboards";
+        private const string RPC_GET_TIME_PERIOD_LEADERBOARD = "get_time_period_leaderboard";
 
         private static int _currentWinStreak = 0;
         public static int CurrentWinStreak => _currentWinStreak;
@@ -61,6 +62,12 @@ namespace IntelliVerseX.Games.Leaderboard
                 string gameId = GetGameId(mgr);
                 string username = ResolveUsername(mgr);
                 string deviceId = ResolveDeviceIdSafe();
+                if (string.IsNullOrWhiteSpace(deviceId))
+                {
+                    // Backend contract requires device_id for identity lookup.
+                    deviceId = apiUserId;
+                    Log("SubmitScoreAsync: DeviceId unavailable, falling back to API user id.");
+                }
 
                 if (string.IsNullOrWhiteSpace(apiUserId))
                 {
@@ -181,6 +188,12 @@ namespace IntelliVerseX.Games.Leaderboard
                 string nakamaUserId = ResolveNakamaUserId(mgr);
                 string gameId = GetGameId(mgr);
                 string deviceId = ResolveDeviceIdSafe();
+                if (string.IsNullOrWhiteSpace(deviceId))
+                {
+                    // Backend contract requires device_id for identity lookup.
+                    deviceId = apiUserId;
+                    Log("GetAllLeaderboardsAsync: DeviceId unavailable, falling back to API user id.");
+                }
 
                 if (string.IsNullOrWhiteSpace(apiUserId))
                 {
@@ -222,7 +235,8 @@ namespace IntelliVerseX.Games.Leaderboard
                     deviceId = deviceId,
                     device_id = deviceId,
 
-                    limit = limit
+                    limit = limit,
+                    offset = 0
                 };
 
                 var jsonPayload = JsonConvert.SerializeObject(payload);
@@ -238,6 +252,14 @@ namespace IntelliVerseX.Games.Leaderboard
 
                 if (result == null)
                 {
+                    Log("GetAllLeaderboardsAsync: aggregate RPC returned null response. Trying fallback RPCs.");
+                    var fallbackNull = await GetAllLeaderboardsViaPeriodRpcAsync(client, session, gameId, nakamaUserId, limit);
+                    if (fallbackNull != null)
+                    {
+                        SafeInvoke(OnLeaderboardsFetched, fallbackNull);
+                        return fallbackNull;
+                    }
+
                     LogError("GetAllLeaderboardsAsync: RPC response deserialized to null.");
                     return null;
                 }
@@ -265,6 +287,14 @@ namespace IntelliVerseX.Games.Leaderboard
 
                 if (!result.success)
                 {
+                    Log($"GetAllLeaderboardsAsync failed: {result.error ?? "Unknown error"}. Trying fallback RPCs.");
+                    var fallbackFailed = await GetAllLeaderboardsViaPeriodRpcAsync(client, session, gameId, nakamaUserId, limit);
+                    if (fallbackFailed != null)
+                    {
+                        SafeInvoke(OnLeaderboardsFetched, fallbackFailed);
+                        return fallbackFailed;
+                    }
+
                     LogError($"GetAllLeaderboardsAsync failed: {result.error ?? "Unknown error"}");
                     return result;
                 }
@@ -276,6 +306,28 @@ namespace IntelliVerseX.Games.Leaderboard
             }
             catch (Exception ex)
             {
+                Log($"GetAllLeaderboardsAsync aggregate RPC exception: {ex.Message}. Trying fallback RPCs.");
+
+                try
+                {
+                    var fallback = await GetAllLeaderboardsViaPeriodRpcAsync(
+                        GetClient(mgr),
+                        GetSession(mgr),
+                        GetGameId(mgr),
+                        ResolveNakamaUserId(mgr),
+                        limit);
+
+                    if (fallback != null)
+                    {
+                        SafeInvoke(OnLeaderboardsFetched, fallback);
+                        return fallback;
+                    }
+                }
+                catch (Exception fallbackEx)
+                {
+                    Log($"GetAllLeaderboardsAsync fallback exception: {fallbackEx.Message}");
+                }
+
                 LogError($"GetAllLeaderboardsAsync exception: {ex}");
                 return null;
             }
@@ -333,6 +385,214 @@ namespace IntelliVerseX.Games.Leaderboard
         {
             _currentWinStreak = 0;
             Log("Win streak reset.");
+        }
+
+        private static async Task<IVXGAllLeaderboardsResponse> GetAllLeaderboardsViaPeriodRpcAsync(
+            IClient client,
+            ISession session,
+            string gameId,
+            string nakamaUserId,
+            int limit)
+        {
+            if (client == null || session == null || string.IsNullOrWhiteSpace(gameId))
+                return null;
+
+            int safeLimit = Mathf.Clamp(limit, 1, 100);
+            bool anySuccess = false;
+            var periods = new[] { "daily", "weekly", "monthly", "alltime" };
+
+            var response = new IVXGAllLeaderboardsResponse
+            {
+                success = true,
+                game_id = gameId,
+                leaderboards = new Dictionary<string, IVXGLeaderboardData>(StringComparer.OrdinalIgnoreCase),
+                player_ranks = new IVXGPlayerRanks()
+            };
+
+            foreach (var period in periods)
+            {
+                var gameData = await FetchTimePeriodLeaderboardAsync(client, session, gameId, period, "game", safeLimit);
+                if (gameData != null)
+                {
+                    response.leaderboards[$"{gameId}_{period}"] = gameData;
+                    anySuccess = true;
+                    SetRankFromRecords(response.player_ranks, gameData.records, nakamaUserId, period, isGlobal: false);
+                }
+
+                var globalData = await FetchTimePeriodLeaderboardAsync(client, session, gameId, period, "global", safeLimit);
+                if (globalData != null)
+                {
+                    response.leaderboards[$"global_{period}"] = globalData;
+                    anySuccess = true;
+                    SetRankFromRecords(response.player_ranks, globalData.records, nakamaUserId, period, isGlobal: true);
+                }
+            }
+
+            if (!anySuccess)
+            {
+                return null;
+            }
+
+            response.ResolveGameLeaderboards(gameId);
+            if (response.global_alltime == null &&
+                response.leaderboards.TryGetValue("global_alltime", out var globalAlltime))
+            {
+                response.global_alltime = globalAlltime;
+            }
+
+            Log("GetAllLeaderboardsAsync fallback succeeded via get_time_period_leaderboard.");
+            return response;
+        }
+
+        private static async Task<IVXGLeaderboardData> FetchTimePeriodLeaderboardAsync(
+            IClient client,
+            ISession session,
+            string gameId,
+            string period,
+            string scope,
+            int limit)
+        {
+            try
+            {
+                var payload = new
+                {
+                    game_id = gameId,
+                    gameId = gameId,
+                    period = period,
+                    scope = scope,
+                    limit = limit
+                };
+
+                var rpcResponse = await client.RpcAsync(
+                    session,
+                    RPC_GET_TIME_PERIOD_LEADERBOARD,
+                    JsonConvert.SerializeObject(payload));
+
+                var parsed = JsonConvert.DeserializeObject<IVXGTimePeriodLeaderboardRpcResponse>(rpcResponse.Payload);
+                if (parsed == null || !parsed.success)
+                {
+                    Log($"Fallback RPC {RPC_GET_TIME_PERIOD_LEADERBOARD} {scope}/{period} failed: {parsed?.error ?? "null response"}");
+                    return null;
+                }
+
+                var records = ConvertRecords(parsed.records);
+                var ownerRecords = ConvertRecords(parsed.ownerRecords);
+                if (ownerRecords.Count > 0)
+                {
+                    foreach (var ownerRecord in ownerRecords)
+                    {
+                        if (!records.Any(r => string.Equals(r.owner_id, ownerRecord.owner_id, StringComparison.Ordinal)))
+                        {
+                            records.Add(ownerRecord);
+                        }
+                    }
+                }
+
+                return new IVXGLeaderboardData
+                {
+                    leaderboard_id = FirstNonEmpty(
+                        parsed.leaderboard_id,
+                        parsed.leaderboardId,
+                        BuildLeaderboardId(gameId, period, scope)),
+                    period = period,
+                    scope = scope,
+                    records = records,
+                    next_cursor = FirstNonEmpty(parsed.next_cursor, parsed.nextCursor),
+                    prev_cursor = FirstNonEmpty(parsed.prev_cursor, parsed.prevCursor)
+                };
+            }
+            catch (Exception ex)
+            {
+                Log($"Fallback RPC {RPC_GET_TIME_PERIOD_LEADERBOARD} {scope}/{period} exception: {ex.Message}");
+                return null;
+            }
+        }
+
+        private static string BuildLeaderboardId(string gameId, string period, string scope)
+        {
+            return string.Equals(scope, "global", StringComparison.OrdinalIgnoreCase)
+                ? $"leaderboard_global_{period}"
+                : $"leaderboard_{gameId}_{period}";
+        }
+
+        private static void SetRankFromRecords(
+            IVXGPlayerRanks ranks,
+            List<IVXGLeaderboardRecord> records,
+            string nakamaUserId,
+            string period,
+            bool isGlobal)
+        {
+            if (ranks == null || records == null || string.IsNullOrWhiteSpace(nakamaUserId))
+                return;
+
+            var record = records.FirstOrDefault(r =>
+                !string.IsNullOrWhiteSpace(r?.owner_id) &&
+                string.Equals(r.owner_id, nakamaUserId, StringComparison.Ordinal));
+
+            if (record == null || record.rank <= 0)
+                return;
+
+            if (isGlobal)
+            {
+                if (string.Equals(period, "alltime", StringComparison.OrdinalIgnoreCase))
+                    ranks.global_rank = record.rank;
+                return;
+            }
+
+            if (string.Equals(period, "daily", StringComparison.OrdinalIgnoreCase)) ranks.daily_rank = record.rank;
+            else if (string.Equals(period, "weekly", StringComparison.OrdinalIgnoreCase)) ranks.weekly_rank = record.rank;
+            else if (string.Equals(period, "monthly", StringComparison.OrdinalIgnoreCase)) ranks.monthly_rank = record.rank;
+            else if (string.Equals(period, "alltime", StringComparison.OrdinalIgnoreCase)) ranks.alltime_rank = record.rank;
+        }
+
+        private static List<IVXGLeaderboardRecord> ConvertRecords(List<IVXGTimePeriodLeaderboardRecord> source)
+        {
+            var records = new List<IVXGLeaderboardRecord>();
+            if (source == null || source.Count == 0)
+                return records;
+
+            foreach (var item in source)
+            {
+                if (item == null) continue;
+
+                string ownerId = FirstNonEmpty(item.owner_id, item.ownerId);
+                if (string.IsNullOrWhiteSpace(ownerId)) continue;
+
+                string metadata = null;
+                if (item.metadata != null)
+                {
+                    metadata = item.metadata as string ?? JsonConvert.SerializeObject(item.metadata);
+                }
+
+                records.Add(new IVXGLeaderboardRecord
+                {
+                    leaderboard_id = FirstNonEmpty(item.leaderboard_id, item.leaderboardId),
+                    owner_id = ownerId,
+                    username = item.username ?? string.Empty,
+                    score = item.score,
+                    subscore = item.subscore,
+                    num_score = item.num_score != 0 ? item.num_score : item.numScore,
+                    rank = item.rank,
+                    metadata = metadata ?? "{}",
+                    create_time = FirstNonEmpty(item.create_time, item.createTime),
+                    update_time = FirstNonEmpty(item.update_time, item.updateTime),
+                    expiry_time = FirstNonEmpty(item.expiry_time, item.expiryTime)
+                });
+            }
+
+            return records;
+        }
+
+        private static string FirstNonEmpty(params string[] values)
+        {
+            if (values == null) return null;
+            for (int i = 0; i < values.Length; i++)
+            {
+                if (!string.IsNullOrWhiteSpace(values[i]))
+                    return values[i];
+            }
+
+            return null;
         }
 
         #endregion
@@ -512,8 +772,28 @@ namespace IntelliVerseX.Games.Leaderboard
 
         private static string ResolveDeviceIdSafe()
         {
+            string id = null;
+
             try
             {
+                // 1) Use IVXNManager stable device id (matches create_or_sync_user contract).
+                var mgr = GetNakamaManager();
+                if (mgr != null)
+                {
+                    var stableDeviceIdMethod = mgr.GetType().GetMethod(
+                        "GetStableDeviceId",
+                        System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                    if (stableDeviceIdMethod != null)
+                    {
+                        id = stableDeviceIdMethod.Invoke(mgr, null) as string;
+                        if (!string.IsNullOrWhiteSpace(id))
+                        {
+                            return id;
+                        }
+                    }
+                }
+
+                // 2) Fallback to identity model if available.
                 var identityType = FindType("IntelliVerseXUserIdentity");
                 if (identityType != null)
                 {
@@ -523,11 +803,28 @@ namespace IntelliVerseX.Games.Leaderboard
                     if (currentUser != null)
                     {
                         var deviceIdProp = currentUser.GetType().GetProperty("DeviceId");
-                        return deviceIdProp?.GetValue(currentUser) as string;
+                        id = deviceIdProp?.GetValue(currentUser) as string;
+                        if (!string.IsNullOrWhiteSpace(id))
+                        {
+                            return id;
+                        }
                     }
                 }
             }
             catch { }
+
+            // 3) Final fallback for robustness in Editor/mobile/web builds.
+            try
+            {
+                id = SystemInfo.deviceUniqueIdentifier;
+                if (!string.IsNullOrWhiteSpace(id) &&
+                    !string.Equals(id, "unknown", StringComparison.OrdinalIgnoreCase))
+                {
+                    return id;
+                }
+            }
+            catch { }
+
             return null;
         }
 
@@ -602,6 +899,45 @@ namespace IntelliVerseX.Games.Leaderboard
             {
                 Debug.LogWarning($"{LOGTAG} Listener exception: {ex}");
             }
+        }
+
+        [Serializable]
+        private class IVXGTimePeriodLeaderboardRpcResponse
+        {
+            public bool success;
+            public string error;
+            public string leaderboardId;
+            public string leaderboard_id;
+            public string period;
+            public string scope;
+            public List<IVXGTimePeriodLeaderboardRecord> records;
+            public List<IVXGTimePeriodLeaderboardRecord> ownerRecords;
+            public string prevCursor;
+            public string nextCursor;
+            public string prev_cursor;
+            public string next_cursor;
+        }
+
+        [Serializable]
+        private class IVXGTimePeriodLeaderboardRecord
+        {
+            public string leaderboardId;
+            public string leaderboard_id;
+            public string ownerId;
+            public string owner_id;
+            public string username;
+            public long score;
+            public int subscore;
+            public int numScore;
+            public int num_score;
+            public int rank;
+            public object metadata;
+            public string createTime;
+            public string updateTime;
+            public string expiryTime;
+            public string create_time;
+            public string update_time;
+            public string expiry_time;
         }
 
         #endregion

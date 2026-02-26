@@ -72,12 +72,24 @@ public static class DeviceInfoHelper
     private static string GetOrCreatePseudoId()
     {
         string id = PlayerPrefs.GetString(PseudoIdKey, string.Empty);
-        if (string.IsNullOrWhiteSpace(id))
+        if (string.IsNullOrWhiteSpace(id) || !IsMacLike(id))
         {
-            id = Guid.NewGuid().ToString("N"); // 32-char hex
+            id = CreatePseudoMacAddress();
             PlayerPrefs.SetString(PseudoIdKey, id);
             PlayerPrefs.Save();
         }
         return id;
+    }
+
+    private static string CreatePseudoMacAddress()
+    {
+        byte[] guidBytes = Guid.NewGuid().ToByteArray();
+        return $"{guidBytes[0]:X2}:{guidBytes[1]:X2}:{guidBytes[2]:X2}:{guidBytes[3]:X2}:{guidBytes[4]:X2}:{guidBytes[5]:X2}";
+    }
+
+    private static bool IsMacLike(string value)
+    {
+        return !string.IsNullOrWhiteSpace(value)
+               && System.Text.RegularExpressions.Regex.IsMatch(value.Trim(), @"^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$");
     }
 }

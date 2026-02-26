@@ -142,42 +142,16 @@ public static class UserSessionManager
     /// </summary>
     public static void SaveFromLoginResponse(APIManager.LoginResponse resp)
     {
-        if (resp == null || resp.data == null || resp.data.user == null)
-            throw new ArgumentException("Invalid login response to persist.");
+        Save(CreateSessionFromLoginResponse(resp));
+    }
 
-        var d = resp.data;
-        var u = d.user;
-        var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
-        var session = new UserSession
-        {
-            accessToken = !string.IsNullOrWhiteSpace(d.accessToken) ? d.accessToken : d.token,
-            idToken = d.idToken,
-            refreshToken = d.refreshToken,
-            expiresIn = d.expiresIn,
-            accessTokenExpiryEpoch = now + Math.Max(0, d.expiresIn <= 0 ? 1800 : d.expiresIn),
-
-            idpUsername = u.idpUsername,
-            userId = u.id,
-            firstName = u.firstName,
-            lastName = u.lastName,
-            userName = u.userName,
-            email = u.email,
-            role = u.role,
-            isAdult = u.isAdult,
-            loginType = u.loginType,
-
-            walletAddress = u.walletAddress,
-            fcmToken = u.fcmToken,
-            kycStatus = u.kycStatus,
-            accountStatus = u.accountStatus,
-            createdAt = u.createdAt,
-            updatedAt = u.updatedAt,
-
-            SavedAtUtc = DateTime.UtcNow
-        };
-
-        Save(session);
+    /// <summary>
+    /// Creates an in-memory session from a LoginResponse without writing to disk.
+    /// Useful when "remember me" is off but runtime systems still need session data.
+    /// </summary>
+    public static void SetTemporaryFromLoginResponse(APIManager.LoginResponse resp)
+    {
+        SetTemporary(CreateSessionFromLoginResponse(resp));
     }
 
     /// <summary>
@@ -282,6 +256,44 @@ public static class UserSessionManager
         if (c == null || c.accessTokenExpiryEpoch <= 0) return false;
         long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         return now + skewSeconds < c.accessTokenExpiryEpoch;
+    }
+
+    private static UserSession CreateSessionFromLoginResponse(APIManager.LoginResponse resp)
+    {
+        if (resp == null || resp.data == null || resp.data.user == null)
+            throw new ArgumentException("Invalid login response to persist.");
+
+        var d = resp.data;
+        var u = d.user;
+        var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+        return new UserSession
+        {
+            accessToken = !string.IsNullOrWhiteSpace(d.accessToken) ? d.accessToken : d.token,
+            idToken = d.idToken,
+            refreshToken = d.refreshToken,
+            expiresIn = d.expiresIn,
+            accessTokenExpiryEpoch = now + Math.Max(0, d.expiresIn <= 0 ? 1800 : d.expiresIn),
+
+            idpUsername = u.idpUsername,
+            userId = u.id,
+            firstName = u.firstName,
+            lastName = u.lastName,
+            userName = u.userName,
+            email = u.email,
+            role = u.role,
+            isAdult = u.isAdult,
+            loginType = u.loginType,
+
+            walletAddress = u.walletAddress,
+            fcmToken = u.fcmToken,
+            kycStatus = u.kycStatus,
+            accountStatus = u.accountStatus,
+            createdAt = u.createdAt,
+            updatedAt = u.updatedAt,
+
+            SavedAtUtc = DateTime.UtcNow
+        };
     }
 
     private static UserSession LoadInternal()

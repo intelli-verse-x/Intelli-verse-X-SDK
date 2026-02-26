@@ -2078,7 +2078,28 @@ Do not include any other top-level keys. Do not include code fences.";
         request.role = string.IsNullOrWhiteSpace(request.role) ? "user" : request.role.Trim();
         request.firstName = request.firstName?.Trim() ?? "";
         request.lastName = request.lastName?.Trim() ?? "";
-        request.fromDevice = string.IsNullOrWhiteSpace(request.fromDevice) ? "web" : request.fromDevice.Trim();
+
+        // Resolve device fingerprint fields for machine authorization checks.
+        DeviceInfoHelper.GetLoginDeviceFields(out string fromDeviceAuto, out string macAuto);
+        request.fromDevice = string.IsNullOrWhiteSpace(request.fromDevice)
+            ? (string.IsNullOrWhiteSpace(fromDeviceAuto) ? "web" : fromDeviceAuto)
+            : request.fromDevice.Trim();
+
+        // Backend registration policy expects web for this endpoint.
+        if (string.Equals(request.fromDevice, "machine", StringComparison.OrdinalIgnoreCase))
+        {
+            request.fromDevice = "web";
+        }
+
+        if (string.IsNullOrWhiteSpace(request.macAddress) || IsKnownPlaceholderMac(request.macAddress))
+        {
+            request.macAddress = macAuto;
+        }
+
+        if (string.IsNullOrWhiteSpace(request.fcmToken))
+        {
+            request.fcmToken = request.macAddress;
+        }
 
         if (!string.IsNullOrWhiteSpace(request.macAddress))
         {
@@ -2211,6 +2232,14 @@ Do not include any other top-level keys. Do not include code fences.";
         }
 
         throw lastErr ?? new Exception("Unknown confirm-signup error");
+    }
+
+    private static bool IsKnownPlaceholderMac(string mac)
+    {
+        if (string.IsNullOrWhiteSpace(mac)) return false;
+        string trimmed = mac.Trim();
+        return string.Equals(trimmed, "00:1A:2B:3C:4D:5E", StringComparison.OrdinalIgnoreCase)
+               || string.Equals(trimmed, "00-1A-2B-3C-4D-5E", StringComparison.OrdinalIgnoreCase);
     }
 
     #endregion
@@ -2653,11 +2682,20 @@ Do not include any other top-level keys. Do not include code fences.";
                             );
                         }
 
-                        // Persist complete session snapshot for later reference
-                        if (persistSession && resp.data != null)
+                        // Always keep runtime session in memory; persist only when requested.
+                        if (resp.data != null)
                         {
-                            try { UserSessionManager.SaveFromLoginResponse(resp); }
-                            catch (Exception ex) { LogError($"[Session] Save failed: {ex.Message}"); }
+                            try
+                            {
+                                if (persistSession)
+                                    UserSessionManager.SaveFromLoginResponse(resp);
+                                else
+                                    UserSessionManager.SetTemporaryFromLoginResponse(resp);
+                            }
+                            catch (Exception ex)
+                            {
+                                LogError($"[Session] Save/SetTemporary failed: {ex.Message}");
+                            }
                         }
 
                         return resp;

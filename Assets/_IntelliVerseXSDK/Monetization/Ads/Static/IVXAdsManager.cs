@@ -1476,6 +1476,7 @@ namespace IntelliVerseX.Monetization
                     Debug.Log($"[IVXAdsManager] Interstitial primary failed. Trying fallback: {fallback}");
                     ShowInterstitialAdFromNetwork(fallback, onComplete);
                 }
+                else
                 {
                     onComplete?.Invoke(false);
                 }

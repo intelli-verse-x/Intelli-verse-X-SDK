@@ -8,6 +8,7 @@ namespace IntelliVerseX.Backend.Nakama
     public sealed class IVXNUserRuntime : MonoBehaviour
     {
         public static IVXNUserRuntime Instance { get; private set; }
+        private static bool _isQuitting;
 
         [Header("Behaviour")]
         [SerializeField] private bool autoRefreshOnStart = true;
@@ -83,6 +84,11 @@ namespace IntelliVerseX.Backend.Nakama
 
         private void Awake()
         {
+            if (_isQuitting)
+            {
+                return;
+            }
+
             if (Instance != null && Instance != this)
             {
                 Log("Duplicate instance detected. Destroying this one.", isWarning: true);
@@ -91,6 +97,11 @@ namespace IntelliVerseX.Backend.Nakama
             }
 
             Instance = this;
+            if (transform.parent != null)
+            {
+                Log("Runtime snapshot object was parented. Detaching before DontDestroyOnLoad.", isWarning: true);
+                transform.SetParent(null, true);
+            }
             DontDestroyOnLoad(gameObject);
 
             TrySubscribeToManager();
@@ -132,6 +143,11 @@ namespace IntelliVerseX.Backend.Nakama
             {
                 Instance = null;
             }
+        }
+
+        private void OnApplicationQuit()
+        {
+            _isQuitting = true;
         }
 
         private void TrySubscribeToManager()

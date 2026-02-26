@@ -192,12 +192,10 @@ namespace IntelliVerseX.Examples
                 return;
             }
 
-            // TODO: IVXAdsManager.ShowInterstitial() not yet implemented in SDK
-            Debug.LogWarning("[Bootstrap] ShowInterstitial() not yet implemented");
-            // IVXAdsManager.ShowInterstitial((success) =>
-            // {
-            //     Debug.Log($"[Bootstrap] Interstitial ad result: {success}");
-            // });
+            IVXAdsManager.ShowInterstitialAd(success =>
+            {
+                Debug.Log($"[Bootstrap] Interstitial ad result: {success}");
+            });
         }
 
         /// <summary>
@@ -211,18 +209,14 @@ namespace IntelliVerseX.Examples
                 return;
             }
 
-            // TODO: IVXAdsManager.ShowRewarded() not yet implemented in SDK
-            Debug.LogWarning("[Bootstrap] ShowRewarded() not yet implemented");
-            // IVXAdsManager.ShowRewarded((success, rewarded) =>
-            // {
-            //     Debug.Log($"[Bootstrap] Rewarded ad result - Success: {success}, Rewarded: {rewarded}");
-            //     
-            //     if (rewarded)
-            //     {
-            //         Debug.Log("[Bootstrap] User watched ad! Give reward here.");
-            //         // Give coins, extra life, etc.
-            //     }
-            // });
+            IVXAdsManager.ShowRewardedAd((success, reward) =>
+            {
+                Debug.Log($"[Bootstrap] Rewarded ad result - Success: {success}, Reward: {reward}");
+                if (success && reward > 0)
+                {
+                    Debug.Log("[Bootstrap] User watched ad. Apply reward logic here.");
+                }
+            });
         }
 
         /// <summary>

@@ -1,0 +1,7384 @@
+fileFormatVersion: 2
+guid: cbfc09071380a874d843fe3256190c4e
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 3871940396039191800
+    second: TwemojiAtlas_1_0
+  - first:
+      213: 7359790609567681632
+    second: TwemojiAtlas_1_1
+  - first:
+      213: 5124212656925765616
+    second: TwemojiAtlas_1_2
+  - first:
+      213: -8937520862191615772
+    second: TwemojiAtlas_1_3
+  - first:
+      213: 2446422984640245701
+    second: TwemojiAtlas_1_4
+  - first:
+      213: -8014278233991766742
+    second: TwemojiAtlas_1_5
+  - first:
+      213: -8068052316598159829
+    second: TwemojiAtlas_1_6
+  - first:
+      213: -4717221515066570889
+    second: TwemojiAtlas_1_7
+  - first:
+      213: -7325411882624668313
+    second: TwemojiAtlas_1_8
+  - first:
+      213: -2139613831821917397
+    second: TwemojiAtlas_1_9
+  - first:
+      213: -3970017664136254384
+    second: TwemojiAtlas_1_10
+  - first:
+      213: 8757057357150120392
+    second: TwemojiAtlas_1_11
+  - first:
+      213: 3570760105033107855
+    second: TwemojiAtlas_1_12
+  - first:
+      213: 1942701109287869186
+    second: TwemojiAtlas_1_13
+  - first:
+      213: -4779937842434905542
+    second: TwemojiAtlas_1_14
+  - first:
+      213: -559210124882127523
+    second: TwemojiAtlas_1_15
+  - first:
+      213: 5467743740217331231
+    second: TwemojiAtlas_1_16
+  - first:
+      213: -1062948050715493170
+    second: TwemojiAtlas_1_17
+  - first:
+      213: -8348430059040413884
+    second: TwemojiAtlas_1_18
+  - first:
+      213: -6400216019650664995
+    second: TwemojiAtlas_1_19
+  - first:
+      213: 565220552441803588
+    second: TwemojiAtlas_1_20
+  - first:
+      213: -22793830128283273
+    second: TwemojiAtlas_1_21
+  - first:
+      213: 6237287352044520193
+    second: TwemojiAtlas_1_22
+  - first:
+      213: -9013389935637508887
+    second: TwemojiAtlas_1_23
+  - first:
+      213: 474602293124842509
+    second: TwemojiAtlas_1_24
+  - first:
+      213: -901777870888778727
+    second: TwemojiAtlas_1_25
+  - first:
+      213: 2365254031321615550
+    second: TwemojiAtlas_1_26
+  - first:
+      213: -2185914688525871958
+    second: TwemojiAtlas_1_27
+  - first:
+      213: 5090150089649549380
+    second: TwemojiAtlas_1_28
+  - first:
+      213: -3321582162925770686
+    second: TwemojiAtlas_1_29
+  - first:
+      213: -4416084042871860968
+    second: TwemojiAtlas_1_30
+  - first:
+      213: -1295094253188603635
+    second: TwemojiAtlas_1_31
+  - first:
+      213: 2929148590086430875
+    second: TwemojiAtlas_1_32
+  - first:
+      213: -3344344537267544952
+    second: TwemojiAtlas_1_33
+  - first:
+      213: 4142606870469008526
+    second: TwemojiAtlas_1_34
+  - first:
+      213: 8344104592143257526
+    second: TwemojiAtlas_1_35
+  - first:
+      213: -5865425728526383273
+    second: TwemojiAtlas_1_36
+  - first:
+      213: -4551104025866829279
+    second: TwemojiAtlas_1_37
+  - first:
+      213: 2531994416480938342
+    second: TwemojiAtlas_1_38
+  - first:
+      213: -7437880757316122801
+    second: TwemojiAtlas_1_39
+  - first:
+      213: 6152578477325353706
+    second: TwemojiAtlas_1_40
+  - first:
+      213: -2483424002955539731
+    second: TwemojiAtlas_1_41
+  - first:
+      213: 4602699915881566312
+    second: TwemojiAtlas_1_42
+  - first:
+      213: -2344788026041216106
+    second: TwemojiAtlas_1_43
+  - first:
+      213: 1522762288756675484
+    second: TwemojiAtlas_1_44
+  - first:
+      213: -7610220655458374821
+    second: TwemojiAtlas_1_45
+  - first:
+      213: -2706650748536850692
+    second: TwemojiAtlas_1_46
+  - first:
+      213: -8848322703505024439
+    second: TwemojiAtlas_1_47
+  - first:
+      213: -3171040320920074649
+    second: TwemojiAtlas_1_48
+  - first:
+      213: 6960423461305142923
+    second: TwemojiAtlas_1_49
+  - first:
+      213: 1471421742991443721
+    second: TwemojiAtlas_1_50
+  - first:
+      213: -4387787372257127156
+    second: TwemojiAtlas_1_51
+  - first:
+      213: -3380465387337685695
+    second: TwemojiAtlas_1_52
+  - first:
+      213: 4269215636250424975
+    second: TwemojiAtlas_1_53
+  - first:
+      213: -3941256749943032725
+    second: TwemojiAtlas_1_54
+  - first:
+      213: 5263541961477394243
+    second: TwemojiAtlas_1_55
+  - first:
+      213: 36614623678558009
+    second: TwemojiAtlas_1_56
+  - first:
+      213: -8008712266398515624
+    second: TwemojiAtlas_1_57
+  - first:
+      213: 6715847524246853291
+    second: TwemojiAtlas_1_58
+  - first:
+      213: -7567723580819290409
+    second: TwemojiAtlas_1_59
+  - first:
+      213: -5270956346965105686
+    second: TwemojiAtlas_1_60
+  - first:
+      213: -3241488619394734194
+    second: TwemojiAtlas_1_61
+  - first:
+      213: 2607533034083975567
+    second: TwemojiAtlas_1_62
+  - first:
+      213: -7717939990227950171
+    second: TwemojiAtlas_1_63
+  - first:
+      213: -6622529071033520881
+    second: TwemojiAtlas_1_64
+  - first:
+      213: -6214155221941879512
+    second: TwemojiAtlas_1_65
+  - first:
+      213: 2480451764173609610
+    second: TwemojiAtlas_1_66
+  - first:
+      213: -1810154414819378283
+    second: TwemojiAtlas_1_67
+  - first:
+      213: -2999413309152075635
+    second: TwemojiAtlas_1_68
+  - first:
+      213: -8191004659172379142
+    second: TwemojiAtlas_1_69
+  - first:
+      213: -8736909850070900405
+    second: TwemojiAtlas_1_70
+  - first:
+      213: -2881115312378207239
+    second: TwemojiAtlas_1_71
+  - first:
+      213: -8249264809188376617
+    second: TwemojiAtlas_1_72
+  - first:
+      213: 5342107564431430475
+    second: TwemojiAtlas_1_73
+  - first:
+      213: 4052060674188352500
+    second: TwemojiAtlas_1_74
+  - first:
+      213: -2114612661164140464
+    second: TwemojiAtlas_1_75
+  - first:
+      213: 4439642719102568930
+    second: TwemojiAtlas_1_76
+  - first:
+      213: 7259989451077118642
+    second: TwemojiAtlas_1_77
+  - first:
+      213: 4552320739917800509
+    second: TwemojiAtlas_1_78
+  - first:
+      213: 7676840100360774114
+    second: TwemojiAtlas_1_79
+  - first:
+      213: 3977252371280718276
+    second: TwemojiAtlas_1_80
+  - first:
+      213: 7809670269192768578
+    second: TwemojiAtlas_1_81
+  - first:
+      213: -8245357270972580048
+    second: TwemojiAtlas_1_82
+  - first:
+      213: 1432153393525819581
+    second: TwemojiAtlas_1_83
+  - first:
+      213: -7790655176387971868
+    second: TwemojiAtlas_1_84
+  - first:
+      213: -8552111425246101741
+    second: TwemojiAtlas_1_85
+  - first:
+      213: 1420088704669493330
+    second: TwemojiAtlas_1_86
+  - first:
+      213: -6703602183792537995
+    second: TwemojiAtlas_1_87
+  - first:
+      213: -4786312205669442212
+    second: TwemojiAtlas_1_88
+  - first:
+      213: -5954253178919898192
+    second: TwemojiAtlas_1_89
+  - first:
+      213: 8422476447945607298
+    second: TwemojiAtlas_1_90
+  - first:
+      213: 3472893415788736082
+    second: TwemojiAtlas_1_91
+  - first:
+      213: 8780501546411955301
+    second: TwemojiAtlas_1_92
+  - first:
+      213: -460925918091287196
+    second: TwemojiAtlas_1_93
+  - first:
+      213: -5584829072232523106
+    second: TwemojiAtlas_1_94
+  - first:
+      213: 4018475544949225289
+    second: TwemojiAtlas_1_95
+  - first:
+      213: -5214502070742862227
+    second: TwemojiAtlas_1_96
+  - first:
+      213: 3288353008137367855
+    second: TwemojiAtlas_1_97
+  - first:
+      213: 7422248379535722271
+    second: TwemojiAtlas_1_98
+  - first:
+      213: 4800861343954463743
+    second: TwemojiAtlas_1_99
+  - first:
+      213: 105590675897355544
+    second: TwemojiAtlas_1_100
+  - first:
+      213: -7026212215459774788
+    second: TwemojiAtlas_1_101
+  - first:
+      213: 3728109072082372425
+    second: TwemojiAtlas_1_102
+  - first:
+      213: -6592368719225156
+    second: TwemojiAtlas_1_103
+  - first:
+      213: -4272865526806733704
+    second: TwemojiAtlas_1_104
+  - first:
+      213: 8568527447843868832
+    second: TwemojiAtlas_1_105
+  - first:
+      213: 1909958389264756969
+    second: TwemojiAtlas_1_106
+  - first:
+      213: -1618282878689202823
+    second: TwemojiAtlas_1_107
+  - first:
+      213: -7859861855108441633
+    second: TwemojiAtlas_1_108
+  - first:
+      213: 6293021828977171452
+    second: TwemojiAtlas_1_109
+  - first:
+      213: -1680001480853731624
+    second: TwemojiAtlas_1_110
+  - first:
+      213: 5101872762669317861
+    second: TwemojiAtlas_1_111
+  - first:
+      213: -7319179245149431589
+    second: TwemojiAtlas_1_112
+  - first:
+      213: 6027418463217400909
+    second: TwemojiAtlas_1_113
+  - first:
+      213: 4009636789258980279
+    second: TwemojiAtlas_1_114
+  - first:
+      213: 3086307835364863714
+    second: TwemojiAtlas_1_115
+  - first:
+      213: -183722154652192282
+    second: TwemojiAtlas_1_116
+  - first:
+      213: 7533741721172676207
+    second: TwemojiAtlas_1_117
+  - first:
+      213: 8968928652238848555
+    second: TwemojiAtlas_1_118
+  - first:
+      213: -6046638023266835795
+    second: TwemojiAtlas_1_119
+  - first:
+      213: 8766193772705287048
+    second: TwemojiAtlas_1_120
+  - first:
+      213: -1997856409175667401
+    second: TwemojiAtlas_1_121
+  - first:
+      213: -7963802918812605468
+    second: TwemojiAtlas_1_122
+  - first:
+      213: 9135060571033645372
+    second: TwemojiAtlas_1_123
+  - first:
+      213: 6176915438852444251
+    second: TwemojiAtlas_1_124
+  - first:
+      213: -6205564741071144482
+    second: TwemojiAtlas_1_125
+  - first:
+      213: 695718154552613370
+    second: TwemojiAtlas_1_126
+  - first:
+      213: 3374342283020704624
+    second: TwemojiAtlas_1_127
+  - first:
+      213: 5762202518912674256
+    second: TwemojiAtlas_1_128
+  - first:
+      213: 6175983769204872874
+    second: TwemojiAtlas_1_129
+  - first:
+      213: 127893662436007728
+    second: TwemojiAtlas_1_130
+  - first:
+      213: -5406342453292806799
+    second: TwemojiAtlas_1_131
+  - first:
+      213: -6190634523300351785
+    second: TwemojiAtlas_1_132
+  - first:
+      213: 1785202009029935079
+    second: TwemojiAtlas_1_133
+  - first:
+      213: -4922332884905793243
+    second: TwemojiAtlas_1_134
+  - first:
+      213: -5269396616728262531
+    second: TwemojiAtlas_1_135
+  - first:
+      213: 4150817965212616902
+    second: TwemojiAtlas_1_136
+  - first:
+      213: 8326884857945090419
+    second: TwemojiAtlas_1_137
+  - first:
+      213: 1590583329950296734
+    second: TwemojiAtlas_1_138
+  - first:
+      213: 3107736743976651227
+    second: TwemojiAtlas_1_139
+  - first:
+      213: -4991955220951379353
+    second: TwemojiAtlas_1_140
+  - first:
+      213: 3712162736256452259
+    second: TwemojiAtlas_1_141
+  - first:
+      213: 1701299830976702329
+    second: TwemojiAtlas_1_142
+  - first:
+      213: 3280046554522330973
+    second: TwemojiAtlas_1_143
+  - first:
+      213: -7212001920958315902
+    second: TwemojiAtlas_1_144
+  - first:
+      213: -8804998630274781423
+    second: TwemojiAtlas_1_145
+  - first:
+      213: -7475895722382085684
+    second: TwemojiAtlas_1_146
+  - first:
+      213: 3824988124807295721
+    second: TwemojiAtlas_1_147
+  - first:
+      213: 8947838607154553421
+    second: TwemojiAtlas_1_148
+  - first:
+      213: 5709622959499428699
+    second: TwemojiAtlas_1_149
+  - first:
+      213: -1970883503584606427
+    second: TwemojiAtlas_1_150
+  - first:
+      213: -1692536791596253559
+    second: TwemojiAtlas_1_151
+  - first:
+      213: 3394577414724875726
+    second: TwemojiAtlas_1_152
+  - first:
+      213: 2824329559731211042
+    second: TwemojiAtlas_1_153
+  - first:
+      213: -2775606770641673731
+    second: TwemojiAtlas_1_154
+  - first:
+      213: 4990464864307959588
+    second: TwemojiAtlas_1_155
+  - first:
+      213: 3994529018865486599
+    second: TwemojiAtlas_1_156
+  - first:
+      213: -4877017893776389474
+    second: TwemojiAtlas_1_157
+  - first:
+      213: -3115826230367222617
+    second: TwemojiAtlas_1_158
+  - first:
+      213: -7789752667926980036
+    second: TwemojiAtlas_1_159
+  - first:
+      213: -5239138910262599887
+    second: TwemojiAtlas_1_160
+  - first:
+      213: -1156713256142893799
+    second: TwemojiAtlas_1_161
+  - first:
+      213: -1152897931182407397
+    second: TwemojiAtlas_1_162
+  - first:
+      213: -5527174440448538107
+    second: TwemojiAtlas_1_163
+  - first:
+      213: 7660695813288240922
+    second: TwemojiAtlas_1_164
+  - first:
+      213: -324459608715298496
+    second: TwemojiAtlas_1_165
+  - first:
+      213: 852177249352729496
+    second: TwemojiAtlas_1_166
+  - first:
+      213: 6047648755024782723
+    second: TwemojiAtlas_1_167
+  - first:
+      213: 3678182534323264908
+    second: TwemojiAtlas_1_168
+  - first:
+      213: -1904019410893702474
+    second: TwemojiAtlas_1_169
+  - first:
+      213: 1395741194631438765
+    second: TwemojiAtlas_1_170
+  - first:
+      213: 2662459128884135395
+    second: TwemojiAtlas_1_171
+  - first:
+      213: -4081016851298436500
+    second: TwemojiAtlas_1_172
+  - first:
+      213: -5637782975288565172
+    second: TwemojiAtlas_1_173
+  - first:
+      213: -8895145105277014072
+    second: TwemojiAtlas_1_174
+  - first:
+      213: -4517884259419501431
+    second: TwemojiAtlas_1_175
+  - first:
+      213: 374097038667716939
+    second: TwemojiAtlas_1_176
+  - first:
+      213: -7267934564374061171
+    second: TwemojiAtlas_1_177
+  - first:
+      213: 1252070109465981775
+    second: TwemojiAtlas_1_178
+  - first:
+      213: 5499538905205125813
+    second: TwemojiAtlas_1_179
+  - first:
+      213: -3372754045984301383
+    second: TwemojiAtlas_1_180
+  - first:
+      213: 1383556079324124693
+    second: TwemojiAtlas_1_181
+  - first:
+      213: 1782206541769407876
+    second: TwemojiAtlas_1_182
+  - first:
+      213: -4160295130283126318
+    second: TwemojiAtlas_1_183
+  - first:
+      213: -8293375018533786164
+    second: TwemojiAtlas_1_184
+  - first:
+      213: -5356370899780692440
+    second: TwemojiAtlas_1_185
+  - first:
+      213: 4725806289412741221
+    second: TwemojiAtlas_1_186
+  - first:
+      213: -1579943455804933996
+    second: TwemojiAtlas_1_187
+  - first:
+      213: -3500974932193433468
+    second: TwemojiAtlas_1_188
+  - first:
+      213: 1583513498543556882
+    second: TwemojiAtlas_1_189
+  - first:
+      213: 7316497935788146934
+    second: TwemojiAtlas_1_190
+  - first:
+      213: 6382811765119737490
+    second: TwemojiAtlas_1_191
+  - first:
+      213: 6364413447401774274
+    second: TwemojiAtlas_1_192
+  - first:
+      213: 5581686742739564219
+    second: TwemojiAtlas_1_193
+  - first:
+      213: 2511809891284974356
+    second: TwemojiAtlas_1_194
+  - first:
+      213: 1861399326726624842
+    second: TwemojiAtlas_1_195
+  - first:
+      213: -2494694615059530960
+    second: TwemojiAtlas_1_196
+  - first:
+      213: -7751554852460210218
+    second: TwemojiAtlas_1_197
+  - first:
+      213: -6432590664404276544
+    second: TwemojiAtlas_1_198
+  - first:
+      213: -3406751894747101029
+    second: TwemojiAtlas_1_199
+  - first:
+      213: 7364435959039153445
+    second: TwemojiAtlas_1_200
+  - first:
+      213: 5922144885532305432
+    second: TwemojiAtlas_1_201
+  - first:
+      213: 6209519501199410968
+    second: TwemojiAtlas_1_202
+  - first:
+      213: 5872978367871981304
+    second: TwemojiAtlas_1_203
+  - first:
+      213: -5970330337068072262
+    second: TwemojiAtlas_1_204
+  - first:
+      213: -1413232697294028172
+    second: TwemojiAtlas_1_205
+  - first:
+      213: -7109238755359142166
+    second: TwemojiAtlas_1_206
+  - first:
+      213: 1664034440754922784
+    second: TwemojiAtlas_1_207
+  - first:
+      213: 2733547222119464753
+    second: TwemojiAtlas_1_208
+  - first:
+      213: 7374391650532120567
+    second: TwemojiAtlas_1_209
+  - first:
+      213: -2365322140672540041
+    second: TwemojiAtlas_1_210
+  - first:
+      213: -7498366312232712464
+    second: TwemojiAtlas_1_211
+  - first:
+      213: -1428090013228794400
+    second: TwemojiAtlas_1_212
+  - first:
+      213: -4424263875450026518
+    second: TwemojiAtlas_1_213
+  - first:
+      213: 5855215690477819572
+    second: TwemojiAtlas_1_214
+  - first:
+      213: 1904809879965499269
+    second: TwemojiAtlas_1_215
+  - first:
+      213: -2467232645967773198
+    second: TwemojiAtlas_1_216
+  - first:
+      213: -3391109306651354326
+    second: TwemojiAtlas_1_217
+  - first:
+      213: -6703547399789713497
+    second: TwemojiAtlas_1_218
+  - first:
+      213: -4982823131530022938
+    second: TwemojiAtlas_1_219
+  - first:
+      213: -3342393573804079140
+    second: TwemojiAtlas_1_220
+  - first:
+      213: -5082296827331419477
+    second: TwemojiAtlas_1_221
+  - first:
+      213: 6279196591789555751
+    second: TwemojiAtlas_1_222
+  - first:
+      213: 5054321735657963163
+    second: TwemojiAtlas_1_223
+  - first:
+      213: 356943469638526677
+    second: TwemojiAtlas_1_224
+  - first:
+      213: 8423321088816487387
+    second: TwemojiAtlas_1_225
+  - first:
+      213: 1980992288421878973
+    second: TwemojiAtlas_1_226
+  - first:
+      213: -120641009687073928
+    second: TwemojiAtlas_1_227
+  - first:
+      213: 7038270707826483441
+    second: TwemojiAtlas_1_228
+  - first:
+      213: -7478759906724443043
+    second: TwemojiAtlas_1_229
+  - first:
+      213: -5444559503818594121
+    second: TwemojiAtlas_1_230
+  - first:
+      213: 3829379685735160408
+    second: TwemojiAtlas_1_231
+  - first:
+      213: 2244792122198785701
+    second: TwemojiAtlas_1_232
+  - first:
+      213: 1703715337894456262
+    second: TwemojiAtlas_1_233
+  - first:
+      213: -4825070470534176430
+    second: TwemojiAtlas_1_234
+  - first:
+      213: 8385099126378501633
+    second: TwemojiAtlas_1_235
+  - first:
+      213: -5696841029979903612
+    second: TwemojiAtlas_1_236
+  - first:
+      213: 3893705646207594867
+    second: TwemojiAtlas_1_237
+  - first:
+      213: -6462387401647092126
+    second: TwemojiAtlas_1_238
+  - first:
+      213: 4145409124587322728
+    second: TwemojiAtlas_1_239
+  - first:
+      213: -9107293599596427953
+    second: TwemojiAtlas_1_240
+  - first:
+      213: 8647177429230735178
+    second: TwemojiAtlas_1_241
+  - first:
+      213: 5096848447575412112
+    second: TwemojiAtlas_1_242
+  - first:
+      213: -7642696269597370179
+    second: TwemojiAtlas_1_243
+  - first:
+      213: -1616831571898651569
+    second: TwemojiAtlas_1_244
+  - first:
+      213: -2404006098494752070
+    second: TwemojiAtlas_1_245
+  - first:
+      213: 5590658155983454991
+    second: TwemojiAtlas_1_246
+  - first:
+      213: -4090183679078031299
+    second: TwemojiAtlas_1_247
+  - first:
+      213: 4086121498298152856
+    second: TwemojiAtlas_1_248
+  - first:
+      213: -8378099831642762166
+    second: TwemojiAtlas_1_249
+  - first:
+      213: -5872842019468240898
+    second: TwemojiAtlas_1_250
+  - first:
+      213: -6317339618191079435
+    second: TwemojiAtlas_1_251
+  - first:
+      213: -8626230574401321410
+    second: TwemojiAtlas_1_252
+  - first:
+      213: 218040477840907326
+    second: TwemojiAtlas_1_253
+  - first:
+      213: 7397740563436617955
+    second: TwemojiAtlas_1_254
+  - first:
+      213: 7459353072146919054
+    second: TwemojiAtlas_1_255
+  - first:
+      213: -6548330264698785668
+    second: TwemojiAtlas_1_256
+  - first:
+      213: -3591419332866824404
+    second: TwemojiAtlas_1_257
+  - first:
+      213: -360502656536865257
+    second: TwemojiAtlas_1_258
+  - first:
+      213: 1672178575884455960
+    second: TwemojiAtlas_1_259
+  - first:
+      213: 8641411860144575650
+    second: TwemojiAtlas_1_260
+  - first:
+      213: -1643065174719049245
+    second: TwemojiAtlas_1_261
+  - first:
+      213: 6714463798976761473
+    second: TwemojiAtlas_1_262
+  - first:
+      213: 6449155128714402746
+    second: TwemojiAtlas_1_263
+  - first:
+      213: -6843264516407898222
+    second: TwemojiAtlas_1_264
+  - first:
+      213: 4689997590106659550
+    second: TwemojiAtlas_1_265
+  - first:
+      213: 1894892991887709393
+    second: TwemojiAtlas_1_266
+  - first:
+      213: -5244809174308695762
+    second: TwemojiAtlas_1_267
+  - first:
+      213: 2064681225731363563
+    second: TwemojiAtlas_1_268
+  - first:
+      213: 6667271076406487192
+    second: TwemojiAtlas_1_269
+  - first:
+      213: -6813355524325694448
+    second: TwemojiAtlas_1_270
+  - first:
+      213: 4996708938852163761
+    second: TwemojiAtlas_1_271
+  - first:
+      213: -345447292089603311
+    second: TwemojiAtlas_1_272
+  - first:
+      213: -1730857999771068496
+    second: TwemojiAtlas_1_273
+  - first:
+      213: -5250121955449055299
+    second: TwemojiAtlas_1_274
+  - first:
+      213: -3319788501885631380
+    second: TwemojiAtlas_1_275
+  - first:
+      213: 1408164549026193324
+    second: TwemojiAtlas_1_276
+  - first:
+      213: -2194936498537917758
+    second: TwemojiAtlas_1_277
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 1024
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 1
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 100
+    crunchedCompression: 1
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 100
+    crunchedCompression: 1
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 1
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 100
+    crunchedCompression: 1
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 100
+    crunchedCompression: 1
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 431
+        width: 721
+        height: 290
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8fcb6699645ebb530800000000000000
+      internalID: 3871940396039191800
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_1
+      rect:
+        serializedVersion: 2
+        x: 749
+        y: 665
+        width: 14
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06c8988c09a332660800000000000000
+      internalID: 7359790609567681632
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_2
+      rect:
+        serializedVersion: 2
+        x: 821
+        y: 665
+        width: 14
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ffee91234cdc1740800000000000000
+      internalID: 5124212656925765616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_3
+      rect:
+        serializedVersion: 2
+        x: 874
+        y: 671
+        width: 52
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e00d6cf02c87f380800000000000000
+      internalID: -8937520862191615772
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_4
+      rect:
+        serializedVersion: 2
+        x: 939
+        y: 575
+        width: 69
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cf25d92eb073f120800000000000000
+      internalID: 2446422984640245701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_5
+      rect:
+        serializedVersion: 2
+        x: 1007
+        y: 650
+        width: 146
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2d96cb586097c090800000000000000
+      internalID: -8014278233991766742
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_6
+      rect:
+        serializedVersion: 2
+        x: 1154
+        y: 651
+        width: 67
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2636e71a25880090800000000000000
+      internalID: -8068052316598159829
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_7
+      rect:
+        serializedVersion: 2
+        x: 1323
+        y: 696
+        width: 18
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77780a36600198eb0800000000000000
+      internalID: -4717221515066570889
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_8
+      rect:
+        serializedVersion: 2
+        x: 1367
+        y: 431
+        width: 290
+        height: 290
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76d2bb654b8e65a90800000000000000
+      internalID: -7325411882624668313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_9
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 491
+        width: 721
+        height: 230
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b230ebd5e809e42e0800000000000000
+      internalID: -2139613831821917397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_10
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 649
+        width: 72
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05ce121f7f9a7e8c0800000000000000
+      internalID: -3970017664136254384
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_11
+      rect:
+        serializedVersion: 2
+        x: 2231
+        y: 647
+        width: 218
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c967aaf441578970800000000000000
+      internalID: 8757057357150120392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_12
+      rect:
+        serializedVersion: 2
+        x: 2447
+        y: 431
+        width: 1010
+        height: 290
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8982a69563ed8130800000000000000
+      internalID: 3570760105033107855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_13
+      rect:
+        serializedVersion: 2
+        x: 3455
+        y: 576
+        width: 74
+        height: 145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20b5cd3bd5cd5fa10800000000000000
+      internalID: 1942701109287869186
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_14
+      rect:
+        serializedVersion: 2
+        x: 1227
+        y: 677
+        width: 66
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3a68358bdf3aadb0800000000000000
+      internalID: -4779937842434905542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_15
+      rect:
+        serializedVersion: 2
+        x: 1299
+        y: 677
+        width: 66
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d55599faa594d38f0800000000000000
+      internalID: -559210124882127523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_16
+      rect:
+        serializedVersion: 2
+        x: 749
+        y: 649
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1e058e56f351eb40800000000000000
+      internalID: 5467743740217331231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_17
+      rect:
+        serializedVersion: 2
+        x: 821
+        y: 649
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eccb86e2166af31f0800000000000000
+      internalID: -1062948050715493170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_18
+      rect:
+        serializedVersion: 2
+        x: 876
+        y: 575
+        width: 60
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 447e3bad71b642c80800000000000000
+      internalID: -8348430059040413884
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_19
+      rect:
+        serializedVersion: 2
+        x: 1323
+        y: 653
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd525fe907ddd27a0800000000000000
+      internalID: -6400216019650664995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_20
+      rect:
+        serializedVersion: 2
+        x: 724
+        y: 596
+        width: 18
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4433b08091118d700800000000000000
+      internalID: 565220552441803588
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_21
+      rect:
+        serializedVersion: 2
+        x: 732
+        y: 575
+        width: 60
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 771122cd1250faff0800000000000000
+      internalID: -22793830128283273
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_22
+      rect:
+        serializedVersion: 2
+        x: 796
+        y: 596
+        width: 18
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10386a4dccb4f8650800000000000000
+      internalID: 6237287352044520193
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_23
+      rect:
+        serializedVersion: 2
+        x: 804
+        y: 575
+        width: 60
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ecce38cb910ae280800000000000000
+      internalID: -9013389935637508887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_24
+      rect:
+        serializedVersion: 2
+        x: 868
+        y: 596
+        width: 18
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d04ca436540269600800000000000000
+      internalID: 474602293124842509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_25
+      rect:
+        serializedVersion: 2
+        x: 935
+        y: 431
+        width: 434
+        height: 218
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 914cd53edcd3c73f0800000000000000
+      internalID: -901777870888778727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_26
+      rect:
+        serializedVersion: 2
+        x: 2087
+        y: 431
+        width: 290
+        height: 217
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ebc4c74820213d020800000000000000
+      internalID: 2365254031321615550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_27
+      rect:
+        serializedVersion: 2
+        x: 2382
+        y: 504
+        width: 61
+        height: 145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa45b191c221aa1e0800000000000000
+      internalID: -2185914688525871958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_28
+      rect:
+        serializedVersion: 2
+        x: 3095
+        y: 359
+        width: 938
+        height: 285
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 440fbfaa988d3a640800000000000000
+      internalID: 5090150089649549380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_29
+      rect:
+        serializedVersion: 2
+        x: 3529
+        y: 576
+        width: 70
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 248298e0f9e57e1d0800000000000000
+      internalID: -3321582162925770686
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_30
+      rect:
+        serializedVersion: 2
+        x: 3601
+        y: 576
+        width: 70
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8111a5ed5fae6b2c0800000000000000
+      internalID: -4416084042871860968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_31
+      rect:
+        serializedVersion: 2
+        x: 3671
+        y: 575
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d012b0073a6e60ee0800000000000000
+      internalID: -1295094253188603635
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_32
+      rect:
+        serializedVersion: 2
+        x: 3743
+        y: 575
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9020769f1d66a820800000000000000
+      internalID: 2929148590086430875
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_33
+      rect:
+        serializedVersion: 2
+        x: 3815
+        y: 575
+        width: 74
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88c56a9cc508691d0800000000000000
+      internalID: -3344344537267544952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_34
+      rect:
+        serializedVersion: 2
+        x: 3959
+        y: 575
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8cd56e000f7d7930800000000000000
+      internalID: 4142606870469008526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_35
+      rect:
+        serializedVersion: 2
+        x: 725
+        y: 503
+        width: 62
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6bf8767eae63cc370800000000000000
+      internalID: 8344104592143257526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_36
+      rect:
+        serializedVersion: 2
+        x: 792
+        y: 431
+        width: 71
+        height: 144
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7578fb25062d99ea0800000000000000
+      internalID: -5865425728526383273
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_37
+      rect:
+        serializedVersion: 2
+        x: 867
+        y: 509
+        width: 66
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1228b52500b37d0c0800000000000000
+      internalID: -4551104025866829279
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_38
+      rect:
+        serializedVersion: 2
+        x: 727
+        y: 433
+        width: 58
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6696e97b183732320800000000000000
+      internalID: 2531994416480938342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_39
+      rect:
+        serializedVersion: 2
+        x: 875
+        y: 431
+        width: 50
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f47857adbd657c890800000000000000
+      internalID: -7437880757316122801
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_40
+      rect:
+        serializedVersion: 2
+        x: 1669
+        y: 445
+        width: 46
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae201b10789526550800000000000000
+      internalID: 6152578477325353706
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_41
+      rect:
+        serializedVersion: 2
+        x: 1741
+        y: 445
+        width: 46
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dea082de60b198dd0800000000000000
+      internalID: -2483424002955539731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_42
+      rect:
+        serializedVersion: 2
+        x: 1807
+        y: 481
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86057d5ff2310ef30800000000000000
+      internalID: 4602699915881566312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_43
+      rect:
+        serializedVersion: 2
+        x: 1814
+        y: 447
+        width: 43
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 693593aa6b3a57fd0800000000000000
+      internalID: -2344788026041216106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_44
+      rect:
+        serializedVersion: 2
+        x: 1851
+        y: 481
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c93d3b2db30f12510800000000000000
+      internalID: 1522762288756675484
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_45
+      rect:
+        serializedVersion: 2
+        x: 1871
+        y: 439
+        width: 74
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5b201172a0136690800000000000000
+      internalID: -7610220655458374821
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_46
+      rect:
+        serializedVersion: 2
+        x: 1948
+        y: 433
+        width: 69
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf67a621c7b007ad0800000000000000
+      internalID: -2706650748536850692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_47
+      rect:
+        serializedVersion: 2
+        x: 2018
+        y: 431
+        width: 67
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94a1f8fa161743580800000000000000
+      internalID: -8848322703505024439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_48
+      rect:
+        serializedVersion: 2
+        x: 2076
+        y: 479
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7664e1701a33ef3d0800000000000000
+      internalID: -3171040320920074649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_49
+      rect:
+        serializedVersion: 2
+        x: 2375
+        y: 431
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8e43699244689060800000000000000
+      internalID: 6960423461305142923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_50
+      rect:
+        serializedVersion: 2
+        x: 1799
+        y: 463
+        width: 14
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9078ac1874a8b6410800000000000000
+      internalID: 1471421742991443721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_51
+      rect:
+        serializedVersion: 2
+        x: 1859
+        y: 463
+        width: 14
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c055ba6e1a27b13c0800000000000000
+      internalID: -4387787372257127156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_52
+      rect:
+        serializedVersion: 2
+        x: 1809
+        y: 439
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 145eb3404ac2611d0800000000000000
+      internalID: -3380465387337685695
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_53
+      rect:
+        serializedVersion: 2
+        x: 1849
+        y: 439
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f86ff3c700d4f3b30800000000000000
+      internalID: 4269215636250424975
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_54
+      rect:
+        serializedVersion: 2
+        x: 2074
+        y: 449
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b64f80b1ed7dd49c0800000000000000
+      internalID: -3941256749943032725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_55
+      rect:
+        serializedVersion: 2
+        x: 1831
+        y: 431
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34f093ac68bdb0940800000000000000
+      internalID: 5263541961477394243
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_56
+      rect:
+        serializedVersion: 2
+        x: 2967
+        y: 379
+        width: 14
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93fe1f56ec4128000800000000000000
+      internalID: 36614623678558009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_57
+      rect:
+        serializedVersion: 2
+        x: 2995
+        y: 379
+        width: 14
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85eb00d20a65bd090800000000000000
+      internalID: -8008712266398515624
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_58
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 369
+        width: 72
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba69b60cdbb733d50800000000000000
+      internalID: 6715847524246853291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_59
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 369
+        width: 72
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d64beeaf7b0af690800000000000000
+      internalID: -7567723580819290409
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_60
+      rect:
+        serializedVersion: 2
+        x: 145
+        y: 369
+        width: 72
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae3ed80112dc9d6b0800000000000000
+      internalID: -5270956346965105686
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_61
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 367
+        width: 144
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e876189564be303d0800000000000000
+      internalID: -3241488619394734194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_62
+      rect:
+        serializedVersion: 2
+        x: 361
+        y: 369
+        width: 72
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f810cacaa71df2420800000000000000
+      internalID: 2607533034083975567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_63
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 369
+        width: 72
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a56ea4687e54e490800000000000000
+      internalID: -7717939990227950171
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_64
+      rect:
+        serializedVersion: 2
+        x: 505
+        y: 369
+        width: 72
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0d6956c5ec0814a0800000000000000
+      internalID: -6622529071033520881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_65
+      rect:
+        serializedVersion: 2
+        x: 577
+        y: 364
+        width: 1080
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82df309efb2e2c9a0800000000000000
+      internalID: -6214155221941879512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_66
+      rect:
+        serializedVersion: 2
+        x: 1655
+        y: 363
+        width: 434
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8a1f0eccb55c6220800000000000000
+      internalID: 2480451764173609610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_67
+      rect:
+        serializedVersion: 2
+        x: 2090
+        y: 363
+        width: 67
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59bf51c762a01e6e0800000000000000
+      internalID: -1810154414819378283
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_68
+      rect:
+        serializedVersion: 2
+        x: 2162
+        y: 363
+        width: 67
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d806965ac71ff56d0800000000000000
+      internalID: -2999413309152075635
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_69
+      rect:
+        serializedVersion: 2
+        x: 2234
+        y: 363
+        width: 67
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af5f57809a4b35e80800000000000000
+      internalID: -8191004659172379142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_70
+      rect:
+        serializedVersion: 2
+        x: 2306
+        y: 363
+        width: 67
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b41a9ef08c240c680800000000000000
+      internalID: -8736909850070900405
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_71
+      rect:
+        serializedVersion: 2
+        x: 2378
+        y: 363
+        width: 67
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f322c063e83408d0800000000000000
+      internalID: -2881115312378207239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_72
+      rect:
+        serializedVersion: 2
+        x: 2450
+        y: 363
+        width: 67
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7df323ecc59b48d80800000000000000
+      internalID: -8249264809188376617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_73
+      rect:
+        serializedVersion: 2
+        x: 2519
+        y: 373
+        width: 434
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b43dcd1b68af22a40800000000000000
+      internalID: 5342107564431430475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_74
+      rect:
+        serializedVersion: 2
+        x: 2967
+        y: 363
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fb9355e6bfcb3830800000000000000
+      internalID: 4052060674188352500
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_75
+      rect:
+        serializedVersion: 2
+        x: 2995
+        y: 363
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05894c50df267a2e0800000000000000
+      internalID: -2114612661164140464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_76
+      rect:
+        serializedVersion: 2
+        x: 3029
+        y: 377
+        width: 14
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e902c1e787cc9d30800000000000000
+      internalID: 4439642719102568930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_77
+      rect:
+        serializedVersion: 2
+        x: 3047
+        y: 377
+        width: 44
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2bae880d0f9a0c460800000000000000
+      internalID: 7259989451077118642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_78
+      rect:
+        serializedVersion: 2
+        x: 377
+        y: 287
+        width: 46
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d34a17ef7971d2f30800000000000000
+      internalID: 4552320739917800509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_79
+      rect:
+        serializedVersion: 2
+        x: 449
+        y: 287
+        width: 46
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e16a7bc56d998a60800000000000000
+      internalID: 7676840100360774114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_80
+      rect:
+        serializedVersion: 2
+        x: 503
+        y: 215
+        width: 73
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c9644495f9023730800000000000000
+      internalID: 3977252371280718276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_81
+      rect:
+        serializedVersion: 2
+        x: 593
+        y: 287
+        width: 46
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24c0a208bb5816c60800000000000000
+      internalID: 7809670269192768578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_82
+      rect:
+        serializedVersion: 2
+        x: 665
+        y: 287
+        width: 46
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03fbe717f3b929d80800000000000000
+      internalID: -8245357270972580048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_83
+      rect:
+        serializedVersion: 2
+        x: 722
+        y: 215
+        width: 68
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db80afc6ce700e310800000000000000
+      internalID: 1432153393525819581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_84
+      rect:
+        serializedVersion: 2
+        x: 797
+        y: 288
+        width: 63
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e436dbc46802e390800000000000000
+      internalID: -7790655176387971868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_85
+      rect:
+        serializedVersion: 2
+        x: 869
+        y: 288
+        width: 63
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31f75a248fbc05980800000000000000
+      internalID: -8552111425246101741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_86
+      rect:
+        serializedVersion: 2
+        x: 941
+        y: 288
+        width: 63
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 258ae57272b25b310800000000000000
+      internalID: 1420088704669493330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_87
+      rect:
+        serializedVersion: 2
+        x: 1013
+        y: 288
+        width: 63
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57e438fb45508f2a0800000000000000
+      internalID: -6703602183792537995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_88
+      rect:
+        serializedVersion: 2
+        x: 1085
+        y: 288
+        width: 63
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5dd4fc686a939db0800000000000000
+      internalID: -4786312205669442212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_89
+      rect:
+        serializedVersion: 2
+        x: 1157
+        y: 288
+        width: 63
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b33dbfd74e3e5da0800000000000000
+      internalID: -5954253178919898192
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_90
+      rect:
+        serializedVersion: 2
+        x: 1943
+        y: 143
+        width: 74
+        height: 218
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28844e884b5a2e470800000000000000
+      internalID: 8422476447945607298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_91
+      rect:
+        serializedVersion: 2
+        x: 2015
+        y: 287
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25e61e65922323030800000000000000
+      internalID: 3472893415788736082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_92
+      rect:
+        serializedVersion: 2
+        x: 2089
+        y: 287
+        width: 70
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56417a7a2ab9ad970800000000000000
+      internalID: 8780501546411955301
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_93
+      rect:
+        serializedVersion: 2
+        x: 2159
+        y: 215
+        width: 218
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 465e560d1567a99f0800000000000000
+      internalID: -460925918091287196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_94
+      rect:
+        serializedVersion: 2
+        x: 2525
+        y: 287
+        width: 56
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9a5e4a6c83be72b0800000000000000
+      internalID: -5584829072232523106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_95
+      rect:
+        serializedVersion: 2
+        x: 2597
+        y: 287
+        width: 56
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 947fa43a73e74c730800000000000000
+      internalID: 4018475544949225289
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_96
+      rect:
+        serializedVersion: 2
+        x: 2669
+        y: 287
+        width: 56
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6635d88efd52a7b0800000000000000
+      internalID: -5214502070742862227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_97
+      rect:
+        serializedVersion: 2
+        x: 2741
+        y: 287
+        width: 56
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f217d1273a392ad20800000000000000
+      internalID: 3288353008137367855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_98
+      rect:
+        serializedVersion: 2
+        x: 2808
+        y: 0
+        width: 73
+        height: 361
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1702f0939f110760800000000000000
+      internalID: 7422248379535722271
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_99
+      rect:
+        serializedVersion: 2
+        x: 2885
+        y: 287
+        width: 56
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffb6f4ec4f510a240800000000000000
+      internalID: 4800861343954463743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_100
+      rect:
+        serializedVersion: 2
+        x: 3029
+        y: 361
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81d84780922277100800000000000000
+      internalID: 105590675897355544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_101
+      rect:
+        serializedVersion: 2
+        x: 3059
+        y: 361
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbe720d6731ed7e90800000000000000
+      internalID: -7026212215459774788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_102
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 287
+        width: 46
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 947816dd277ecb330800000000000000
+      internalID: 3728109072082372425
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_103
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 287
+        width: 46
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbe134c864498eff0800000000000000
+      internalID: -6592368719225156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_104
+      rect:
+        serializedVersion: 2
+        x: 143
+        y: 215
+        width: 74
+        height: 145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87c1ca5217bb3b4c0800000000000000
+      internalID: -4272865526806733704
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_105
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 287
+        width: 46
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a01be8d05689e670800000000000000
+      internalID: 8568527447843868832
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_106
+      rect:
+        serializedVersion: 2
+        x: 305
+        y: 287
+        width: 46
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e037ef1909818a10800000000000000
+      internalID: 1909958389264756969
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_107
+      rect:
+        serializedVersion: 2
+        x: 1227
+        y: 289
+        width: 65
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97d22adbb44ba89e0800000000000000
+      internalID: -1618282878689202823
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_108
+      rect:
+        serializedVersion: 2
+        x: 1301
+        y: 289
+        width: 62
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd95e9e39492ce290800000000000000
+      internalID: -7859861855108441633
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_109
+      rect:
+        serializedVersion: 2
+        x: 1368
+        y: 293
+        width: 72
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfb96f7f20e455750800000000000000
+      internalID: 6293021828977171452
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_110
+      rect:
+        serializedVersion: 2
+        x: 1441
+        y: 289
+        width: 70
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d6459fdd8f6fa8e0800000000000000
+      internalID: -1680001480853731624
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_111
+      rect:
+        serializedVersion: 2
+        x: 1512
+        y: 289
+        width: 70
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ee352c2f3e7dc640800000000000000
+      internalID: 5101872762669317861
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_112
+      rect:
+        serializedVersion: 2
+        x: 1583
+        y: 289
+        width: 74
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd8d475514d0d6a90800000000000000
+      internalID: -7319179245149431589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_113
+      rect:
+        serializedVersion: 2
+        x: 1655
+        y: 292
+        width: 74
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4c34bc5821b5a350800000000000000
+      internalID: 6027418463217400909
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_114
+      rect:
+        serializedVersion: 2
+        x: 1728
+        y: 287
+        width: 73
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7bb8e167a6715a730800000000000000
+      internalID: 4009636789258980279
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_115
+      rect:
+        serializedVersion: 2
+        x: 1803
+        y: 308
+        width: 31
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ee6d62df94c4da20800000000000000
+      internalID: 3086307835364863714
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_116
+      rect:
+        serializedVersion: 2
+        x: 1835
+        y: 319
+        width: 30
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e1369a7ca9437df0800000000000000
+      internalID: -183722154652192282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_117
+      rect:
+        serializedVersion: 2
+        x: 1883
+        y: 289
+        width: 50
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6e89001e2a3d8860800000000000000
+      internalID: 7533741721172676207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_118
+      rect:
+        serializedVersion: 2
+        x: 2377
+        y: 307
+        width: 71
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b22058cf619087c70800000000000000
+      internalID: 8968928652238848555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_119
+      rect:
+        serializedVersion: 2
+        x: 2447
+        y: 315
+        width: 44
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da26fc911c6061ca0800000000000000
+      internalID: -6046638023266835795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_120
+      rect:
+        serializedVersion: 2
+        x: 2491
+        y: 309
+        width: 30
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88b075e7ac6c7a970800000000000000
+      internalID: 8766193772705287048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_121
+      rect:
+        serializedVersion: 2
+        x: 2953
+        y: 297
+        width: 72
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73dc8d25e203644e0800000000000000
+      internalID: -1997856409175667401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_122
+      rect:
+        serializedVersion: 2
+        x: 3025
+        y: 297
+        width: 72
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e3a4fa7073ea7190800000000000000
+      internalID: -7963802918812605468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_123
+      rect:
+        serializedVersion: 2
+        x: 3097
+        y: 297
+        width: 72
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c313322903146ce70800000000000000
+      internalID: 9135060571033645372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_124
+      rect:
+        serializedVersion: 2
+        x: 3169
+        y: 295
+        width: 144
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b501d6c6ddfc8b550800000000000000
+      internalID: 6176915438852444251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_125
+      rect:
+        serializedVersion: 2
+        x: 3313
+        y: 297
+        width: 72
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed9f3c91fb761e9a0800000000000000
+      internalID: -6205564741071144482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_126
+      rect:
+        serializedVersion: 2
+        x: 3385
+        y: 297
+        width: 72
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af916e9b9ffa7a900800000000000000
+      internalID: 695718154552613370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_127
+      rect:
+        serializedVersion: 2
+        x: 3457
+        y: 297
+        width: 72
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07b970aad6214de20800000000000000
+      internalID: 3374342283020704624
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_128
+      rect:
+        serializedVersion: 2
+        x: 3529
+        y: 295
+        width: 144
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d9a6a759a477ff40800000000000000
+      internalID: 5762202518912674256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_129
+      rect:
+        serializedVersion: 2
+        x: 3673
+        y: 297
+        width: 72
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa6d80e248085b550800000000000000
+      internalID: 6175983769204872874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_130
+      rect:
+        serializedVersion: 2
+        x: 3745
+        y: 297
+        width: 72
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03f958ebb9e56c100800000000000000
+      internalID: 127893662436007728
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_131
+      rect:
+        serializedVersion: 2
+        x: 3817
+        y: 297
+        width: 72
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17d4e59ce20d8f4b0800000000000000
+      internalID: -5406342453292806799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_132
+      rect:
+        serializedVersion: 2
+        x: 3889
+        y: 295
+        width: 144
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d0b96053b2761aa0800000000000000
+      internalID: -6190634523300351785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_133
+      rect:
+        serializedVersion: 2
+        x: 1820
+        y: 290
+        width: 41
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7effa80d4cf46c810800000000000000
+      internalID: 1785202009029935079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_134
+      rect:
+        serializedVersion: 2
+        x: 2471
+        y: 289
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52967f0225c50bbb0800000000000000
+      internalID: -4922332884905793243
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_135
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 216
+        width: 50
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d78444f02b75fd6b0800000000000000
+      internalID: -5269396616728262531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_136
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 216
+        width: 73
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c8cec782faaa9930800000000000000
+      internalID: 4150817965212616902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_137
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 221
+        width: 62
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 379656b19a90f8370800000000000000
+      internalID: 8326884857945090419
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_138
+      rect:
+        serializedVersion: 2
+        x: 287
+        y: 215
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9a685f7c13e21610800000000000000
+      internalID: 1590583329950296734
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_139
+      rect:
+        serializedVersion: 2
+        x: 359
+        y: 216
+        width: 73
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd948286a16e02b20800000000000000
+      internalID: 3107736743976651227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_140
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 216
+        width: 73
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7625980dc2309bab0800000000000000
+      internalID: -4991955220951379353
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_141
+      rect:
+        serializedVersion: 2
+        x: 579
+        y: 217
+        width: 63
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a6020b3750448330800000000000000
+      internalID: 3712162736256452259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_142
+      rect:
+        serializedVersion: 2
+        x: 649
+        y: 217
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9776cc1be2b3c9710800000000000000
+      internalID: 1701299830976702329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_143
+      rect:
+        serializedVersion: 2
+        x: 669
+        y: 263
+        width: 24
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d572c0186f0158d20800000000000000
+      internalID: 3280046554522330973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_144
+      rect:
+        serializedVersion: 2
+        x: 805
+        y: 217
+        width: 47
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28248d5b672d9eb90800000000000000
+      internalID: -7212001920958315902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_145
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 229
+        width: 72
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11fabaa856c5ec580800000000000000
+      internalID: -8804998630274781423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_146
+      rect:
+        serializedVersion: 2
+        x: 941
+        y: 215
+        width: 60
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc1bd811378404890800000000000000
+      internalID: -7475895722382085684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_147
+      rect:
+        serializedVersion: 2
+        x: 1008
+        y: 216
+        width: 72
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e2f9311f66151530800000000000000
+      internalID: 3824988124807295721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_148
+      rect:
+        serializedVersion: 2
+        x: 1079
+        y: 224
+        width: 74
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4229f63ecb1d2c70800000000000000
+      internalID: 8947838607154553421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_149
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 216
+        width: 72
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b53c06ea4d7ac3f40800000000000000
+      internalID: 5709622959499428699
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_150
+      rect:
+        serializedVersion: 2
+        x: 1223
+        y: 215
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 527892b45e306a4e0800000000000000
+      internalID: -1970883503584606427
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_151
+      rect:
+        serializedVersion: 2
+        x: 1296
+        y: 217
+        width: 71
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98e30a761c6e288e0800000000000000
+      internalID: -1692536791596253559
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_152
+      rect:
+        serializedVersion: 2
+        x: 1367
+        y: 222
+        width: 74
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec57d376c26fb1f20800000000000000
+      internalID: 3394577414724875726
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_153
+      rect:
+        serializedVersion: 2
+        x: 1439
+        y: 215
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22b0a6845c8023720800000000000000
+      internalID: 2824329559731211042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_154
+      rect:
+        serializedVersion: 2
+        x: 1513
+        y: 215
+        width: 70
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df1ebbf09501b79d0800000000000000
+      internalID: -2775606770641673731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_155
+      rect:
+        serializedVersion: 2
+        x: 1583
+        y: 219
+        width: 74
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 427d42d7a51b14540800000000000000
+      internalID: 4990464864307959588
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_156
+      rect:
+        serializedVersion: 2
+        x: 1657
+        y: 217
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70b877e8afa6f6730800000000000000
+      internalID: 3994529018865486599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_157
+      rect:
+        serializedVersion: 2
+        x: 1740
+        y: 217
+        width: 48
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9a0c3ea01a515cb0800000000000000
+      internalID: -4877017893776389474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_158
+      rect:
+        serializedVersion: 2
+        x: 1813
+        y: 217
+        width: 46
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a40e154d8c52c4d0800000000000000
+      internalID: -3115826230367222617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_159
+      rect:
+        serializedVersion: 2
+        x: 1883
+        y: 217
+        width: 50
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3a9f0c683d35e390800000000000000
+      internalID: -7789752667926980036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_160
+      rect:
+        serializedVersion: 2
+        x: 2017
+        y: 217
+        width: 72
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13fded45be6da47b0800000000000000
+      internalID: -5239138910262599887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_161
+      rect:
+        serializedVersion: 2
+        x: 2089
+        y: 217
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91d0e9c0c6782ffe0800000000000000
+      internalID: -1156713256142893799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_162
+      rect:
+        serializedVersion: 2
+        x: 2381
+        y: 217
+        width: 62
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b11079d90751000f0800000000000000
+      internalID: -1152897931182407397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_163
+      rect:
+        serializedVersion: 2
+        x: 2447
+        y: 143
+        width: 74
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50a427171288b43b0800000000000000
+      internalID: -5527174440448538107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_164
+      rect:
+        serializedVersion: 2
+        x: 2529
+        y: 217
+        width: 52
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a172e5b0142405a60800000000000000
+      internalID: 7660695813288240922
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_165
+      rect:
+        serializedVersion: 2
+        x: 2593
+        y: 217
+        width: 70
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 049ff8674b94f7bf0800000000000000
+      internalID: -324459608715298496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_166
+      rect:
+        serializedVersion: 2
+        x: 2663
+        y: 271
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 893c65971ba83db00800000000000000
+      internalID: 852177249352729496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_167
+      rect:
+        serializedVersion: 2
+        x: 2666
+        y: 220
+        width: 65
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 385e59930809de350800000000000000
+      internalID: 6047648755024782723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_168
+      rect:
+        serializedVersion: 2
+        x: 2720
+        y: 273
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8d5261f6878b0330800000000000000
+      internalID: 3678182534323264908
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_169
+      rect:
+        serializedVersion: 2
+        x: 2737
+        y: 231
+        width: 71
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ba7b380f609395e0800000000000000
+      internalID: -1904019410893702474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_170
+      rect:
+        serializedVersion: 2
+        x: 2879
+        y: 143
+        width: 74
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da1e268b83bae5310800000000000000
+      internalID: 1395741194631438765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_171
+      rect:
+        serializedVersion: 2
+        x: 2955
+        y: 217
+        width: 66
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e5822ea874f2f420800000000000000
+      internalID: 2662459128884135395
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_172
+      rect:
+        serializedVersion: 2
+        x: 3027
+        y: 216
+        width: 65
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6a39ffbbc05d57c0800000000000000
+      internalID: -4081016851298436500
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_173
+      rect:
+        serializedVersion: 2
+        x: 3097
+        y: 217
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c422e25114292c1b0800000000000000
+      internalID: -5637782975288565172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_174
+      rect:
+        serializedVersion: 2
+        x: 3169
+        y: 215
+        width: 70
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8cfa86eb7a81e8480800000000000000
+      internalID: -8895145105277014072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_175
+      rect:
+        serializedVersion: 2
+        x: 3241
+        y: 215
+        width: 68
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98cc8fce3304d41c0800000000000000
+      internalID: -4517884259419501431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_176
+      rect:
+        serializedVersion: 2
+        x: 3318
+        y: 217
+        width: 52
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b49905d464f013500800000000000000
+      internalID: 374097038667716939
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_177
+      rect:
+        serializedVersion: 2
+        x: 3384
+        y: 216
+        width: 72
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8f53b7550c132b90800000000000000
+      internalID: -7267934564374061171
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_178
+      rect:
+        serializedVersion: 2
+        x: 3455
+        y: 222
+        width: 74
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f43ba9c712f306110800000000000000
+      internalID: 1252070109465981775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_179
+      rect:
+        serializedVersion: 2
+        x: 3531
+        y: 143
+        width: 66
+        height: 145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b231391f79425c40800000000000000
+      internalID: 5499538905205125813
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_180
+      rect:
+        serializedVersion: 2
+        x: 3599
+        y: 215
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9be185690129131d0800000000000000
+      internalID: -3372754045984301383
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_181
+      rect:
+        serializedVersion: 2
+        x: 3671
+        y: 153
+        width: 74
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51652fa7ce0633310800000000000000
+      internalID: 1383556079324124693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_182
+      rect:
+        serializedVersion: 2
+        x: 3754
+        y: 217
+        width: 52
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48dfa8e386babb810800000000000000
+      internalID: 1782206541769407876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_183
+      rect:
+        serializedVersion: 2
+        x: 3817
+        y: 217
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d1dfa60f99a346c0800000000000000
+      internalID: -4160295130283126318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_184
+      rect:
+        serializedVersion: 2
+        x: 3892
+        y: 215
+        width: 64
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ccde13f5c5308ec80800000000000000
+      internalID: -8293375018533786164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_185
+      rect:
+        serializedVersion: 2
+        x: 3977
+        y: 215
+        width: 46
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8261551cb095aa5b0800000000000000
+      internalID: -5356370899780692440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_186
+      rect:
+        serializedVersion: 2
+        x: 3530
+        y: 262
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 568d0c528cf659140800000000000000
+      internalID: 4725806289412741221
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_187
+      rect:
+        serializedVersion: 2
+        x: 3594
+        y: 240
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4983b8f3cc9e21ae0800000000000000
+      internalID: -1579943455804933996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_188
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 143
+        width: 54
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 488201f19d90a6fc0800000000000000
+      internalID: -3500974932193433468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_189
+      rect:
+        serializedVersion: 2
+        x: 1594
+        y: 143
+        width: 54
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21989b91325c9f510800000000000000
+      internalID: 1583513498543556882
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_190
+      rect:
+        serializedVersion: 2
+        x: 1658
+        y: 143
+        width: 68
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f0088eab1c698560800000000000000
+      internalID: 7316497935788146934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_191
+      rect:
+        serializedVersion: 2
+        x: 1806
+        y: 151
+        width: 35
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29e55289b7d449850800000000000000
+      internalID: 6382811765119737490
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_192
+      rect:
+        serializedVersion: 2
+        x: 1871
+        y: 143
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2cc1a107f40f25850800000000000000
+      internalID: 6364413447401774274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_193
+      rect:
+        serializedVersion: 2
+        x: 2016
+        y: 143
+        width: 72
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb6bf7cf482267d40800000000000000
+      internalID: 5581686742739564219
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_194
+      rect:
+        serializedVersion: 2
+        x: 2087
+        y: 143
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41b7a59b9cdbbd220800000000000000
+      internalID: 2511809891284974356
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_195
+      rect:
+        serializedVersion: 2
+        x: 2231
+        y: 143
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4611b653d405d910800000000000000
+      internalID: 1861399326726624842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_196
+      rect:
+        serializedVersion: 2
+        x: 2303
+        y: 143
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03bfb4e0770116dd0800000000000000
+      internalID: -2494694615059530960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_197
+      rect:
+        serializedVersion: 2
+        x: 2375
+        y: 71
+        width: 74
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d757226ee1fc6490800000000000000
+      internalID: -7751554852460210218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_198
+      rect:
+        serializedVersion: 2
+        x: 2519
+        y: 0
+        width: 218
+        height: 217
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ca60be3fd8dab6a0800000000000000
+      internalID: -6432590664404276544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_199
+      rect:
+        serializedVersion: 2
+        x: 2720
+        y: 217
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b98c5b39339c8b0d0800000000000000
+      internalID: -3406751894747101029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_200
+      rect:
+        serializedVersion: 2
+        x: 2747
+        y: 143
+        width: 48
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52554ad7c7bb33660800000000000000
+      internalID: 7364435959039153445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_201
+      rect:
+        serializedVersion: 2
+        x: 2951
+        y: 0
+        width: 146
+        height: 217
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 818ac82856faf2250800000000000000
+      internalID: 5922144885532305432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_202
+      rect:
+        serializedVersion: 2
+        x: 3107
+        y: 144
+        width: 50
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8170ade3615ac2650800000000000000
+      internalID: 6209519501199410968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_203
+      rect:
+        serializedVersion: 2
+        x: 3167
+        y: 143
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f6109e85b2018150800000000000000
+      internalID: 5872978367871981304
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_204
+      rect:
+        serializedVersion: 2
+        x: 3239
+        y: 143
+        width: 146
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab2c15bc030252da0800000000000000
+      internalID: -5970330337068072262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_205
+      rect:
+        serializedVersion: 2
+        x: 3599
+        y: 0
+        width: 74
+        height: 217
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47282d47950336ce0800000000000000
+      internalID: -1413232697294028172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_206
+      rect:
+        serializedVersion: 2
+        x: 3760
+        y: 143
+        width: 40
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aeec063b409e65d90800000000000000
+      internalID: -7109238755359142166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_207
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 143
+        width: 58
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0258637e186d71710800000000000000
+      internalID: 1664034440754922784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_208
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 143
+        width: 59
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13fbf2f27b28fe520800000000000000
+      internalID: 2733547222119464753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_209
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 143
+        width: 58
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f7d29c822a175660800000000000000
+      internalID: 7374391650532120567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_210
+      rect:
+        serializedVersion: 2
+        x: 223
+        y: 143
+        width: 58
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 772c8d98b00bc2fd0800000000000000
+      internalID: -2365322140672540041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_211
+      rect:
+        serializedVersion: 2
+        x: 294
+        y: 143
+        width: 59
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f60d9b219370f790800000000000000
+      internalID: -7498366312232712464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_212
+      rect:
+        serializedVersion: 2
+        x: 367
+        y: 143
+        width: 58
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0edf63603b76e2ce0800000000000000
+      internalID: -1428090013228794400
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_213
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 143
+        width: 58
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae5453f227bd992c0800000000000000
+      internalID: -4424263875450026518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_214
+      rect:
+        serializedVersion: 2
+        x: 510
+        y: 143
+        width: 59
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b65932f5a7e14150800000000000000
+      internalID: 5855215690477819572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_215
+      rect:
+        serializedVersion: 2
+        x: 583
+        y: 143
+        width: 58
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58f7ff36e7e3f6a10800000000000000
+      internalID: 1904809879965499269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_216
+      rect:
+        serializedVersion: 2
+        x: 655
+        y: 143
+        width: 58
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f108defaf0a2cdd0800000000000000
+      internalID: -2467232645967773198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_217
+      rect:
+        serializedVersion: 2
+        x: 726
+        y: 143
+        width: 59
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2b568e6d0c50f0d0800000000000000
+      internalID: -3391109306651354326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_218
+      rect:
+        serializedVersion: 2
+        x: 799
+        y: 143
+        width: 58
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a76a84282738f2a0800000000000000
+      internalID: -6703547399789713497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_219
+      rect:
+        serializedVersion: 2
+        x: 871
+        y: 143
+        width: 58
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6efad8213c479dab0800000000000000
+      internalID: -4982823131530022938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_220
+      rect:
+        serializedVersion: 2
+        x: 1015
+        y: 143
+        width: 58
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd70cddd0ce6d91d0800000000000000
+      internalID: -3342393573804079140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_221
+      rect:
+        serializedVersion: 2
+        x: 1087
+        y: 143
+        width: 58
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba2e0d376fd0879b0800000000000000
+      internalID: -5082296827331419477
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_222
+      rect:
+        serializedVersion: 2
+        x: 1161
+        y: 143
+        width: 54
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 720c5781800342750800000000000000
+      internalID: 6279196591789555751
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_223
+      rect:
+        serializedVersion: 2
+        x: 1231
+        y: 143
+        width: 58
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9ebd62f6de842640800000000000000
+      internalID: 5054321735657963163
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_224
+      rect:
+        serializedVersion: 2
+        x: 1305
+        y: 143
+        width: 54
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d623b8c13e14f400800000000000000
+      internalID: 356943469638526677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_225
+      rect:
+        serializedVersion: 2
+        x: 1368
+        y: 151
+        width: 72
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdb96ffc6e5a5e470800000000000000
+      internalID: 8423321088816487387
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_226
+      rect:
+        serializedVersion: 2
+        x: 1439
+        y: 146
+        width: 74
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dbc9c269df5ed7b10800000000000000
+      internalID: 1980992288421878973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_227
+      rect:
+        serializedVersion: 2
+        x: 1512
+        y: 145
+        width: 73
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87be14014a5635ef0800000000000000
+      internalID: -120641009687073928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_228
+      rect:
+        serializedVersion: 2
+        x: 1728
+        y: 143
+        width: 71
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f0e80d1be5fca160800000000000000
+      internalID: 7038270707826483441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_229
+      rect:
+        serializedVersion: 2
+        x: 1830
+        y: 143
+        width: 35
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5c814f2d7b163890800000000000000
+      internalID: -7478759906724443043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_230
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 155
+        width: 71
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b86a605af90174b0800000000000000
+      internalID: -5444559503818594121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_231
+      rect:
+        serializedVersion: 2
+        x: 3387
+        y: 144
+        width: 69
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85a57560980b42530800000000000000
+      internalID: 3829379685735160408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_232
+      rect:
+        serializedVersion: 2
+        x: 3455
+        y: 145
+        width: 74
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5aef04eaa8a172f10800000000000000
+      internalID: 2244792122198785701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_233
+      rect:
+        serializedVersion: 2
+        x: 3677
+        y: 143
+        width: 31
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cb6599b210d4a710800000000000000
+      internalID: 1703715337894456262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_234
+      rect:
+        serializedVersion: 2
+        x: 3815
+        y: 151
+        width: 74
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 251659ba8f7e90db0800000000000000
+      internalID: -4825070470534176430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_235
+      rect:
+        serializedVersion: 2
+        x: 3887
+        y: 145
+        width: 74
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1069a32ba3bdd5470800000000000000
+      internalID: 8385099126378501633
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_236
+      rect:
+        serializedVersion: 2
+        x: 3980
+        y: 145
+        width: 34
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4896d223441c0f0b0800000000000000
+      internalID: -5696841029979903612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_237
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1225
+        height: 141
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 371f22ec7a8390630800000000000000
+      internalID: 3893705646207594867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_238
+      rect:
+        serializedVersion: 2
+        x: 1226
+        y: 0
+        width: 67
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26e8ddbb5ecf056a0800000000000000
+      internalID: -6462387401647092126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_239
+      rect:
+        serializedVersion: 2
+        x: 1299
+        y: 71
+        width: 66
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86db0bfa2a3778930800000000000000
+      internalID: 4145409124587322728
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_240
+      rect:
+        serializedVersion: 2
+        x: 1306
+        y: 0
+        width: 52
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f45cdd249b46c9180800000000000000
+      internalID: -9107293599596427953
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_241
+      rect:
+        serializedVersion: 2
+        x: 1372
+        y: 0
+        width: 63
+        height: 139
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4fc213ae02f00870800000000000000
+      internalID: 8647177429230735178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_242
+      rect:
+        serializedVersion: 2
+        x: 1442
+        y: 0
+        width: 67
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09dcbb7a8a4abb640800000000000000
+      internalID: 5096848447575412112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_243
+      rect:
+        serializedVersion: 2
+        x: 1515
+        y: 71
+        width: 66
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db8127c4c30bfe590800000000000000
+      internalID: -7642696269597370179
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_244
+      rect:
+        serializedVersion: 2
+        x: 1522
+        y: 0
+        width: 52
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4c285f604cdf89e0800000000000000
+      internalID: -1616831571898651569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_245
+      rect:
+        serializedVersion: 2
+        x: 1588
+        y: 0
+        width: 63
+        height: 139
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abaf85db03143aed0800000000000000
+      internalID: -2404006098494752070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_246
+      rect:
+        serializedVersion: 2
+        x: 1658
+        y: 0
+        width: 67
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f03c808e8f1069d40800000000000000
+      internalID: 5590658155983454991
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_247
+      rect:
+        serializedVersion: 2
+        x: 1731
+        y: 71
+        width: 66
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3024765d9fbc37c0800000000000000
+      internalID: -4090183679078031299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_248
+      rect:
+        serializedVersion: 2
+        x: 1738
+        y: 0
+        width: 52
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 897f52f7ad1d4b830800000000000000
+      internalID: 4086121498298152856
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_249
+      rect:
+        serializedVersion: 2
+        x: 1804
+        y: 0
+        width: 63
+        height: 139
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a445c2a97920bbb80800000000000000
+      internalID: -8378099831642762166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_250
+      rect:
+        serializedVersion: 2
+        x: 1874
+        y: 0
+        width: 67
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef79b978c497f7ea0800000000000000
+      internalID: -5872842019468240898
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_251
+      rect:
+        serializedVersion: 2
+        x: 1947
+        y: 71
+        width: 66
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f70834861d4458a0800000000000000
+      internalID: -6317339618191079435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_252
+      rect:
+        serializedVersion: 2
+        x: 1954
+        y: 0
+        width: 52
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e36023e0ff8794880800000000000000
+      internalID: -8626230574401321410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_253
+      rect:
+        serializedVersion: 2
+        x: 2020
+        y: 0
+        width: 63
+        height: 139
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3c1d5cc8a2a60300800000000000000
+      internalID: 218040477840907326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_254
+      rect:
+        serializedVersion: 2
+        x: 2090
+        y: 0
+        width: 67
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e04328f8dd0aa660800000000000000
+      internalID: 7397740563436617955
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_255
+      rect:
+        serializedVersion: 2
+        x: 2163
+        y: 71
+        width: 66
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8e29870912f48760800000000000000
+      internalID: 7459353072146919054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_256
+      rect:
+        serializedVersion: 2
+        x: 2170
+        y: 0
+        width: 52
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7070bc9158af15a0800000000000000
+      internalID: -6548330264698785668
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_257
+      rect:
+        serializedVersion: 2
+        x: 2236
+        y: 0
+        width: 63
+        height: 139
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c27a0091527b82ec0800000000000000
+      internalID: -3591419332866824404
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_258
+      rect:
+        serializedVersion: 2
+        x: 2306
+        y: 0
+        width: 67
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71619807ebc3ffaf0800000000000000
+      internalID: -360502656536865257
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_259
+      rect:
+        serializedVersion: 2
+        x: 2386
+        y: 0
+        width: 52
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8109c902e85c43710800000000000000
+      internalID: 1672178575884455960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_260
+      rect:
+        serializedVersion: 2
+        x: 2449
+        y: 0
+        width: 72
+        height: 143
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a4d3c97d467ce770800000000000000
+      internalID: 8641411860144575650
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_261
+      rect:
+        serializedVersion: 2
+        x: 2737
+        y: 0
+        width: 72
+        height: 145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e15e0ecde8a239e0800000000000000
+      internalID: -1643065174719049245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_262
+      rect:
+        serializedVersion: 2
+        x: 2881
+        y: 0
+        width: 72
+        height: 143
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18eca3b10419e2d50800000000000000
+      internalID: 6714463798976761473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_263
+      rect:
+        serializedVersion: 2
+        x: 3097
+        y: 0
+        width: 72
+        height: 143
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abb1964ab60008950800000000000000
+      internalID: 6449155128714402746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_264
+      rect:
+        serializedVersion: 2
+        x: 3169
+        y: 0
+        width: 72
+        height: 145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29fc873fd27d701a0800000000000000
+      internalID: -6843264516407898222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_265
+      rect:
+        serializedVersion: 2
+        x: 3240
+        y: 0
+        width: 73
+        height: 145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: edadeb3a5f7361140800000000000000
+      internalID: 4689997590106659550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_266
+      rect:
+        serializedVersion: 2
+        x: 3313
+        y: 0
+        width: 72
+        height: 143
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d418d4f2230c4a10800000000000000
+      internalID: 1894892991887709393
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_267
+      rect:
+        serializedVersion: 2
+        x: 3385
+        y: 0
+        width: 72
+        height: 145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e21de9a18d1b637b0800000000000000
+      internalID: -5244809174308695762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_268
+      rect:
+        serializedVersion: 2
+        x: 3456
+        y: 0
+        width: 73
+        height: 145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be2d22ab2a837ac10800000000000000
+      internalID: 2064681225731363563
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_269
+      rect:
+        serializedVersion: 2
+        x: 3529
+        y: 0
+        width: 72
+        height: 143
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 898e17228b7e68c50800000000000000
+      internalID: 6667271076406487192
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_270
+      rect:
+        serializedVersion: 2
+        x: 3672
+        y: 0
+        width: 68
+        height: 143
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0142f14df391271a0800000000000000
+      internalID: -6813355524325694448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_271
+      rect:
+        serializedVersion: 2
+        x: 3745
+        y: 0
+        width: 67
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b06d426e40e75540800000000000000
+      internalID: 4996708938852163761
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_272
+      rect:
+        serializedVersion: 2
+        x: 3823
+        y: 71
+        width: 58
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11be062a489b43bf0800000000000000
+      internalID: -345447292089603311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_273
+      rect:
+        serializedVersion: 2
+        x: 3894
+        y: 71
+        width: 59
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b79007d1d1caf7e0800000000000000
+      internalID: -1730857999771068496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_274
+      rect:
+        serializedVersion: 2
+        x: 3967
+        y: 71
+        width: 58
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db7daf9d5e1d327b0800000000000000
+      internalID: -5250121955449055299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_275
+      rect:
+        serializedVersion: 2
+        x: 3816
+        y: 0
+        width: 72
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c644eaf42fdbde1d0800000000000000
+      internalID: -3319788501885631380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_276
+      rect:
+        serializedVersion: 2
+        x: 3888
+        y: 0
+        width: 72
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: caf1102523eca8310800000000000000
+      internalID: 1408164549026193324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwemojiAtlas_1_277
+      rect:
+        serializedVersion: 2
+        x: 3960
+        y: 0
+        width: 72
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c29b1442e40a81e0800000000000000
+      internalID: -2194936498537917758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      TwemojiAtlas_1_0: 3871940396039191800
+      TwemojiAtlas_1_1: 7359790609567681632
+      TwemojiAtlas_1_10: -3970017664136254384
+      TwemojiAtlas_1_100: 105590675897355544
+      TwemojiAtlas_1_101: -7026212215459774788
+      TwemojiAtlas_1_102: 3728109072082372425
+      TwemojiAtlas_1_103: -6592368719225156
+      TwemojiAtlas_1_104: -4272865526806733704
+      TwemojiAtlas_1_105: 8568527447843868832
+      TwemojiAtlas_1_106: 1909958389264756969
+      TwemojiAtlas_1_107: -1618282878689202823
+      TwemojiAtlas_1_108: -7859861855108441633
+      TwemojiAtlas_1_109: 6293021828977171452
+      TwemojiAtlas_1_11: 8757057357150120392
+      TwemojiAtlas_1_110: -1680001480853731624
+      TwemojiAtlas_1_111: 5101872762669317861
+      TwemojiAtlas_1_112: -7319179245149431589
+      TwemojiAtlas_1_113: 6027418463217400909
+      TwemojiAtlas_1_114: 4009636789258980279
+      TwemojiAtlas_1_115: 3086307835364863714
+      TwemojiAtlas_1_116: -183722154652192282
+      TwemojiAtlas_1_117: 7533741721172676207
+      TwemojiAtlas_1_118: 8968928652238848555
+      TwemojiAtlas_1_119: -6046638023266835795
+      TwemojiAtlas_1_12: 3570760105033107855
+      TwemojiAtlas_1_120: 8766193772705287048
+      TwemojiAtlas_1_121: -1997856409175667401
+      TwemojiAtlas_1_122: -7963802918812605468
+      TwemojiAtlas_1_123: 9135060571033645372
+      TwemojiAtlas_1_124: 6176915438852444251
+      TwemojiAtlas_1_125: -6205564741071144482
+      TwemojiAtlas_1_126: 695718154552613370
+      TwemojiAtlas_1_127: 3374342283020704624
+      TwemojiAtlas_1_128: 5762202518912674256
+      TwemojiAtlas_1_129: 6175983769204872874
+      TwemojiAtlas_1_13: 1942701109287869186
+      TwemojiAtlas_1_130: 127893662436007728
+      TwemojiAtlas_1_131: -5406342453292806799
+      TwemojiAtlas_1_132: -6190634523300351785
+      TwemojiAtlas_1_133: 1785202009029935079
+      TwemojiAtlas_1_134: -4922332884905793243
+      TwemojiAtlas_1_135: -5269396616728262531
+      TwemojiAtlas_1_136: 4150817965212616902
+      TwemojiAtlas_1_137: 8326884857945090419
+      TwemojiAtlas_1_138: 1590583329950296734
+      TwemojiAtlas_1_139: 3107736743976651227
+      TwemojiAtlas_1_14: -4779937842434905542
+      TwemojiAtlas_1_140: -4991955220951379353
+      TwemojiAtlas_1_141: 3712162736256452259
+      TwemojiAtlas_1_142: 1701299830976702329
+      TwemojiAtlas_1_143: 3280046554522330973
+      TwemojiAtlas_1_144: -7212001920958315902
+      TwemojiAtlas_1_145: -8804998630274781423
+      TwemojiAtlas_1_146: -7475895722382085684
+      TwemojiAtlas_1_147: 3824988124807295721
+      TwemojiAtlas_1_148: 8947838607154553421
+      TwemojiAtlas_1_149: 5709622959499428699
+      TwemojiAtlas_1_15: -559210124882127523
+      TwemojiAtlas_1_150: -1970883503584606427
+      TwemojiAtlas_1_151: -1692536791596253559
+      TwemojiAtlas_1_152: 3394577414724875726
+      TwemojiAtlas_1_153: 2824329559731211042
+      TwemojiAtlas_1_154: -2775606770641673731
+      TwemojiAtlas_1_155: 4990464864307959588
+      TwemojiAtlas_1_156: 3994529018865486599
+      TwemojiAtlas_1_157: -4877017893776389474
+      TwemojiAtlas_1_158: -3115826230367222617
+      TwemojiAtlas_1_159: -7789752667926980036
+      TwemojiAtlas_1_16: 5467743740217331231
+      TwemojiAtlas_1_160: -5239138910262599887
+      TwemojiAtlas_1_161: -1156713256142893799
+      TwemojiAtlas_1_162: -1152897931182407397
+      TwemojiAtlas_1_163: -5527174440448538107
+      TwemojiAtlas_1_164: 7660695813288240922
+      TwemojiAtlas_1_165: -324459608715298496
+      TwemojiAtlas_1_166: 852177249352729496
+      TwemojiAtlas_1_167: 6047648755024782723
+      TwemojiAtlas_1_168: 3678182534323264908
+      TwemojiAtlas_1_169: -1904019410893702474
+      TwemojiAtlas_1_17: -1062948050715493170
+      TwemojiAtlas_1_170: 1395741194631438765
+      TwemojiAtlas_1_171: 2662459128884135395
+      TwemojiAtlas_1_172: -4081016851298436500
+      TwemojiAtlas_1_173: -5637782975288565172
+      TwemojiAtlas_1_174: -8895145105277014072
+      TwemojiAtlas_1_175: -4517884259419501431
+      TwemojiAtlas_1_176: 374097038667716939
+      TwemojiAtlas_1_177: -7267934564374061171
+      TwemojiAtlas_1_178: 1252070109465981775
+      TwemojiAtlas_1_179: 5499538905205125813
+      TwemojiAtlas_1_18: -8348430059040413884
+      TwemojiAtlas_1_180: -3372754045984301383
+      TwemojiAtlas_1_181: 1383556079324124693
+      TwemojiAtlas_1_182: 1782206541769407876
+      TwemojiAtlas_1_183: -4160295130283126318
+      TwemojiAtlas_1_184: -8293375018533786164
+      TwemojiAtlas_1_185: -5356370899780692440
+      TwemojiAtlas_1_186: 4725806289412741221
+      TwemojiAtlas_1_187: -1579943455804933996
+      TwemojiAtlas_1_188: -3500974932193433468
+      TwemojiAtlas_1_189: 1583513498543556882
+      TwemojiAtlas_1_19: -6400216019650664995
+      TwemojiAtlas_1_190: 7316497935788146934
+      TwemojiAtlas_1_191: 6382811765119737490
+      TwemojiAtlas_1_192: 6364413447401774274
+      TwemojiAtlas_1_193: 5581686742739564219
+      TwemojiAtlas_1_194: 2511809891284974356
+      TwemojiAtlas_1_195: 1861399326726624842
+      TwemojiAtlas_1_196: -2494694615059530960
+      TwemojiAtlas_1_197: -7751554852460210218
+      TwemojiAtlas_1_198: -6432590664404276544
+      TwemojiAtlas_1_199: -3406751894747101029
+      TwemojiAtlas_1_2: 5124212656925765616
+      TwemojiAtlas_1_20: 565220552441803588
+      TwemojiAtlas_1_200: 7364435959039153445
+      TwemojiAtlas_1_201: 5922144885532305432
+      TwemojiAtlas_1_202: 6209519501199410968
+      TwemojiAtlas_1_203: 5872978367871981304
+      TwemojiAtlas_1_204: -5970330337068072262
+      TwemojiAtlas_1_205: -1413232697294028172
+      TwemojiAtlas_1_206: -7109238755359142166
+      TwemojiAtlas_1_207: 1664034440754922784
+      TwemojiAtlas_1_208: 2733547222119464753
+      TwemojiAtlas_1_209: 7374391650532120567
+      TwemojiAtlas_1_21: -22793830128283273
+      TwemojiAtlas_1_210: -2365322140672540041
+      TwemojiAtlas_1_211: -7498366312232712464
+      TwemojiAtlas_1_212: -1428090013228794400
+      TwemojiAtlas_1_213: -4424263875450026518
+      TwemojiAtlas_1_214: 5855215690477819572
+      TwemojiAtlas_1_215: 1904809879965499269
+      TwemojiAtlas_1_216: -2467232645967773198
+      TwemojiAtlas_1_217: -3391109306651354326
+      TwemojiAtlas_1_218: -6703547399789713497
+      TwemojiAtlas_1_219: -4982823131530022938
+      TwemojiAtlas_1_22: 6237287352044520193
+      TwemojiAtlas_1_220: -3342393573804079140
+      TwemojiAtlas_1_221: -5082296827331419477
+      TwemojiAtlas_1_222: 6279196591789555751
+      TwemojiAtlas_1_223: 5054321735657963163
+      TwemojiAtlas_1_224: 356943469638526677
+      TwemojiAtlas_1_225: 8423321088816487387
+      TwemojiAtlas_1_226: 1980992288421878973
+      TwemojiAtlas_1_227: -120641009687073928
+      TwemojiAtlas_1_228: 7038270707826483441
+      TwemojiAtlas_1_229: -7478759906724443043
+      TwemojiAtlas_1_23: -9013389935637508887
+      TwemojiAtlas_1_230: -5444559503818594121
+      TwemojiAtlas_1_231: 3829379685735160408
+      TwemojiAtlas_1_232: 2244792122198785701
+      TwemojiAtlas_1_233: 1703715337894456262
+      TwemojiAtlas_1_234: -4825070470534176430
+      TwemojiAtlas_1_235: 8385099126378501633
+      TwemojiAtlas_1_236: -5696841029979903612
+      TwemojiAtlas_1_237: 3893705646207594867
+      TwemojiAtlas_1_238: -6462387401647092126
+      TwemojiAtlas_1_239: 4145409124587322728
+      TwemojiAtlas_1_24: 474602293124842509
+      TwemojiAtlas_1_240: -9107293599596427953
+      TwemojiAtlas_1_241: 8647177429230735178
+      TwemojiAtlas_1_242: 5096848447575412112
+      TwemojiAtlas_1_243: -7642696269597370179
+      TwemojiAtlas_1_244: -1616831571898651569
+      TwemojiAtlas_1_245: -2404006098494752070
+      TwemojiAtlas_1_246: 5590658155983454991
+      TwemojiAtlas_1_247: -4090183679078031299
+      TwemojiAtlas_1_248: 4086121498298152856
+      TwemojiAtlas_1_249: -8378099831642762166
+      TwemojiAtlas_1_25: -901777870888778727
+      TwemojiAtlas_1_250: -5872842019468240898
+      TwemojiAtlas_1_251: -6317339618191079435
+      TwemojiAtlas_1_252: -8626230574401321410
+      TwemojiAtlas_1_253: 218040477840907326
+      TwemojiAtlas_1_254: 7397740563436617955
+      TwemojiAtlas_1_255: 7459353072146919054
+      TwemojiAtlas_1_256: -6548330264698785668
+      TwemojiAtlas_1_257: -3591419332866824404
+      TwemojiAtlas_1_258: -360502656536865257
+      TwemojiAtlas_1_259: 1672178575884455960
+      TwemojiAtlas_1_26: 2365254031321615550
+      TwemojiAtlas_1_260: 8641411860144575650
+      TwemojiAtlas_1_261: -1643065174719049245
+      TwemojiAtlas_1_262: 6714463798976761473
+      TwemojiAtlas_1_263: 6449155128714402746
+      TwemojiAtlas_1_264: -6843264516407898222
+      TwemojiAtlas_1_265: 4689997590106659550
+      TwemojiAtlas_1_266: 1894892991887709393
+      TwemojiAtlas_1_267: -5244809174308695762
+      TwemojiAtlas_1_268: 2064681225731363563
+      TwemojiAtlas_1_269: 6667271076406487192
+      TwemojiAtlas_1_27: -2185914688525871958
+      TwemojiAtlas_1_270: -6813355524325694448
+      TwemojiAtlas_1_271: 4996708938852163761
+      TwemojiAtlas_1_272: -345447292089603311
+      TwemojiAtlas_1_273: -1730857999771068496
+      TwemojiAtlas_1_274: -5250121955449055299
+      TwemojiAtlas_1_275: -3319788501885631380
+      TwemojiAtlas_1_276: 1408164549026193324
+      TwemojiAtlas_1_277: -2194936498537917758
+      TwemojiAtlas_1_28: 5090150089649549380
+      TwemojiAtlas_1_29: -3321582162925770686
+      TwemojiAtlas_1_3: -8937520862191615772
+      TwemojiAtlas_1_30: -4416084042871860968
+      TwemojiAtlas_1_31: -1295094253188603635
+      TwemojiAtlas_1_32: 2929148590086430875
+      TwemojiAtlas_1_33: -3344344537267544952
+      TwemojiAtlas_1_34: 4142606870469008526
+      TwemojiAtlas_1_35: 8344104592143257526
+      TwemojiAtlas_1_36: -5865425728526383273
+      TwemojiAtlas_1_37: -4551104025866829279
+      TwemojiAtlas_1_38: 2531994416480938342
+      TwemojiAtlas_1_39: -7437880757316122801
+      TwemojiAtlas_1_4: 2446422984640245701
+      TwemojiAtlas_1_40: 6152578477325353706
+      TwemojiAtlas_1_41: -2483424002955539731
+      TwemojiAtlas_1_42: 4602699915881566312
+      TwemojiAtlas_1_43: -2344788026041216106
+      TwemojiAtlas_1_44: 1522762288756675484
+      TwemojiAtlas_1_45: -7610220655458374821
+      TwemojiAtlas_1_46: -2706650748536850692
+      TwemojiAtlas_1_47: -8848322703505024439
+      TwemojiAtlas_1_48: -3171040320920074649
+      TwemojiAtlas_1_49: 6960423461305142923
+      TwemojiAtlas_1_5: -8014278233991766742
+      TwemojiAtlas_1_50: 1471421742991443721
+      TwemojiAtlas_1_51: -4387787372257127156
+      TwemojiAtlas_1_52: -3380465387337685695
+      TwemojiAtlas_1_53: 4269215636250424975
+      TwemojiAtlas_1_54: -3941256749943032725
+      TwemojiAtlas_1_55: 5263541961477394243
+      TwemojiAtlas_1_56: 36614623678558009
+      TwemojiAtlas_1_57: -8008712266398515624
+      TwemojiAtlas_1_58: 6715847524246853291
+      TwemojiAtlas_1_59: -7567723580819290409
+      TwemojiAtlas_1_6: -8068052316598159829
+      TwemojiAtlas_1_60: -5270956346965105686
+      TwemojiAtlas_1_61: -3241488619394734194
+      TwemojiAtlas_1_62: 2607533034083975567
+      TwemojiAtlas_1_63: -7717939990227950171
+      TwemojiAtlas_1_64: -6622529071033520881
+      TwemojiAtlas_1_65: -6214155221941879512
+      TwemojiAtlas_1_66: 2480451764173609610
+      TwemojiAtlas_1_67: -1810154414819378283
+      TwemojiAtlas_1_68: -2999413309152075635
+      TwemojiAtlas_1_69: -8191004659172379142
+      TwemojiAtlas_1_7: -4717221515066570889
+      TwemojiAtlas_1_70: -8736909850070900405
+      TwemojiAtlas_1_71: -2881115312378207239
+      TwemojiAtlas_1_72: -8249264809188376617
+      TwemojiAtlas_1_73: 5342107564431430475
+      TwemojiAtlas_1_74: 4052060674188352500
+      TwemojiAtlas_1_75: -2114612661164140464
+      TwemojiAtlas_1_76: 4439642719102568930
+      TwemojiAtlas_1_77: 7259989451077118642
+      TwemojiAtlas_1_78: 4552320739917800509
+      TwemojiAtlas_1_79: 7676840100360774114
+      TwemojiAtlas_1_8: -7325411882624668313
+      TwemojiAtlas_1_80: 3977252371280718276
+      TwemojiAtlas_1_81: 7809670269192768578
+      TwemojiAtlas_1_82: -8245357270972580048
+      TwemojiAtlas_1_83: 1432153393525819581
+      TwemojiAtlas_1_84: -7790655176387971868
+      TwemojiAtlas_1_85: -8552111425246101741
+      TwemojiAtlas_1_86: 1420088704669493330
+      TwemojiAtlas_1_87: -6703602183792537995
+      TwemojiAtlas_1_88: -4786312205669442212
+      TwemojiAtlas_1_89: -5954253178919898192
+      TwemojiAtlas_1_9: -2139613831821917397
+      TwemojiAtlas_1_90: 8422476447945607298
+      TwemojiAtlas_1_91: 3472893415788736082
+      TwemojiAtlas_1_92: 8780501546411955301
+      TwemojiAtlas_1_93: -460925918091287196
+      TwemojiAtlas_1_94: -5584829072232523106
+      TwemojiAtlas_1_95: 4018475544949225289
+      TwemojiAtlas_1_96: -5214502070742862227
+      TwemojiAtlas_1_97: 3288353008137367855
+      TwemojiAtlas_1_98: 7422248379535722271
+      TwemojiAtlas_1_99: 4800861343954463743
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

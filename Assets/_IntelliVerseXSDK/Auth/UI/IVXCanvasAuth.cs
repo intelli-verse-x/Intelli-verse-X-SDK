@@ -100,7 +100,7 @@ namespace IntelliVerseX.Auth.UI
         /// </summary>
         public void ShowLogin()
         {
-            HideAllPanels();
+            HideAllPanels(_loginPanel);
             _loginPanel?.Open();
         }
 
@@ -109,7 +109,7 @@ namespace IntelliVerseX.Auth.UI
         /// </summary>
         public void ShowRegister()
         {
-            HideAllPanels();
+            HideAllPanels(_registerPanel);
             _registerPanel?.Open();
         }
 
@@ -118,7 +118,7 @@ namespace IntelliVerseX.Auth.UI
         /// </summary>
         public void ShowOTP()
         {
-            HideAllPanels();
+            HideAllPanels(_otpPanel);
             _otpPanel?.Open();
         }
 
@@ -135,7 +135,7 @@ namespace IntelliVerseX.Auth.UI
         /// </summary>
         public void ShowForgotPassword()
         {
-            HideAllPanels();
+            HideAllPanels(_forgotPasswordPanel);
             _forgotPasswordPanel?.Open();
         }
 
@@ -172,12 +172,12 @@ namespace IntelliVerseX.Auth.UI
             if (_loadingPanel != null) _loadingPanel.SetActive(false);
         }
 
-        private void HideAllPanels()
+        private void HideAllPanels(MonoBehaviour panelToKeepOpen = null)
         {
-            _loginPanel?.Close();
-            _registerPanel?.Close();
-            _otpPanel?.Close();
-            _forgotPasswordPanel?.Close();
+            if (_loginPanel != panelToKeepOpen) _loginPanel?.Close();
+            if (_registerPanel != panelToKeepOpen) _registerPanel?.Close();
+            if (_otpPanel != panelToKeepOpen) _otpPanel?.Close();
+            if (_forgotPasswordPanel != panelToKeepOpen) _forgotPasswordPanel?.Close();
             HideLoading();
         }
 

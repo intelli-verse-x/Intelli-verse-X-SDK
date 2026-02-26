@@ -12,6 +12,8 @@ Welcome to the IntelliVerseX SDK documentation. This guide will help you get sta
 6. [Samples](samples.md)
 7. [Troubleshooting](troubleshooting.md)
 8. [FAQ](faq.md)
+9. [Emoji Support](emoji-support.md)
+10. [Profile System Master Blueprint](profile-system-master-blueprint.md)
 
 ## Quick Links
 

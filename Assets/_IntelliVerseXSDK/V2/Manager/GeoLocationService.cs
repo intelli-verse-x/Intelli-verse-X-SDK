@@ -116,6 +116,11 @@ namespace IntelliVerseX.Services
                 if (_instance == null)
                 {
                     _instance = this;
+                    if (transform.parent != null)
+                    {
+                        Debug.LogWarning("[GeoLocationService] Service was parented in hierarchy. Detaching before DontDestroyOnLoad.");
+                        transform.SetParent(null, true);
+                    }
                     DontDestroyOnLoad(gameObject);
                 }
                 else if (_instance != this)
