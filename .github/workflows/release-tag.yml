@@ -119,40 +119,26 @@ jobs:
           # Save to file
           echo "$NOTES" > release_notes.md
           
-          # Add installation instructions
-          cat >> release_notes.md << EOF
-
----
-
-## 📦 Installation
-
-### Via Git URL
-
-Add to your \`Packages/manifest.json\`:
-
-\`\`\`json
-{
-  "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v$VERSION"
-  }
-}
-\`\`\`
-
-### Via Package Manager UI
-
-1. Open **Window > Package Manager**
-2. Click **+** > **Add package from git URL...**
-3. Enter: \`https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v$VERSION\`
-4. Click **Add**
-
----
-
-## 📋 Requirements
-
-- **Unity:** 2023.3 LTS or Unity 6
-- See [INSTALLATION.md](Assets/_IntelliVerseXSDK/INSTALLATION.md) for full setup guide
-
-EOF
+          # Add installation instructions (using printf to avoid heredoc YAML issues)
+          printf '\n' >> release_notes.md
+          printf '## 📦 Installation\n\n' >> release_notes.md
+          printf '### Via Git URL\n\n' >> release_notes.md
+          printf 'Add to your `Packages/manifest.json`:\n\n' >> release_notes.md
+          printf '```json\n' >> release_notes.md
+          printf '{\n' >> release_notes.md
+          printf '  "dependencies": {\n' >> release_notes.md
+          printf '    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v%s"\n' "$VERSION" >> release_notes.md
+          printf '  }\n' >> release_notes.md
+          printf '}\n' >> release_notes.md
+          printf '```\n\n' >> release_notes.md
+          printf '### Via Package Manager UI\n\n' >> release_notes.md
+          printf '1. Open **Window > Package Manager**\n' >> release_notes.md
+          printf '2. Click **+** > **Add package from git URL...**\n' >> release_notes.md
+          printf '3. Enter: `https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v%s`\n' "$VERSION" >> release_notes.md
+          printf '4. Click **Add**\n\n' >> release_notes.md
+          printf '## 📋 Requirements\n\n' >> release_notes.md
+          printf '- **Unity:** 2023.3 LTS or Unity 6\n' >> release_notes.md
+          printf '- See [INSTALLATION.md](Assets/_IntelliVerseXSDK/INSTALLATION.md) for full setup guide\n' >> release_notes.md
           
           echo "✅ Release notes prepared"
       
