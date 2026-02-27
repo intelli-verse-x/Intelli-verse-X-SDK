@@ -7,6 +7,11 @@
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/Version-5.0.0-orange.svg)](Assets/_IntelliVerseXSDK/CHANGELOG.md)
 [![CI](https://img.shields.io/badge/CI-Passing-success.svg)](.github/workflows/unity-tests.yml)
+[![Documentation](https://img.shields.io/badge/Docs-Online-blue.svg)](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/)
+
+<p align="center">
+  <a href="https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/"><strong>📖 Read the Full Documentation →</strong></a>
+</p>
 
 ---
 
@@ -145,10 +150,14 @@ This repository includes GitHub Actions that test the SDK on:
 
 ## 📚 Documentation
 
-- [Installation Guide](Assets/_IntelliVerseXSDK/INSTALLATION.md)
-- [Getting Started](Assets/_IntelliVerseXSDK/Documentation~/getting-started.md)
-- [Changelog](Assets/_IntelliVerseXSDK/CHANGELOG.md)
-- [Troubleshooting](Assets/_IntelliVerseXSDK/Documentation~/troubleshooting.md)
+**📖 [Full Documentation Site →](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/)**
+
+Quick links:
+- [Getting Started](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/getting-started/quickstart/)
+- [Installation Guide](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/getting-started/installation/)
+- [API Reference](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/api/core/)
+- [Troubleshooting](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/troubleshooting/faq/)
+- [Changelog](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/changelog/)
 
 ---
 

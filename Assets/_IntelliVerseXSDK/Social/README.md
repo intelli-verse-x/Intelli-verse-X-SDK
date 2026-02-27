@@ -1,27 +1,22 @@
 # IntelliVerse-X SDK - Friends Module
 
-**Version:** 1.0.0  
+**Version:** 2.0.0  
 **Namespace:** `IntelliVerseX.Social`  
-**Requires:** DOTween (free version works)
+**Requires:** DOTween (free version works), Nakama Backend
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. Run Setup Wizard
+### 1. Configure Nakama Backend
 
-```
-Tools → IntelliVerse-X → Setup Friends Flow
-```
+Ensure your Nakama backend is configured via the SDK Setup Wizard.
 
-The wizard will:
-- Check/install DOTween
-- Create the `FriendsConfig` asset
-- Optionally create a demo scene
+### 2. Add Prefabs to Your Scene
 
-### 2. Add to Your Scene
+Add the `IVXFriendsCanvas` prefab to your scene, or use individual slot prefabs for custom UI.
 
-Add the `IVXFriendsCanvas` prefab to your scene, or create your own UI using the provided components.
+Alternatively, open the demo scene: `Assets/Scenes/Tests/IVX_Friends.unity`
 
 ### 3. Open the Friends Panel
 
@@ -42,9 +37,8 @@ IVXFriendsPanel.Instance.Close();
 ```
 Social/
 ├── Runtime/
-│   ├── IVXFriendsService.cs      # API client (static)
-│   ├── IVXFriendsModels.cs       # Data models
-│   └── IVXFriendsConfig.cs       # Configuration (ScriptableObject)
+│   ├── IVXFriendsService.cs      # API client (static, uses Nakama)
+│   └── IVXFriendsModels.cs       # Data models
 │
 ├── UI/
 │   ├── IVXFriendsPanel.cs        # Main panel controller
@@ -59,9 +53,6 @@ Social/
 │   ├── IVXFriendRequestSlot.prefab
 │   └── IVXFriendSearchSlot.prefab
 │
-├── Editor/
-│   └── IVXFriendsSetupWizard.cs  # Setup wizard
-│
 └── Scenes/
     └── IVX_FriendsDemo.unity     # Demo scene
 ```
@@ -70,34 +61,9 @@ Social/
 
 ## 🔧 Configuration
 
-The `FriendsConfig` asset is located at:
-```
-Resources/IntelliVerseX/FriendsConfig.asset
-```
+The Friends module uses **Nakama's native friend system** and does not require a separate configuration asset.
 
-### API Settings
-
-| Property | Default | Description |
-|----------|---------|-------------|
-| `baseUrl` | `https://api.intelli-verse-x.ai/api/games/friends` | Friends API base URL |
-| `timeoutSeconds` | `15` | Request timeout |
-| `maxRetries` | `1` | Retry attempts on failure |
-
-### Feature Flags
-
-| Property | Default | Description |
-|----------|---------|-------------|
-| `enableBlocking` | `true` | Allow users to block others |
-| `enableSearch` | `true` | Enable user search |
-| `enableRequestMessages` | `true` | Allow messages with friend requests |
-| `showOnlineStatus` | `true` | Show online/offline indicators |
-
-### UI Settings
-
-| Property | Default | Description |
-|----------|---------|-------------|
-| `maxVisibleFriends` | `50` | Max friends to display |
-| `maxSearchResults` | `20` | Max search results |
+Configuration is managed via the `IVXFriendsService` static class and Nakama backend settings.
 | `autoRefreshIntervalSeconds` | `60` | Auto-refresh interval (0 = disabled) |
 | `defaultAvatar` | `null` | Fallback avatar sprite |
 
@@ -332,8 +298,8 @@ The user is not logged in. Ensure the user has authenticated via the SDK before 
 ### API errors
 
 1. Check the Unity Console for detailed error messages
-2. Verify the `baseUrl` in `FriendsConfig` is correct
-3. Ensure the backend Friends API is running
+2. Ensure Nakama backend is properly configured
+3. Verify that the user is authenticated before using Friends features
 
 ---
 

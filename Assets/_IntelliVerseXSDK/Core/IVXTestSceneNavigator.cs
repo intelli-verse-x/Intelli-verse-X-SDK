@@ -29,7 +29,7 @@ namespace IntelliVerseX.Core
         }
 
         [Header("Navigation")]
-        [SerializeField] private string _homeSceneName = "IVX_Homescreen";
+        [SerializeField] private string _homeSceneName = "IVX_HomeScreen";
         [SerializeField] private KeyCode _toggleOverlayKey = KeyCode.F8;
         [SerializeField] private bool _overlayVisible = true;
         [SerializeField] private int _sortingOrder = 500;
@@ -42,9 +42,11 @@ namespace IntelliVerseX.Core
             new SceneLink { Label = "Leaderboard", SceneName = "IVX_LeaderboardTest", ShowOnHome = true, ShowOnFeatureScenes = true },
             new SceneLink { Label = "Wallet",      SceneName = "IVX_WalletTest",      ShowOnHome = true, ShowOnFeatureScenes = true },
             new SceneLink { Label = "Weekly Quiz", SceneName = "IVX_WeeklyQuizTest",  ShowOnHome = true, ShowOnFeatureScenes = true },
-            new SceneLink { Label = "More Of Us",  SceneName = "IVX_MoreOfUsTest",    ShowOnHome = true, ShowOnFeatureScenes = true },
-            new SceneLink { Label = "Friends",     SceneName = "IVX_FriendsTest",     ShowOnHome = true, ShowOnFeatureScenes = true },
-            new SceneLink { Label = "Full",        SceneName = "IVX_FullTest",        ShowOnHome = true, ShowOnFeatureScenes = true }
+            new SceneLink { Label = "Daily Quiz",  SceneName = "IVX_DailyQuiz",       ShowOnHome = true, ShowOnFeatureScenes = true },
+            new SceneLink { Label = "Profile",     SceneName = "IVX_Profile",         ShowOnHome = true, ShowOnFeatureScenes = true },
+            new SceneLink { Label = "Friends",     SceneName = "IVX_Friends",         ShowOnHome = true, ShowOnFeatureScenes = true },
+            new SceneLink { Label = "More Of Us",  SceneName = "IVX_MoreOfUs",        ShowOnHome = true, ShowOnFeatureScenes = true },
+            new SceneLink { Label = "Share/Rate",  SceneName = "IVX_Share&RateUs",    ShowOnHome = true, ShowOnFeatureScenes = true }
         };
 
         private GameObject _canvasObject;

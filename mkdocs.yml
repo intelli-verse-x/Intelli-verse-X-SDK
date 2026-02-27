@@ -1,0 +1,167 @@
+# IntelliVerseX SDK Documentation
+# https://squidfunk.github.io/mkdocs-material/
+
+site_name: IntelliVerseX SDK
+site_description: Complete modular game development SDK for Unity
+site_author: IntelliVerse-X Team
+site_url: https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/
+
+repo_name: Intelli-verse-X/Intelli-verse-X-Unity-SDK
+repo_url: https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK
+edit_uri: edit/main/docs/
+
+copyright: Copyright &copy; 2026 IntelliVerse-X
+
+theme:
+  name: material
+  language: en
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.annotation
+    - content.code.copy
+  icon:
+    repo: fontawesome/brands/github
+  logo: assets/logo.svg
+  favicon: assets/favicon.ico
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - getting-started/index.md
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quickstart.md
+    - Requirements: getting-started/requirements.md
+    - Project Setup: getting-started/project-setup.md
+  - Configuration:
+    - configuration/index.md
+    - Game Configuration: configuration/game-config.md
+    - Backend Configuration: configuration/backend-config.md
+    - Ads Configuration: configuration/ads-config.md
+    - Feature Flags: configuration/feature-flags.md
+  - Modules:
+    - modules/index.md
+    - Core: modules/core.md
+    - Identity & Authentication: modules/identity.md
+    - Backend (Nakama): modules/backend.md
+    - Social & Friends: modules/social.md
+    - Monetization: modules/monetization.md
+    - Analytics: modules/analytics.md
+    - Localization: modules/localization.md
+    - Storage: modules/storage.md
+    - Leaderboards: modules/leaderboards.md
+    - Quiz System: modules/quiz.md
+    - UI Components: modules/ui.md
+    - More Of Us: modules/more-of-us.md
+  - API Reference:
+    - api/index.md
+    - Core API: api/core.md
+    - Identity API: api/identity.md
+    - Backend API: api/backend.md
+    - Social API: api/social.md
+    - Monetization API: api/monetization.md
+    - Localization API: api/localization.md
+    - Analytics API: api/analytics.md
+    - UI API: api/ui.md
+  - Samples:
+    - samples/index.md
+    - Authentication Demo: samples/auth-demo.md
+    - Leaderboard Demo: samples/leaderboard-demo.md
+    - Friends Demo: samples/friends-demo.md
+    - Ads Demo: samples/ads-demo.md
+    - Quiz Demo: samples/quiz-demo.md
+  - Guides:
+    - guides/index.md
+    - Authentication Flow: guides/auth-flow.md
+    - Nakama Integration: guides/nakama-integration.md
+    - Ad Integration: guides/ad-integration.md
+    - Localization Setup: guides/localization-setup.md
+    - Migration Guide: guides/migration.md
+  - Troubleshooting:
+    - troubleshooting/index.md
+    - Build Errors: troubleshooting/build-errors.md
+    - Runtime Issues: troubleshooting/runtime-issues.md
+    - Platform Specific: troubleshooting/platform-specific.md
+    - FAQ: troubleshooting/faq.md
+  - Changelog: changelog.md
+
+plugins:
+  - search:
+      separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
+  - minify:
+      minify_html: true
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: Intelli-verse-X
+      repo: Intelli-verse-X-Unity-SDK
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Intelli-verse-X
+  generator: false
+  version:
+    provider: mike

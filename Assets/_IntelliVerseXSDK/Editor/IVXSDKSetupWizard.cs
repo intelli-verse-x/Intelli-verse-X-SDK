@@ -315,7 +315,7 @@ namespace IntelliVerseX.Editor
         // Monetization Modules
         private ModuleSetupState adsModule = new ModuleSetupState();
         private ModuleSetupState iapModule = new ModuleSetupState();
-        private ModuleSetupState retentionModule = new ModuleSetupState();
+        // Note: Retention features removed - QuizVerse-specific
 
         #endregion
 
@@ -483,7 +483,6 @@ namespace IntelliVerseX.Editor
             // Friends Module
             friendsModule.setupSteps = new List<string>
             {
-                "FriendsConfig asset created",
                 "IVXFriendSlot prefab exists",
                 "IVXFriendRequestSlot prefab exists",
                 "IVXFriendSearchSlot prefab exists",
@@ -547,13 +546,7 @@ namespace IntelliVerseX.Editor
             };
             iapModule.stepCompleted = new List<bool>(new bool[iapModule.setupSteps.Count]);
 
-            // Retention Module
-            retentionModule.setupSteps = new List<string>
-            {
-                "Daily rewards configured",
-                "Streak system configured"
-            };
-            retentionModule.stepCompleted = new List<bool>(new bool[retentionModule.setupSteps.Count]);
+            // Note: Retention module removed - QuizVerse-specific feature
         }
 
         #endregion
@@ -959,6 +952,39 @@ namespace IntelliVerseX.Editor
                 "Use Quick Setup to automatically configure SDK modules. " +
                 "For individual module control, use the specific tabs.",
                 MessageType.Info);
+
+            EditorGUILayout.Space(10);
+
+            // Consumer Asset Installation (for UPM installs)
+            EditorGUILayout.BeginVertical(moduleBoxStyle);
+            EditorGUILayout.LabelField("📦 Demo Assets Installation", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Install demo scenes, prefabs, and sample assets to your project", EditorStyles.wordWrappedMiniLabel);
+
+            EditorGUILayout.Space(5);
+            
+            EditorGUILayout.BeginHorizontal();
+            
+            if (GUILayout.Button("Install All Demo Assets", GUILayout.Height(35)))
+            {
+                IVXConsumerAssetInstaller.InstallAllAssets(true);
+            }
+            
+            if (GUILayout.Button("Demo Scenes Only", GUILayout.Height(35)))
+            {
+                IVXConsumerAssetInstaller.InstallDemoScenesOnly();
+            }
+            
+            if (GUILayout.Button("Prefabs Only", GUILayout.Height(35)))
+            {
+                IVXConsumerAssetInstaller.InstallPrefabsOnly();
+            }
+            
+            EditorGUILayout.EndHorizontal();
+            
+            EditorGUILayout.Space(3);
+            EditorGUILayout.LabelField("Demo scenes → Assets/IntelliVerseX Demo Scenes/", EditorStyles.miniLabel);
+            EditorGUILayout.LabelField("Prefabs → Assets/IntelliVerseX/Prefabs/", EditorStyles.miniLabel);
+            EditorGUILayout.EndVertical();
 
             EditorGUILayout.Space(10);
 
@@ -1989,39 +2015,21 @@ namespace IntelliVerseX.Editor
             EditorGUILayout.Space(5);
             EditorGUILayout.LabelField("Auth Actions:", EditorStyles.miniBoldLabel);
 
+            EditorGUILayout.HelpBox(
+                "Authentication is configured via prefabs in demo scenes. Open the Auth demo scene to see the setup.",
+                MessageType.Info);
+
             // Store button states to process actions after layout
-            bool createConfig = false;
-            bool addToScene = false;
             bool openDemoScene = false;
-            bool editConfig = false;
 
             EditorGUILayout.BeginHorizontal();
-            createConfig = GUILayout.Button("Create Auth Config", GUILayout.Height(25));
-            addToScene = GUILayout.Button("Add Auth Canvas to Scene", GUILayout.Height(25));
+            GUI.backgroundColor = accentColor;
+            openDemoScene = GUILayout.Button("Open Auth Demo Scene", GUILayout.Height(30));
+            GUI.backgroundColor = Color.white;
             EditorGUILayout.EndHorizontal();
-
-            EditorGUILayout.BeginHorizontal();
-            openDemoScene = GUILayout.Button("Open Auth Demo Scene", GUILayout.Height(25));
-            EditorGUILayout.EndHorizontal();
-
-            // Auth Config Quick Settings
-            var authConfig = Resources.Load<ScriptableObject>("IntelliVerseX/AuthConfig");
-            if (authConfig != null)
-            {
-                EditorGUILayout.Space(5);
-                EditorGUILayout.LabelField("Auth Config:", EditorStyles.miniBoldLabel);
-
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.ObjectField("Config Asset:", authConfig, typeof(ScriptableObject), false);
-                editConfig = GUILayout.Button("Edit", GUILayout.Width(50));
-                EditorGUILayout.EndHorizontal();
-            }
 
             // Process button actions after all GUI layout is complete
-            if (createConfig) EditorApplication.delayCall += CreateAuthConfig;
-            if (addToScene) EditorApplication.delayCall += AddAuthCanvasToScene;
             if (openDemoScene) OpenDemoScene("IVX_AuthTest");
-            if (editConfig && authConfig != null) Selection.activeObject = authConfig;
         }
 
         private void DrawFriendsModuleActions()
@@ -2029,19 +2037,18 @@ namespace IntelliVerseX.Editor
             EditorGUILayout.Space(5);
             EditorGUILayout.LabelField("Friends Actions:", EditorStyles.miniBoldLabel);
 
+            EditorGUILayout.HelpBox(
+                "Friends functionality is configured via prefabs in demo scenes. Open the Friends demo scene to see the setup.",
+                MessageType.Info);
+
             // Store button states to process actions after layout
-            bool createConfig = false;
-            bool addToScene = false;
             bool openDemoScene = false;
             bool openDOTweenStore = false;
 
             EditorGUILayout.BeginHorizontal();
-            createConfig = GUILayout.Button("Create Friends Config", GUILayout.Height(25));
-            addToScene = GUILayout.Button("Add Friends UI to Scene", GUILayout.Height(25));
-            EditorGUILayout.EndHorizontal();
-
-            EditorGUILayout.BeginHorizontal();
-            openDemoScene = GUILayout.Button("Open Friends Demo Scene", GUILayout.Height(25));
+            GUI.backgroundColor = accentColor;
+            openDemoScene = GUILayout.Button("Open Friends Demo Scene", GUILayout.Height(30));
+            GUI.backgroundColor = Color.white;
             EditorGUILayout.EndHorizontal();
 
             // DOTween Check
@@ -2057,8 +2064,6 @@ namespace IntelliVerseX.Editor
             }
 
             // Process button actions after all GUI layout is complete
-            if (createConfig) EditorApplication.delayCall += CreateFriendsConfig;
-            if (addToScene) EditorApplication.delayCall += AddFriendsUIToScene;
             if (openDemoScene) OpenDemoScene("IVX_Friends");
             if (openDOTweenStore) Application.OpenURL("https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676");
         }
@@ -2357,9 +2362,6 @@ namespace IntelliVerseX.Editor
 
             DrawModuleSection("💳 In-App Purchases", iapModule, CheckIAPModule,
                 "IAP with Unity Purchasing integration");
-
-            DrawModuleSection("🎁 Retention Features", retentionModule, CheckRetentionModule,
-                "Daily rewards, streaks, and session boosters");
 
             EditorGUILayout.Space(10);
 
@@ -2941,10 +2943,40 @@ namespace IntelliVerseX.Editor
             EditorGUILayout.LabelField("Demo Scenes", subHeaderStyle ?? EditorStyles.boldLabel);
             EditorGUILayout.HelpBox(
                 "Demo scenes are included with the SDK to test each feature. " +
-                "These scenes contain pre-configured prefabs and UI to verify SDK functionality.",
+                "These scenes contain pre-configured prefabs and UI to verify SDK functionality.\n\n" +
+                "Consumer projects: Use 'Install Demo Scenes' to copy scenes to your Assets folder.",
                 MessageType.Info);
 
             EditorGUILayout.Space(10);
+            
+            // Installation Section
+            EditorGUILayout.BeginVertical(moduleBoxStyle);
+            EditorGUILayout.LabelField("📥 Install Demo Scenes to Project", EditorStyles.boldLabel);
+            
+            EditorGUILayout.BeginHorizontal();
+            
+            GUI.backgroundColor = accentColor;
+            if (GUILayout.Button("Install All Demo Scenes", GUILayout.Height(30)))
+            {
+                IVXConsumerAssetInstaller.InstallDemoScenesOnly();
+            }
+            GUI.backgroundColor = Color.white;
+            
+            if (GUILayout.Button("Re-import (Force)", GUILayout.Height(30)))
+            {
+                IVXConsumerAssetInstaller.ForceReinstall();
+            }
+            
+            EditorGUILayout.EndHorizontal();
+            
+            EditorGUILayout.Space(3);
+            EditorGUILayout.LabelField("Scenes will be copied to: Assets/IntelliVerseX Demo Scenes/", EditorStyles.miniLabel);
+            EditorGUILayout.EndVertical();
+            
+            EditorGUILayout.Space(10);
+            
+            // Demo Scene Buttons
+            EditorGUILayout.LabelField("Available Demo Scenes", subHeaderStyle ?? EditorStyles.boldLabel);
 
             DrawTestSceneButton("🏠 Home Screen Demo",
                 "Central home for navigating all IVX feature test scenes",
@@ -2976,10 +3008,30 @@ namespace IntelliVerseX.Editor
                 "Test ad loading, display, and reward callbacks",
                 "IVX_AdsTest",
                 null);
+                
+            DrawTestSceneButton("📱 Profile Demo Scene",
+                "Test user profile display and editing",
+                "IVX_Profile",
+                null);
+                
+            DrawTestSceneButton("🎯 Daily Quiz Demo Scene",
+                "Test daily quiz feature with Nakama integration",
+                "IVX_DailyQuiz",
+                null);
+                
+            DrawTestSceneButton("📅 Weekly Quiz Demo Scene",
+                "Test weekly quiz feature with Nakama integration",
+                "IVX_WeeklyQuizTest",
+                null);
 
             DrawTestSceneButton("📤 Share & Rate Demo Scene",
                 "Test share and rate features",
                 "IVX_Share&RateUs",
+                null);
+                
+            DrawTestSceneButton("🎮 More Of Us Demo Scene",
+                "Test More Of Us feature",
+                "IVX_MoreOfUs",
                 null);
 
             EditorGUILayout.Space(10);
@@ -3004,28 +3056,78 @@ namespace IntelliVerseX.Editor
 
             EditorGUILayout.BeginHorizontal();
 
-            if (GUILayout.Button("Re-import To Consumer Assets", GUILayout.Height(25)))
+            if (GUILayout.Button("Open Consumer Scenes Folder", GUILayout.Height(25)))
+            {
+                OpenConsumerScenesFolder();
+            }
+            
+            if (GUILayout.Button("Legacy Re-import", GUILayout.Height(25)))
             {
                 IVXSceneImporter.ForceReimportScenes();
             }
 
             EditorGUILayout.EndHorizontal();
 
-            if (GUILayout.Button("Open Consumer Scenes Folder", GUILayout.Height(25)))
-            {
-                IVXSceneImporter.OpenScenesFolder();
-            }
-
             EditorGUILayout.Space(6);
-            EditorGUILayout.LabelField("Source (SDK package): Samples~/TestScenes", EditorStyles.miniLabel);
-            EditorGUILayout.LabelField("Consumer copy path: Assets/IntelliVerseX Scenes", EditorStyles.miniLabel);
+            EditorGUILayout.LabelField("SDK Source (dev): Assets/Scenes/Tests/", EditorStyles.miniLabel);
+            EditorGUILayout.LabelField("SDK Source (pkg): Samples~/TestScenes/", EditorStyles.miniLabel);
+            EditorGUILayout.LabelField("Consumer path: Assets/IntelliVerseX Demo Scenes/", EditorStyles.miniLabel);
             EditorGUILayout.EndVertical();
+        }
+        
+        private void OpenConsumerScenesFolder()
+        {
+            string folderPath = "Assets/IntelliVerseX Demo Scenes";
+            
+            // Check if folder exists
+            if (!Directory.Exists(Path.Combine(Application.dataPath, "..", folderPath)))
+            {
+                EditorUtility.DisplayDialog(
+                    "Folder Not Found",
+                    $"The demo scenes folder does not exist yet:\n\n{folderPath}\n\n" +
+                    "Use 'Install Demo Scenes' to copy scenes to your project.",
+                    "OK"
+                );
+                return;
+            }
+            
+            // Select and ping the folder
+            UnityEngine.Object folder = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(folderPath);
+            if (folder != null)
+            {
+                Selection.activeObject = folder;
+                EditorGUIUtility.PingObject(folder);
+            }
         }
 
         private void DrawTestSceneButton(string title, string description, string sceneName, Action createAction)
         {
-            string scenePath = $"Assets/Scenes/Tests/{sceneName}.unity";
-            bool sceneExists = File.Exists(scenePath);
+            // Check multiple possible scene paths
+            string[] possiblePaths = new string[]
+            {
+                $"Assets/IntelliVerseX Demo Scenes/{sceneName}.unity",  // Consumer project path
+                $"Assets/Scenes/Tests/{sceneName}.unity",               // Development path
+                $"Packages/com.intelliversex.sdk/Samples~/TestScenes/{sceneName}.unity" // UPM path
+            };
+            
+            string scenePath = null;
+            bool sceneExists = false;
+            
+            foreach (string path in possiblePaths)
+            {
+                if (File.Exists(path) || AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path) != null)
+                {
+                    scenePath = path;
+                    sceneExists = true;
+                    break;
+                }
+            }
+            
+            // Default to consumer path if not found
+            if (scenePath == null)
+            {
+                scenePath = $"Assets/IntelliVerseX Demo Scenes/{sceneName}.unity";
+            }
 
             EditorGUILayout.BeginVertical(moduleBoxStyle ?? EditorStyles.helpBox);
             EditorGUILayout.BeginHorizontal();
@@ -3272,7 +3374,7 @@ namespace IntelliVerseX.Editor
             CheckLocalizationModule();
             CheckAdsModule();
             CheckIAPModule();
-            CheckRetentionModule();
+            // Note: Retention module removed - QuizVerse-specific
         }
 
         /// <summary>
@@ -3372,21 +3474,16 @@ namespace IntelliVerseX.Editor
         /// </summary>
         private void CheckFriendsModule()
         {
-            if (friendsModule.stepCompleted == null || friendsModule.stepCompleted.Count < 5) return;
-            
-            // Config check (IVXFriendsConfig is in IntelliVerseX.Social)
-            friendsModule.stepCompleted[0] = Resources.Load("IntelliVerseX/FriendsConfig") != null ||
-                                             AssetDatabase.LoadAssetAtPath<ScriptableObject>(RESOURCES_PATH + "/FriendsConfig.asset") != null ||
-                                             TypeExists("IntelliVerseX.Social.IVXFriendsConfig");
+            if (friendsModule.stepCompleted == null || friendsModule.stepCompleted.Count < 4) return;
             
             // Prefab/Type checks - UI types are in IntelliVerseX.Social.UI
-            friendsModule.stepCompleted[1] = AssetDatabase.LoadAssetAtPath<GameObject>(SOCIAL_PREFABS_PATH + "/IVXFriendSlot.prefab") != null ||
+            friendsModule.stepCompleted[0] = AssetDatabase.LoadAssetAtPath<GameObject>(SOCIAL_PREFABS_PATH + "/IVXFriendSlot.prefab") != null ||
                                              TypeExists("IntelliVerseX.Social.UI.IVXFriendSlot");
-            friendsModule.stepCompleted[2] = AssetDatabase.LoadAssetAtPath<GameObject>(SOCIAL_PREFABS_PATH + "/IVXFriendRequestSlot.prefab") != null ||
+            friendsModule.stepCompleted[1] = AssetDatabase.LoadAssetAtPath<GameObject>(SOCIAL_PREFABS_PATH + "/IVXFriendRequestSlot.prefab") != null ||
                                              TypeExists("IntelliVerseX.Social.UI.IVXFriendRequestSlot");
-            friendsModule.stepCompleted[3] = AssetDatabase.LoadAssetAtPath<GameObject>(SOCIAL_PREFABS_PATH + "/IVXFriendSearchSlot.prefab") != null ||
+            friendsModule.stepCompleted[2] = AssetDatabase.LoadAssetAtPath<GameObject>(SOCIAL_PREFABS_PATH + "/IVXFriendSearchSlot.prefab") != null ||
                                              TypeExists("IntelliVerseX.Social.UI.IVXFriendSearchSlot");
-            friendsModule.stepCompleted[4] = TypeExists("IntelliVerseX.Social.UI.IVXFriendsPanel") ||
+            friendsModule.stepCompleted[3] = TypeExists("IntelliVerseX.Social.UI.IVXFriendsPanel") ||
                                              TypeExists("IntelliVerseX.Social.IVXFriendsService");
 
             friendsModule.isSetupComplete = friendsModule.stepCompleted.All(x => x);
@@ -3549,24 +3646,7 @@ namespace IntelliVerseX.Editor
                 : "IAP components missing";
         }
 
-        /// <summary>
-        /// Checks Retention module status (QuizVerse-specific).
-        /// </summary>
-        private void CheckRetentionModule()
-        {
-            if (retentionModule.stepCompleted == null || retentionModule.stepCompleted.Count < 2) return;
-            
-            // Retention module is QuizVerse-specific, check both file and type
-            retentionModule.stepCompleted[0] = File.Exists(QUIZVERSE_ROOT + "/Scripts/Rewards/DailyRewardManager.cs") ||
-                                               TypeExists("QuizVerse.Rewards.DailyRewardManager");
-            retentionModule.stepCompleted[1] = File.Exists(QUIZVERSE_ROOT + "/Scripts/Retention/StreakShieldManager.cs") ||
-                                               TypeExists("QuizVerse.Retention.StreakShieldManager");
-
-            retentionModule.isSetupComplete = retentionModule.stepCompleted.All(x => x);
-            retentionModule.statusMessage = retentionModule.isSetupComplete 
-                ? "Retention module is configured" 
-                : "Retention components missing (QuizVerse-specific)";
-        }
+        // Note: CheckRetentionModule removed - QuizVerse-specific feature
 
         /// <summary>
         /// Checks if DOTween is installed in the project.
@@ -3648,7 +3728,7 @@ namespace IntelliVerseX.Editor
 
         private void SetupFriendsModule()
         {
-            CreateFriendsConfig();
+            // Note: FriendsConfig removed - configuration now done via prefabs in demo scenes
             CheckFriendsModule();
             Debug.Log("[IVXSDKSetupWizard] Friends module setup complete");
         }
@@ -3718,30 +3798,7 @@ namespace IntelliVerseX.Editor
             Debug.Log("[IVXSDKSetupWizard] Auth configuration is now done via IVXCanvasAuth Inspector - no separate config asset needed.");
         }
 
-        private void CreateFriendsConfig()
-        {
-            EnsureDirectoryExists(RESOURCES_PATH);
-
-            var configPath = RESOURCES_PATH + "/FriendsConfig.asset";
-            if (AssetDatabase.LoadAssetAtPath<ScriptableObject>(configPath) != null)
-            {
-                Debug.Log("[IVXSDKSetupWizard] FriendsConfig already exists");
-                return;
-            }
-
-            var configType = GetTypeByName("IntelliVerseX.Social.IVXFriendsConfig");
-            if (configType != null)
-            {
-                var config = ScriptableObject.CreateInstance(configType);
-                AssetDatabase.CreateAsset(config, configPath);
-                AssetDatabase.SaveAssets();
-                Debug.Log($"[IVXSDKSetupWizard] Created FriendsConfig at: {configPath}");
-            }
-            else
-            {
-                Debug.LogWarning("[IVXSDKSetupWizard] IVXFriendsConfig type not found");
-            }
-        }
+        // Note: CreateFriendsConfig removed - configuration now done via prefabs in demo scenes
 
         #endregion
 
@@ -4049,7 +4106,7 @@ namespace IntelliVerseX.Editor
 
         private void CreateHomeScreenTestScene()
         {
-            CreateTestScene("IVX_Homescreen", () =>
+            CreateTestScene("IVX_HomeScreen", () =>
             {
                 EnsureHomeNavigatorInScene();
                 CreateTestLabel(
@@ -4329,7 +4386,7 @@ namespace IntelliVerseX.Editor
         {
             RefreshAllModuleStatus();
 
-            var modules = new[]
+            var modules = new (ModuleSetupState, string)[]
             {
                 (coreModule, "Core"),
                 (identityModule, "Identity"),
@@ -4341,8 +4398,7 @@ namespace IntelliVerseX.Editor
                 (quizModule, "Quiz"),
                 (localizationModule, "Localization"),
                 (adsModule, "Ads"),
-                (iapModule, "IAP"),
-                (retentionModule, "Retention")
+                (iapModule, "IAP")
             };
 
             int completed = modules.Count(m => m.Item1.isSetupComplete);

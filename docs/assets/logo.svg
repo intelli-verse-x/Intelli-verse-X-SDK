@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradient for main icon -->
+    <linearGradient id="ivxGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
+    </linearGradient>
+    <!-- Glow effect -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="90" fill="#1e1b4b" />
+  <circle cx="100" cy="100" r="85" fill="none" stroke="url(#ivxGradient)" stroke-width="2" opacity="0.5"/>
+  
+  <!-- IX monogram -->
+  <g filter="url(#glow)">
+    <!-- I letter -->
+    <rect x="55" y="55" width="18" height="90" rx="4" fill="url(#ivxGradient)"/>
+    
+    <!-- V shape (stylized as connection lines) -->
+    <path d="M 85 55 L 100 95 L 115 55" fill="none" stroke="url(#ivxGradient)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- X letter -->
+    <path d="M 125 55 L 155 145 M 155 55 L 125 145" fill="none" stroke="url(#ivxGradient)" stroke-width="10" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Decorative dots (representing connectivity/universe) -->
+  <circle cx="45" cy="100" r="4" fill="#a855f7" opacity="0.7"/>
+  <circle cx="155" cy="100" r="4" fill="#a855f7" opacity="0.7"/>
+  <circle cx="100" cy="45" r="4" fill="#8b5cf6" opacity="0.7"/>
+  <circle cx="100" cy="155" r="4" fill="#8b5cf6" opacity="0.7"/>
+  
+  <!-- Corner accents -->
+  <circle cx="60" cy="60" r="2" fill="#6366f1" opacity="0.5"/>
+  <circle cx="140" cy="60" r="2" fill="#6366f1" opacity="0.5"/>
+  <circle cx="60" cy="140" r="2" fill="#6366f1" opacity="0.5"/>
+  <circle cx="140" cy="140" r="2" fill="#6366f1" opacity="0.5"/>
+</svg>

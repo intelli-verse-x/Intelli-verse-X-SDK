@@ -60,7 +60,6 @@
   <Project Path="Unity.PerformanceTesting.csproj" />
   <Project Path="Unity.2D.Tilemap.Extras.Editor.csproj" />
   <Project Path="AppodealStack.Monetization.Common.csproj" />
-  <Project Path="AppodealStack.Monetization.Platforms.Android.csproj" />
   <Project Path="Unity.TextMeshPro.csproj" />
   <Project Path="UnityEditor.Purchasing.csproj" />
   <Project Path="IntelliVerseX.Examples.csproj" />
@@ -142,11 +141,13 @@
   <Project Path="AppodealInc.Mediation.TopBarMenu.Editor.csproj" />
   <Project Path="IntelliVerseX.UI.csproj" />
   <Project Path="NativeGallery.Runtime.csproj" />
+  <Project Path="NativeShare.Editor.csproj" />
   <Project Path="Sych.ShareAssets.Runtime.iOS.csproj" />
   <Project Path="AppodealInc.Mediation.SettingsWindow.Editor.csproj" />
   <Project Path="Unity.Services.Core.Registration.csproj" />
   <Project Path="AppodealStack.Monetization.Platforms.csproj" />
   <Project Path="Sych.ShareAssets.Runtime.Android.csproj" />
+  <Project Path="NativeShare.Runtime.csproj" />
   <Project Path="Unity.InputSystem.DocCodeSamples.csproj" />
   <Project Path="Unity.RenderPipelines.Universal.Shaders.csproj" />
   <Project Path="Unity.RenderPipelines.Core.Runtime.Shared.csproj" />
@@ -159,7 +160,6 @@
   <Project Path="AppodealInc.Mediation.AssetExtractors.Editor.csproj" />
   <Project Path="AppodealInc.Mediation.PluginSettings.Editor.csproj" />
   <Project Path="Unity.VisualScripting.DocCodeExamples.csproj" />
-  <Project Path="AppodealInc.Mediation.PreProcess.Editor.csproj" />
   <Project Path="Unity.Rendering.LightTransport.Editor.csproj" />
   <Project Path="Unity.Services.Core.Environments.csproj" />
   <Project Path="Unity.Collections.Editor.csproj" />

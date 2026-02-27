@@ -1,6 +1,7 @@
 // IVXSceneImporter.cs
-// Automatically copies test scenes to consumer project's Assets folder when SDK is imported
-// Scenes are copied to: Assets/IntelliVerseX Scenes/
+// Automatically copies demo scenes to consumer project's Assets folder when SDK is imported
+// Scenes are copied to: Assets/IntelliVerseX Demo Scenes/
+// Updated: Now includes ALL demo scenes for comprehensive SDK testing
 
 #if UNITY_EDITOR
 using System;
@@ -12,25 +13,32 @@ using UnityEditor;
 namespace IntelliVerseX.Editor
 {
     /// <summary>
-    /// Automatically imports test scenes to consumer project when SDK package is installed.
-    /// Scenes are copied to Assets/IntelliVerseX Scenes/ folder (outside the package).
+    /// Automatically imports all demo scenes to consumer project when SDK package is installed.
+    /// Scenes are copied to Assets/IntelliVerseX Demo Scenes/ folder (outside the package).
+    /// Includes comprehensive test scenes for all SDK features.
     /// </summary>
     [InitializeOnLoad]
     public static class IVXSceneImporter
     {
-        private const string SCENES_IMPORTED_KEY = "IVX_SCENES_IMPORTED_V4";
-        private const string CONSUMER_SCENES_FOLDER = "Assets/IntelliVerseX Scenes";
+        private const string SCENES_IMPORTED_KEY = "IVX_SCENES_IMPORTED_V5";
+        private const string CONSUMER_SCENES_FOLDER = "Assets/IntelliVerseX Demo Scenes";
         private const string PACKAGE_NAME = "com.intelliversex.sdk";
         
-        // Test scenes to copy to consumer Assets folder.
+        // All demo scenes to copy to consumer Assets folder.
+        // Updated to include ALL test scenes for comprehensive testing.
         private static readonly string[] TEST_SCENES = new string[]
         {
-            "IVX_Homescreen.unity",
-            "IVX_AuthTest.unity",
-            "IVX_AdsTest.unity",
-            "IVX_LeaderboardTest.unity",
-            "IVX_WalletTest.unity",
-            "IVX_WeeklyQuizTest.unity"
+            "IVX_HomeScreen.unity",    // Home screen with navigation
+            "IVX_AuthTest.unity",      // Authentication testing
+            "IVX_AdsTest.unity",       // Ads integration testing
+            "IVX_DailyQuiz.unity",     // Daily quiz feature
+            "IVX_Friends.unity",       // Friends system testing
+            "IVX_LeaderboardTest.unity", // Leaderboard testing
+            "IVX_MoreOfUs.unity",      // More Of Us feature
+            "IVX_Profile.unity",       // User profile testing
+            "IVX_Share&RateUs.unity",  // Share and rate features
+            "IVX_WalletTest.unity",    // Wallet system testing
+            "IVX_WeeklyQuizTest.unity" // Weekly quiz testing
         };
         
         static IVXSceneImporter()
@@ -292,19 +300,59 @@ namespace IntelliVerseX.Editor
                 return null;
             }
 
+            // Main candidate paths for finding scenes
             string[] candidateRelativePaths =
             {
                 $"Samples~/TestScenes/{sceneFileName}",
                 $"Scenes/Tests/{sceneFileName}",
-                $"Auth/Scenes/{sceneFileName}"
+                $"Auth/Scenes/{sceneFileName}",
+                // Development mode paths (when SDK is in Assets folder)
+                $"../../../Scenes/Tests/{sceneFileName}"
             };
 
+            // Try exact match first
             for (int i = 0; i < candidateRelativePaths.Length; i++)
             {
                 string path = Path.Combine(sdkRoot, candidateRelativePaths[i]);
                 if (File.Exists(path))
                 {
                     return path;
+                }
+            }
+            
+            // Try case-insensitive search for the file
+            string[] searchFolders = new string[]
+            {
+                Path.Combine(sdkRoot, "Samples~", "TestScenes"),
+                Path.Combine(sdkRoot, "Scenes", "Tests"),
+                Path.Combine(sdkRoot, "Auth", "Scenes"),
+                // Development mode
+                Path.Combine(Application.dataPath, "Scenes", "Tests")
+            };
+            
+            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(sceneFileName);
+            
+            foreach (string folder in searchFolders)
+            {
+                if (Directory.Exists(folder))
+                {
+                    try
+                    {
+                        // Case-insensitive file search
+                        var files = Directory.GetFiles(folder, "*.unity");
+                        foreach (string file in files)
+                        {
+                            string foundName = Path.GetFileNameWithoutExtension(file);
+                            if (string.Equals(foundName, fileNameWithoutExt, StringComparison.OrdinalIgnoreCase))
+                            {
+                                return file;
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // Ignore directory access errors
+                    }
                 }
             }
 

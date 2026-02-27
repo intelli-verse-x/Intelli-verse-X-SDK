@@ -271,7 +271,6 @@ int rank = await IVXGLeaderboardManager.GetPlayerRankAsync();");
             DrawStatusBox("Friends Status", new[]
             {
                 ("IVXFriendsService.cs", SDKFileExists("Social/Runtime/IVXFriendsService.cs")),
-                ("IVXFriendsConfig.cs", SDKFileExists("Social/Runtime/IVXFriendsConfig.cs")),
                 ("IVXFriendsPanel.cs", SDKFileExists("Social/UI/IVXFriendsPanel.cs")),
                 ("UI Prefabs", SDKFolderExists("Social/Prefabs"))
             });
