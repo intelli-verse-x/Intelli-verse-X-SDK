@@ -99,21 +99,22 @@ Complete system requirements for the IntelliVerseX SDK.
 
 ### Required for Features
 
-| Dependency | Required For | Source |
+| Dependency | Required For | Get It |
 |------------|--------------|--------|
-| Nakama Unity SDK | Backend, Leaderboards, Wallets, Friends | [GitHub](https://github.com/heroiclabs/nakama-unity) |
-| Unity Purchasing | IAP | Unity Package Manager |
-| LevelPlay SDK | Ads (IronSource) | [Unity Ads](https://unity.com/products/unity-ads) |
-| Appodeal SDK | Ads (Appodeal) | [Appodeal](https://appodeal.com) |
-| AdMob SDK | Ads (Google) | [AdMob Unity](https://developers.google.com/admob/unity) |
+| Nakama Unity SDK | Backend, Auth, Leaderboards, Friends | [:material-github: GitHub](https://github.com/heroiclabs/nakama-unity) or [:material-shopping: Asset Store](https://assetstore.unity.com/packages/tools/network/nakama-81338) |
+| Unity Purchasing | IAP | Unity Package Manager (`com.unity.purchasing`) |
+| LevelPlay SDK | Ads (IronSource) | [:material-web: LevelPlay](https://docs.unity.com/monetization-dashboard/en-us/manual/LevelPlaySDKInstallation) |
+| Appodeal SDK | Ads (Appodeal) | [:material-web: Appodeal](https://docs.appodeal.com/unity/get-started) |
+| AdMob SDK | Ads (Google) | [:material-web: AdMob Unity](https://developers.google.com/admob/unity/quick-start) |
 
-### Optional
+### Optional Enhancements
 
-| Dependency | Purpose | Source |
+| Dependency | Purpose | Get It |
 |------------|---------|--------|
-| DOTween | Animations | Asset Store |
-| Photon PUN2 | Multiplayer | Asset Store |
-| Apple Auth | Sign in with Apple | [GitHub](https://github.com/lupidan/apple-signin-unity) |
+| Photon PUN2 | Real-time multiplayer | [:material-shopping: Asset Store](https://assetstore.unity.com/packages/tools/network/pun-2-free-119922) |
+| DOTween | Smooth UI animations | [:material-shopping: Asset Store](https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676) |
+| Sign in with Apple | Apple ID authentication | [:material-shopping: Asset Store](https://assetstore.unity.com/packages/tools/integration/sign-in-with-apple-plugin-for-unity-152088) |
+| Native Share | Social sharing | [:material-shopping: Asset Store](https://assetstore.unity.com/packages/tools/integration/share-for-ios-and-android-309744) |
 | Google Sign-In | Google authentication | Unity Package Manager |
 
 ---
@@ -162,16 +163,23 @@ Ensure outbound access to:
 
 ## Scripting Define Symbols
 
-The SDK uses these define symbols:
+The SDK automatically manages define symbols based on detected dependencies:
 
-| Symbol | Purpose | Auto-Added |
-|--------|---------|------------|
-| `INTELLIVERSEX_SDK` | SDK detection | Yes |
-| `IVX_NAKAMA` | Nakama integration enabled | No |
-| `IVX_PHOTON` | Photon integration enabled | No |
-| `IVX_ADS_LEVELPLAY` | LevelPlay ads enabled | No |
-| `IVX_ADS_APPODEAL` | Appodeal ads enabled | No |
-| `IVX_ADS_ADMOB` | AdMob ads enabled | No |
+| Symbol | Purpose | Auto-Managed |
+|--------|---------|--------------|
+| `INTELLIVERSEX_SDK` | SDK installed marker | :material-check-circle: Yes |
+| `INTELLIVERSEX_HAS_NAKAMA` | Nakama SDK detected | :material-check-circle: Yes |
+| `INTELLIVERSEX_HAS_PHOTON` | Photon PUN2 detected | :material-check-circle: Yes |
+| `INTELLIVERSEX_HAS_DOTWEEN` | DOTween detected | :material-check-circle: Yes |
+| `INTELLIVERSEX_HAS_APPODEAL` | Appodeal SDK detected | :material-check-circle: Yes |
+| `INTELLIVERSEX_HAS_LEVELPLAY` | LevelPlay SDK detected | :material-check-circle: Yes |
+| `INTELLIVERSEX_HAS_NATIVE_SHARE` | Native Share detected | :material-check-circle: Yes |
+| `INTELLIVERSEX_HAS_APPLE_SIGNIN` | Apple Sign-In detected | :material-check-circle: Yes |
+
+!!! tip "Automatic Symbol Management"
+    When you import a dependency package, the SDK automatically detects it and adds the appropriate define symbol. No manual configuration required!
+    
+    Use **IntelliVerseX > SDK Tools > Show Define Symbol Status** to see current symbols.
 
 ---
 

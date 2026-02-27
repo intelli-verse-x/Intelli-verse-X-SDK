@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using IntelliVerseX.Multiplayer;
 
 namespace IntelliVerseX.Core
 {
@@ -23,7 +22,7 @@ namespace IntelliVerseX.Core
         private static IntelliVerseXManager _instance;
         private static IntelliVerseXConfig _config;
         private static bool _isInitialized = false;
-        private static IVXMultiplayerManager _multiplayerManager;
+        private static object _multiplayerManager;
 
         // Events
         public event Action OnReady;
@@ -45,20 +44,17 @@ namespace IntelliVerseX.Core
         public static bool IsInitialized => _isInitialized;
 
         /// <summary>
-        /// Access to multiplayer manager for Photon integration
+        /// Checks if Photon multiplayer is available.
+        /// Returns true if Photon PUN2 is installed and the Multiplayer module is loaded.
         /// </summary>
-        public IVXMultiplayerManager Multiplayer
-        {
-            get
-            {
-                if (_multiplayerManager == null)
-                {
-                    _multiplayerManager = new IVXMultiplayerManager();
-                    _multiplayerManager.Initialize();
-                }
-                return _multiplayerManager;
-            }
-        }
+        public static bool IsMultiplayerAvailable => _multiplayerManager != null;
+
+        /// <summary>
+        /// Gets the multiplayer manager instance (if available).
+        /// Returns null if Photon PUN2 is not installed.
+        /// Use IsMultiplayerAvailable to check before accessing.
+        /// </summary>
+        public object MultiplayerManager => _multiplayerManager;
 
         /// <summary>
         /// Initialize SDK with configuration
@@ -132,12 +128,22 @@ namespace IntelliVerseX.Core
                     Debug.Log("[IntelliVerseX] Backend module ready");
                 }
 
-                // 4. Initialize Multiplayer (Photon config is hardcoded at SDK level)
+                // 4. Initialize Multiplayer (Photon - optional dependency)
                 if (_config.enablePhotonMultiplayer)
                 {
-                    _multiplayerManager = new IVXMultiplayerManager();
-                    _multiplayerManager.Initialize();
-                    Debug.Log("[IntelliVerseX] Multiplayer module initialized");
+                    var multiplayerType = System.Type.GetType("IntelliVerseX.Multiplayer.IVXMultiplayerManager, IntelliVerseX.Multiplayer");
+                    if (multiplayerType != null)
+                    {
+                        _multiplayerManager = System.Activator.CreateInstance(multiplayerType);
+                        var initMethod = multiplayerType.GetMethod("Initialize");
+                        initMethod?.Invoke(_multiplayerManager, null);
+                        Debug.Log("[IntelliVerseX] Multiplayer module initialized");
+                    }
+                    else
+                    {
+                        Debug.LogWarning("[IntelliVerseX] Multiplayer requested but Photon PUN2 not installed. " +
+                            "Install from: https://assetstore.unity.com/packages/tools/network/pun-2-free-119922");
+                    }
                 }
 
                 // 5. Initialize Monetization (Ads)

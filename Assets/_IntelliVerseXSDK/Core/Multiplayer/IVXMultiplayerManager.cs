@@ -1,10 +1,8 @@
 // IVXMultiplayerManager.cs
 // IntelliVerseX SDK - Photon Multiplayer Manager
-// Requires Photon PUN2 package to be installed
+// This assembly only compiles when INTELLIVERSEX_HAS_PHOTON is defined
 
-#if PHOTON_PUN2 || PUN_2_0_OR_NEWER || PHOTON_UNITY_NETWORKING
 using Photon.Pun;
-#endif
 using IntelliVerseX.Core;
 using UnityEngine;
 
@@ -12,7 +10,7 @@ namespace IntelliVerseX.Multiplayer
 {
     /// <summary>
     /// Manages Photon multiplayer connections for IntelliVerse-X games.
-    /// Requires Photon PUN2 package to be installed.
+    /// This class is only available when Photon PUN2 is installed.
     /// </summary>
     public class IVXMultiplayerManager
     {
@@ -23,11 +21,7 @@ namespace IntelliVerseX.Multiplayer
         /// </summary>
         public void Initialize()
         {
-#if PHOTON_PUN2 || PUN_2_0_OR_NEWER || PHOTON_UNITY_NETWORKING
             Debug.Log("[IVXMultiplayerManager] Initialized with Photon PUN2");
-#else
-            Debug.LogWarning("[IVXMultiplayerManager] Photon PUN2 not installed. Multiplayer features disabled.");
-#endif
         }
 
         /// <summary>
@@ -35,7 +29,6 @@ namespace IntelliVerseX.Multiplayer
         /// </summary>
         public void Connect()
         {
-#if PHOTON_PUN2 || PUN_2_0_OR_NEWER || PHOTON_UNITY_NETWORKING
             if (PhotonNetwork.IsConnected || isConnecting)
             {
                 return;
@@ -54,40 +47,16 @@ namespace IntelliVerseX.Multiplayer
 
             PhotonNetwork.PhotonServerSettings.AppSettings.AppIdRealtime = appId;
             PhotonNetwork.ConnectUsingSettings();
-#else
-            Debug.LogError("[IVXMultiplayerManager] Cannot connect - Photon PUN2 not installed.");
-            Debug.LogError("[IVXMultiplayerManager] Install from: https://assetstore.unity.com/packages/tools/network/pun-2-free-119922");
-#endif
         }
 
         /// <summary>
-        /// Checks if Photon PUN2 is available.
+        /// Checks if Photon PUN2 is available. Always true when this assembly is loaded.
         /// </summary>
-        public static bool IsPhotonAvailable
-        {
-            get
-            {
-#if PHOTON_PUN2 || PUN_2_0_OR_NEWER || PHOTON_UNITY_NETWORKING
-                return true;
-#else
-                return false;
-#endif
-            }
-        }
+        public static bool IsPhotonAvailable => true;
 
         /// <summary>
         /// Checks if connected to Photon.
         /// </summary>
-        public static bool IsConnected
-        {
-            get
-            {
-#if PHOTON_PUN2 || PUN_2_0_OR_NEWER || PHOTON_UNITY_NETWORKING
-                return PhotonNetwork.IsConnected;
-#else
-                return false;
-#endif
-            }
-        }
+        public static bool IsConnected => PhotonNetwork.IsConnected;
     }
 }

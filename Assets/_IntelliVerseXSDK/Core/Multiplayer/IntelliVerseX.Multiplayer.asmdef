@@ -1,0 +1,20 @@
+{
+    "name": "IntelliVerseX.Multiplayer",
+    "rootNamespace": "IntelliVerseX.Multiplayer",
+    "references": [
+        "IntelliVerseX.Core",
+        "PhotonUnityNetworking",
+        "PhotonRealtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "INTELLIVERSEX_HAS_PHOTON"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

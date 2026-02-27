@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
+#if UNITY_2021_2_OR_NEWER
+using UnityEditor.Build;
+#endif
 
 namespace IntelliVerseX.Bootstrap.Editor
 {
@@ -66,7 +69,7 @@ namespace IntelliVerseX.Bootstrap.Editor
         [MenuItem(MENU_ROOT + "SDK Status/Refresh Symbols", false, 102)]
         private static void RefreshSymbols()
         {
-            IVXDependencySymbolManager.ForceRefreshSymbols();
+            IVXDefineSymbolManager.ForceReapplyDefines();
         }
         
         #endregion
@@ -145,9 +148,8 @@ namespace IntelliVerseX.Bootstrap.Editor
         
         private void CheckDependencies()
         {
-            // Check scripting defines
-            string defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(
-                EditorUserBuildSettings.selectedBuildTargetGroup);
+            // Get scripting defines using version-compatible API
+            string defines = GetCurrentDefines();
             
             // Check by type existence (more reliable)
             HasNakama = TypeExists("Nakama.Client");
@@ -162,6 +164,25 @@ namespace IntelliVerseX.Bootstrap.Editor
             if (!HasNakama) HasNakama = defines.Contains("INTELLIVERSEX_HAS_NAKAMA");
             if (!HasPhoton) HasPhoton = defines.Contains("INTELLIVERSEX_HAS_PHOTON");
             if (!HasDOTween) HasDOTween = defines.Contains("INTELLIVERSEX_HAS_DOTWEEN");
+        }
+        
+        private string GetCurrentDefines()
+        {
+#if UNITY_2021_2_OR_NEWER
+            try
+            {
+                var namedTarget = UnityEditor.Build.NamedBuildTarget.FromBuildTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+                return PlayerSettings.GetScriptingDefineSymbols(namedTarget);
+            }
+            catch
+            {
+                return string.Empty;
+            }
+#else
+            #pragma warning disable CS0618
+            return PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            #pragma warning restore CS0618
+#endif
         }
         
         private bool TypeExists(string fullTypeName)
