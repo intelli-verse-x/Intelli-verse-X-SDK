@@ -380,19 +380,17 @@ namespace IntelliVerseX.Core
         public static bool APPODEAL_AUTO_CACHE => true;
 
         /// <summary>
-        /// Appodeal ad types to initialize (rewarded + interstitial + banner)
+        /// Appodeal ad types to initialize (rewarded + interstitial + banner).
+        /// Uses numeric values to avoid compile-time dependency on Appodeal SDK.
+        /// Values: RewardedVideo=128, Interstitial=3, Banner=4
         /// </summary>
         public static int AD_TYPES
         {
             get
             {
-#if APPODEAL
-                return AppodealStack.Monetization.Common.AppodealAdType.RewardedVideo 
-                     | AppodealStack.Monetization.Common.AppodealAdType.Interstitial 
-                     | AppodealStack.Monetization.Common.AppodealAdType.Banner;
-#else
-                return 0;
-#endif
+                // AppodealAdType values: RewardedVideo=128, Interstitial=3, Banner=4
+                // Combined: 128 | 3 | 4 = 135
+                return 135;
             }
         }
 
