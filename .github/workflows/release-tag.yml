@@ -110,14 +110,10 @@ jobs:
             # Extract notes for this version
             NOTES=$(awk "/## \[$VERSION\]/,/^## \[/" "$CHANGELOG_PATH" | head -n -1)
             if [ -z "$NOTES" ]; then
-              NOTES="## Release v$VERSION
-
-See CHANGELOG.md for details."
+              NOTES=$(printf "## Release v%s\n\nSee CHANGELOG.md for details." "$VERSION")
             fi
           else
-            NOTES="## Release v$VERSION
-
-Initial release."
+            NOTES=$(printf "## Release v%s\n\nInitial release." "$VERSION")
           fi
           
           # Save to file
