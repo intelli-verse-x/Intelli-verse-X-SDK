@@ -23,9 +23,7 @@ graph TD
 
 ### 1. Configure Provider
 
-In **IntelliVerseX > Game Config**, select your ad provider:
-
-![Ads Configuration](../assets/ads-config-placeholder.png)
+In **IntelliVerseX > Game Config**, select your ad provider.
 
 ### 2. Add App Keys
 

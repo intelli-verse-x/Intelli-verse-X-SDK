@@ -220,6 +220,6 @@ The following features will be removed in v6.0:
 
 ## Links
 
-- [Full Release Notes](https://github.com/AhamedAzmi/IntelliVerseX/releases)
-- [Migration Guides](../guides/migration.md)
-- [API Changes](../api/changelog.md)
+- [Full Release Notes](https://github.com/intelli-verse-x/Intelli-verse-X-Unity-SDK/releases)
+- [Migration Guide](guides/migration.md)
+- [API Reference](api/index.md)
