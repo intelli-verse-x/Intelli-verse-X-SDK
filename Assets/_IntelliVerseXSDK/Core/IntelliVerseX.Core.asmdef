@@ -2,9 +2,6 @@
     "name": "IntelliVerseX.Core",
     "rootNamespace": "IntelliVerseX.Core",
     "references": [
-        "GUID:57c32fc907df0f54e8e6e8f0d2488336",
-        "GUID:831409e8f9d13b5479a3baef9822ad34",
-        "GUID:1f613da493e88413786955ac61fc9673",
         "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
@@ -14,6 +11,12 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.nuget.newtonsoft-json",
+            "expression": "",
+            "define": "NEWTONSOFT_JSON"
+        }
+    ],
     "noEngineReferences": false
 }
