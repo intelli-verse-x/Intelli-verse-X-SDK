@@ -29,6 +29,7 @@ namespace IntelliVerseX.Social.UI
         [Header("Animation")]
         [SerializeField] private CanvasGroup canvasGroup;
         [SerializeField] private RectTransform rectTransform;
+        [SerializeField] private Sprite defaultAvatar;
 
         #endregion
 
@@ -48,8 +49,14 @@ namespace IntelliVerseX.Social.UI
         #region Private Fields
 
         private FriendInfo _friendData;
-        private IVXFriendsConfig _config;
         private Coroutine _avatarLoadCoroutine;
+        
+        // Configuration constants
+        private static readonly Color ONLINE_COLOR = new Color(0.2f, 0.8f, 0.2f);
+        private static readonly Color OFFLINE_COLOR = new Color(0.5f, 0.5f, 0.5f);
+        private const bool SHOW_ONLINE_STATUS = true;
+        private const bool ENABLE_BLOCKING = true;
+        private const bool ENABLE_SLOT_ANIMATIONS = true;
 
         #endregion
 
@@ -57,8 +64,6 @@ namespace IntelliVerseX.Social.UI
 
         private void Awake()
         {
-            _config = IVXFriendsConfig.Instance;
-
             if (rectTransform == null)
                 rectTransform = GetComponent<RectTransform>();
 
@@ -102,10 +107,10 @@ namespace IntelliVerseX.Social.UI
             }
 
             // Set online indicator
-            if (statusIndicator != null && _config.showOnlineStatus)
+            if (statusIndicator != null && SHOW_ONLINE_STATUS)
             {
                 statusIndicator.gameObject.SetActive(true);
-                statusIndicator.color = friend.isOnline ? _config.onlineColor : _config.offlineColor;
+                statusIndicator.color = friend.isOnline ? ONLINE_COLOR : OFFLINE_COLOR;
             }
             else if (statusIndicator != null)
             {
@@ -115,14 +120,14 @@ namespace IntelliVerseX.Social.UI
             // Configure buttons based on config
             if (blockButton != null)
             {
-                blockButton.gameObject.SetActive(_config.enableBlocking);
+                blockButton.gameObject.SetActive(ENABLE_BLOCKING);
             }
 
             // Load avatar
             LoadAvatar(friend.avatarUrl);
 
             // Animate appearance
-            if (_config.enableSlotAnimations && canvasGroup != null && rectTransform != null)
+            if (ENABLE_SLOT_ANIMATIONS && canvasGroup != null && rectTransform != null)
             {
                 IVXFriendsAnimations.AnimateSlotAppear(rectTransform, canvasGroup, animationIndex);
             }
@@ -143,9 +148,9 @@ namespace IntelliVerseX.Social.UI
                 _friendData.isOnline = isOnline;
             }
 
-            if (statusIndicator != null && _config.showOnlineStatus)
+            if (statusIndicator != null && SHOW_ONLINE_STATUS)
             {
-                statusIndicator.color = isOnline ? _config.onlineColor : _config.offlineColor;
+                statusIndicator.color = isOnline ? ONLINE_COLOR : OFFLINE_COLOR;
             }
 
             if (statusText != null)
@@ -221,9 +226,9 @@ namespace IntelliVerseX.Social.UI
         private void LoadAvatar(string url)
         {
             // Set default avatar first
-            if (avatarImage != null && _config.defaultAvatar != null)
+            if (avatarImage != null && defaultAvatar != null)
             {
-                avatarImage.sprite = _config.defaultAvatar;
+                avatarImage.sprite = defaultAvatar;
             }
 
             // Load from URL if provided

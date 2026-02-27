@@ -23,9 +23,10 @@
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.unity.nuget.newtonsoft-json": "3.0.2"
+        "com.unity.nuget.newtonsoft-json": "3.0.2",
+        "com.unity.test-framework": "1.1.31"
       },
-      "hash": "c1d89c768056528dced1c224dbf584ebca6788c2"
+      "hash": "08b8eacab13da57ed13859167fa6033c6441f58d"
     },
     "com.google.external-dependency-manager": {
       "version": "file:../com.google.external-dependency-manager-1.2.186.tgz",
@@ -150,6 +151,15 @@
       "depth": 1,
       "source": "builtin",
       "dependencies": {}
+    },
+    "com.unity.ide.visualstudio": {
+      "version": "2.0.27",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.test-framework": "1.1.33"
+      },
+      "url": "https://packages.unity.com"
     },
     "com.unity.inputsystem": {
       "version": "1.18.0",

@@ -14,7 +14,14 @@ namespace IntelliVerseX.Social.UI
     /// </summary>
     public static class IVXFriendsAnimations
     {
-        private static IVXFriendsConfig Config => IVXFriendsConfig.Instance;
+        #region Animation Constants
+        
+        private const float PANEL_ANIMATION_DURATION = 0.3f;
+        private const float SLOT_ANIMATION_DURATION = 0.2f;
+        private const float SLOT_STAGGER_DELAY = 0.05f;
+        private const bool ENABLE_SLOT_ANIMATIONS = true;
+        
+        #endregion
 
         #region Panel Animations
 
@@ -23,9 +30,17 @@ namespace IntelliVerseX.Social.UI
         /// </summary>
         public static void AnimatePanelOpen(CanvasGroup canvasGroup, RectTransform rectTransform, Action onComplete = null)
         {
-            if (canvasGroup == null) return;
+            if (canvasGroup == null)
+            {
+                onComplete?.Invoke();
+                return;
+            }
 
 #if DOTWEEN
+            // Kill any existing animations first
+            canvasGroup.DOKill();
+            if (rectTransform != null) rectTransform.DOKill();
+
             canvasGroup.alpha = 0f;
             if (rectTransform != null)
             {
@@ -33,17 +48,15 @@ namespace IntelliVerseX.Social.UI
             }
 
             var sequence = DOTween.Sequence();
-            sequence.Append(canvasGroup.DOFade(1f, Config.panelAnimationDuration).SetEase(Ease.OutQuad));
+            sequence.Append(canvasGroup.DOFade(1f, PANEL_ANIMATION_DURATION).SetEase(Ease.OutQuad));
             
             if (rectTransform != null)
             {
-                sequence.Join(rectTransform.DOScale(1f, Config.panelAnimationDuration).SetEase(Ease.OutBack));
+                sequence.Join(rectTransform.DOScale(1f, PANEL_ANIMATION_DURATION).SetEase(Ease.OutBack));
             }
 
-            if (onComplete != null)
-            {
-                sequence.OnComplete(() => onComplete());
-            }
+            sequence.OnComplete(() => onComplete?.Invoke());
+            sequence.SetAutoKill(true);
 #else
             canvasGroup.alpha = 1f;
             if (rectTransform != null)
@@ -66,18 +79,20 @@ namespace IntelliVerseX.Social.UI
             }
 
 #if DOTWEEN
+            // Kill any existing animations first
+            canvasGroup.DOKill();
+            if (rectTransform != null) rectTransform.DOKill();
+
             var sequence = DOTween.Sequence();
-            sequence.Append(canvasGroup.DOFade(0f, Config.panelAnimationDuration * 0.7f).SetEase(Ease.InQuad));
+            sequence.Append(canvasGroup.DOFade(0f, PANEL_ANIMATION_DURATION * 0.7f).SetEase(Ease.InQuad));
             
             if (rectTransform != null)
             {
-                sequence.Join(rectTransform.DOScale(0.9f, Config.panelAnimationDuration * 0.7f).SetEase(Ease.InBack));
+                sequence.Join(rectTransform.DOScale(0.9f, PANEL_ANIMATION_DURATION * 0.7f).SetEase(Ease.InBack));
             }
 
-            if (onComplete != null)
-            {
-                sequence.OnComplete(() => onComplete());
-            }
+            sequence.OnComplete(() => onComplete?.Invoke());
+            sequence.SetAutoKill(true);
 #else
             canvasGroup.alpha = 0f;
             onComplete?.Invoke();
@@ -93,14 +108,24 @@ namespace IntelliVerseX.Social.UI
         /// </summary>
         public static void AnimateSlotAppear(RectTransform rectTransform, CanvasGroup canvasGroup, int index)
         {
-            if (!Config.enableSlotAnimations)
+            if (rectTransform == null)
+            {
+                if (canvasGroup != null) canvasGroup.alpha = 1f;
+                return;
+            }
+
+            if (!ENABLE_SLOT_ANIMATIONS)
             {
                 if (canvasGroup != null) canvasGroup.alpha = 1f;
                 return;
             }
 
 #if DOTWEEN
-            float delay = index * Config.slotStaggerDelay;
+            // Kill existing animations first
+            rectTransform.DOKill();
+            if (canvasGroup != null) canvasGroup.DOKill();
+
+            float delay = index * SLOT_STAGGER_DELAY;
             Vector2 originalPosition = rectTransform.anchoredPosition;
 
             // Start off-screen to the right
@@ -108,15 +133,17 @@ namespace IntelliVerseX.Social.UI
             if (canvasGroup != null) canvasGroup.alpha = 0f;
 
             // Animate in
-            rectTransform.DOAnchorPos(originalPosition, Config.slotAnimationDuration)
+            rectTransform.DOAnchorPos(originalPosition, SLOT_ANIMATION_DURATION)
                 .SetDelay(delay)
-                .SetEase(Ease.OutQuad);
+                .SetEase(Ease.OutQuad)
+                .SetAutoKill(true);
 
             if (canvasGroup != null)
             {
-                canvasGroup.DOFade(1f, Config.slotAnimationDuration)
+                canvasGroup.DOFade(1f, SLOT_ANIMATION_DURATION)
                     .SetDelay(delay)
-                    .SetEase(Ease.OutQuad);
+                    .SetEase(Ease.OutQuad)
+                    .SetAutoKill(true);
             }
 #else
             if (canvasGroup != null) canvasGroup.alpha = 1f;
@@ -128,21 +155,29 @@ namespace IntelliVerseX.Social.UI
         /// </summary>
         public static void AnimateSlotDisappear(RectTransform rectTransform, CanvasGroup canvasGroup, Action onComplete = null)
         {
+            if (rectTransform == null)
+            {
+                onComplete?.Invoke();
+                return;
+            }
+
 #if DOTWEEN
+            // Kill existing animations first
+            rectTransform.DOKill();
+            if (canvasGroup != null) canvasGroup.DOKill();
+
             var sequence = DOTween.Sequence();
 
             if (canvasGroup != null)
             {
-                sequence.Append(canvasGroup.DOFade(0f, Config.slotAnimationDuration).SetEase(Ease.InQuad));
+                sequence.Append(canvasGroup.DOFade(0f, SLOT_ANIMATION_DURATION).SetEase(Ease.InQuad));
             }
 
-            sequence.Join(rectTransform.DOScale(0.8f, Config.slotAnimationDuration).SetEase(Ease.InBack));
-            sequence.Join(rectTransform.DOAnchorPosX(rectTransform.anchoredPosition.x - 50f, Config.slotAnimationDuration));
+            sequence.Join(rectTransform.DOScale(0.8f, SLOT_ANIMATION_DURATION).SetEase(Ease.InBack));
+            sequence.Join(rectTransform.DOAnchorPosX(rectTransform.anchoredPosition.x - 50f, SLOT_ANIMATION_DURATION));
 
-            if (onComplete != null)
-            {
-                sequence.OnComplete(() => onComplete());
-            }
+            sequence.OnComplete(() => onComplete?.Invoke());
+            sequence.SetAutoKill(true);
 #else
             if (canvasGroup != null) canvasGroup.alpha = 0f;
             onComplete?.Invoke();
@@ -285,32 +320,43 @@ namespace IntelliVerseX.Social.UI
             Action onComplete = null)
         {
 #if DOTWEEN
-            var sequence = DOTween.Sequence();
+            // Kill any existing animations on both canvas groups first
+            if (outgoingContent != null) outgoingContent.DOKill();
+            if (incomingContent != null) incomingContent.DOKill();
 
-            // Fade out current content
-            if (outgoingContent != null)
+            var sequence = DOTween.Sequence();
+            bool hasOutgoing = outgoingContent != null && outgoingContent.gameObject.activeInHierarchy;
+            bool hasIncoming = incomingContent != null && incomingContent.gameObject.activeInHierarchy;
+
+            // Fade out current content (if active)
+            if (hasOutgoing)
             {
                 sequence.Append(outgoingContent.DOFade(0f, 0.15f).SetEase(Ease.InQuad));
             }
-
-            // Call switch point callback
-            if (onSwitchPoint != null)
+            else
             {
-                sequence.AppendCallback(() => onSwitchPoint());
+                // No outgoing content, just add a tiny delay for visual smoothness
+                sequence.AppendInterval(0.01f);
             }
 
-            // Fade in new content
-            if (incomingContent != null)
+            // Call switch point callback at the midpoint
+            sequence.AppendCallback(() => onSwitchPoint?.Invoke());
+
+            // Fade in new content (if active)
+            if (hasIncoming)
             {
+                // Ensure starting alpha is 0 for incoming
                 incomingContent.alpha = 0f;
                 sequence.Append(incomingContent.DOFade(1f, 0.15f).SetEase(Ease.OutQuad));
             }
 
-            if (onComplete != null)
-            {
-                sequence.OnComplete(() => onComplete());
-            }
+            // OnComplete callback
+            sequence.OnComplete(() => onComplete?.Invoke());
+            
+            // Safety: ensure completion happens even if killed
+            sequence.SetAutoKill(true);
 #else
+            // Non-DOTween fallback - immediate switch
             if (outgoingContent != null) outgoingContent.alpha = 0f;
             onSwitchPoint?.Invoke();
             if (incomingContent != null) incomingContent.alpha = 1f;
@@ -338,6 +384,18 @@ namespace IntelliVerseX.Social.UI
         /// Kills all DOTween animations on a CanvasGroup.
         /// </summary>
         public static void KillAnimations(CanvasGroup target)
+        {
+            if (target == null) return;
+
+#if DOTWEEN
+            target.DOKill();
+#endif
+        }
+
+        /// <summary>
+        /// Kills all DOTween animations on a RectTransform.
+        /// </summary>
+        public static void KillAnimations(RectTransform target)
         {
             if (target == null) return;
 

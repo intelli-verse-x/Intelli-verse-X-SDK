@@ -336,6 +336,16 @@ namespace IntelliVerseX.Examples
             SetStatus("Status logged to console.\nCheck Unity Console for details.");
         }
 
+        /// <summary>
+        /// Reset interstitial cooldown and count for testing
+        /// </summary>
+        public void ResetInterstitialLimits()
+        {
+            IVXAdsManager.ResetInterstitialLimits();
+            SetStatus("Interstitial limits reset!\nCooldown and count cleared.");
+            Log("Interstitial limits reset");
+        }
+
         #endregion
 
         #region Event Handlers
@@ -365,7 +375,8 @@ namespace IntelliVerseX.Examples
             bool isInitialized = IVXAdsManager.IsInitialized();
             bool adsBootstrapReady = IVXAdsBootstrap.IsAdsInitialized;
             bool rewardedReady = isInitialized && IVXAdsManager.IsRewardedAdReady();
-            bool interstitialReady = isInitialized && IVXAdsManager.IsInterstitialAdReady();
+            bool canShowInterstitial = isInitialized && IVXAdsManager.CanShowInterstitial();
+            string interstitialStatus = isInitialized ? IVXAdsManager.GetInterstitialStatus() : "Not initialized";
 
             // Update network info text
             if (networkInfoText != null)
@@ -400,7 +411,7 @@ namespace IntelliVerseX.Examples
                 var img = showInterstitialBtn.GetComponent<Image>();
                 if (img != null)
                 {
-                    img.color = interstitialReady 
+                    img.color = canShowInterstitial 
                         ? new Color(0.2f, 0.7f, 0.3f, 1f)
                         : new Color(0.25f, 0.52f, 0.96f, 1f);
                 }
@@ -412,7 +423,7 @@ namespace IntelliVerseX.Examples
                 _isInitialized = true;
                 SetStatus($"Ads INITIALIZED!\n" +
                          $"Rewarded: {(rewardedReady ? "Ready" : "Loading...")}\n" +
-                         $"Interstitial: {(interstitialReady ? "Ready" : "Loading...")}");
+                         $"Interstitial: {interstitialStatus}");
             }
         }
 

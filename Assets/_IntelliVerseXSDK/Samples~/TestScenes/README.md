@@ -28,11 +28,16 @@ Leaderboard integration test scene showing:
 - Nakama backend integration
 
 ### IVX_WalletTest
-Wallet/IAP test scene demonstrating:
-- Product fetching
-- Purchase flow
-- Balance display
-- Transaction history
+Production-ready wallet test scene for Nakama dual-wallet system:
+- **Add to Game Wallet** - Credit coins to the game-specific wallet
+- **Spend from Game Wallet** - Debit coins from the game wallet
+- **Add to Global Wallet** - Credit tokens to the global (IVX) wallet
+- **Spend from Global Wallet** - Debit tokens from the global wallet
+- **Refresh Balances** - Sync wallet balances from Nakama server
+- Real-time balance display for both wallets
+- Input field for custom amounts
+- Status feedback for all operations
+- Full integration with `IVXNWalletManager` static API
 
 ### IVX_WeeklyQuizTest
 Weekly quiz system test scene with:

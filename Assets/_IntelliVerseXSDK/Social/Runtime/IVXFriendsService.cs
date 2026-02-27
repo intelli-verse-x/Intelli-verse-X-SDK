@@ -1,532 +1,425 @@
 // ============================================================================
-// IVXFriendsService.cs - IntelliVerse-X Friends API Service
+// IVXFriendsService.cs - IntelliVerse-X Friends API Service (100% Nakama)
 // ============================================================================
-// PRODUCTION-READY | HIGH-PERFORMANCE | ENTERPRISE-GRADE
+// PRODUCTION-READY | NO HTTP | NO API MANAGER
 //
-// Thin wrapper over APIManager for Friends functionality.
-// Uses centralized APIManager for all HTTP calls - no duplicate HTTP code.
-// Provides events and convenience methods for the Friends UI.
+// Facade over IVXFriendsManager. Uses Nakama native APIs only.
+// Converts IApiFriend/IApiUser to FriendInfo, FriendRequest, FriendSearchResult
+// for UI compatibility.
 // ============================================================================
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Nakama;
 using UnityEngine;
 
 namespace IntelliVerseX.Social
 {
     /// <summary>
-    /// Static API client for the Friends system.
-    /// Wraps APIManager's Friends methods with events and caching.
-    /// 
-    /// Architecture:
-    /// - ALL HTTP calls go through APIManager (centralized)
-    /// - This service adds: events, caching, convenience methods
-    /// - Thread-safe, async-first design
-    /// 
-    /// Usage:
-    ///   var friends = await IVXFriendsService.GetFriendsAsync();
-    ///   await IVXFriendsService.SendFriendRequestAsync("user123");
+    /// Static API client for Friends. Delegates to IVXFriendsManager (Nakama native).
     /// </summary>
     public static class IVXFriendsService
     {
         #region Events
 
-        /// <summary>Fired when the friends list is updated.</summary>
         public static event Action<List<FriendInfo>> OnFriendsListUpdated;
-
-        /// <summary>Fired when the requests list is updated.</summary>
         public static event Action<List<FriendRequest>> OnRequestsListUpdated;
-
-        /// <summary>Fired when a new friend request is received.</summary>
         public static event Action<FriendRequest> OnNewRequestReceived;
-
-        /// <summary>Fired when a friend is added (request accepted).</summary>
         public static event Action<FriendInfo> OnFriendAdded;
-
-        /// <summary>Fired when a friend is removed.</summary>
         public static event Action<string> OnFriendRemoved;
-
-        /// <summary>Fired on any API error.</summary>
         public static event Action<string> OnError;
 
         #endregion
 
-        #region Configuration
-
-        private static IVXFriendsConfig Config => IVXFriendsConfig.Instance;
         private const string LOG_TAG = "[IVXFriends]";
-
-        #endregion
-
-        #region Public API Methods
+        private static bool _nakamaInitialized = false;
 
         /// <summary>
-        /// Gets the current user's friends list.
+        /// Ensures Nakama is initialized before using friend operations.
+        /// Call this once at startup or before first friend operation.
         /// </summary>
-        /// <param name="ct">Cancellation token.</param>
-        /// <returns>List of friends, or empty list on error.</returns>
-        public static async Task<List<FriendInfo>> GetFriendsAsync(CancellationToken ct = default)
+        public static async Task<bool> EnsureNakamaInitializedAsync()
         {
-            Log("GetFriendsAsync called");
-            
+            if (_nakamaInitialized)
+                return true;
+
             try
             {
-                // Check session first with detailed logging
-                var session = UserSessionManager.Current;
-                if (session == null)
+                // Find IVXNManager via reflection
+                var mgrType = Type.GetType("IntelliVerseX.Backend.Nakama.IVXNManager, IntelliVerseX.V2");
+                if (mgrType == null)
                 {
-                    LogWarning("GetFriends: Session is NULL. User must login first.");
-                    return new List<FriendInfo>();
+                    LogError("IVXNManager type not found. Ensure IntelliVerseX.Backend assembly is referenced.");
+                    return false;
                 }
-                
-                Log($"GetFriends: Session found. userId={session.userId ?? "NULL"}, " +
-                    $"accessToken={(string.IsNullOrEmpty(session.accessToken) ? "EMPTY" : "present")}");
-                
-                if (string.IsNullOrEmpty(session.accessToken))
+
+                var instanceProp = mgrType.GetProperty("Instance",
+                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                var mgr = instanceProp?.GetValue(null);
+
+                if (mgr == null)
                 {
-                    LogWarning("GetFriends: Session exists but accessToken is EMPTY. User must re-login.");
-                    return new List<FriendInfo>();
+                    // Bootstrap IVXNManager if it doesn't exist
+                    if (typeof(MonoBehaviour).IsAssignableFrom(mgrType))
+                    {
+                        var bootstrapGo = new GameObject("IVXNManager");
+                        UnityEngine.Object.DontDestroyOnLoad(bootstrapGo);
+                        bootstrapGo.AddComponent(mgrType);
+                        await Task.Yield();
+                        mgr = instanceProp?.GetValue(null);
+                    }
+
+                    if (mgr == null)
+                    {
+                        LogError("Failed to create IVXNManager instance.");
+                        return false;
+                    }
                 }
+
+                // Check if session is valid
+                var sessionProp = mgrType.GetProperty("Session");
+                var session = sessionProp?.GetValue(mgr) as ISession;
                 
-                Log("GetFriends: Calling APIManager.GetAcceptedFriendsAsync...");
-                var data = await APIManager.GetAcceptedFriendsAsync(ct);
-                Log($"GetFriends: APIManager returned {data?.Count ?? 0} results.");
-                
-                var friends = ConvertToFriendInfoList(data);
-                Log($"GetFriends: Converted to {friends.Count} FriendInfo items.");
-                OnFriendsListUpdated?.Invoke(friends);
-                return friends;
-            }
-            catch (OperationCanceledException)
-            {
-                Log("GetFriends: Operation was cancelled.");
-                throw;
+                if (session == null || session.IsExpired)
+                {
+                    Log("Nakama session not ready. Initializing...");
+                    
+                    // Call InitializeForCurrentUserAsync
+                    var initMethod = mgrType.GetMethod(
+                        "InitializeForCurrentUserAsync",
+                        System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance,
+                        null,
+                        new[] { typeof(bool) },
+                        null);
+                    
+                    if (initMethod != null)
+                    {
+                        var task = initMethod.Invoke(mgr, new object[] { false }) as Task<bool>;
+                        if (task != null)
+                        {
+                            bool success = await task;
+                            if (success)
+                            {
+                                Log("Nakama initialized successfully.");
+                                _nakamaInitialized = true;
+                                return true;
+                            }
+                            else
+                            {
+                                LogError("InitializeForCurrentUserAsync returned false.");
+                                return false;
+                            }
+                        }
+                    }
+                    
+                    // Fallback for older API without bool parameter
+                    initMethod = mgrType.GetMethod(
+                        "InitializeForCurrentUserAsync",
+                        System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance,
+                        null,
+                        Type.EmptyTypes,
+                        null);
+                    
+                    if (initMethod != null)
+                    {
+                        var task = initMethod.Invoke(mgr, null) as Task<bool>;
+                        if (task != null)
+                        {
+                            bool success = await task;
+                            _nakamaInitialized = success;
+                            if (!success) LogError("InitializeForCurrentUserAsync returned false.");
+                            return success;
+                        }
+                    }
+                    
+                    LogError("InitializeForCurrentUserAsync method not found.");
+                    return false;
+                }
+
+                _nakamaInitialized = true;
+                return true;
             }
             catch (Exception ex)
             {
-                LogError($"GetFriends exception: {ex.GetType().Name} - {ex.Message}");
-                LogError($"GetFriends stack trace: {ex.StackTrace}");
+                LogError($"EnsureNakamaInitializedAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+        private static IVXFriendsManager GetManager()
+        {
+            var mgr = IVXFriendsManager.Instance;
+            if (mgr == null)
+            {
+                var go = new GameObject("IVXFriendsManager");
+                mgr = go.AddComponent<IVXFriendsManager>();
+                if (!mgr.InitializeFromNakamaManager())
+                    return null;
+            }
+            return mgr;
+        }
+
+        private static async Task<IVXFriendsManager> GetManagerAsync()
+        {
+            // Ensure Nakama is initialized first
+            if (!await EnsureNakamaInitializedAsync())
+            {
+                return null;
+            }
+            return GetManager();
+        }
+
+        public static async Task<List<FriendInfo>> GetFriendsAsync(CancellationToken ct = default)
+        {
+            var mgr = await GetManagerAsync();
+            if (mgr == null)
+            {
+                LogWarning("Nakama not initialized. Initialize IVXNManager first.");
+                return new List<FriendInfo>();
+            }
+            try
+            {
+                var list = await mgr.GetFriendsAsync(ct);
+                var friends = ConvertToFriendInfoList(list);
+                OnFriendsListUpdated?.Invoke(friends);
+                return friends;
+            }
+            catch (OperationCanceledException) { throw; }
+            catch (Exception ex)
+            {
+                LogError($"GetFriends: {ex.Message}");
                 OnError?.Invoke(ex.Message);
                 return new List<FriendInfo>();
             }
         }
 
-        /// <summary>
-        /// Gets incoming friend requests.
-        /// </summary>
-        /// <param name="ct">Cancellation token.</param>
-        /// <returns>List of pending friend requests.</returns>
         public static async Task<List<FriendRequest>> GetIncomingRequestsAsync(CancellationToken ct = default)
         {
-            Log("GetIncomingRequestsAsync called");
-            
+            var mgr = await GetManagerAsync();
+            if (mgr == null)
+            {
+                LogWarning("Nakama not initialized.");
+                return new List<FriendRequest>();
+            }
             try
             {
-                // Check session first with detailed logging
-                var session = UserSessionManager.Current;
-                if (session == null)
-                {
-                    LogWarning("GetIncomingRequests: Session is NULL. User must login first.");
-                    return new List<FriendRequest>();
-                }
-                
-                Log($"GetIncomingRequests: Session found. userId={session.userId ?? "NULL"}, " +
-                    $"accessToken={(string.IsNullOrEmpty(session.accessToken) ? "EMPTY" : "present")}");
-                
-                if (string.IsNullOrEmpty(session.accessToken))
-                {
-                    LogWarning("GetIncomingRequests: Session exists but accessToken is EMPTY. User must re-login.");
-                    return new List<FriendRequest>();
-                }
-                
-                Log("GetIncomingRequests: Calling APIManager.GetIncomingRequestsAsync...");
-                var data = await APIManager.GetIncomingRequestsAsync(ct);
-                Log($"GetIncomingRequests: APIManager returned {data?.Count ?? 0} results.");
-                
-                var requests = ConvertToFriendRequestList(data);
-                Log($"GetIncomingRequests: Converted to {requests.Count} FriendRequest items.");
+                var list = await mgr.GetPendingRequestsAsync(ct);
+                var requests = ConvertToFriendRequestList(list);
                 OnRequestsListUpdated?.Invoke(requests);
                 return requests;
             }
-            catch (OperationCanceledException)
-            {
-                Log("GetIncomingRequests: Operation was cancelled.");
-                throw;
-            }
+            catch (OperationCanceledException) { throw; }
             catch (Exception ex)
             {
-                LogError($"GetIncomingRequests exception: {ex.GetType().Name} - {ex.Message}");
-                LogError($"GetIncomingRequests stack trace: {ex.StackTrace}");
+                LogError($"GetIncomingRequests: {ex.Message}");
                 OnError?.Invoke(ex.Message);
                 return new List<FriendRequest>();
             }
         }
 
-        /// <summary>
-        /// Searches for users by display name or username.
-        /// </summary>
-        /// <param name="query">Search query (min 2 characters).</param>
-        /// <param name="limit">Maximum results to return.</param>
-        /// <param name="ct">Cancellation token.</param>
-        /// <returns>List of matching users.</returns>
         public static async Task<List<FriendSearchResult>> SearchUsersAsync(
-            string query,
-            int limit = 20,
-            CancellationToken ct = default)
+            string query, int limit = 20, CancellationToken ct = default)
         {
-            Log($"SearchUsersAsync called with query='{query}', limit={limit}");
-            
-            if (!Config.enableSearch)
-            {
-                LogWarning("Search is disabled in config.");
-                return new List<FriendSearchResult>();
-            }
-
             if (string.IsNullOrWhiteSpace(query) || query.Length < 2)
+                return new List<FriendSearchResult>();
+
+            var mgr = await GetManagerAsync();
+            if (mgr == null)
             {
-                Log("Query too short, returning empty list.");
+                LogWarning("Nakama not initialized.");
                 return new List<FriendSearchResult>();
             }
-
             try
             {
-                // Check session first with detailed logging
-                var session = UserSessionManager.Current;
-                if (session == null)
+                var user = await mgr.SearchUserByUsernameAsync(query.Trim(), ct);
+                if (user == null) return new List<FriendSearchResult>();
+                var friends = await mgr.GetFriendsAsync(ct);
+                var pending = await mgr.GetPendingRequestsAsync(ct);
+                bool isFriend = friends.Any(f => f?.User?.Id == user.Id);
+                bool isPending = pending.Any(f => f?.User?.Id == user.Id);
+                return new List<FriendSearchResult>
                 {
-                    LogWarning("SearchUsers: Session is NULL. User must login first.");
-                    return new List<FriendSearchResult>();
-                }
-                
-                Log($"SearchUsers: Session found. userId={session.userId ?? "NULL"}, " +
-                    $"accessToken={(string.IsNullOrEmpty(session.accessToken) ? "EMPTY" : "present")}, " +
-                    $"userName={session.userName ?? "NULL"}");
-                
-                if (string.IsNullOrEmpty(session.accessToken))
-                {
-                    LogWarning("SearchUsers: Session exists but accessToken is EMPTY. User must re-login.");
-                    return new List<FriendSearchResult>();
-                }
-                
-                if (string.IsNullOrEmpty(session.userId))
-                {
-                    LogWarning("SearchUsers: Session exists but userId is EMPTY. Session is incomplete.");
-                    return new List<FriendSearchResult>();
-                }
-                
-                Log($"SearchUsers: Calling APIManager.SearchFriendsAsync with query='{query}'...");
-                var data = await APIManager.SearchFriendsAsync(query, ct);
-                Log($"SearchUsers: APIManager returned {data?.Count ?? 0} results.");
-                
-                var results = ConvertToSearchResultList(data, limit);
-                Log($"SearchUsers: Converted to {results.Count} FriendSearchResult items.");
-                return results;
+                    new FriendSearchResult
+                    {
+                        userId = user.Id,
+                        displayName = user.DisplayName ?? user.Username ?? "Unknown",
+                        avatarUrl = user.AvatarUrl,
+                        alreadyFriend = isFriend,
+                        requestPending = isPending
+                    }
+                };
             }
-            catch (OperationCanceledException)
-            {
-                Log("SearchUsers: Operation was cancelled.");
-                throw;
-            }
+            catch (OperationCanceledException) { throw; }
             catch (Exception ex)
             {
-                LogError($"SearchUsers exception: {ex.GetType().Name} - {ex.Message}");
-                LogError($"SearchUsers stack trace: {ex.StackTrace}");
+                LogError($"SearchUsers: {ex.Message}");
                 OnError?.Invoke(ex.Message);
                 return new List<FriendSearchResult>();
             }
         }
 
-        /// <summary>
-        /// Sends a friend request to another user.
-        /// </summary>
-        /// <param name="targetUserId">The user ID to send the request to.</param>
-        /// <param name="message">Optional message (not currently used by backend).</param>
-        /// <param name="ct">Cancellation token.</param>
-        /// <returns>True if the request was sent successfully.</returns>
-        public static async Task<bool> SendFriendRequestAsync(
-            string targetUserId,
-            string message = null,
-            CancellationToken ct = default)
+        public static async Task<bool> SendFriendRequestAsync(string targetUserId, string message = null, CancellationToken ct = default)
         {
             if (string.IsNullOrWhiteSpace(targetUserId))
             {
-                LogError("SendFriendRequest: targetUserId is required.");
+                LogError("targetUserId is required.");
                 return false;
             }
-
+            var mgr = await GetManagerAsync();
+            if (mgr == null) return false;
             try
             {
-                bool success = await APIManager.SendFriendInviteAsync(targetUserId, ct);
-                if (success)
-                {
-                    Log($"Friend request sent to {targetUserId}");
-                }
-                return success;
+                await mgr.AddFriendByIdAsync(targetUserId, ct);
+                return true;
             }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
+            catch (OperationCanceledException) { throw; }
             catch (Exception ex)
             {
-                LogError($"SendFriendRequest exception: {ex.Message}");
+                LogError($"SendFriendRequest: {ex.Message}");
                 OnError?.Invoke(ex.Message);
                 return false;
             }
         }
 
         /// <summary>
-        /// Accepts a friend request.
+        /// Accept friend request. requestId = fromUserId (initiator) in Nakama.
         /// </summary>
-        /// <param name="requestId">The request/relation ID to accept.</param>
-        /// <param name="ct">Cancellation token.</param>
-        /// <returns>True if the request was accepted successfully.</returns>
         public static async Task<bool> AcceptRequestAsync(string requestId, CancellationToken ct = default)
         {
             if (string.IsNullOrWhiteSpace(requestId))
             {
-                LogError("AcceptRequest: requestId is required.");
+                LogError("requestId (fromUserId) is required.");
                 return false;
             }
-
+            var mgr = await GetManagerAsync();
+            if (mgr == null) return false;
             try
             {
-                bool success = await APIManager.AcceptFriendRequestAsync(requestId, ct);
-                if (success)
-                {
-                    Log($"Friend request accepted: {requestId}");
-                }
-                return success;
+                await mgr.AddFriendByIdAsync(requestId, ct);
+                return true;
             }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
+            catch (OperationCanceledException) { throw; }
             catch (Exception ex)
             {
-                LogError($"AcceptRequest exception: {ex.Message}");
+                LogError($"AcceptRequest: {ex.Message}");
                 OnError?.Invoke(ex.Message);
                 return false;
             }
         }
 
-        /// <summary>
-        /// Rejects a friend request.
-        /// </summary>
-        /// <param name="requestId">The request/relation ID to reject.</param>
-        /// <param name="ct">Cancellation token.</param>
-        /// <returns>True if the request was rejected successfully.</returns>
         public static async Task<bool> RejectRequestAsync(string requestId, CancellationToken ct = default)
         {
             if (string.IsNullOrWhiteSpace(requestId))
             {
-                LogError("RejectRequest: requestId is required.");
+                LogError("requestId (fromUserId) is required.");
                 return false;
             }
-
+            var mgr = await GetManagerAsync();
+            if (mgr == null) return false;
             try
             {
-                bool success = await APIManager.RejectFriendRequestAsync(requestId, ct);
-                if (success)
-                {
-                    Log($"Friend request rejected: {requestId}");
-                }
-                return success;
+                await mgr.RemoveFriendAsync(requestId, ct);
+                return true;
             }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
+            catch (OperationCanceledException) { throw; }
             catch (Exception ex)
             {
-                LogError($"RejectRequest exception: {ex.Message}");
+                LogError($"RejectRequest: {ex.Message}");
                 OnError?.Invoke(ex.Message);
                 return false;
             }
         }
 
-        /// <summary>
-        /// Removes a friend from the friends list.
-        /// </summary>
-        /// <param name="friendUserId">The relation ID of the friend to remove.</param>
-        /// <param name="ct">Cancellation token.</param>
-        /// <returns>True if the friend was removed successfully.</returns>
         public static async Task<bool> RemoveFriendAsync(string friendUserId, CancellationToken ct = default)
         {
             if (string.IsNullOrWhiteSpace(friendUserId))
             {
-                LogError("RemoveFriend: friendUserId is required.");
+                LogError("friendUserId is required.");
                 return false;
             }
-
+            var mgr = await GetManagerAsync();
+            if (mgr == null) return false;
             try
             {
-                bool success = await APIManager.RemoveFriendAsync(friendUserId, ct);
-                if (success)
-                {
-                    Log($"Friend removed: {friendUserId}");
-                    OnFriendRemoved?.Invoke(friendUserId);
-                }
-                return success;
+                await mgr.RemoveFriendAsync(friendUserId, ct);
+                OnFriendRemoved?.Invoke(friendUserId);
+                return true;
             }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
+            catch (OperationCanceledException) { throw; }
             catch (Exception ex)
             {
-                LogError($"RemoveFriend exception: {ex.Message}");
+                LogError($"RemoveFriend: {ex.Message}");
                 OnError?.Invoke(ex.Message);
                 return false;
             }
         }
 
-        /// <summary>
-        /// Blocks a user.
-        /// </summary>
-        /// <param name="userId">The relation ID to block.</param>
-        /// <param name="reason">Optional reason (not currently used by backend).</param>
-        /// <param name="ct">Cancellation token.</param>
-        /// <returns>True if the user was blocked successfully.</returns>
-        public static async Task<bool> BlockUserAsync(
-            string userId,
-            string reason = null,
-            CancellationToken ct = default)
+        public static async Task<bool> BlockUserAsync(string userId, string reason = null, CancellationToken ct = default)
         {
-            if (!Config.enableBlocking)
-            {
-                LogWarning("Blocking is disabled in config.");
-                return false;
-            }
-
             if (string.IsNullOrWhiteSpace(userId))
-            {
-                LogError("BlockUser: userId is required.");
                 return false;
-            }
-
+            var mgr = await GetManagerAsync();
+            if (mgr == null) return false;
             try
             {
-                bool success = await APIManager.BlockUserAsync(userId, ct);
-                if (success)
-                {
-                    Log($"User blocked: {userId}");
-                    OnFriendRemoved?.Invoke(userId);
-                }
-                return success;
+                await mgr.BlockFriendAsync(userId, ct);
+                OnFriendRemoved?.Invoke(userId);
+                return true;
             }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
+            catch (OperationCanceledException) { throw; }
             catch (Exception ex)
             {
-                LogError($"BlockUser exception: {ex.Message}");
+                LogError($"BlockUser: {ex.Message}");
                 OnError?.Invoke(ex.Message);
                 return false;
             }
         }
 
-        #endregion
-
-        #region Data Conversion
-
-        /// <summary>
-        /// Converts API FriendData to UI FriendInfo.
-        /// </summary>
-        private static List<FriendInfo> ConvertToFriendInfoList(List<IVXModels.FriendData> data)
+        private static List<FriendInfo> ConvertToFriendInfoList(IEnumerable<IApiFriend> list)
         {
             var result = new List<FriendInfo>();
-            if (data == null) return result;
-
-            foreach (var d in data)
+            if (list == null) return result;
+            foreach (var f in list)
             {
+                if (f?.User == null) continue;
+                var u = f.User;
                 result.Add(new FriendInfo
                 {
-                    userId = d.id ?? d.user?.id,
-                    displayName = d.userName ?? d.user?.userName ?? "Unknown",
-                    avatarUrl = d.profilePicture ?? d.user?.profilePicture,
-                    isOnline = false, // Not provided by API currently
-                    lastSeenEpoch = 0 // Not provided by API currently
+                    userId = u.Id,
+                    displayName = u.DisplayName ?? u.Username ?? "Unknown",
+                    avatarUrl = u.AvatarUrl,
+                    isOnline = false,
+                    lastSeenEpoch = 0
                 });
             }
             return result;
         }
 
-        /// <summary>
-        /// Converts API FriendData (pending) to UI FriendRequest.
-        /// </summary>
-        private static List<FriendRequest> ConvertToFriendRequestList(List<IVXModels.FriendData> data)
+        private static List<FriendRequest> ConvertToFriendRequestList(IEnumerable<IApiFriend> list)
         {
             var result = new List<FriendRequest>();
-            if (data == null) return result;
-
-            foreach (var d in data)
+            if (list == null) return result;
+            foreach (var f in list)
             {
+                if (f?.User == null) continue;
+                var u = f.User;
                 result.Add(new FriendRequest
                 {
-                    requestId = d.relationId,
-                    fromUserId = d.id ?? d.user?.id,
-                    fromDisplayName = d.userName ?? d.user?.userName ?? "Unknown",
-                    fromAvatarUrl = d.profilePicture ?? d.user?.profilePicture,
-                    sentAtEpoch = 0 // Not provided by API currently
+                    requestId = u.Id,
+                    fromUserId = u.Id,
+                    fromDisplayName = u.DisplayName ?? u.Username ?? "Unknown",
+                    fromAvatarUrl = u.AvatarUrl,
+                    sentAtEpoch = 0
                 });
             }
             return result;
         }
 
-        /// <summary>
-        /// Converts API SearchUser to UI FriendSearchResult.
-        /// </summary>
-        private static List<FriendSearchResult> ConvertToSearchResultList(List<IVXModels.SearchUser> data, int limit)
-        {
-            var result = new List<FriendSearchResult>();
-            if (data == null) return result;
-
-            int count = Math.Min(data.Count, limit);
-            for (int i = 0; i < count; i++)
-            {
-                var d = data[i];
-                // Determine relationship status from API data
-                bool isPending = !string.IsNullOrEmpty(d.requestStatus) && 
-                                 (d.requestStatus.Equals("pending", StringComparison.OrdinalIgnoreCase) ||
-                                  d.requestStatus.Equals("sent", StringComparison.OrdinalIgnoreCase));
-                bool isAccepted = !string.IsNullOrEmpty(d.requestStatus) && 
-                                  d.requestStatus.Equals("accepted", StringComparison.OrdinalIgnoreCase);
-                
-                result.Add(new FriendSearchResult
-                {
-                    userId = d.id,
-                    displayName = d.userName ?? "Unknown",
-                    avatarUrl = d.profilePicture,
-                    alreadyFriend = isAccepted,
-                    requestPending = isPending
-                });
-            }
-            return result;
-        }
-
-        #endregion
-
-        #region Logging
-
-        private static void Log(string message)
-        {
-            Debug.Log($"{LOG_TAG} {message}");
-        }
-
-        private static void LogWarning(string message)
-        {
-            Debug.LogWarning($"{LOG_TAG} {message}");
-        }
-
-        private static void LogError(string message)
-        {
-            Debug.LogError($"{LOG_TAG} {message}");
-        }
-
-        #endregion
+        private static void Log(string msg) => Debug.Log($"{LOG_TAG} {msg}");
+        private static void LogWarning(string msg) => Debug.LogWarning($"{LOG_TAG} {msg}");
+        private static void LogError(string msg) => Debug.LogError($"{LOG_TAG} {msg}");
     }
 }

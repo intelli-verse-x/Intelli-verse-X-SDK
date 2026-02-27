@@ -5,7 +5,7 @@
 [![Unity 2023](https://img.shields.io/badge/Unity-2023.3%2B-black.svg)](https://unity.com/)
 [![Unity 6](https://img.shields.io/badge/Unity%206-Supported-blue.svg)](https://unity.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-2.0.0-orange.svg)](Assets/_IntelliVerseXSDK/CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-5.0.0-orange.svg)](Assets/_IntelliVerseXSDK/CHANGELOG.md)
 [![CI](https://img.shields.io/badge/CI-Passing-success.svg)](.github/workflows/unity-tests.yml)
 
 ---

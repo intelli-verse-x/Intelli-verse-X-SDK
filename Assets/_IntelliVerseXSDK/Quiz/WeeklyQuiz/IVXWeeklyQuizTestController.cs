@@ -2,6 +2,7 @@
 // Test controller for Weekly Quiz demo scene
 
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -32,6 +33,9 @@ namespace IntelliVerseX.Quiz.WeeklyQuiz
         [Header("UI References - Utility")]
         [SerializeField] private Button resetButton;
         [SerializeField] private Button logStatusButton;
+
+        [Header("Quiz Play Controller")]
+        [SerializeField] private IVXQuizPlayController playController;
 
         #endregion
 
@@ -120,7 +124,12 @@ namespace IntelliVerseX.Quiz.WeeklyQuiz
                 if (go != null) logStatusButton = go.GetComponent<Button>();
             }
 
-            Log($"Auto-found UI: Fortune={fortuneButton != null}, Emoji={emojiButton != null}, Prediction={predictionButton != null}, Health={healthButton != null}");
+            if (playController == null)
+            {
+                playController = GetComponent<IVXQuizPlayController>();
+            }
+
+            Log($"Auto-found UI: Fortune={fortuneButton != null}, Emoji={emojiButton != null}, Prediction={predictionButton != null}, Health={healthButton != null}, PlayController={playController != null}");
         }
 
         private void EnsureManager()
@@ -216,27 +225,56 @@ namespace IntelliVerseX.Quiz.WeeklyQuiz
         {
             Log("Fortune button clicked");
             UpdateStatus("Loading Fortune Quiz 🔮...");
-            _manager.StartFortuneQuiz();
+            if (playController != null)
+            {
+                playController.StartQuiz(IVXWeeklyQuizType.Fortune);
+            }
+            else
+            {
+                _manager.StartFortuneQuiz();
+            }
         }
 
         private void OnEmojiClicked()
         {
             Log("Emoji button clicked");
             UpdateStatus("Loading Emoji Quiz 🎉...");
-            _manager.StartEmojiQuiz();
+            if (playController != null)
+            {
+                playController.StartQuiz(IVXWeeklyQuizType.Emoji);
+            }
+            else
+            {
+                _manager.StartEmojiQuiz();
+            }
         }
 
         private void OnPredictionClicked()
         {
             Log("Prediction button clicked");
-            UpdateStatus("Prediction Quiz coming soon! ⚽");
+            if (playController != null)
+            {
+                UpdateStatus("Loading Prediction Quiz ⚽...");
+                playController.StartQuiz(IVXWeeklyQuizType.Prediction);
+            }
+            else
+            {
+                UpdateStatus("Prediction Quiz coming soon! ⚽");
+            }
         }
 
         private void OnHealthClicked()
         {
             Log("Health button clicked");
             UpdateStatus("Loading Health Quiz 💧...");
-            _manager.StartHealthQuiz();
+            if (playController != null)
+            {
+                playController.StartQuiz(IVXWeeklyQuizType.Health);
+            }
+            else
+            {
+                _manager.StartHealthQuiz();
+            }
         }
 
         private void OnResetClicked()
@@ -256,6 +294,26 @@ namespace IntelliVerseX.Quiz.WeeklyQuiz
             _manager.DebugPrintStatus();
 #endif
             LogCurrentStatus();
+            LogUrlPatterns();
+        }
+        
+        /// <summary>
+        /// Debug helper: Logs URL patterns for all quiz types to help verify S3 file naming.
+        /// </summary>
+        private void LogUrlPatterns()
+        {
+            var service = new IVXWeeklyQuizService();
+            service.EnableVerboseLogging = true;
+            
+            Debug.Log("=== Weekly Quiz URL Patterns ===");
+            service.LogUrlPatternForWeeks(IVXWeeklyQuizType.Emoji, 5);
+            
+            // Log current URLs for all quiz types
+            Debug.Log("=== Current Week URLs ===");
+            Debug.Log($"Fortune:    {service.GetCurrentQuizUrl(IVXWeeklyQuizType.Fortune)}");
+            Debug.Log($"Emoji:      {service.GetCurrentQuizUrl(IVXWeeklyQuizType.Emoji)}");
+            Debug.Log($"Prediction: {service.GetCurrentQuizUrl(IVXWeeklyQuizType.Prediction)}");
+            Debug.Log($"Health:     {service.GetCurrentQuizUrl(IVXWeeklyQuizType.Health)}");
         }
 
         #endregion
@@ -266,12 +324,6 @@ namespace IntelliVerseX.Quiz.WeeklyQuiz
         {
             Log($"Fortune loaded: {quiz.title} with {quiz.QuestionCount} questions");
             UpdateStatus($"Fortune Quiz Loaded!\n{quiz.SafeEmoji} {quiz.SafeTitle}\n{quiz.QuestionCount} questions");
-            
-            if (quiz.QuestionCount > 0)
-            {
-                _manager.BeginFortuneQuiz();
-                SimulateFortuneQuiz();
-            }
         }
 
         private void HandleFortuneLoadFailed(string error)
@@ -286,21 +338,6 @@ namespace IntelliVerseX.Quiz.WeeklyQuiz
             UpdateStatus($"Fortune Complete! {result.SafeEmoji}\n{result.SafeTitle}\n{result.SafeDescription}");
         }
 
-        private void SimulateFortuneQuiz()
-        {
-            int totalQuestions = _manager.FortuneTotalQuestions;
-            for (int i = 0; i < totalQuestions; i++)
-            {
-                var question = _manager.GetCurrentFortuneQuestion();
-                if (question != null)
-                {
-                    int randomOption = UnityEngine.Random.Range(0, question.OptionCount);
-                    _manager.SubmitFortuneAnswer(randomOption);
-                    _manager.NextFortuneQuestion();
-                }
-            }
-        }
-
         #endregion
 
         #region Event Handlers - Emoji
@@ -309,12 +346,6 @@ namespace IntelliVerseX.Quiz.WeeklyQuiz
         {
             Log($"Emoji loaded: {quiz.title} with {quiz.QuestionCount} questions");
             UpdateStatus($"Emoji Quiz Loaded!\n{quiz.SafeEmoji} {quiz.SafeTitle}\n{quiz.QuestionCount} questions");
-            
-            if (quiz.QuestionCount > 0)
-            {
-                _manager.BeginEmojiQuiz();
-                SimulateEmojiQuiz();
-            }
         }
 
         private void HandleEmojiLoadFailed(string error)
@@ -329,21 +360,6 @@ namespace IntelliVerseX.Quiz.WeeklyQuiz
             UpdateStatus($"Emoji Complete! {result.SafeEmoji}\n{result.SafeTitle}\nScore: {summary.correctAnswers}/{summary.totalQuestions}");
         }
 
-        private void SimulateEmojiQuiz()
-        {
-            int totalQuestions = _manager.EmojiTotalQuestions;
-            for (int i = 0; i < totalQuestions; i++)
-            {
-                var question = _manager.GetCurrentEmojiQuestion();
-                if (question != null)
-                {
-                    int answer = question.correctAnswer;
-                    _manager.SubmitEmojiAnswer(answer);
-                    _manager.NextEmojiQuestion();
-                }
-            }
-        }
-
         #endregion
 
         #region Event Handlers - Health
@@ -352,12 +368,6 @@ namespace IntelliVerseX.Quiz.WeeklyQuiz
         {
             Log($"Health loaded: {quiz.title} with {quiz.QuestionCount} questions");
             UpdateStatus($"Health Quiz Loaded!\n{quiz.SafeEmoji} {quiz.SafeTitle}\n{quiz.QuestionCount} questions");
-            
-            if (quiz.QuestionCount > 0)
-            {
-                _manager.BeginHealthQuiz();
-                SimulateHealthQuiz();
-            }
         }
 
         private void HandleHealthLoadFailed(string error)
@@ -370,21 +380,6 @@ namespace IntelliVerseX.Quiz.WeeklyQuiz
         {
             Log($"Health completed! Correct: {summary.correctAnswers}/{summary.totalQuestions}");
             UpdateStatus($"Health Complete! {result.SafeEmoji}\n{result.SafeTitle}\nScore: {summary.correctAnswers}/{summary.totalQuestions}");
-        }
-
-        private void SimulateHealthQuiz()
-        {
-            int totalQuestions = _manager.HealthTotalQuestions;
-            for (int i = 0; i < totalQuestions; i++)
-            {
-                var question = _manager.GetCurrentHealthQuestion();
-                if (question != null)
-                {
-                    int answer = question.correctAnswer;
-                    _manager.SubmitHealthAnswer(answer);
-                    _manager.NextHealthQuestion();
-                }
-            }
         }
 
         #endregion

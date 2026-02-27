@@ -1,8 +1,14 @@
 {
     "name": "IntelliVerseX.Samples.TestScenes",
-    "rootNamespace": "IntelliVerseX.Samples.TestScenes",
+    "rootNamespace": "IntelliVerseX.Examples",
     "references": [
-        "IntelliVerseX.V2"
+        "IntelliVerseX.Core",
+        "IntelliVerseX.V2",
+        "IntelliVerseX.Backend",
+        "IntelliVerseX.Identity",
+        "IntelliVerseX.Monetization",
+        "IntelliVerseX.Examples",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

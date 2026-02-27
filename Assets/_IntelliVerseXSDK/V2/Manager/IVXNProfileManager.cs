@@ -20,8 +20,17 @@ namespace IntelliVerseX.Backend.Nakama
         private const int MAX_RETRY_ATTEMPTS = 3;
         private const int BASE_RETRY_DELAY_MS = 500;
         private static readonly Regex SafeNamePattern = new Regex(@"^[\p{L}\p{N}\s\.\-_']{1,100}$", RegexOptions.Compiled);
+        private static readonly Regex UsernamePattern = new Regex(@"^[a-zA-Z0-9_]{3,20}$", RegexOptions.Compiled);
+
+        private static readonly string[] ReservedUsernames =
+        {
+            "admin", "system", "nakama", "root", "moderator", "support", "null", "undefined",
+            "guest", "anonymous", "intelliversex", "intelliverse"
+        };
 
         private static readonly object SyncRoot = new object();
+        private static readonly System.Threading.SemaphoreSlim ChangeUsernameLock = new System.Threading.SemaphoreSlim(1, 1);
+        private static readonly System.Threading.SemaphoreSlim UpdateProfileLock = new System.Threading.SemaphoreSlim(1, 1);
         private static IVXNProfileSnapshot _snapshot = new IVXNProfileSnapshot();
         private static bool _isInitialized;
         private static bool _isDirty;
@@ -43,12 +52,15 @@ namespace IntelliVerseX.Backend.Nakama
 
         public static event Action<IVXNProfileSnapshot> OnProfileLoaded;
         public static event Action<IVXNProfileSnapshot> OnProfileUpdated;
+        public static event Action<IVXNUsernameChangeResult> OnUsernameChanged;
         public static event Action<string> OnProfileError;
 
         [Serializable]
         public sealed class IVXNProfileSnapshot
         {
             public string UserId;
+            public string Username;
+            public string DisplayName;
             public string Email;
             public string FirstName;
             public string LastName;
@@ -58,6 +70,7 @@ namespace IntelliVerseX.Backend.Nakama
             public string CountryCode;
             public string Locale;
             public string AvatarUrl;
+            public int AvatarPresetId;
             public string DeviceId;
             public string Platform;
             public int ProfileVersion;
@@ -65,6 +78,10 @@ namespace IntelliVerseX.Backend.Nakama
             public string TraceId;
             public string RequestId;
             public string RawMetadataJson;
+
+            public string FullName => string.IsNullOrWhiteSpace(FirstName) && string.IsNullOrWhiteSpace(LastName)
+                ? DisplayName ?? Username ?? "Player"
+                : $"{FirstName ?? ""} {LastName ?? ""}".Trim();
 
             public IVXNProfileSnapshot Clone()
             {
@@ -75,6 +92,7 @@ namespace IntelliVerseX.Backend.Nakama
         [Serializable]
         public sealed class IVXNProfileUpdateRequest
         {
+            public string DisplayName;
             public string FirstName;
             public string LastName;
             public string Locale;
@@ -83,7 +101,27 @@ namespace IntelliVerseX.Backend.Nakama
             public string Country;
             public string CountryCode;
             public string AvatarUrl;
+            public int? AvatarPresetId;
             public int? ExpectedProfileVersion;
+        }
+
+        [Serializable]
+        public sealed class IVXNUsernameChangeRequest
+        {
+            public string NewUsername;
+        }
+
+        [Serializable]
+        public sealed class IVXNUsernameChangeResult
+        {
+            public bool Success;
+            public string ErrorCode;
+            public string ErrorMessage;
+            public bool Retryable;
+            public string TraceId;
+            public string RequestId;
+            public string OldUsername;
+            public string NewUsername;
         }
 
         [Serializable]
@@ -205,6 +243,9 @@ namespace IntelliVerseX.Backend.Nakama
                 };
             }
 
+            await UpdateProfileLock.WaitAsync(cancellationToken);
+            try
+            {
             var payload = BuildUpdatePayload(request);
             var payloadJson = payload.ToString(Formatting.None);
 
@@ -270,6 +311,136 @@ namespace IntelliVerseX.Backend.Nakama
                 ErrorMessage = "Profile update failed after retries.",
                 Retryable = true
             };
+            }
+            finally
+            {
+                UpdateProfileLock.Release();
+            }
+        }
+
+        /// <summary>Alias for ChangeUsernameAsync. Updates username via rpc_change_username.</summary>
+        public static Task<IVXNUsernameChangeResult> UpdateUsernameAsync(string newUsername, CancellationToken cancellationToken = default) => ChangeUsernameAsync(newUsername, cancellationToken);
+
+        public static async Task<IVXNUsernameChangeResult> ChangeUsernameAsync(string newUsername, CancellationToken cancellationToken = default)
+        {
+            EnsureInitialized();
+
+            if (string.IsNullOrWhiteSpace(newUsername))
+            {
+                return new IVXNUsernameChangeResult
+                {
+                    Success = false,
+                    ErrorCode = "VALIDATION_ERROR",
+                    ErrorMessage = "Username is required.",
+                    Retryable = false
+                };
+            }
+
+            newUsername = newUsername.Trim();
+
+            if (newUsername.Length < 3 || newUsername.Length > 20)
+            {
+                return new IVXNUsernameChangeResult
+                {
+                    Success = false,
+                    ErrorCode = "VALIDATION_ERROR",
+                    ErrorMessage = "Username must be 3-20 characters.",
+                    Retryable = false
+                };
+            }
+
+            if (!UsernamePattern.IsMatch(newUsername))
+            {
+                return new IVXNUsernameChangeResult
+                {
+                    Success = false,
+                    ErrorCode = "VALIDATION_ERROR",
+                    ErrorMessage = "Username can only contain letters, numbers, and underscores.",
+                    Retryable = false
+                };
+            }
+
+            var normalized = newUsername.ToLowerInvariant();
+            for (var i = 0; i < ReservedUsernames.Length; i++)
+            {
+                if (string.Equals(ReservedUsernames[i], normalized, StringComparison.Ordinal))
+                {
+                    return new IVXNUsernameChangeResult
+                    {
+                        Success = false,
+                        ErrorCode = "VALIDATION_ERROR",
+                        ErrorMessage = "Username is reserved.",
+                        Retryable = false
+                    };
+                }
+            }
+
+            await ChangeUsernameLock.WaitAsync(cancellationToken);
+            try
+            {
+            var oldUsername = Snapshot.Username;
+            var payload = new JObject { ["new_username"] = newUsername };
+            var payloadJson = payload.ToString(Formatting.None);
+
+            for (var attempt = 1; attempt <= MAX_RETRY_ATTEMPTS; attempt++)
+            {
+                var rpc = await CallRpcAsync("rpc_change_username", payloadJson, cancellationToken);
+                if (!rpc.Success)
+                {
+                    if (attempt < MAX_RETRY_ATTEMPTS && rpc.Retryable)
+                    {
+                        await Task.Delay(GetRetryDelayMs(attempt), cancellationToken);
+                        continue;
+                    }
+
+                    var transportFailure = new IVXNUsernameChangeResult
+                    {
+                        Success = false,
+                        ErrorCode = rpc.ErrorCode,
+                        ErrorMessage = rpc.ErrorMessage,
+                        Retryable = rpc.Retryable,
+                        OldUsername = oldUsername
+                    };
+                    RaiseProfileError(transportFailure.ErrorMessage);
+                    return transportFailure;
+                }
+
+                var parsed = ParseUsernameChangeResponse(rpc.Payload, oldUsername);
+                if (!parsed.Success && attempt < MAX_RETRY_ATTEMPTS && parsed.Retryable)
+                {
+                    await Task.Delay(GetRetryDelayMs(attempt), cancellationToken);
+                    continue;
+                }
+
+                if (parsed.Success)
+                {
+                    lock (SyncRoot)
+                    {
+                        _snapshot.Username = parsed.NewUsername;
+                    }
+                    RaiseUsernameChanged(parsed);
+                }
+                else
+                {
+                    RaiseProfileError(parsed.ErrorMessage);
+                }
+
+                return parsed;
+            }
+
+            return new IVXNUsernameChangeResult
+            {
+                Success = false,
+                ErrorCode = "MAX_RETRIES_EXCEEDED",
+                ErrorMessage = "Username change failed after retries.",
+                Retryable = true,
+                OldUsername = oldUsername
+            };
+            }
+            finally
+            {
+                ChangeUsernameLock.Release();
+            }
         }
 
         public static async Task<IVXNProfilePortfolioResult> FetchPortfolioAsync(CancellationToken cancellationToken = default)
@@ -345,6 +516,7 @@ namespace IntelliVerseX.Backend.Nakama
         {
             var payload = new JObject();
 
+            if (!string.IsNullOrWhiteSpace(request.DisplayName)) payload["display_name"] = request.DisplayName.Trim();
             if (!string.IsNullOrWhiteSpace(request.FirstName)) payload["first_name"] = request.FirstName.Trim();
             if (!string.IsNullOrWhiteSpace(request.LastName)) payload["last_name"] = request.LastName.Trim();
             if (!string.IsNullOrWhiteSpace(request.Locale)) payload["locale"] = request.Locale.Trim().Replace("_", "-").ToLowerInvariant();
@@ -353,6 +525,7 @@ namespace IntelliVerseX.Backend.Nakama
             if (!string.IsNullOrWhiteSpace(request.Country)) payload["country"] = request.Country.Trim();
             if (!string.IsNullOrWhiteSpace(request.CountryCode)) payload["country_code"] = request.CountryCode.Trim().ToUpperInvariant();
             if (!string.IsNullOrWhiteSpace(request.AvatarUrl)) payload["avatar_url"] = request.AvatarUrl.Trim();
+            if (request.AvatarPresetId.HasValue) payload["avatar_preset_id"] = request.AvatarPresetId.Value;
 
             var expectedVersion = request.ExpectedProfileVersion;
             if (!expectedVersion.HasValue)
@@ -379,6 +552,12 @@ namespace IntelliVerseX.Backend.Nakama
                 return "Profile update request is required.";
             }
 
+            if (!string.IsNullOrWhiteSpace(request.DisplayName) &&
+                (request.DisplayName.Length < 2 || request.DisplayName.Length > 50 || !SafeNamePattern.IsMatch(request.DisplayName)))
+            {
+                return "Display name must be 2-50 safe characters.";
+            }
+
             if (!string.IsNullOrWhiteSpace(request.FirstName) &&
                 (request.FirstName.Length > 100 || !SafeNamePattern.IsMatch(request.FirstName)))
             {
@@ -398,6 +577,11 @@ namespace IntelliVerseX.Backend.Nakama
                 {
                     return "Avatar URL must be an absolute HTTP/HTTPS URL.";
                 }
+            }
+
+            if (request.AvatarPresetId.HasValue && (request.AvatarPresetId.Value < 0 || request.AvatarPresetId.Value > 999))
+            {
+                return "Avatar preset ID must be between 0 and 999.";
             }
 
             return null;
@@ -595,6 +779,8 @@ namespace IntelliVerseX.Backend.Nakama
             return new IVXNProfileSnapshot
             {
                 UserId = metadata.Value<string>("user_id") ?? metadata.Value<string>("userId"),
+                Username = metadata.Value<string>("username") ?? metadata.Value<string>("userName"),
+                DisplayName = metadata.Value<string>("display_name") ?? metadata.Value<string>("displayName"),
                 Email = metadata.Value<string>("email"),
                 FirstName = metadata.Value<string>("first_name") ?? metadata.Value<string>("firstName"),
                 LastName = metadata.Value<string>("last_name") ?? metadata.Value<string>("lastName"),
@@ -607,12 +793,61 @@ namespace IntelliVerseX.Backend.Nakama
                               metadata.Value<string>("geoLocation"),
                 Locale = metadata.Value<string>("locale"),
                 AvatarUrl = metadata.Value<string>("avatar_url") ?? metadata.Value<string>("avatarUrl") ?? metadata.Value<string>("avatar"),
+                AvatarPresetId = metadata.Value<int?>("avatar_preset_id") ?? metadata.Value<int?>("avatarPresetId") ?? 0,
                 DeviceId = metadata.Value<string>("device_id") ?? metadata.Value<string>("deviceId"),
                 Platform = metadata.Value<string>("platform"),
                 ProfileVersion = metadata.Value<int?>("profileVersion") ?? metadata.Value<int?>("profile_version") ?? metadata.Value<int?>("version") ?? 0,
                 SchemaVersion = metadata.Value<int?>("schemaVersion") ?? metadata.Value<int?>("schema_version") ?? 0,
                 RawMetadataJson = metadata.ToString(Formatting.None)
             };
+        }
+
+        private static IVXNUsernameChangeResult ParseUsernameChangeResponse(string payload, string oldUsername)
+        {
+            try
+            {
+                var root = JObject.Parse(payload ?? "{}");
+                var success = root.Value<bool?>("success") != false;
+                var errorCode = GetErrorCode(root);
+                var errorMessage = root.Value<string>("error") ?? root.Value<string>("message");
+                var traceId = root.Value<string>("traceId");
+                var requestId = root.Value<string>("requestId") ?? root.Value<string>("request_id");
+                var newUsername = root.Value<string>("username") ?? root.Value<string>("new_username");
+
+                if (!success)
+                {
+                    return new IVXNUsernameChangeResult
+                    {
+                        Success = false,
+                        ErrorCode = errorCode,
+                        ErrorMessage = string.IsNullOrEmpty(errorMessage) ? "Username change failed." : errorMessage,
+                        Retryable = IsRetryable(errorCode),
+                        TraceId = traceId,
+                        RequestId = requestId,
+                        OldUsername = oldUsername
+                    };
+                }
+
+                return new IVXNUsernameChangeResult
+                {
+                    Success = true,
+                    TraceId = traceId,
+                    RequestId = requestId,
+                    OldUsername = oldUsername,
+                    NewUsername = newUsername ?? oldUsername
+                };
+            }
+            catch (Exception ex)
+            {
+                return new IVXNUsernameChangeResult
+                {
+                    Success = false,
+                    ErrorCode = "DESERIALIZATION_ERROR",
+                    ErrorMessage = ex.Message,
+                    Retryable = false,
+                    OldUsername = oldUsername
+                };
+            }
         }
 
         private static IVXNProfileFetchResult BuildFetchFailure(string errorCode, string errorMessage, bool retryable)
@@ -703,6 +938,19 @@ namespace IntelliVerseX.Backend.Nakama
             catch (Exception ex)
             {
                 SafeLog("Profile error event handler failed: " + ex.Message, true);
+            }
+        }
+
+        private static void RaiseUsernameChanged(IVXNUsernameChangeResult result)
+        {
+            SafeLog($"Username changed from '{result.OldUsername ?? "unknown"}' to '{result.NewUsername ?? "unknown"}'.");
+            try
+            {
+                OnUsernameChanged?.Invoke(result);
+            }
+            catch (Exception ex)
+            {
+                SafeLog("Username changed event handler failed: " + ex.Message, true);
             }
         }
 

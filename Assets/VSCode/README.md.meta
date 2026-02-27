@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5a47489a858c74f3ea182d15dec0dd72
+timeCreated: 1444651605
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 45320
+  packageName: VSCode
+  packageVersion: 2.7
+  assetPath: Assets/VSCode/README.md
+  uploadId: 130484

@@ -85,7 +85,7 @@ namespace IntelliVerseX.Monetization
         private static IVXAdNetwork _primaryNetwork = IVXAdNetworkConfig.PRIMARY_AD_NETWORK;
         private static bool _isInitialized = false;
         private static int _interstitialCount = 0;
-        private static float _lastInterstitialTime = 0f;
+        private static float _lastInterstitialTime = -9999f; // Allow first interstitial immediately
         private static string _bannerReqPlacement;
         private static IVXBannerPosition _bannerReqPosition;
         private static IVXAdNetwork _bannerNetworkInUse;
@@ -1055,11 +1055,16 @@ namespace IntelliVerseX.Monetization
 
         #region Consent Flow
 
+        private static bool _umpConsentObtained = false;
+        private static bool _canRequestAds = false;
+
         private static void CheckConsent()
         {
-            // Check if we need to show consent dialog
-            // This is simplified - use proper consent SDK in production (e.g., Google UMP SDK)
-
+#if GOOGLE_UMP
+            // Use Google UMP SDK for proper consent management
+            RequestUMPConsent();
+#else
+            // Fallback: Check if we need to show consent dialog
             bool needsConsent = IsInGdprRegion() || IsInCcpaRegion();
 
             if (needsConsent && !HasUserConsent())
@@ -1067,30 +1072,233 @@ namespace IntelliVerseX.Monetization
                 OnConsentRequired?.Invoke();
                 Debug.Log("[IVXAdsManager] User consent required");
             }
+            else
+            {
+                _canRequestAds = true;
+            }
+#endif
         }
+
+#if GOOGLE_UMP
+        private static void RequestUMPConsent()
+        {
+            Debug.Log("[IVXAdsManager] Requesting UMP consent...");
+            
+            try
+            {
+                var request = new GoogleMobileAds.Ump.Api.ConsentRequestParameters();
+                
+                // Enable debug settings for testing (remove in production)
+                #if UNITY_EDITOR || DEVELOPMENT_BUILD
+                var debugSettings = new GoogleMobileAds.Ump.Api.ConsentDebugSettings();
+                debugSettings.DebugGeography = GoogleMobileAds.Ump.Api.DebugGeography.EEA;
+                request.ConsentDebugSettings = debugSettings;
+                #endif
+                
+                GoogleMobileAds.Ump.Api.ConsentInformation.Update(request, OnConsentInfoUpdated);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[IVXAdsManager] UMP consent request failed: {e.Message}");
+                _canRequestAds = true; // Allow ads on failure (better UX)
+            }
+        }
+
+        private static void OnConsentInfoUpdated(GoogleMobileAds.Ump.Api.FormError error)
+        {
+            if (error != null)
+            {
+                Debug.LogWarning($"[IVXAdsManager] UMP consent error: {error.Message}");
+                _canRequestAds = true;
+                return;
+            }
+
+            var status = GoogleMobileAds.Ump.Api.ConsentInformation.ConsentStatus;
+            Debug.Log($"[IVXAdsManager] UMP consent status: {status}");
+
+            if (status == GoogleMobileAds.Ump.Api.ConsentStatus.Required)
+            {
+                LoadAndShowConsentForm();
+            }
+            else
+            {
+                _umpConsentObtained = status == GoogleMobileAds.Ump.Api.ConsentStatus.Obtained;
+                _canRequestAds = GoogleMobileAds.Ump.Api.ConsentInformation.CanRequestAds();
+                ApplyConsentToNetworks();
+            }
+        }
+
+        private static void LoadAndShowConsentForm()
+        {
+            GoogleMobileAds.Ump.Api.ConsentForm.LoadAndShowConsentFormIfRequired(OnConsentFormDismissed);
+        }
+
+        private static void OnConsentFormDismissed(GoogleMobileAds.Ump.Api.FormError error)
+        {
+            if (error != null)
+            {
+                Debug.LogWarning($"[IVXAdsManager] Consent form error: {error.Message}");
+            }
+
+            _umpConsentObtained = GoogleMobileAds.Ump.Api.ConsentInformation.ConsentStatus == 
+                                   GoogleMobileAds.Ump.Api.ConsentStatus.Obtained;
+            _canRequestAds = GoogleMobileAds.Ump.Api.ConsentInformation.CanRequestAds();
+            
+            Debug.Log($"[IVXAdsManager] Consent form dismissed. CanRequestAds: {_canRequestAds}");
+            ApplyConsentToNetworks();
+        }
+
+        private static void ApplyConsentToNetworks()
+        {
+            // Apply consent to IronSource
+#if IRONSOURCE
+            try
+            {
+                IronSource.Agent.setConsent(_canRequestAds);
+                Debug.Log($"[IVXAdsManager] Applied consent to IronSource: {_canRequestAds}");
+            }
+            catch { }
+#endif
+
+            // Apply consent to Appodeal
+#if APPODEAL
+            try
+            {
+                if (_canRequestAds)
+                {
+                    Appodeal.UpdateGdprConsent(AppodealStack.ConsentManagement.Api.GdprConsent.Personalized);
+                }
+                else
+                {
+                    Appodeal.UpdateGdprConsent(AppodealStack.ConsentManagement.Api.GdprConsent.NonPersonalized);
+                }
+                Debug.Log($"[IVXAdsManager] Applied consent to Appodeal: {_canRequestAds}");
+            }
+            catch { }
+#endif
+        }
+
+        /// <summary>
+        /// Show privacy options form (for settings screen)
+        /// </summary>
+        public static void ShowPrivacyOptionsForm(Action onComplete = null)
+        {
+            try
+            {
+                GoogleMobileAds.Ump.Api.ConsentForm.ShowPrivacyOptionsForm(error =>
+                {
+                    if (error != null)
+                    {
+                        Debug.LogWarning($"[IVXAdsManager] Privacy form error: {error.Message}");
+                    }
+                    _canRequestAds = GoogleMobileAds.Ump.Api.ConsentInformation.CanRequestAds();
+                    ApplyConsentToNetworks();
+                    onComplete?.Invoke();
+                });
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[IVXAdsManager] ShowPrivacyOptionsForm failed: {e.Message}");
+                onComplete?.Invoke();
+            }
+        }
+
+        /// <summary>
+        /// Check if privacy options form is available
+        /// </summary>
+        public static bool IsPrivacyOptionsRequired()
+        {
+            try
+            {
+                return GoogleMobileAds.Ump.Api.ConsentInformation.PrivacyOptionsRequirementStatus == 
+                       GoogleMobileAds.Ump.Api.PrivacyOptionsRequirementStatus.Required;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+#endif
 
         private static bool IsInGdprRegion()
         {
-            // Check if user is in EU
-            // In production, use proper geo-detection
-            return false; // Placeholder
+            // In production, use proper geo-detection or UMP SDK
+            // This is a fallback for when UMP is not available
+#if GOOGLE_UMP
+            return false; // UMP handles this
+#else
+            return false; // Placeholder - implement with geo API if needed
+#endif
         }
 
         private static bool IsInCcpaRegion()
         {
             // Check if user is in California
+            // In production, use proper geo-detection or UMP SDK
             return false; // Placeholder
         }
 
         private static bool HasUserConsent()
         {
-            // Check if user has given consent
+#if GOOGLE_UMP
+            return _canRequestAds;
+#else
             return PlayerPrefs.GetInt("ad_consent_given", 0) == 1;
+#endif
         }
 
+        /// <summary>
+        /// Set user consent for ads (manual override)
+        /// </summary>
         public static void SetUserConsent(bool granted)
         {
             PlayerPrefs.SetInt("ad_consent_given", granted ? 1 : 0);
+            PlayerPrefs.Save();
+            _canRequestAds = granted;
+            
+#if GOOGLE_UMP
+            ApplyConsentToNetworks();
+#endif
+        }
+
+        /// <summary>
+        /// Check if ads can be requested (consent obtained)
+        /// </summary>
+        public static bool CanRequestAds()
+        {
+#if GOOGLE_UMP
+            try
+            {
+                return GoogleMobileAds.Ump.Api.ConsentInformation.CanRequestAds();
+            }
+            catch
+            {
+                return _canRequestAds;
+            }
+#else
+            return _canRequestAds || HasUserConsent();
+#endif
+        }
+
+        /// <summary>
+        /// Reset consent for testing purposes
+        /// </summary>
+        public static void ResetConsent()
+        {
+#if GOOGLE_UMP
+            try
+            {
+                GoogleMobileAds.Ump.Api.ConsentInformation.Reset();
+                _umpConsentObtained = false;
+                _canRequestAds = false;
+                Debug.Log("[IVXAdsManager] Consent reset");
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[IVXAdsManager] Consent reset failed: {e.Message}");
+            }
+#endif
+            PlayerPrefs.DeleteKey("ad_consent_given");
             PlayerPrefs.Save();
         }
 
@@ -1446,16 +1654,30 @@ namespace IntelliVerseX.Monetization
                 return;
             }
 
-            if (Time.time - _lastInterstitialTime < IVXAdNetworkConfig.INTERSTITIAL_COOLDOWN_SECONDS)
+            // Check if ad is ready first (more useful feedback than cooldown)
+            if (!IsInterstitialAdReady())
             {
-                Debug.Log("[IVXAdsManager] Interstitial on cooldown");
+                Debug.Log("[IVXAdsManager] Interstitial not ready - preloading...");
+                PreloadInterstitialAd();
                 onComplete?.Invoke(false);
                 return;
             }
 
+            // Check cooldown (only if ad is actually ready)
+            float timeSinceLastAd = Time.time - _lastInterstitialTime;
+            float cooldown = IVXAdNetworkConfig.INTERSTITIAL_COOLDOWN_SECONDS;
+            if (timeSinceLastAd < cooldown)
+            {
+                float remaining = cooldown - timeSinceLastAd;
+                Debug.Log($"[IVXAdsManager] Interstitial on cooldown ({remaining:F0}s remaining)");
+                onComplete?.Invoke(false);
+                return;
+            }
+
+            // Check session cap
             if (_interstitialCount >= IVXAdNetworkConfig.MAX_INTERSTITIALS_PER_SESSION)
             {
-                Debug.Log("[IVXAdsManager] Interstitial cap reached");
+                Debug.Log($"[IVXAdsManager] Interstitial cap reached ({_interstitialCount}/{IVXAdNetworkConfig.MAX_INTERSTITIALS_PER_SESSION})");
                 onComplete?.Invoke(false);
                 return;
             }
@@ -1644,6 +1866,58 @@ namespace IntelliVerseX.Monetization
 #endif
 
             return false;
+        }
+
+        /// <summary>
+        /// Get remaining cooldown time for interstitial ads (in seconds)
+        /// Returns 0 if no cooldown active
+        /// </summary>
+        public static float GetInterstitialCooldownRemaining()
+        {
+            float timeSinceLastAd = Time.time - _lastInterstitialTime;
+            float cooldown = IVXAdNetworkConfig.INTERSTITIAL_COOLDOWN_SECONDS;
+            float remaining = cooldown - timeSinceLastAd;
+            return remaining > 0 ? remaining : 0f;
+        }
+
+        /// <summary>
+        /// Check if interstitial can be shown (ready AND not on cooldown AND under cap)
+        /// </summary>
+        public static bool CanShowInterstitial()
+        {
+            if (!_isInitialized) return false;
+            if (!IsInterstitialAdReady()) return false;
+            if (GetInterstitialCooldownRemaining() > 0) return false;
+            if (_interstitialCount >= IVXAdNetworkConfig.MAX_INTERSTITIALS_PER_SESSION) return false;
+            return true;
+        }
+
+        /// <summary>
+        /// Get detailed interstitial status for debugging
+        /// </summary>
+        public static string GetInterstitialStatus()
+        {
+            if (!_isInitialized) return "Not initialized";
+            
+            bool ready = IsInterstitialAdReady();
+            float cooldownRemaining = GetInterstitialCooldownRemaining();
+            int count = _interstitialCount;
+            int max = IVXAdNetworkConfig.MAX_INTERSTITIALS_PER_SESSION;
+            
+            if (!ready) return "Loading...";
+            if (cooldownRemaining > 0) return $"Cooldown: {cooldownRemaining:F0}s";
+            if (count >= max) return $"Cap reached ({count}/{max})";
+            return "Ready";
+        }
+
+        /// <summary>
+        /// Reset interstitial cooldown and count (for testing purposes)
+        /// </summary>
+        public static void ResetInterstitialLimits()
+        {
+            _lastInterstitialTime = -9999f;
+            _interstitialCount = 0;
+            Debug.Log("[IVXAdsManager] Interstitial limits reset (cooldown and count)");
         }
 
         #endregion
@@ -1930,8 +2204,9 @@ namespace IntelliVerseX.Monetization
             sb.AppendLine($"Fallback Network: {GetFallback(_primaryNetwork)}");
             sb.AppendLine($"Rewarded Ready: {IsRewardedAdReady()}");
             sb.AppendLine($"Interstitial Ready: {IsInterstitialAdReady()}");
-            sb.AppendLine($"Interstitial Count: {_interstitialCount}");
-            sb.AppendLine($"Last Interstitial Time: {_lastInterstitialTime}");
+            sb.AppendLine($"Interstitial Count: {_interstitialCount}/{IVXAdNetworkConfig.MAX_INTERSTITIALS_PER_SESSION}");
+            sb.AppendLine($"Interstitial Cooldown: {GetInterstitialCooldownRemaining():F0}s remaining");
+            sb.AppendLine($"Interstitial Status: {GetInterstitialStatus()}");
             
 #if APPODEAL
             sb.AppendLine("--- Appodeal Status ---");

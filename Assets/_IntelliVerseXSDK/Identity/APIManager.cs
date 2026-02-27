@@ -7973,38 +7973,44 @@ Do not include any other top-level keys. Do not include code fences.";
     }
 
     /// <summary>
-    /// Accept a friend request.
+    /// Accept a friend request. Obsolete: Use IVXFriendsService.AcceptRequestAsync (Nakama native).
     /// </summary>
+    [Obsolete("Use IVXFriendsService.AcceptRequestAsync (100% Nakama). HTTP friends API deprecated.")]
     public static Task<bool> AcceptFriendRequestAsync(string relationId, CancellationToken ct = default)
         => UpdateFriendStatusAsync(relationId, "accepted", ct);
 
     /// <summary>
-    /// Reject a friend request.
+    /// Reject a friend request. Obsolete: Use IVXFriendsService.RejectRequestAsync (Nakama native).
     /// </summary>
+    [Obsolete("Use IVXFriendsService.RejectRequestAsync (100% Nakama). HTTP friends API deprecated.")]
     public static Task<bool> RejectFriendRequestAsync(string relationId, CancellationToken ct = default)
         => UpdateFriendStatusAsync(relationId, "rejected", ct);
 
     /// <summary>
-    /// Remove a friend.
+    /// Remove a friend. Obsolete: Use IVXFriendsService.RemoveFriendAsync (Nakama native).
     /// </summary>
+    [Obsolete("Use IVXFriendsService.RemoveFriendAsync (100% Nakama). HTTP friends API deprecated.")]
     public static Task<bool> RemoveFriendAsync(string relationId, CancellationToken ct = default)
         => UpdateFriendStatusAsync(relationId, "cancelled", ct);
 
     /// <summary>
-    /// Block a user.
+    /// Block a user. Obsolete: Use IVXFriendsService.BlockUserAsync (Nakama native).
     /// </summary>
+    [Obsolete("Use IVXFriendsService.BlockUserAsync (100% Nakama). HTTP friends API deprecated.")]
     public static Task<bool> BlockUserAsync(string relationId, CancellationToken ct = default)
         => UpdateFriendStatusAsync(relationId, "blocked", ct);
 
     /// <summary>
-    /// Get pending incoming friend requests.
+    /// Get pending incoming friend requests. Obsolete: Use IVXFriendsService.GetIncomingRequestsAsync (Nakama).
     /// </summary>
+    [Obsolete("Use IVXFriendsService.GetIncomingRequestsAsync (100% Nakama). HTTP friends API deprecated.")]
     public static Task<List<IVXModels.FriendData>> GetIncomingRequestsAsync(CancellationToken ct = default)
         => GetFriendsAsync(null, "pending", null, ct);
 
     /// <summary>
-    /// Get accepted friends list.
+    /// Get accepted friends list. Obsolete: Use IVXFriendsService.GetFriendsAsync (Nakama native).
     /// </summary>
+    [Obsolete("Use IVXFriendsService.GetFriendsAsync (100% Nakama). HTTP friends API deprecated.")]
     public static Task<List<IVXModels.FriendData>> GetAcceptedFriendsAsync(CancellationToken ct = default)
         => GetFriendsAsync(null, "accepted", null, ct);
 

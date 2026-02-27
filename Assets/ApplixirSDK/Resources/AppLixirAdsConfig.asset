@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72b29385c60544d8afa2858c757aae7e, type: 3}
+  m_Name: AppLixirAdsConfig
+  m_EditorClassIdentifier: 
+  apiKey: '0f3a61ae-d7cb-4fd9-ad9d-5e340cdb59a6 '
+  logLevel: 5
+  debugPlayVideoResponse: 4

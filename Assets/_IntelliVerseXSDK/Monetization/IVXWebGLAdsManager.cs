@@ -15,6 +15,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using UnityEngine;
+using IntelliVerseX.Core;
 
 // Only include InteropServices on WebGL builds (not Editor, not iOS, not Android)
 #if UNITY_WEBGL && ! UNITY_EDITOR
@@ -161,7 +162,102 @@ namespace IntelliVerseX.Monetization
         #region Initialization
 
         /// <summary>
-        /// Initialize WebGL ads system
+        /// Initialize WebGL ads system from IntelliVerseXConfig (recommended).
+        /// Reads AppLixir/AdSense settings from the centralized config.
+        /// </summary>
+        /// <param name="gameConfig">Main game configuration</param>
+        public static void Initialize(IntelliVerseXConfig gameConfig)
+        {
+            if (gameConfig == null)
+            {
+                Debug.LogError($"{LOG_PREFIX} Game config cannot be null");
+                return;
+            }
+
+            var adsConfig = gameConfig.adsConfig;
+            if (adsConfig == null)
+            {
+                Debug.LogError($"{LOG_PREFIX} Ads config not found in game config");
+                return;
+            }
+
+            // Create runtime config from IntelliVerseXConfig
+            var runtimeConfig = CreateRuntimeConfigFromGameConfig(adsConfig);
+            Initialize(runtimeConfig);
+        }
+
+        /// <summary>
+        /// Create runtime WebGL config from IVXAdsConfig
+        /// </summary>
+        private static IVXWebGLAdsConfig CreateRuntimeConfigFromGameConfig(IVXAdsConfig adsConfig)
+        {
+            var config = ScriptableObject.CreateInstance<IVXWebGLAdsConfig>();
+            
+            // Map settings from IVXAdsConfig to IVXWebGLAdsConfig
+            config.enableApplixir = adsConfig.enableAppLixir;
+            config.applixirZoneId = adsConfig.appLixirZoneId;
+            config.applixirTestMode = adsConfig.appLixirTestMode;
+            config.applixirAdCooldown = adsConfig.appLixirCooldown;
+            config.applixirSkipDelay = adsConfig.appLixirSkipDelay;
+            
+            config.enableAdSense = adsConfig.enableAdSense;
+            config.adSensePublisherId = adsConfig.adSensePublisherId;
+            
+            // Create default rewarded units if not present
+            if (config.applixirRewardedUnits == null || config.applixirRewardedUnits.Length == 0)
+            {
+                config.applixirRewardedUnits = new ApplixirRewardedUnit[]
+                {
+                    new ApplixirRewardedUnit
+                    {
+                        unitName = "Rewarded_ExtraHints",
+                        coinReward = 50,
+                        videoLengthSeconds = 30,
+                        enabled = true
+                    },
+                    new ApplixirRewardedUnit
+                    {
+                        unitName = "Rewarded_ContinueGame",
+                        coinReward = 100,
+                        videoLengthSeconds = 30,
+                        enabled = true
+                    },
+                    new ApplixirRewardedUnit
+                    {
+                        unitName = "Rewarded_DoubleReward",
+                        coinReward = 200,
+                        videoLengthSeconds = 30,
+                        enabled = true
+                    }
+                };
+            }
+            
+            // Create AdSense banner unit if configured
+            if (config.enableAdSense && !string.IsNullOrEmpty(adsConfig.adSenseBannerSlotId))
+            {
+                config.displayAdUnits = new AdSenseAdUnit[]
+                {
+                    new AdSenseAdUnit
+                    {
+                        unitName = "Banner_Top",
+                        adSlotId = adsConfig.adSenseBannerSlotId,
+                        adFormat = AdSenseFormat.Display,
+                        adSize = AdSenseSize.Responsive,
+                        enabled = true
+                    }
+                };
+            }
+            
+            config.webGLOnly = true;
+            config.enableWaterfall = adsConfig.enableMediation;
+            config.prioritizeApplixir = true;
+            config.enableAnalytics = true;
+            
+            return config;
+        }
+
+        /// <summary>
+        /// Initialize WebGL ads system from standalone config
         /// </summary>
         /// <param name="config">WebGL ads configuration</param>
         public static void Initialize(IVXWebGLAdsConfig config)
@@ -183,7 +279,7 @@ namespace IntelliVerseX.Monetization
             // Platform check - skip initialization on non-WebGL if configured
             if (config.webGLOnly && !IsWebGL)
             {
-                Debug.Log($"{LOG_PREFIX} Skipping init (not WebGL platform).  Current: {Application.platform}");
+                Debug.Log($"{LOG_PREFIX} Skipping init (not WebGL platform). Current: {Application.platform}");
                 return;
             }
 

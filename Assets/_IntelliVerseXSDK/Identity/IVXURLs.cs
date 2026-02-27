@@ -167,29 +167,40 @@ public static class IVXURLs
     #endregion
     
     // ========================================================================
-    // FRIENDS SYSTEM
+    // FRIENDS SYSTEM (DEPRECATED - Use Nakama native friends via IVXFriendsManager)
     // ========================================================================
     
-    #region Friends
+    #region Friends (DEPRECATED)
+    // ═══════════════════════════════════════════════════════════════════════
+    // DEPRECATED: All HTTP-based friend URLs below are obsolete.
+    // Use IVXFriendsManager (Nakama native) instead.
+    // These URLs will be removed in a future version.
+    // ═══════════════════════════════════════════════════════════════════════
     
     /// <summary>Get friends list (accepts userId, status, query params)</summary>
+    [System.Obsolete("Use IVXFriendsManager with Nakama native friends instead.")]
     public const string GetFriendList = BaseUrl + "api/games/friends";
     
     /// <summary>Search for users to add as friends</summary>
+    [System.Obsolete("Use IVXFriendsManager.SearchUsersAsync() with Nakama instead.")]
     public const string SearchFriend = BaseUrl + "api/games/friends/search";
     
     /// <summary>Send friend request/invite</summary>
+    [System.Obsolete("Use IVXFriendsManager.AddFriendByIdAsync() with Nakama instead.")]
     public const string SendFriendRequest = BaseUrl + "api/games/friends/invite";
     
     /// <summary>Send gift to a friend</summary>
+    [System.Obsolete("Implement gift sending via Nakama RPC if needed.")]
     public const string SendGiftToFriend = BaseUrl + "api/games/friends/send-gift";
     
     /// <summary>Update friend relationship status (accept/reject/block)</summary>
+    [System.Obsolete("Use IVXFriendsManager.AddFriendByIdAsync/RemoveFriendAsync/BlockFriendAsync() with Nakama instead.")]
     public const string UpdateFriendStatus = BaseUrl + "api/games/friends/status";
     
     /// <summary>
     /// Build friends list URL with query parameters.
     /// </summary>
+    [System.Obsolete("Use IVXFriendsManager.GetFriendsAsync() with Nakama instead.")]
     public static string GetFriendsUrl(string userId, string status = null, string query = null)
     {
         var url = $"{GetFriendList}?userId={UnityWebRequest.EscapeURL(userId)}";
@@ -203,6 +214,7 @@ public static class IVXURLs
     /// <summary>
     /// Build search friends URL.
     /// </summary>
+    [System.Obsolete("Use IVXFriendsManager.SearchUsersAsync() with Nakama instead.")]
     public static string GetSearchFriendsUrl(string searchQuery, string userId) =>
         $"{SearchFriend}?search={UnityWebRequest.EscapeURL(searchQuery.Trim())}&userId={UnityWebRequest.EscapeURL(userId)}";
     

@@ -1,0 +1,19 @@
+{
+    "name": "IntelliVerseX.Monetization.Ads.Editor",
+    "rootNamespace": "IntelliVerseX.Monetization.Editor",
+    "references": [
+        "IntelliVerseX.Monetization",
+        "IntelliVerseX.Core"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

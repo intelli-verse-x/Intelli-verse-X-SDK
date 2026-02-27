@@ -36,8 +36,16 @@ namespace IntelliVerseX.Quiz.WeeklyQuiz
         public string FetchedDate { get; set; }
         public string LanguageCode { get; set; }
         public string ErrorMessage { get; set; }
+        public string SourceUrl { get; set; }
 
         public T GetQuizData<T>() where T : class => QuizData as T;
+        
+        public override string ToString()
+        {
+            if (Success)
+                return $"[{QuizType}] Success from {SourceUrl} (Date: {FetchedDate}, Lang: {LanguageCode})";
+            return $"[{QuizType}] Failed: {ErrorMessage}";
+        }
     }
 
     #endregion

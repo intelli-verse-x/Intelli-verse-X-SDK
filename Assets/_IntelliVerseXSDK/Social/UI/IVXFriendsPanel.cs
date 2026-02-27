@@ -102,6 +102,10 @@ namespace IntelliVerseX.Social.UI
         [SerializeField] private TextMeshProUGUI toastText;
         [SerializeField] private float toastDuration = 3f;
 
+        [Header("Behavior")]
+        [Tooltip("If true, panel opens automatically when the scene loads")]
+        [SerializeField] private bool autoOpenOnAwake = true;
+
         [Header("Confirmation Dialog")]
         [SerializeField] private GameObject confirmDialog;
         [SerializeField] private TextMeshProUGUI confirmTitleText;
@@ -138,10 +142,14 @@ namespace IntelliVerseX.Social.UI
         private List<IVXFriendSearchSlot> _searchSlots = new List<IVXFriendSearchSlot>();
 
         private CancellationTokenSource _cts;
-        private IVXFriendsConfig _config;
         private bool _isOpen;
         private float _lastRefreshTime;
         private Action _pendingConfirmAction;
+        
+        // Configuration constants
+        private const int MAX_VISIBLE_FRIENDS = 50;
+        private const int MAX_SEARCH_RESULTS = 20;
+        private const float AUTO_REFRESH_INTERVAL = 0f; // 0 = disabled
 
         #endregion
 
@@ -150,21 +158,74 @@ namespace IntelliVerseX.Social.UI
         private void Awake()
         {
             _instance = this;
-            _config = IVXFriendsConfig.Instance;
             
             SetupButtons();
             
-            if (panelRoot != null)
+            // Initialize all content panels to a known state
+            InitializeContentPanels();
+        }
+
+        private void Start()
+        {
+            // Auto-open if configured (useful for dedicated friends scenes)
+            if (autoOpenOnAwake)
+            {
+                Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes all content panels to a clean starting state.
+        /// </summary>
+        private void InitializeContentPanels()
+        {
+            // Hide panel root initially if not auto-opening
+            if (panelRoot != null && !autoOpenOnAwake)
             {
                 panelRoot.SetActive(false);
             }
+            
+            // Ensure content panels start in correct state
+            // Friends content is the default, others start hidden
+            if (friendsContent != null)
+            {
+                friendsContent.SetActive(true);
+                if (friendsContentCanvasGroup != null) friendsContentCanvasGroup.alpha = 1f;
+            }
+            if (requestsContent != null)
+            {
+                requestsContent.SetActive(false);
+                if (requestsContentCanvasGroup != null) requestsContentCanvasGroup.alpha = 0f;
+            }
+            if (searchContent != null)
+            {
+                searchContent.SetActive(false);
+                if (searchContentCanvasGroup != null) searchContentCanvasGroup.alpha = 0f;
+            }
+            
+            // Hide overlays
+            if (loadingOverlay != null) loadingOverlay.SetActive(false);
+            if (toastPanel != null) toastPanel.SetActive(false);
+            if (confirmDialog != null) confirmDialog.SetActive(false);
         }
 
         private void OnDestroy()
         {
             _cts?.Cancel();
             _cts?.Dispose();
+            _cts = null;
 
+            // Kill any running animations to prevent errors
+            IVXFriendsAnimations.KillAnimations(panelCanvasGroup);
+            IVXFriendsAnimations.KillAnimations(friendsContentCanvasGroup);
+            IVXFriendsAnimations.KillAnimations(requestsContentCanvasGroup);
+            IVXFriendsAnimations.KillAnimations(searchContentCanvasGroup);
+            if (loadingSpinner != null)
+            {
+                IVXFriendsAnimations.StopSpinnerRotation(loadingSpinner);
+            }
+
+            // Clear instance
             if (_instance == this)
             {
                 _instance = null;
@@ -174,9 +235,9 @@ namespace IntelliVerseX.Social.UI
         private void Update()
         {
             // Auto-refresh if enabled and panel is open
-            if (_isOpen && _config.autoRefreshIntervalSeconds > 0)
+            if (_isOpen && AUTO_REFRESH_INTERVAL > 0)
             {
-                if (Time.time - _lastRefreshTime > _config.autoRefreshIntervalSeconds)
+                if (Time.time - _lastRefreshTime > AUTO_REFRESH_INTERVAL)
                 {
                     RefreshCurrentTab();
                     _lastRefreshTime = Time.time;
@@ -196,6 +257,8 @@ namespace IntelliVerseX.Social.UI
             if (_isOpen) return;
 
             _isOpen = true;
+            _cts?.Cancel();
+            _cts?.Dispose();
             _cts = new CancellationTokenSource();
 
             if (panelRoot != null)
@@ -203,17 +266,80 @@ namespace IntelliVerseX.Social.UI
                 panelRoot.SetActive(true);
             }
 
+            // Ensure proper initial state for content panels
+            EnsureContentPanelState(Tab.Friends);
+
             // Animate open
             IVXFriendsAnimations.AnimatePanelOpen(panelCanvasGroup, panelRectTransform);
 
-            // Show friends tab by default
-            SwitchToTab(Tab.Friends);
+            // Initialize to friends tab (force it even if already set)
+            _currentTab = Tab.Friends;
+            UpdateTabIndicators();
 
             // Load initial data
-            _ = LoadFriendsAndRequestsAsync();
+            _ = LoadInitialDataAsync();
 
             _lastRefreshTime = Time.time;
             OnPanelOpened?.Invoke();
+        }
+
+        /// <summary>
+        /// Ensures proper state for content panels when opening.
+        /// </summary>
+        private void EnsureContentPanelState(Tab activeTab)
+        {
+            // Friends content
+            if (friendsContent != null) friendsContent.SetActive(activeTab == Tab.Friends);
+            if (friendsContentCanvasGroup != null) friendsContentCanvasGroup.alpha = activeTab == Tab.Friends ? 1f : 0f;
+            
+            // Requests content
+            if (requestsContent != null) requestsContent.SetActive(activeTab == Tab.Requests);
+            if (requestsContentCanvasGroup != null) requestsContentCanvasGroup.alpha = activeTab == Tab.Requests ? 1f : 0f;
+            
+            // Search content
+            if (searchContent != null) searchContent.SetActive(activeTab == Tab.Search);
+            if (searchContentCanvasGroup != null) searchContentCanvasGroup.alpha = activeTab == Tab.Search ? 1f : 0f;
+        }
+
+        /// <summary>
+        /// Loads initial data when panel opens.
+        /// </summary>
+        private async Task LoadInitialDataAsync()
+        {
+            SetLoading(true, "Loading...");
+
+            try
+            {
+                // Load friends and requests in parallel
+                var friendsTask = IVXFriendsService.GetFriendsAsync(_cts?.Token ?? default);
+                var requestsTask = IVXFriendsService.GetIncomingRequestsAsync(_cts?.Token ?? default);
+
+                await Task.WhenAll(friendsTask, requestsTask);
+
+                _friendsList = friendsTask.Result ?? new List<FriendInfo>();
+                _requestsList = requestsTask.Result ?? new List<FriendRequest>();
+
+                PopulateFriendsList();
+                UpdateRequestsBadge();
+            }
+            catch (OperationCanceledException)
+            {
+                // Ignore cancellation
+                Debug.Log("[IVXFriendsPanel] Initial load was cancelled.");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[IVXFriendsPanel] Initial load error: {ex.Message}");
+                ShowToast("Failed to load friends data", true);
+                
+                // Set empty lists on error
+                _friendsList = new List<FriendInfo>();
+                _requestsList = new List<FriendRequest>();
+            }
+            finally
+            {
+                SetLoading(false);
+            }
         }
 
         /// <summary>
@@ -224,6 +350,13 @@ namespace IntelliVerseX.Social.UI
             if (!_isOpen) return;
 
             _cts?.Cancel();
+            
+            // Hide toast and dialogs immediately
+            HideToast();
+            if (confirmDialog != null) confirmDialog.SetActive(false);
+            
+            // Kill loading animations
+            SetLoading(false);
 
             IVXFriendsAnimations.AnimatePanelClose(panelCanvasGroup, panelRectTransform, () =>
             {
@@ -234,6 +367,19 @@ namespace IntelliVerseX.Social.UI
                 _isOpen = false;
                 OnPanelClosed?.Invoke();
             });
+        }
+
+        /// <summary>
+        /// Forces a complete refresh of all data (friends and requests).
+        /// </summary>
+        public async void ForceRefreshAll()
+        {
+            if (!_isOpen) return;
+            
+            await LoadInitialDataAsync();
+            
+            // Also refresh current tab's data
+            RefreshCurrentTab();
         }
 
         /// <summary>
@@ -309,20 +455,33 @@ namespace IntelliVerseX.Social.UI
         {
             if (_currentTab == tab && _isOpen) return;
 
-            var outgoingCanvasGroup = GetTabCanvasGroup(_currentTab);
+            var previousTab = _currentTab;
+            var outgoingCanvasGroup = GetTabCanvasGroup(previousTab);
             var incomingCanvasGroup = GetTabCanvasGroup(tab);
+
+            // Kill any existing animations to prevent stacking
+            IVXFriendsAnimations.KillAnimations(outgoingCanvasGroup);
+            IVXFriendsAnimations.KillAnimations(incomingCanvasGroup);
+
+            // CRITICAL: Activate incoming content BEFORE animation so DOTween can find it
+            _currentTab = tab;
+            SetTabContentActive(tab, true);
+            
+            // Set initial alpha to 0 for fade-in effect (if DOTween is available)
+            if (incomingCanvasGroup != null)
+            {
+                incomingCanvasGroup.alpha = 0f;
+            }
+            
+            UpdateTabIndicators();
 
             IVXFriendsAnimations.AnimateTabSwitch(outgoingCanvasGroup, incomingCanvasGroup, () =>
             {
-                // Hide old content
-                SetTabContentActive(_currentTab, false);
-                
-                // Show new content
-                _currentTab = tab;
-                SetTabContentActive(tab, true);
-                UpdateTabIndicators();
-
-                // Load data for new tab
+                // Hide old content after animation starts
+                SetTabContentActive(previousTab, false);
+            }, () =>
+            {
+                // OnComplete: Load data for new tab
                 switch (tab)
                 {
                     case Tab.Friends:
@@ -404,8 +563,8 @@ namespace IntelliVerseX.Social.UI
             try
             {
                 // Load both in parallel
-                var friendsTask = IVXFriendsService.GetFriendsAsync(_cts.Token);
-                var requestsTask = IVXFriendsService.GetIncomingRequestsAsync(_cts.Token);
+                var friendsTask = IVXFriendsService.GetFriendsAsync(_cts?.Token ?? default);
+                var requestsTask = IVXFriendsService.GetIncomingRequestsAsync(_cts?.Token ?? default);
 
                 await Task.WhenAll(friendsTask, requestsTask);
 
@@ -515,7 +674,7 @@ namespace IntelliVerseX.Social.UI
             if (friendsEmptyText != null) friendsEmptyText.gameObject.SetActive(false);
             if (friendsCountText != null) friendsCountText.text = $"{_friendsList.Count} Friends";
 
-            int maxToShow = Mathf.Min(_friendsList.Count, _config.maxVisibleFriends);
+            int maxToShow = Mathf.Min(_friendsList.Count, MAX_VISIBLE_FRIENDS);
             for (int i = 0; i < maxToShow; i++)
             {
                 var slot = CreateSlot<IVXFriendSlot>(friendSlotPrefab, friendsListContainer);
@@ -652,20 +811,12 @@ namespace IntelliVerseX.Social.UI
         {
             Debug.Log($"[IVXFriendsPanel] SearchUsersAsync called with query='{query}'");
             
-            // Validate config first
-            if (_config == null)
-            {
-                Debug.LogError("[IVXFriendsPanel] Search error: _config is null!");
-                ShowToast("Configuration error", true);
-                return;
-            }
-            
             SetLoading(true, "Searching...");
 
             try
             {
                 Debug.Log($"[IVXFriendsPanel] Calling IVXFriendsService.SearchUsersAsync...");
-                _searchResults = await IVXFriendsService.SearchUsersAsync(query, _config.maxSearchResults, _cts?.Token ?? default) ?? new List<FriendSearchResult>();
+                _searchResults = await IVXFriendsService.SearchUsersAsync(query, MAX_SEARCH_RESULTS, _cts?.Token ?? default) ?? new List<FriendSearchResult>();
                 Debug.Log($"[IVXFriendsPanel] Search returned {_searchResults.Count} results.");
                 PopulateSearchResults();
             }
@@ -691,7 +842,7 @@ namespace IntelliVerseX.Social.UI
             var slot = _searchSlots.Find(s => s.GetSearchResult()?.userId == result.userId);
             if (slot != null) slot.SetLoadingState(true);
 
-            bool success = await IVXFriendsService.SendFriendRequestAsync(result.userId, null, _cts.Token);
+            bool success = await IVXFriendsService.SendFriendRequestAsync(result.userId, null, _cts?.Token ?? default);
 
             if (slot != null)
             {
@@ -710,7 +861,7 @@ namespace IntelliVerseX.Social.UI
             var slot = _requestSlots.Find(s => s.GetRequestData()?.requestId == request.requestId);
             if (slot != null) slot.SetLoadingState(true);
 
-            bool success = await IVXFriendsService.AcceptRequestAsync(request.requestId, _cts.Token);
+            bool success = await IVXFriendsService.AcceptRequestAsync(request.requestId, _cts?.Token ?? default);
 
             if (success)
             {
@@ -744,7 +895,7 @@ namespace IntelliVerseX.Social.UI
             var slot = _requestSlots.Find(s => s.GetRequestData()?.requestId == request.requestId);
             if (slot != null) slot.SetLoadingState(true);
 
-            bool success = await IVXFriendsService.RejectRequestAsync(request.requestId, _cts.Token);
+            bool success = await IVXFriendsService.RejectRequestAsync(request.requestId, _cts?.Token ?? default);
 
             if (success)
             {
@@ -774,7 +925,7 @@ namespace IntelliVerseX.Social.UI
                 {
                     var slot = _friendSlots.Find(s => s.GetFriendData()?.userId == friend.userId);
                     
-                    bool success = await IVXFriendsService.RemoveFriendAsync(friend.userId, _cts.Token);
+                    bool success = await IVXFriendsService.RemoveFriendAsync(friend.userId, _cts?.Token ?? default);
 
                     if (success)
                     {
@@ -806,7 +957,7 @@ namespace IntelliVerseX.Social.UI
                 {
                     var slot = _friendSlots.Find(s => s.GetFriendData()?.userId == friend.userId);
                     
-                    bool success = await IVXFriendsService.BlockUserAsync(friend.userId, null, _cts.Token);
+                    bool success = await IVXFriendsService.BlockUserAsync(friend.userId, null, _cts?.Token ?? default);
 
                     if (success)
                     {

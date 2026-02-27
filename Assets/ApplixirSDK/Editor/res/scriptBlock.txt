@@ -1,0 +1,27 @@
+<script type="text/javascript" src="https://cdn.applixir.com/applixir.app.v6.0.1.js"></script>
+<script type="text/javascript">
+      const options = { 
+        injectionElementId: "applixir-app",
+        apiKey: "{{APPLIXIR_API_KEY}}",
+        adStatusCallbackFn: (status) => {
+            window.adStatusCallbackX(status);
+        },
+        adErrorCallbackFn: (error) => {
+            window.adErrorCallbackX(error.getError().toString());
+        }
+      };
+
+      try {
+        window.ApplixirApp = new Application(options);
+      } catch (error) {
+        window.ApplixirApp = null;
+        console.error("Error creating Application:", error.message);
+      }
+      window.onload = () => {
+        if (window.ApplixirApp && typeof window.ApplixirApp.initialize === 'function') {
+            window.ApplixirApp.initialize();
+        } else {
+              console.error("ApplixirApp is not initialized properly.");
+        }
+      };
+</script>

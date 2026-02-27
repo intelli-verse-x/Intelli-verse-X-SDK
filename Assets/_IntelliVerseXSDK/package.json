@@ -1,6 +1,6 @@
 {
   "name": "com.intelliversex.sdk",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "displayName": "IntelliVerseX SDK",
   "description": "Complete modular game development SDK with 15+ packages: Core, Identity, Auth, Backend, Networking, Localization, Storage, Quiz, QuizUI, UI, Leaderboard, Social, Monetization (IAP, Ads), Analytics, and more. Battle-tested in production. Includes support for Nakama, Photon PUN2, DOTween, LevelPlay, Appodeal, AdMob, and more.",
   "unity": "2023.3",
@@ -61,7 +61,7 @@
     },
     {
       "displayName": "Test Scenes",
-      "description": "Pre-built test scenes for Ads, Auth, Leaderboard, Wallet, and Weekly Quiz",
+      "description": "Pre-built test scenes for Ads, Auth, Leaderboard, Wallet (dual-wallet system: game + global), Profile, and Weekly Quiz with Nakama integration",
       "path": "Samples~/TestScenes"
     },
     {

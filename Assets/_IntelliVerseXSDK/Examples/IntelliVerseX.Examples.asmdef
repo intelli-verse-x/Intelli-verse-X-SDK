@@ -1,16 +1,17 @@
 {
     "name": "IntelliVerseX.Examples",
     "rootNamespace": "IntelliVerseX.Examples",
-    "references": [
-        "IntelliVerseX.Core",
-        "IntelliVerseX.Backend",
-        "IntelliVerseX.V2",
-        "IntelliVerseX.Identity",
-        "IntelliVerseX.Localization",
-        "IntelliVerseX.Monetization",
-        "IntelliVerseX.Leaderboard",
-        "Unity.TextMeshPro"
-    ],
+"references": [
+    "IntelliVerseX.Core",
+    "IntelliVerseX.Backend",
+    "IntelliVerseX.V2",
+    "IntelliVerseX.Identity",
+    "IntelliVerseX.Localization",
+    "IntelliVerseX.Monetization",
+    "IntelliVerseX.Leaderboard",
+    "IntelliVerseX.Social",
+    "Unity.TextMeshPro"
+],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

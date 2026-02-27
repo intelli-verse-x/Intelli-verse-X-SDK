@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Intelli-verse-X-Unity-SDK.sln"
+    "dotnet.defaultSolution": "Intelli-verse-X-Unity-SDK.slnx"
 }

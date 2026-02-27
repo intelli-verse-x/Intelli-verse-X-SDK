@@ -298,7 +298,12 @@ namespace IntelliVerseX.Identity
 
         #endregion
 
-        #region Friend Management
+        #region Friend Management (DEPRECATED - Use IVXFriendsManager)
+        // ═══════════════════════════════════════════════════════════════════════
+        // DEPRECATED: All HTTP-based friend methods below are obsolete.
+        // Use IVXFriendsManager (Nakama native) instead.
+        // These methods will be removed in a future version.
+        // ═══════════════════════════════════════════════════════════════════════
 
         /// <summary>
         /// Get the user's friend list.
@@ -307,6 +312,7 @@ namespace IntelliVerseX.Identity
         /// <param name="query">Search query</param>
         /// <param name="ct">Cancellation token</param>
         /// <returns>List of friend data</returns>
+        [System.Obsolete("Use IVXFriendsManager.GetFriendsAsync() instead. HTTP friend APIs are deprecated.")]
         public static async Task<System.Collections.Generic.List<IVXModels.FriendData>> GetFriendsAsync(
             string status = "accepted",
             string query = null,
@@ -321,6 +327,7 @@ namespace IntelliVerseX.Identity
         /// </summary>
         /// <param name="ct">Cancellation token</param>
         /// <returns>List of pending friend requests</returns>
+        [System.Obsolete("Use IVXFriendsManager.GetPendingRequestsAsync() instead. HTTP friend APIs are deprecated.")]
         public static Task<System.Collections.Generic.List<IVXModels.FriendData>> GetPendingFriendRequestsAsync(
             CancellationToken ct = default)
         {
@@ -332,6 +339,7 @@ namespace IntelliVerseX.Identity
         /// </summary>
         /// <param name="ct">Cancellation token</param>
         /// <returns>List of accepted friends</returns>
+        [System.Obsolete("Use IVXFriendsManager.GetFriendsAsync() instead. HTTP friend APIs are deprecated.")]
         public static Task<System.Collections.Generic.List<IVXModels.FriendData>> GetAcceptedFriendsAsync(
             CancellationToken ct = default)
         {
@@ -344,6 +352,7 @@ namespace IntelliVerseX.Identity
         /// <param name="searchQuery">Search query (username, email, etc.)</param>
         /// <param name="ct">Cancellation token</param>
         /// <returns>List of matching users</returns>
+        [System.Obsolete("Use IVXFriendsManager.SearchUsersAsync() instead. HTTP friend APIs are deprecated.")]
         public static async Task<System.Collections.Generic.List<IVXModels.SearchUser>> SearchFriendsAsync(
             string searchQuery,
             CancellationToken ct = default)
@@ -357,6 +366,7 @@ namespace IntelliVerseX.Identity
         /// <param name="receiverUserId">User ID of the person to add</param>
         /// <param name="ct">Cancellation token</param>
         /// <returns>True if successful</returns>
+        [System.Obsolete("Use IVXFriendsManager.AddFriendByIdAsync() instead. HTTP friend APIs are deprecated.")]
         public static async Task<bool> SendFriendRequestAsync(
             string receiverUserId,
             CancellationToken ct = default)
@@ -370,6 +380,7 @@ namespace IntelliVerseX.Identity
         /// <param name="relationId">Relation ID of the friend request</param>
         /// <param name="ct">Cancellation token</param>
         /// <returns>True if successful</returns>
+        [System.Obsolete("Use IVXFriendsManager.AddFriendByIdAsync(userId) instead. HTTP friend APIs are deprecated. Use friend.User.Id not relationId.")]
         public static async Task<bool> AcceptFriendRequestAsync(
             string relationId,
             CancellationToken ct = default)
@@ -383,6 +394,7 @@ namespace IntelliVerseX.Identity
         /// <param name="relationId">Relation ID of the friend request</param>
         /// <param name="ct">Cancellation token</param>
         /// <returns>True if successful</returns>
+        [System.Obsolete("Use IVXFriendsManager.RemoveFriendAsync(userId) instead. HTTP friend APIs are deprecated. Use friend.User.Id not relationId.")]
         public static async Task<bool> RejectFriendRequestAsync(
             string relationId,
             CancellationToken ct = default)
@@ -396,6 +408,7 @@ namespace IntelliVerseX.Identity
         /// <param name="relationId">Relation ID of the friend to remove</param>
         /// <param name="ct">Cancellation token</param>
         /// <returns>True if successful</returns>
+        [System.Obsolete("Use IVXFriendsManager.RemoveFriendAsync(userId) instead. HTTP friend APIs are deprecated. Use friend.User.Id not relationId.")]
         public static async Task<bool> RemoveFriendAsync(
             string relationId,
             CancellationToken ct = default)

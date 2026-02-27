@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // IVXWebGLMonetizationSettings. cs
 // ScriptableObject configuration for WebGL Monetization
 // 
@@ -14,6 +14,9 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace IntelliVerseX.Monetization
 {
@@ -55,22 +58,27 @@ namespace IntelliVerseX.Monetization
         [Tooltip("Enable decompression fallback for older browsers")]
         public bool enableDecompressionFallback = true;
 
+#if UNITY_EDITOR
         [Tooltip("Compression format for WebGL build")]
         public WebGLCompressionFormat compressionFormat = WebGLCompressionFormat.Brotli;
+#endif
 
         [Tooltip("Enable WebAssembly streaming for faster load times")]
         public bool enableWasmStreaming = true;
 
+#if UNITY_EDITOR
         [Tooltip("Managed code stripping level (higher = smaller build)")]
         public ManagedStrippingLevel strippingLevel = ManagedStrippingLevel.High;
+#endif
 
         #endregion
 
         #region Game Orientation
 
         [Header("=== Game Orientation ===")]
-        [Tooltip("Primary game orientation")]
-        public GameOrientation gameOrientation = GameOrientation.Portrait;
+        [Tooltip("Primary game orientation (0=Portrait, 1=Landscape, 2=Auto)")]
+        [Range(0, 2)]
+        public int gameOrientationValue = 0;
 
         [Tooltip("Show rotate device overlay when in wrong orientation")]
         public bool showRotateOverlay = true;
@@ -710,7 +718,7 @@ namespace IntelliVerseX.Monetization
                 // Engagement
                 autoFullscreen = this.autoFullscreen,
                 idlePromptSeconds = this.idlePromptSeconds,
-                gameOrientation = this.gameOrientation,
+                gameOrientation = (GameOrientation)this.gameOrientationValue,
                 autoPauseOnHidden = this.autoPauseOnHidden
             };
         }

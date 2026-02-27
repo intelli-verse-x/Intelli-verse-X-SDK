@@ -121,6 +121,32 @@ namespace IntelliVerseX.Core
         [Tooltip("Unity Ads Banner Placement ID")]
         public string unityAdsBannerPlacement = "Banner_iOS";
 
+        [Header("WebGL / AppLixir (Only for WebGL builds)")]
+        [Tooltip("Enable AppLixir for WebGL rewarded ads")]
+        public bool enableAppLixir = true;
+
+        [Tooltip("AppLixir Zone ID (get from AppLixir dashboard)")]
+        public string appLixirZoneId = "";
+
+        [Tooltip("Enable AppLixir test mode")]
+        public bool appLixirTestMode = false;
+
+        [Tooltip("AppLixir ad cooldown in seconds")]
+        public int appLixirCooldown = 60;
+
+        [Tooltip("Skip button delay in seconds (0 = no skip)")]
+        public int appLixirSkipDelay = 5;
+
+        [Header("WebGL / AdSense (Only for WebGL builds)")]
+        [Tooltip("Enable AdSense for WebGL display ads")]
+        public bool enableAdSense = false;
+
+        [Tooltip("AdSense Publisher ID (ca-pub-XXXXXXXX)")]
+        public string adSensePublisherId = "";
+
+        [Tooltip("AdSense Banner Slot ID")]
+        public string adSenseBannerSlotId = "";
+
         [Header("Ad Settings")]
         [Tooltip("Enable ad mediation (waterfall)")]
         public bool enableMediation = true;
@@ -138,7 +164,7 @@ namespace IntelliVerseX.Core
         public bool testMode = false;
 
         [Header("Consent & Privacy")]
-        [Tooltip("Enable GDPR consent flow")]
+        [Tooltip("Enable GDPR consent flow (UMP SDK)")]
         public bool enableGDPRConsent = true;
 
         [Tooltip("Enable CCPA compliance")]
@@ -146,6 +172,9 @@ namespace IntelliVerseX.Core
 
         [Tooltip("Enable COPPA for child-directed apps")]
         public bool enableCOPPA = false;
+
+        [Tooltip("Test device IDs for UMP consent debugging")]
+        public string[] umpTestDeviceIds = new string[0];
 
         #region Platform-Specific Getters
 
@@ -271,6 +300,33 @@ namespace IntelliVerseX.Core
 
         #endregion
 
+        #region WebGL Getters
+
+        /// <summary>
+        /// Get AppLixir zone ID
+        /// </summary>
+        public string GetAppLixirZoneId() => appLixirZoneId;
+
+        /// <summary>
+        /// Get AdSense publisher ID
+        /// </summary>
+        public string GetAdSensePublisherId() => adSensePublisherId;
+
+        /// <summary>
+        /// Get AdSense banner slot ID
+        /// </summary>
+        public string GetAdSenseBannerSlotId() => adSenseBannerSlotId;
+
+        /// <summary>
+        /// Check if WebGL ads are configured
+        /// </summary>
+        public bool IsWebGLConfigured()
+        {
+            return enableAppLixir && !string.IsNullOrEmpty(appLixirZoneId);
+        }
+
+        #endregion
+
         #region Validation
 
         /// <summary>
@@ -279,6 +335,16 @@ namespace IntelliVerseX.Core
         public bool Validate(out string error)
         {
             error = null;
+
+            // WebGL validation
+#if UNITY_WEBGL
+            if (enableAppLixir && string.IsNullOrEmpty(appLixirZoneId))
+            {
+                error = "AppLixir Zone ID is required for WebGL builds";
+                return false;
+            }
+            return true;
+#endif
 
             if (primaryNetwork == IVXAdNetwork.None)
             {
@@ -323,6 +389,25 @@ namespace IntelliVerseX.Core
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Get a summary of the ads configuration for logging
+        /// </summary>
+        public string GetConfigSummary()
+        {
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine("=== IVX Ads Config Summary ===");
+            sb.AppendLine($"Primary Network: {primaryNetwork}");
+            sb.AppendLine($"Fallback Network: {fallbackNetwork}");
+            sb.AppendLine($"Test Mode: {testMode}");
+            sb.AppendLine($"GDPR Consent: {enableGDPRConsent}");
+            sb.AppendLine($"COPPA: {enableCOPPA}");
+#if UNITY_WEBGL
+            sb.AppendLine($"AppLixir: {enableAppLixir} (Zone: {appLixirZoneId})");
+            sb.AppendLine($"AdSense: {enableAdSense}");
+#endif
+            return sb.ToString();
         }
 
         #endregion

@@ -1,6 +1,6 @@
 // File: IVXSDKSetupWizard.cs
 // Purpose: Comprehensive Unified SDK Setup Wizard for IntelliVerseX SDK
-// Version: 4.0.0
+// Version: 5.0.0
 // Author: IntelliVerseX Team
 // Description: Single unified panel for ALL SDK module setup including Auth, Friends, Monetization, Platform Validation, etc.
 // Note: Supports both development (Assets/_IntelliVerseXSDK) and UPM package (Packages/com.intelliversex.sdk) installations.
@@ -29,7 +29,7 @@ namespace IntelliVerseX.Editor
         #region Constants
 
         private const string WINDOW_TITLE = "IntelliVerseX SDK Setup";
-        private const string SDK_VERSION = "4.0.0";
+        private const string SDK_VERSION = "5.0.0";
         private const string PACKAGE_NAME = "com.intelliversex.sdk";
         
         // Version check URLs
@@ -1991,19 +1991,17 @@ namespace IntelliVerseX.Editor
 
             // Store button states to process actions after layout
             bool createConfig = false;
-            bool createPrefabs = false;
             bool addToScene = false;
-            bool createDemoScene = false;
+            bool openDemoScene = false;
             bool editConfig = false;
 
             EditorGUILayout.BeginHorizontal();
             createConfig = GUILayout.Button("Create Auth Config", GUILayout.Height(25));
-            createPrefabs = GUILayout.Button("Create Auth Prefabs", GUILayout.Height(25));
+            addToScene = GUILayout.Button("Add Auth Canvas to Scene", GUILayout.Height(25));
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
-            addToScene = GUILayout.Button("Add Auth Canvas to Scene", GUILayout.Height(25));
-            createDemoScene = GUILayout.Button("Create Auth Demo Scene", GUILayout.Height(25));
+            openDemoScene = GUILayout.Button("Open Auth Demo Scene", GUILayout.Height(25));
             EditorGUILayout.EndHorizontal();
 
             // Auth Config Quick Settings
@@ -2021,9 +2019,8 @@ namespace IntelliVerseX.Editor
 
             // Process button actions after all GUI layout is complete
             if (createConfig) EditorApplication.delayCall += CreateAuthConfig;
-            if (createPrefabs) EditorApplication.delayCall += CreateAuthPrefabs;
             if (addToScene) EditorApplication.delayCall += AddAuthCanvasToScene;
-            if (createDemoScene) CreateAuthDemoScene();
+            if (openDemoScene) OpenDemoScene("IVX_AuthTest");
             if (editConfig && authConfig != null) Selection.activeObject = authConfig;
         }
 
@@ -2034,19 +2031,17 @@ namespace IntelliVerseX.Editor
 
             // Store button states to process actions after layout
             bool createConfig = false;
-            bool createPrefabs = false;
             bool addToScene = false;
-            bool createDemoScene = false;
+            bool openDemoScene = false;
             bool openDOTweenStore = false;
 
             EditorGUILayout.BeginHorizontal();
             createConfig = GUILayout.Button("Create Friends Config", GUILayout.Height(25));
-            createPrefabs = GUILayout.Button("Create Slot Prefabs", GUILayout.Height(25));
+            addToScene = GUILayout.Button("Add Friends UI to Scene", GUILayout.Height(25));
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
-            addToScene = GUILayout.Button("Add Friends UI to Scene", GUILayout.Height(25));
-            createDemoScene = GUILayout.Button("Create Friends Demo Scene", GUILayout.Height(25));
+            openDemoScene = GUILayout.Button("Open Friends Demo Scene", GUILayout.Height(25));
             EditorGUILayout.EndHorizontal();
 
             // DOTween Check
@@ -2063,9 +2058,8 @@ namespace IntelliVerseX.Editor
 
             // Process button actions after all GUI layout is complete
             if (createConfig) EditorApplication.delayCall += CreateFriendsConfig;
-            if (createPrefabs) EditorApplication.delayCall += CreateFriendsPrefabs;
             if (addToScene) EditorApplication.delayCall += AddFriendsUIToScene;
-            if (createDemoScene) CreateFriendsDemoScene();
+            if (openDemoScene) OpenDemoScene("IVX_Friends");
             if (openDOTweenStore) Application.OpenURL("https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676");
         }
 
@@ -2129,15 +2123,14 @@ namespace IntelliVerseX.Editor
 
             EditorGUILayout.BeginHorizontal();
             
-            bool createPrefabs = GUILayout.Button("Create Prefabs", GUILayout.Height(25));
             bool addToScene = GUILayout.Button("Add to Scene", GUILayout.Height(25));
+            bool validateSetup = GUILayout.Button("Validate Setup", GUILayout.Height(25));
 
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
-
-            bool validateSetup = GUILayout.Button("Validate Setup", GUILayout.Height(25));
-            bool createTestScene = GUILayout.Button("Create Test Scene", GUILayout.Height(25));
+            
+            bool openTestScene = GUILayout.Button("Open Wallet Test Scene", GUILayout.Height(25));
 
             EditorGUILayout.EndHorizontal();
 
@@ -2180,11 +2173,6 @@ namespace IntelliVerseX.Editor
             }
 
             // Process button actions after all GUI layout is complete
-            if (createPrefabs)
-            {
-                EditorApplication.delayCall += CreateWalletPrefabs;
-            }
-            
             if (addToScene)
             {
                 EditorApplication.delayCall += SetupWalletUI;
@@ -2205,9 +2193,9 @@ namespace IntelliVerseX.Editor
                 };
             }
             
-            if (createTestScene)
+            if (openTestScene)
             {
-                EditorApplication.delayCall += CreateWalletTestScene;
+                OpenDemoScene("IVX_WalletTest");
             }
         }
 
@@ -2218,7 +2206,6 @@ namespace IntelliVerseX.Editor
 
             EditorGUILayout.BeginHorizontal();
             
-            bool createPrefabs = GUILayout.Button("Create Prefabs", GUILayout.Height(25));
             bool addShareToScene = GUILayout.Button("Add Share", GUILayout.Height(25));
             bool addRateToScene = GUILayout.Button("Add Rate App", GUILayout.Height(25));
 
@@ -2263,11 +2250,6 @@ namespace IntelliVerseX.Editor
             }
 
             // Process button actions after all GUI layout is complete
-            if (createPrefabs)
-            {
-                EditorApplication.delayCall += CreateSocialPrefabs;
-            }
-            
             if (addShareToScene)
             {
                 EditorApplication.delayCall += AddShareToScene;
@@ -2286,15 +2268,14 @@ namespace IntelliVerseX.Editor
 
             EditorGUILayout.BeginHorizontal();
             
-            bool createPrefabs = GUILayout.Button("Create Prefabs", GUILayout.Height(25));
             bool addToScene = GUILayout.Button("Add to Scene", GUILayout.Height(25));
+            bool validateSetup = GUILayout.Button("Validate Setup", GUILayout.Height(25));
 
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
 
-            bool validateSetup = GUILayout.Button("Validate Setup", GUILayout.Height(25));
-            bool createTestScene = GUILayout.Button("Create Test Scene", GUILayout.Height(25));
+            bool openTestScene = GUILayout.Button("Open Leaderboard Test Scene", GUILayout.Height(25));
 
             EditorGUILayout.EndHorizontal();
 
@@ -2337,11 +2318,6 @@ namespace IntelliVerseX.Editor
             }
 
             // Process button actions after all GUI layout is complete
-            if (createPrefabs)
-            {
-                EditorApplication.delayCall += CreateLeaderboardPrefabs;
-            }
-            
             if (addToScene)
             {
                 EditorApplication.delayCall += SetupLeaderboardUI;
@@ -2362,32 +2338,10 @@ namespace IntelliVerseX.Editor
                 };
             }
             
-            if (createTestScene)
+            if (openTestScene)
             {
-                EditorApplication.delayCall += CreateLeaderboardTestScene;
+                OpenDemoScene("IVX_LeaderboardTest");
             }
-        }
-
-        private void CreateLeaderboardPrefabs()
-        {
-            var builderType = GetTypeByName("IntelliVerseX.Games.Leaderboard.Editor.IVXGLeaderboardPrefabBuilder");
-            if (builderType != null)
-            {
-                var createAllMethod = builderType.GetMethod("CreateAllPrefabs",
-                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-
-                if (createAllMethod != null)
-                {
-                    createAllMethod.Invoke(null, null);
-                    CheckLeaderboardModule();
-                    return;
-                }
-            }
-
-            Debug.LogWarning("[IVXSDKSetupWizard] IVXGLeaderboardPrefabBuilder not found");
-            EditorUtility.DisplayDialog("Error",
-                "Leaderboard Prefab Builder not found.\n\nMake sure the leaderboard module is properly installed.",
-                "OK");
         }
 
         #endregion
@@ -2466,50 +2420,37 @@ namespace IntelliVerseX.Editor
             EditorGUILayout.BeginVertical(moduleBoxStyle);
             EditorGUILayout.LabelField("UI Prefabs", EditorStyles.boldLabel);
             EditorGUILayout.LabelField(
-                "Create production-ready UI prefabs with Netflix-style hover animations and carousel scrolling.",
+                "Add pre-built UI prefabs with Netflix-style hover animations and carousel scrolling.",
                 EditorStyles.wordWrappedMiniLabel);
 
             EditorGUILayout.Space(10);
             EditorGUILayout.BeginHorizontal();
 
             GUI.backgroundColor = accentColor;
-            if (GUILayout.Button("Build All Prefabs", GUILayout.Height(35)))
-            {
-                try
-                {
-                    // Call the prefab builder
-                    var builderType = System.Type.GetType("IntelliVerseX.MoreOfUs.Editor.IVXMoreOfUsPrefabBuilder, IntelliVerseX.MoreOfUs.Editor");
-                    if (builderType != null)
-                    {
-                        var method = builderType.GetMethod("BuildAllPrefabs", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-                        method?.Invoke(null, null);
-                    }
-                    else
-                    {
-                        EditorUtility.DisplayDialog("Info", "Please ensure the MoreOfUs assembly is compiled first.", "OK");
-                    }
-                }
-                catch (System.Exception ex)
-                {
-                    Debug.LogError($"[IVXSDKSetupWizard] Failed to build More Of Us prefabs: {ex.Message}");
-                    EditorUtility.DisplayDialog("Error", $"Failed to build prefabs: {ex.Message}", "OK");
-                }
-            }
-            GUI.backgroundColor = Color.white;
-
             if (GUILayout.Button("Add To Scene", GUILayout.Height(35)))
             {
                 try
                 {
-                    var builderType = System.Type.GetType("IntelliVerseX.MoreOfUs.Editor.IVXMoreOfUsPrefabBuilder, IntelliVerseX.MoreOfUs.Editor");
-                    if (builderType != null)
+                    // Load MoreOfUs prefab from SDK
+                    var moreOfUsPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(SDK_ROOT + "/MoreOfUs/Prefabs/IVXGMoreOfUsCanvas.prefab");
+                    if (moreOfUsPrefab != null && GameObject.Find("IVXGMoreOfUsCanvas") == null)
                     {
-                        var method = builderType.GetMethod("AddToCurrentScene", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-                        method?.Invoke(null, null);
+                        var instance = PrefabUtility.InstantiatePrefab(moreOfUsPrefab) as GameObject;
+                        if (instance != null)
+                        {
+                            Undo.RegisterCreatedObjectUndo(instance, "Add More Of Us Canvas");
+                            Selection.activeGameObject = instance;
+                            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+                            Debug.Log("[IVXSDKSetupWizard] Added More Of Us Canvas to scene");
+                        }
+                    }
+                    else if (GameObject.Find("IVXGMoreOfUsCanvas") != null)
+                    {
+                        EditorUtility.DisplayDialog("Info", "More Of Us Canvas already exists in scene.", "OK");
                     }
                     else
                     {
-                        EditorUtility.DisplayDialog("Info", "Please ensure the MoreOfUs assembly is compiled first.", "OK");
+                        EditorUtility.DisplayDialog("Info", "More Of Us prefab not found at: " + SDK_ROOT + "/MoreOfUs/Prefabs/IVXGMoreOfUsCanvas.prefab", "OK");
                     }
                 }
                 catch (System.Exception ex)
@@ -2518,6 +2459,7 @@ namespace IntelliVerseX.Editor
                     EditorUtility.DisplayDialog("Error", $"Failed to add to scene: {ex.Message}", "OK");
                 }
             }
+            GUI.backgroundColor = Color.white;
 
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndVertical();
@@ -2996,49 +2938,49 @@ namespace IntelliVerseX.Editor
 
         private void DrawTestScenesTab()
         {
-            EditorGUILayout.LabelField("Test Scene Creator", subHeaderStyle ?? EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Demo Scenes", subHeaderStyle ?? EditorStyles.boldLabel);
             EditorGUILayout.HelpBox(
-                "Create test scenes to manually verify each SDK feature. " +
-                "Each scene includes the necessary prefabs and a simple UI to test functionality.",
+                "Demo scenes are included with the SDK to test each feature. " +
+                "These scenes contain pre-configured prefabs and UI to verify SDK functionality.",
                 MessageType.Info);
 
             EditorGUILayout.Space(10);
 
-            DrawTestSceneButton("🏠 Home Screen Test Scene",
+            DrawTestSceneButton("🏠 Home Screen Demo",
                 "Central home for navigating all IVX feature test scenes",
-                "IVX_Homescreen",
-                CreateHomeScreenTestScene);
+                "IVX_HomeScreen",
+                null);
 
             // Test Scene Buttons
-            DrawTestSceneButton("🔐 Auth Test Scene",
+            DrawTestSceneButton("🔐 Auth Demo Scene",
                 "Test login, register, OTP, guest, and social auth flows",
                 "IVX_AuthTest",
-                CreateAuthTestScene);
+                null);
 
-            DrawTestSceneButton("👥 Friends Test Scene",
+            DrawTestSceneButton("👥 Friends Demo Scene",
                 "Test friend list, requests, search, and social features",
-                "IVX_FriendsTest",
-                CreateFriendsTestScene);
+                "IVX_Friends",
+                null);
 
-            DrawTestSceneButton("💰 Wallet Test Scene",
+            DrawTestSceneButton("💰 Wallet Demo Scene",
                 "Test wallet display, balance updates, and transactions",
                 "IVX_WalletTest",
-                CreateWalletTestScene);
+                null);
 
-            DrawTestSceneButton("🏆 Leaderboard Test Scene",
+            DrawTestSceneButton("🏆 Leaderboard Demo Scene",
                 "Test leaderboard display, score submission, and rankings",
                 "IVX_LeaderboardTest",
-                CreateLeaderboardTestScene);
+                null);
 
-            DrawTestSceneButton("📺 Ads Test Scene",
+            DrawTestSceneButton("📺 Ads Demo Scene",
                 "Test ad loading, display, and reward callbacks",
                 "IVX_AdsTest",
-                CreateAdsTestScene);
+                null);
 
-            DrawTestSceneButton("🎮 Full Integration Test",
-                "Complete test scene with all SDK features",
-                "IVX_FullTest",
-                CreateFullTestScene);
+            DrawTestSceneButton("📤 Share & Rate Demo Scene",
+                "Test share and rate features",
+                "IVX_Share&RateUs",
+                null);
 
             EditorGUILayout.Space(10);
 
@@ -3061,11 +3003,6 @@ namespace IntelliVerseX.Editor
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
-
-            if (GUILayout.Button("Setup Home Navigation For All", GUILayout.Height(25)))
-            {
-                EditorApplication.ExecuteMenuItem("IntelliVerse-X SDK/Tools/Test Scenes/Setup Home Navigation");
-            }
 
             if (GUILayout.Button("Re-import To Consumer Assets", GUILayout.Height(25)))
             {
@@ -3094,7 +3031,7 @@ namespace IntelliVerseX.Editor
             EditorGUILayout.BeginHorizontal();
 
             EditorGUILayout.BeginVertical();
-            EditorGUILayout.LabelField(title + (sceneExists ? " [OK]" : ""), EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(title + (sceneExists ? " ✓" : " ✗"), EditorStyles.boldLabel);
             EditorGUILayout.LabelField(description, EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.EndVertical();
 
@@ -3130,11 +3067,10 @@ namespace IntelliVerseX.Editor
             }
             else
             {
-                if (GUILayout.Button("Create", GUILayout.Height(52)))
-                {
-                    // Use delayCall to avoid GUI layout issues when creating scenes
-                    EditorApplication.delayCall += () => createAction?.Invoke();
-                }
+                // Scene not found - show disabled state
+                GUI.enabled = false;
+                GUILayout.Button("Not Found", GUILayout.Height(52));
+                GUI.enabled = true;
             }
 
             EditorGUILayout.EndVertical();
@@ -3706,7 +3642,6 @@ namespace IntelliVerseX.Editor
         private void SetupAuthModule()
         {
             CreateAuthConfig();
-            CreateAuthPrefabs();
             CheckAuthModule();
             Debug.Log("[IVXSDKSetupWizard] Auth module setup complete");
         }
@@ -3714,7 +3649,6 @@ namespace IntelliVerseX.Editor
         private void SetupFriendsModule()
         {
             CreateFriendsConfig();
-            CreateFriendsPrefabs();
             CheckFriendsModule();
             Debug.Log("[IVXSDKSetupWizard] Friends module setup complete");
         }
@@ -3811,105 +3745,6 @@ namespace IntelliVerseX.Editor
 
         #endregion
 
-        #region Prefab Creation
-
-        private void CreateAuthPrefabs()
-        {
-            GameObject canvas = null;
-            try
-            {
-                // Use writable path (handles both UPM and dev installs)
-                string prefabPath = WRITABLE_AUTH_PREFABS_PATH;
-                EnsureDirectoryExists(prefabPath);
-                
-                Debug.Log($"[IVXSDKSetupWizard] Creating Auth prefabs at writable path: {prefabPath}");
-
-                var builderType = GetTypeByName("IntelliVerseX.Auth.Editor.IVXAuthPrefabBuilder");
-                if (builderType != null)
-                {
-                    // Try the new method with path parameter first
-                    var createMethodWithPath = builderType.GetMethod("CreateAuthCanvasPrefabAtPath",
-                        System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-                    
-                    if (createMethodWithPath != null)
-                    {
-                        createMethodWithPath.Invoke(null, new object[] { prefabPath });
-                        AssetDatabase.Refresh();
-                        Debug.Log($"[IVXSDKSetupWizard] Created Auth prefab at: {prefabPath}/IVX_AuthCanvas.prefab");
-                        return;
-                    }
-                    
-                    // Fallback to old method
-                    var createMethod = builderType.GetMethod("CreateAuthCanvasPrefab",
-                        System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-
-                    if (createMethod != null)
-                    {
-                        canvas = createMethod.Invoke(null, null) as GameObject;
-                        if (canvas != null)
-                        {
-                            var fullPrefabPath = prefabPath + "/IVX_AuthCanvas.prefab";
-                            PrefabUtility.SaveAsPrefabAsset(canvas, fullPrefabPath);
-                            DestroyImmediate(canvas);
-                            canvas = null;
-                            AssetDatabase.Refresh();
-                            Debug.Log($"[IVXSDKSetupWizard] Created Auth prefab at: {fullPrefabPath}");
-                        }
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning("[IVXSDKSetupWizard] IVXAuthPrefabBuilder not found");
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[IVXSDKSetupWizard] Auth prefab creation failed: {ex.Message}\n{ex.StackTrace}");
-                
-                // Clean up any partially created objects
-                if (canvas != null)
-                {
-                    try { DestroyImmediate(canvas); } catch { }
-                }
-            }
-        }
-
-        private void CreateFriendsPrefabs()
-        {
-            try
-            {
-                // Use writable path (handles both UPM and dev installs)
-                string prefabPath = WRITABLE_SOCIAL_PREFABS_PATH;
-                EnsureDirectoryExists(prefabPath);
-                
-                Debug.Log($"[IVXSDKSetupWizard] Creating Friends prefabs at writable path: {prefabPath}");
-
-                var builderType = GetTypeByName("IntelliVerseX.Social.Editor.IVXFriendsPrefabBuilder");
-                if (builderType != null)
-                {
-                    var saveMethod = builderType.GetMethod("SavePrefabs",
-                        System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-
-                    if (saveMethod != null)
-                    {
-                        saveMethod.Invoke(null, new object[] { prefabPath });
-                        AssetDatabase.Refresh();
-                        Debug.Log($"[IVXSDKSetupWizard] Created Friends prefabs at: {prefabPath}");
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning("[IVXSDKSetupWizard] IVXFriendsPrefabBuilder not found");
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[IVXSDKSetupWizard] Friends prefab creation failed: {ex.Message}\n{ex.StackTrace}");
-            }
-        }
-
-        #endregion
-
         #region Scene Actions
 
         private void AddManagersToCurrentScene()
@@ -3973,13 +3808,11 @@ namespace IntelliVerseX.Editor
             else
             {
                 // Auth Canvas prefab doesn't exist - show guidance
-                Debug.LogWarning("[IVXSDKSetupWizard] Auth Canvas prefab not found. Auth module may not be fully set up.");
-                EditorUtility.DisplayDialog("Auth Setup Required",
-                    "The Auth Canvas prefab doesn't exist yet.\n\n" +
-                    "To set up authentication:\n" +
-                    "1. Ensure the Auth module files exist in Assets/_IntelliVerseXSDK/Auth/\n" +
-                    "2. Use 'Create Auth Prefabs' button to generate prefabs\n" +
-                    "3. Or manually create an Auth Canvas with IVXCanvasAuth component",
+                Debug.LogWarning("[IVXSDKSetupWizard] Auth Canvas prefab not found.");
+                EditorUtility.DisplayDialog("Auth Canvas Missing",
+                    "The Auth Canvas prefab was not found.\n\n" +
+                    "Check that the SDK's Auth prefabs are properly installed at:\n" +
+                    AUTH_PREFABS_PATH,
                     "OK");
             }
         }
@@ -3998,23 +3831,32 @@ namespace IntelliVerseX.Editor
                 }
             }
 
-            var builderType = GetTypeByName("IntelliVerseX.Social.Editor.IVXFriendsPrefabBuilder");
-            if (builderType != null)
+            // Load Friends Panel prefab from SDK
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(SOCIAL_PREFABS_PATH + "/IVX_FriendsPanel.prefab");
+            if (prefab == null)
             {
-                var createMethod = builderType.GetMethod("CreateFriendsCanvas",
-                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-
-                if (createMethod != null)
+                // Try alternate path
+                prefab = AssetDatabase.LoadAssetAtPath<GameObject>(SDK_ROOT + "/Social/Prefabs/IVX_FriendsPanel.prefab");
+            }
+            
+            if (prefab != null)
+            {
+                var instance = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+                if (instance != null)
                 {
-                    var canvas = createMethod.Invoke(null, new object[] { null }) as GameObject;
-                    if (canvas != null)
-                    {
-                        Undo.RegisterCreatedObjectUndo(canvas, "Add Friends Canvas");
-                        Selection.activeGameObject = canvas;
-                        EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
-                        Debug.Log("[IVXSDKSetupWizard] Added Friends Canvas to scene");
-                    }
+                    Undo.RegisterCreatedObjectUndo(instance, "Add Friends Panel");
+                    Selection.activeGameObject = instance;
+                    EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+                    Debug.Log("[IVXSDKSetupWizard] Added Friends Panel to scene");
                 }
+            }
+            else
+            {
+                Debug.LogWarning("[IVXSDKSetupWizard] Friends Panel prefab not found.");
+                EditorUtility.DisplayDialog("Friends Panel Missing",
+                    "The Friends Panel prefab was not found.\n\n" +
+                    "Check that the SDK's Social prefabs are properly installed.",
+                    "OK");
             }
         }
 
@@ -4390,120 +4232,73 @@ namespace IntelliVerseX.Editor
                 "OK");
         }
 
-        private void CreateWalletPrefabs()
-        {
-            var builderType = GetTypeByName("IntelliVerseX.Games.Wallet.Editor.IVXGWalletPrefabBuilder");
-            if (builderType != null)
-            {
-                var createAllMethod = builderType.GetMethod("CreateAllPrefabs",
-                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-
-                if (createAllMethod != null)
-                {
-                    createAllMethod.Invoke(null, null);
-                    CheckWalletModule();
-                    return;
-                }
-            }
-
-            Debug.LogWarning("[IVXSDKSetupWizard] IVXGWalletPrefabBuilder not found");
-            EditorUtility.DisplayDialog("Error",
-                "Wallet Prefab Builder not found.\n\nMake sure the wallet module is properly installed.",
-                "OK");
-        }
-
         private void SetupSocialFeatures()
         {
             AddShareToScene();
             AddRateAppToScene();
         }
 
-        private void CreateSocialPrefabs()
-        {
-            var builderType = GetTypeByName("IntelliVerseX.Games.Social.Editor.IVXGSocialPrefabBuilder");
-            if (builderType != null)
-            {
-                var createAllMethod = builderType.GetMethod("CreateAllPrefabs",
-                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-
-                if (createAllMethod != null)
-                {
-                    createAllMethod.Invoke(null, null);
-                    CheckSocialModule();
-                    return;
-                }
-            }
-
-            Debug.LogWarning("[IVXSDKSetupWizard] IVXGSocialPrefabBuilder not found");
-        }
-
         private void AddShareToScene()
         {
-            var builderType = GetTypeByName("IntelliVerseX.Games.Social.Editor.IVXGSocialPrefabBuilder");
-            if (builderType != null)
+            // Load Share prefab from SDK
+            var sharePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(SDK_ROOT + "/Social/Prefabs/IVXGShareManager.prefab");
+            if (sharePrefab != null && GameObject.Find("IVXGShareManager") == null)
             {
-                var addMethod = builderType.GetMethod("AddShareToScene",
-                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-
-                if (addMethod != null)
+                var instance = PrefabUtility.InstantiatePrefab(sharePrefab) as GameObject;
+                if (instance != null)
                 {
-                    addMethod.Invoke(null, null);
+                    Undo.RegisterCreatedObjectUndo(instance, "Add Share Manager");
+                    Selection.activeGameObject = instance;
+                    EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+                    Debug.Log("[IVXSDKSetupWizard] Added Share Manager to scene");
                     CheckSocialModule();
                     return;
                 }
             }
-
-            Debug.LogWarning("[IVXSDKSetupWizard] IVXGSocialPrefabBuilder not found");
+            
+            Debug.LogWarning("[IVXSDKSetupWizard] Share Manager prefab not found or already exists");
         }
 
         private void AddRateAppToScene()
         {
-            var builderType = GetTypeByName("IntelliVerseX.Games.Social.Editor.IVXGSocialPrefabBuilder");
-            if (builderType != null)
+            // Load Rate App prefab from SDK
+            var ratePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(SDK_ROOT + "/Social/Prefabs/IVXGRateAppManager.prefab");
+            if (ratePrefab != null && GameObject.Find("IVXGRateAppManager") == null)
             {
-                var addMethod = builderType.GetMethod("AddRateAppToScene",
-                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-
-                if (addMethod != null)
+                var instance = PrefabUtility.InstantiatePrefab(ratePrefab) as GameObject;
+                if (instance != null)
                 {
-                    addMethod.Invoke(null, null);
+                    Undo.RegisterCreatedObjectUndo(instance, "Add Rate App Manager");
+                    Selection.activeGameObject = instance;
+                    EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+                    Debug.Log("[IVXSDKSetupWizard] Added Rate App Manager to scene");
                     CheckSocialModule();
                     return;
                 }
             }
-
-            Debug.LogWarning("[IVXSDKSetupWizard] IVXGSocialPrefabBuilder not found");
+            
+            Debug.LogWarning("[IVXSDKSetupWizard] Rate App Manager prefab not found or already exists");
         }
 
         private void SetupLeaderboardUI()
         {
-            // Try to use the prefab builder
-            var builderType = GetTypeByName("IntelliVerseX.Games.Leaderboard.Editor.IVXGLeaderboardPrefabBuilder");
-            if (builderType != null)
+            // Load Leaderboard prefab from SDK
+            var leaderboardPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(SDK_ROOT + "/Leaderboard/Prefabs/IVXGLeaderboardCanvas.prefab");
+            if (leaderboardPrefab != null && GameObject.Find("IVXGLeaderboardCanvas") == null)
             {
-                var addToSceneMethod = builderType.GetMethod("AddLeaderboardToScene",
-                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-
-                if (addToSceneMethod != null)
+                var instance = PrefabUtility.InstantiatePrefab(leaderboardPrefab) as GameObject;
+                if (instance != null)
                 {
-                    addToSceneMethod.Invoke(null, null);
+                    Undo.RegisterCreatedObjectUndo(instance, "Add Leaderboard UI");
+                    Selection.activeGameObject = instance;
+                    EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
                     CheckLeaderboardModule();
                     Debug.Log("[IVXSDKSetupWizard] Leaderboard UI added to scene");
                     return;
                 }
             }
 
-            // Fallback: show instructions
-            Debug.Log("[IVXSDKSetupWizard] Leaderboard UI setup - Add IVXGLeaderboardUI component to your UI");
-            EditorUtility.DisplayDialog("Leaderboard Setup",
-                "To set up leaderboard UI:\n\n" +
-                "1. Go to IntelliVerseX → Leaderboard → Add to Scene\n" +
-                "   OR manually:\n" +
-                "2. Add IVXGLeaderboard component for runtime management\n" +
-                "3. Add IVXGLeaderboardUI component to a Canvas\n" +
-                "4. Create entry prefab with IVXGLeaderboardEntryView\n" +
-                "5. Configure references and call RefreshLeaderboardFromServer()",
-                "OK");
+            Debug.LogWarning("[IVXSDKSetupWizard] Leaderboard UI prefab not found or already exists");
         }
 
         private void ConfigureAds()
@@ -4574,6 +4369,28 @@ namespace IntelliVerseX.Editor
         #endregion
 
         #region Utility Methods
+
+        /// <summary>
+        /// Opens a demo scene by name from Assets/Scenes/Tests folder.
+        /// </summary>
+        private void OpenDemoScene(string sceneName)
+        {
+            string scenePath = $"Assets/Scenes/Tests/{sceneName}.unity";
+            if (File.Exists(scenePath))
+            {
+                if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+                {
+                    EditorSceneManager.OpenScene(scenePath);
+                }
+            }
+            else
+            {
+                EditorUtility.DisplayDialog("Scene Not Found",
+                    $"The demo scene '{sceneName}' was not found at:\n{scenePath}\n\n" +
+                    "Make sure the SDK demo scenes are properly installed.",
+                    "OK");
+            }
+        }
 
         private void EnsureDirectoryExists(string path)
         {

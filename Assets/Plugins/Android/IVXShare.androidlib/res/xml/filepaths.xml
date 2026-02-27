@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FileProvider paths for IntelliVerseX Share (temporary cache for screenshots) -->
+<paths>
+  <cache-path name="share_cache" path="." />
+  <external-cache-path name="external_share_cache" path="." />
+</paths>

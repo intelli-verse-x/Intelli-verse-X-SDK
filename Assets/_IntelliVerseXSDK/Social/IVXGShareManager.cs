@@ -74,6 +74,15 @@ namespace IntelliVerseX.Games.Social
         [Header("Settings")]
         [SerializeField] private int maxImageSize = 1920;
         [SerializeField] private bool logDebug = true;
+        [Tooltip("Minimum seconds between share attempts (prevents rapid double-press)")]
+        [SerializeField] private float shareCooldownSeconds = 1.5f;
+
+        #endregion
+
+        #region Private State
+
+        private float _lastShareTime = float.MinValue;
+        private const string SHARE_IMAGE_FILENAME = "share_image.png";
 
         #endregion
 
@@ -118,6 +127,12 @@ namespace IntelliVerseX.Games.Social
         /// </summary>
         public void ShareText(string text, string url = null, Action<bool> callback = null)
         {
+            if (!TryConsumeShareCooldown())
+            {
+                callback?.Invoke(false);
+                OnShareCompleted?.Invoke(false);
+                return;
+            }
             StartCoroutine(ShareTextRoutine(text, url, callback));
         }
 
@@ -126,6 +141,12 @@ namespace IntelliVerseX.Games.Social
         /// </summary>
         public void ShareScore(string gameName, int score, Texture2D screenshot = null, Action<bool> callback = null)
         {
+            if (!TryConsumeShareCooldown())
+            {
+                callback?.Invoke(false);
+                OnShareCompleted?.Invoke(false);
+                return;
+            }
             string text = $"I scored {score} in {gameName}! Can you beat me? 🎮";
             string url = GetStoreUrl();
 
@@ -137,6 +158,12 @@ namespace IntelliVerseX.Games.Social
         /// </summary>
         public void ShareAchievement(string achievementName, string description, Texture2D screenshot = null, Action<bool> callback = null)
         {
+            if (!TryConsumeShareCooldown())
+            {
+                callback?.Invoke(false);
+                OnShareCompleted?.Invoke(false);
+                return;
+            }
             string text = $"🏆 I unlocked '{achievementName}' in {appName}!\n{description}";
             string url = GetStoreUrl();
 
@@ -148,6 +175,12 @@ namespace IntelliVerseX.Games.Social
         /// </summary>
         public void ShareReferral(string referralCode, string customMessage = null, Action<bool> callback = null)
         {
+            if (!TryConsumeShareCooldown())
+            {
+                callback?.Invoke(false);
+                OnShareCompleted?.Invoke(false);
+                return;
+            }
             string text = customMessage ?? $"Join me in {appName}! Use my code: {referralCode} for bonus rewards! 🎁";
             string url = GetStoreUrl();
 
@@ -159,6 +192,12 @@ namespace IntelliVerseX.Games.Social
         /// </summary>
         public void ShareWithScreenshot(string text, string url = null, Action<bool> callback = null)
         {
+            if (!TryConsumeShareCooldown())
+            {
+                callback?.Invoke(false);
+                OnShareCompleted?.Invoke(false);
+                return;
+            }
             StartCoroutine(CaptureAndShareRoutine(text, url, callback));
         }
 
@@ -167,6 +206,12 @@ namespace IntelliVerseX.Games.Social
         /// </summary>
         public void ShareImage(Texture2D image, string text = null, Action<bool> callback = null)
         {
+            if (!TryConsumeShareCooldown())
+            {
+                callback?.Invoke(false);
+                OnShareCompleted?.Invoke(false);
+                return;
+            }
             StartCoroutine(ShareImageRoutine(image, text, callback));
         }
 
@@ -211,13 +256,16 @@ namespace IntelliVerseX.Games.Social
             {
                 string fullText = string.IsNullOrEmpty(url) ? text : $"{text}\n\n{url}";
                 success = NativeShare(fullText, screenshot);
+                if (success && screenshot != null)
+                {
+                    StartCoroutine(CleanupTempShareFileDelayedRoutine());
+                }
             }
             catch (Exception ex)
             {
                 Log($"ShareWithScreenshot error: {ex.Message}", true);
             }
 
-            // Cleanup captured screenshot
             if (captured != null)
             {
                 Destroy(captured);
@@ -240,6 +288,10 @@ namespace IntelliVerseX.Games.Social
             {
                 string fullText = string.IsNullOrEmpty(url) ? text : $"{text}\n\n{url}";
                 success = NativeShare(fullText, screenshot);
+                if (success && screenshot != null)
+                {
+                    StartCoroutine(CleanupTempShareFileDelayedRoutine());
+                }
             }
             catch (Exception ex)
             {
@@ -257,6 +309,13 @@ namespace IntelliVerseX.Games.Social
             OnShareCompleted?.Invoke(success);
         }
 
+        private IEnumerator CleanupTempShareFileDelayedRoutine()
+        {
+            yield return new WaitForSecondsRealtime(60f);
+            string path = Path.Combine(Application.temporaryCachePath, SHARE_IMAGE_FILENAME);
+            CleanupTempShareFile(path);
+        }
+
         private IEnumerator ShareImageRoutine(Texture2D image, string text, Action<bool> callback)
         {
             bool success = false;
@@ -264,6 +323,10 @@ namespace IntelliVerseX.Games.Social
             try
             {
                 success = NativeShare(text ?? "", image);
+                if (success && image != null)
+                {
+                    StartCoroutine(CleanupTempShareFileDelayedRoutine());
+                }
             }
             catch (Exception ex)
             {
@@ -334,9 +397,10 @@ namespace IntelliVerseX.Games.Social
                     intentObject.Call<AndroidJavaObject>("setType", image != null ? "image/*" : "text/plain");
                     intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_TEXT"), text);
 
+                    string imagePath = null;
                     if (image != null)
                     {
-                        string imagePath = SaveImageToCache(image);
+                        imagePath = SaveImageToCache(image);
                         if (!string.IsNullOrEmpty(imagePath))
                         {
                             using (var uri = GetContentUri(imagePath))
@@ -344,7 +408,7 @@ namespace IntelliVerseX.Games.Social
                                 if (uri != null)
                                 {
                                     intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_STREAM"), uri);
-                                    intentObject.Call<AndroidJavaObject>("addFlags", 1); // FLAG_GRANT_READ_URI_PERMISSION
+                                    intentObject.Call<AndroidJavaObject>("addFlags", 0x00000001); // Intent.FLAG_GRANT_READ_URI_PERMISSION
                                 }
                             }
                         }
@@ -364,21 +428,6 @@ namespace IntelliVerseX.Games.Social
             {
                 Log($"Android share error: {ex.Message}", true);
                 return false;
-            }
-        }
-
-        private string SaveImageToCache(Texture2D image)
-        {
-            try
-            {
-                byte[] bytes = image.EncodeToPNG();
-                string path = Path.Combine(Application.temporaryCachePath, "share_image.png");
-                File.WriteAllBytes(path, bytes);
-                return path;
-            }
-            catch
-            {
-                return null;
             }
         }
 
@@ -432,7 +481,13 @@ namespace IntelliVerseX.Games.Social
                     return true;
                 }
 
-                Log("NativeShare plugin not found on iOS", true);
+                // Fallback: Sych.ShareAssets when available
+                if (TrySychShare(text, image))
+                {
+                    return true;
+                }
+
+                Log("NativeShare and Sych.ShareAssets not found on iOS", true);
                 return false;
             }
             catch (Exception ex)
@@ -441,7 +496,85 @@ namespace IntelliVerseX.Games.Social
                 return false;
             }
         }
+
+        private bool TrySychShare(string text, Texture2D image)
+        {
+            try
+            {
+                var shareType = FindType("Sych.ShareAssets.Runtime.Share");
+                if (shareType == null) return false;
+
+                var itemMethod = shareType.GetMethod("Item", new Type[] { typeof(string), typeof(Action<bool>) });
+                if (itemMethod == null) return false;
+
+                string item = null;
+                if (image != null)
+                {
+                    string path = SaveImageToCache(image);
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        item = path;
+                        StartCoroutine(CleanupTempShareFileDelayedRoutine());
+                    }
+                }
+                if (string.IsNullOrEmpty(item))
+                {
+                    item = text;
+                }
+
+                itemMethod.Invoke(null, new object[] { item, (Action<bool>)(success => { }) });
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 #endif
+
+        #endregion
+
+        #region Platform-Agnostic Helpers
+
+        private string SaveImageToCache(Texture2D image)
+        {
+            try
+            {
+                byte[] bytes = image.EncodeToPNG();
+                string path = Path.Combine(Application.temporaryCachePath, SHARE_IMAGE_FILENAME);
+                File.WriteAllBytes(path, bytes);
+                return path;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private void CleanupTempShareFile(string path)
+        {
+            if (string.IsNullOrEmpty(path) || !File.Exists(path)) return;
+            try
+            {
+                File.Delete(path);
+            }
+            catch (Exception ex)
+            {
+                Log($"Temp file cleanup failed: {ex.Message}", true);
+            }
+        }
+
+        private bool TryConsumeShareCooldown()
+        {
+            float now = Time.unscaledTime;
+            if (now - _lastShareTime < shareCooldownSeconds)
+            {
+                Log("Share cooldown active, ignoring rapid press", false);
+                return false;
+            }
+            _lastShareTime = now;
+            return true;
+        }
 
         #endregion
 

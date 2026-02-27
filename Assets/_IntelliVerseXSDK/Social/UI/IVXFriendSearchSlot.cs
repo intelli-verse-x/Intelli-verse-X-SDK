@@ -36,6 +36,7 @@ namespace IntelliVerseX.Social.UI
 
         [Header("Loading State")]
         [SerializeField] private GameObject loadingIndicator;
+        [SerializeField] private Sprite defaultAvatar;
 
         #endregion
 
@@ -49,9 +50,11 @@ namespace IntelliVerseX.Social.UI
         #region Private Fields
 
         private FriendSearchResult _searchResult;
-        private IVXFriendsConfig _config;
         private Coroutine _avatarLoadCoroutine;
         private bool _isProcessing;
+        
+        // Configuration constants
+        private const bool ENABLE_SLOT_ANIMATIONS = true;
 
         #endregion
 
@@ -59,8 +62,6 @@ namespace IntelliVerseX.Social.UI
 
         private void Awake()
         {
-            _config = IVXFriendsConfig.Instance;
-
             if (rectTransform == null)
                 rectTransform = GetComponent<RectTransform>();
 
@@ -109,7 +110,7 @@ namespace IntelliVerseX.Social.UI
             SetLoadingState(false);
 
             // Animate appearance
-            if (_config.enableSlotAnimations && canvasGroup != null && rectTransform != null)
+            if (ENABLE_SLOT_ANIMATIONS && canvasGroup != null && rectTransform != null)
             {
                 IVXFriendsAnimations.AnimateSlotAppear(rectTransform, canvasGroup, animationIndex);
             }
@@ -247,9 +248,9 @@ namespace IntelliVerseX.Social.UI
         private void LoadAvatar(string url)
         {
             // Set default avatar first
-            if (avatarImage != null && _config.defaultAvatar != null)
+            if (avatarImage != null && defaultAvatar != null)
             {
-                avatarImage.sprite = _config.defaultAvatar;
+                avatarImage.sprite = defaultAvatar;
             }
 
             // Load from URL if provided
