@@ -555,6 +555,99 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1744539124
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1744539126}
+  - component: {fileID: 1744539125}
+  m_Layer: 0
+  m_Name: IVX_TestSceneNavigator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1744539125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1744539124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 915fdfd16d6425e429a9ed19cf2f8183, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: IntelliVerseX.Core::IntelliVerseX.Core.IVXTestSceneNavigator
+  _homeSceneName: IVX_Homescreen
+  _toggleOverlayKey: 289
+  _overlayVisible: 1
+  _sortingOrder: 500
+  _sceneLinks:
+  - Label: Ads
+    SceneName: IVX_AdsTest
+    ShowOnHome: 1
+    ShowOnFeatureScenes: 1
+  - Label: Auth
+    SceneName: IVX_AuthTest
+    ShowOnHome: 1
+    ShowOnFeatureScenes: 1
+  - Label: DailyQuiz
+    SceneName: IVX_DailyQuiz
+    ShowOnHome: 1
+    ShowOnFeatureScenes: 1
+  - Label: Friends
+    SceneName: IVX_FriendsTest
+    ShowOnHome: 1
+    ShowOnFeatureScenes: 1
+  - Label: HomeScreen
+    SceneName: IVX_HomeScreen
+    ShowOnHome: 1
+    ShowOnFeatureScenes: 1
+  - Label: Leaderboard
+    SceneName: IVX_LeaderboardTest
+    ShowOnHome: 1
+    ShowOnFeatureScenes: 1
+  - Label: More Of Us
+    SceneName: IVX_MoreOfUsTest
+    ShowOnHome: 1
+    ShowOnFeatureScenes: 1
+  - Label: Profile
+    SceneName: IVX_Profile
+    ShowOnHome: 1
+    ShowOnFeatureScenes: 1
+  - Label: 'Share and rate us '
+    SceneName: IVX_Share&RateUs
+    ShowOnHome: 1
+    ShowOnFeatureScenes: 1
+  - Label: Wallet
+    SceneName: IVX_WalletTest
+    ShowOnHome: 1
+    ShowOnFeatureScenes: 1
+  - Label: Weekly Quiz
+    SceneName: IVX_WeeklyQuizTest
+    ShowOnHome: 1
+    ShowOnFeatureScenes: 1
+--- !u!4 &1744539126
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1744539124}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -562,3 +655,4 @@ SceneRoots:
   - {fileID: 1029050659}
   - {fileID: 590467404}
   - {fileID: 1134760305}
+  - {fileID: 1744539126}

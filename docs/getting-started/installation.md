@@ -65,7 +65,8 @@ For production builds, always pin to a specific version tag:
 
 | Version | Release Date | Notes |
 |---------|--------------|-------|
-| `v5.0.0` | 2026-02 | Latest stable |
+| `v5.1.0` | 2026-03 | Latest stable (IP Geolocation) |
+| `v5.0.0` | 2026-02 | Friends system |
 | `v4.0.0` | 2026-02 | Production ready |
 | `v3.0.0` | 2026-01 | Platform support |
 

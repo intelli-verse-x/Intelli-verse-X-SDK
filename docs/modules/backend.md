@@ -160,23 +160,58 @@ if (walletManager.Coins >= 50)
 
 ---
 
-### IVXGeolocationService
+### IVXIPGeolocationService
 
-Location-based services.
+IP-based location detection using multiple free APIs with automatic fallback.
 
 ```csharp
-public class IVXGeolocationService
+public class IVXIPGeolocationService
 {
-    public static IVXGeolocationService Instance { get; }
+    public static IVXIPGeolocationService Instance { get; }
     
-    public string CountryCode { get; }
-    public string CountryName { get; }
-    public string City { get; }
-    public string Region { get; }
+    // Get location (with caching)
+    public async Task<IPGeolocationResult> GetLocationAsync(
+        bool forceRefresh = false, 
+        CancellationToken ct = default);
     
-    public async Task<bool> DetectLocationAsync();
+    // Get cached location (synchronous)
+    public IPGeolocationResult GetCachedLocation();
+    
+    // Check if cache is valid
+    public bool IsCacheValid { get; }
+    
+    // Events
+    public event Action<IPGeolocationResult> OnLocationFetched;
+    public event Action<string> OnLocationError;
+}
+
+// Location result model
+public class IPGeolocationResult
+{
+    public bool Success;
+    public string IP;
+    public string Country;        // "United States"
+    public string CountryCode;    // "US"
+    public string Region;         // "California"
+    public string City;           // "San Francisco"
+    public double Latitude;
+    public double Longitude;
+    public string Timezone;       // "America/Los_Angeles"
+    public string ISP;
+    public string Provider;       // Which API provided this result
+    
+    public string GetLocationString();  // "San Francisco, California, United States"
+    public string GetShortLocation();   // "San Francisco, US"
 }
 ```
+
+**API Providers (priority order):**
+1. ip-api.com (45 req/min, HTTP)
+2. ipapi.co (30k/month, HTTPS)
+3. geojs.io (unlimited, HTTPS)
+4. geoplugin.net (120 req/min, HTTP)
+5. ipinfo.io (50k/month, HTTPS)
+6. country.is (country only, HTTPS)
 
 ---
 

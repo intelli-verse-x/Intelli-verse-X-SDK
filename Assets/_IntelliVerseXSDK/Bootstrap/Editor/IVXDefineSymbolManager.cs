@@ -27,7 +27,7 @@ namespace IntelliVerseX.Bootstrap.Editor
         #region Constants
         
         private const string LOG_PREFIX = "[IntelliVerseX] ";
-        private const string SDK_VERSION = "5.0.0";
+        private const string SDK_VERSION = "5.1.0";
         private const string EDITORPREFS_VERSION_KEY = "com.intelliversex.sdk.lastAppliedVersion";
         private const string EDITORPREFS_SYMBOLS_HASH_KEY = "com.intelliversex.sdk.lastSymbolsHash";
         

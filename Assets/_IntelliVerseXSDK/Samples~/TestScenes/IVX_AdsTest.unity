@@ -2684,16 +2684,40 @@ MonoBehaviour:
   _overlayVisible: 1
   _sortingOrder: 500
   _sceneLinks:
-  - Label: Auth
-    SceneName: IVX_AuthTest
-    ShowOnHome: 1
-    ShowOnFeatureScenes: 1
   - Label: Ads
     SceneName: IVX_AdsTest
     ShowOnHome: 1
     ShowOnFeatureScenes: 1
+  - Label: Auth
+    SceneName: IVX_AuthTest
+    ShowOnHome: 1
+    ShowOnFeatureScenes: 1
+  - Label: DailyQuiz
+    SceneName: IVX_DailyQuiz
+    ShowOnHome: 1
+    ShowOnFeatureScenes: 1
+  - Label: Friends
+    SceneName: IVX_FriendsTest
+    ShowOnHome: 1
+    ShowOnFeatureScenes: 1
+  - Label: HomeScreen
+    SceneName: IVX_HomeScreen
+    ShowOnHome: 1
+    ShowOnFeatureScenes: 1
   - Label: Leaderboard
     SceneName: IVX_LeaderboardTest
+    ShowOnHome: 1
+    ShowOnFeatureScenes: 1
+  - Label: More Of Us
+    SceneName: IVX_MoreOfUsTest
+    ShowOnHome: 1
+    ShowOnFeatureScenes: 1
+  - Label: Profile
+    SceneName: IVX_Profile
+    ShowOnHome: 1
+    ShowOnFeatureScenes: 1
+  - Label: 'Share and rate us '
+    SceneName: IVX_Share&RateUs
     ShowOnHome: 1
     ShowOnFeatureScenes: 1
   - Label: Wallet

@@ -131,7 +131,7 @@ namespace IntelliVerseX.Editor
                         "IVXBackendService.cs",
                         "IVXNakamaManager.cs",
                         "IVXWalletManager.cs",
-                        "IVXGeolocationService.cs"
+                        "IVXIPGeolocationService.cs"
                     },
                     RequiredPrefabs = new List<string>
                     {

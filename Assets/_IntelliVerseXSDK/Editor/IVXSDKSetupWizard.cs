@@ -29,7 +29,7 @@ namespace IntelliVerseX.Editor
         #region Constants
 
         private const string WINDOW_TITLE = "IntelliVerseX SDK Setup";
-        private const string SDK_VERSION = "5.0.0";
+        private const string SDK_VERSION = "5.1.0";
         private const string PACKAGE_NAME = "com.intelliversex.sdk";
         
         // Version check URLs

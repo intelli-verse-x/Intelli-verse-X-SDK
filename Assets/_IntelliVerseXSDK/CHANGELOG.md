@@ -7,6 +7,78 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.1.0] - 2026-03-02
+
+### 🚀 New Feature: IP-Based Geolocation System
+
+Fast, reliable geolocation without requiring GPS permissions.
+
+### Added
+
+#### IP Geolocation Service (New)
+- **IVXIPGeolocationService** - Ultra-optimized IP-based geolocation with 6 free API providers
+  - Parallel fetching for fastest response (typically <500ms)
+  - Intelligent tiered fallback: ip-api.com → ipapi.co → GeoJS → geoPlugin → ipinfo.io → Country.is
+  - Configurable caching (default: 1 hour TTL)
+  - Thread-safe singleton pattern
+  - Zero-allocation hot paths where possible
+  - CancellationToken support for async operations
+  - Events: `OnLocationFetched`, `OnLocationError`, `OnFetchStarted`, `OnFetchCompleted`
+
+#### Login Integration
+- Non-blocking IP geolocation fetch during login panel open
+- Location synced to PlayerPrefs on successful authentication
+- Static `GetCurrentIPLocation()` helper in IVXPanelLogin
+- PlayerPrefs keys: `ivx_player_country`, `ivx_player_city`, `ivx_player_region`, `ivx_player_timezone`, etc.
+
+#### Debug Tools
+- Context menu items for testing: "Debug: Log Cache Status", "Debug: Clear Cache", "Debug: Force Fetch", "Debug: Test All APIs"
+
+### Changed
+
+- Consolidated geolocation services - removed redundant `IVXGeolocationService` (GPS-based) and `GeoLocationService` (facade)
+- Now single service: `IVXIPGeolocationService` for all geolocation needs
+- Updated IVXModuleRegistry to reference new service
+- Updated backend.md documentation
+
+### Installation
+
+```json
+{
+  "dependencies": {
+    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v5.1.0"
+  }
+}
+```
+
+---
+
+## [5.0.0] - 2026-02-27
+
+### 🎯 Major Release - Friends System & Social Features
+
+Complete friends system with real-time social features.
+
+### Added
+
+#### Friends Module (Complete)
+- **IVXFriendsManager** - Comprehensive friends management
+- **IVXFriendSlot** - Friend list item UI component
+- **IVXFriendsPanel** - Full-featured friends UI panel with tabs (Online, All, Requests, Blocked)
+- Real-time friend status updates via Nakama
+- Smooth DOTween animations for list transitions
+
+#### Test Scenes (Updated)
+- All test scenes synced to UPM Samples~/TestScenes
+
+### Fixed
+
+- DOTween animation stacking issues in Friends panel
+- Tab switching race conditions with `_isTabSwitching` flag
+- Proper animation cleanup with `KillAllContentAnimations()`
+
+---
+
 ## [4.0.0] - 2026-02-23
 
 ### 🎯 Major Release - Production Ready SDK

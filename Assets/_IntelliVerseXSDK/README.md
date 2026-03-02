@@ -5,7 +5,7 @@
 [![Unity](https://img.shields.io/badge/Unity-2023.3%2B-black.svg)](https://unity.com/)
 [![Unity 6](https://img.shields.io/badge/Unity%206-Supported-blue.svg)](https://unity.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-2.0.0-orange.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-5.1.0-orange.svg)](CHANGELOG.md)
 
 ---
 
@@ -24,6 +24,7 @@
 | 🎲 **Quiz System** | Complete quiz game framework |
 | 🎨 **UI Components** | Production-ready UI utilities |
 | 😀 **Emoji Support** | TMP emoji conversion + production import hardening |
+| 📍 **IP Geolocation** | Fast location detection without GPS (6 free APIs) |
 
 ---
 
@@ -46,7 +47,7 @@ Add to your `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v2.0.0"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v5.1.0"
   }
 }
 ```
