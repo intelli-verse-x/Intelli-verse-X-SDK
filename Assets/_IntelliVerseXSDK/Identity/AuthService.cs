@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.IO;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -14,16 +15,44 @@ namespace IntelliVerseX.Identity
     public class AuthService : MonoBehaviour
     {
         /// <summary>
-        /// Base URL for authentication endpoints.
-        /// Ensure your backend is running and has these endpoints:
-        /// - POST /auth/register
-        /// - POST /auth/verify-otp
-        /// - POST /auth/login
-        /// - POST /auth/google
-        /// - POST /auth/apple
-        /// - POST /auth/guest
+        /// Default base URL for authentication endpoints when config/keys.json is not used.
         /// </summary>
-        private const string BASE_URL = "http://localhost:3000/auth";
+        private const string DefaultBaseUrl = "http://localhost:3000/auth";
+
+        /// <summary>
+        /// Base URL for authentication endpoints. Loaded from config/keys.json (key: authBaseUrl) when present; otherwise uses default.
+        /// See config/keys.example.json and config/README.md. Ensure your backend exposes: /auth/register, /auth/verify-otp, /auth/login, /auth/google, /auth/apple, /auth/guest.
+        /// </summary>
+        private static string BASE_URL => GetAuthBaseUrlFromConfig();
+
+        private static string GetAuthBaseUrlFromConfig()
+        {
+#if UNITY_EDITOR
+            try
+            {
+                string projectRoot = Path.GetDirectoryName(Application.dataPath);
+                if (!string.IsNullOrEmpty(projectRoot))
+                {
+                    string path = Path.Combine(projectRoot, "config", "keys.json");
+                    if (File.Exists(path))
+                    {
+                        string json = File.ReadAllText(path);
+                        var config = JsonUtility.FromJson<AuthSecretsConfig>(json);
+                        if (config != null && !string.IsNullOrEmpty(config.authBaseUrl))
+                            return config.authBaseUrl.Trim();
+                    }
+                }
+            }
+            catch (Exception) { /* fallback to default */ }
+#endif
+            return DefaultBaseUrl;
+        }
+
+        [Serializable]
+        private class AuthSecretsConfig
+        {
+            public string authBaseUrl;
+        }
 
         /// <summary>
         /// Calls POST /auth/register. On success invokes onSuccess; on error invokes onError with message.

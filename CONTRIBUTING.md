@@ -19,7 +19,7 @@ Thank you for your interest in contributing to IntelliVerseX SDK! This document 
 
 ## Code of Conduct
 
-This project follows the [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/version/2/1/code_of_conduct/). By participating, you are expected to uphold this code.
+This project follows the [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/version/2/1/code_of_conduct/). See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) in this repository. By participating, you are expected to uphold this code.
 
 **In short:** Be respectful, inclusive, and constructive.
 
@@ -283,6 +283,25 @@ Describe how you tested the changes
 | Constants | UPPER_SNAKE | `SDK_VERSION` |
 | Packages | `com.intelliversex.sdk.*` | `com.intelliversex.sdk.core` |
 
+#### Flutter / Dart
+
+| Element | Convention | Example |
+|---------|------------|---------|
+| Classes | `IVX` + PascalCase | `IVXManager` |
+| Methods | camelCase | `authenticateDevice()` |
+| Constants | camelCase | `sdkVersion` |
+| Private | `_` prefix | `_initialized` |
+| Events | `IVXEvent` enum | `IVXEvent.authSuccess` |
+
+#### Web3 (TypeScript)
+
+| Element | Convention | Example |
+|---------|------------|---------|
+| Classes | `IVX` + PascalCase | `IVXWeb3Manager` |
+| Methods | camelCase | `connectWallet()` |
+| Interfaces | `IVX` + PascalCase | `IVXWalletInfo` |
+| Constants | UPPER_SNAKE | `SDK_VERSION` |
+
 #### C/C++ Native
 
 | Element | Convention | Example |
@@ -368,7 +387,7 @@ mkdocs serve
 
 ## Questions?
 
-- 💬 [GitHub Discussions](https://github.com/AhamedAzmi/IntelliVerseX/discussions)
+- 💬 [GitHub Discussions](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/discussions)
 - 📧 [Email](mailto:contribute@intelli-verse-x.ai)
 
 ---

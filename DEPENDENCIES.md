@@ -18,6 +18,8 @@ Each platform requires its respective Nakama client library:
 | JavaScript | [@heroiclabs/nakama-js](https://github.com/heroiclabs/nakama-js) | npm |
 | C / C++ | [nakama-cpp](https://github.com/heroiclabs/nakama-cpp) | CMake |
 | Java / Android | [nakama-java](https://github.com/heroiclabs/nakama-java) | Gradle / Maven |
+| Flutter / Dart | [nakama](https://pub.dev/packages/nakama) | pub.dev / pubspec.yaml |
+| Web3 | [@heroiclabs/nakama-js](https://github.com/heroiclabs/nakama-js) + [ethers](https://www.npmjs.com/package/ethers) | npm |
 
 ---
 

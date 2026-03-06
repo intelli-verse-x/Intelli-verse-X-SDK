@@ -22,7 +22,7 @@ for run in title.runs:
 
 p = doc.add_paragraph()
 p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-run = p.add_run('Version 5.1.0  •  March 2026  •  8 Platform SDKs  •  17 Distribution Channels')
+run = p.add_run('Version 5.1.0  •  March 2026  •  10 Platform SDKs  •  17 Distribution Channels')
 run.font.size = Pt(12)
 run.font.color.rgb = RGBColor(0x66, 0x66, 0x66)
 
@@ -88,7 +88,7 @@ add_table(
 # ════════════════════════════════════════════════════════════════
 add_phase_heading('Phase 1 — Ship Now (Week of Mar 10)', RGBColor(0x1B, 0x7A, 0x2B))
 
-add_channel_heading('1. GitHub Releases — All 8 SDKs')
+add_channel_heading('1. GitHub Releases — All 10 SDKs')
 add_checklist([
     'Clean up repo — remove .bak files and build artifacts',
     'Add license headers to all source files',
@@ -262,7 +262,7 @@ doc.add_heading('Distribution Channel Summary', level=1)
 add_table(
     ['#', 'Channel', 'SDK', 'SDK Ready', 'Channel Ready', 'Priority', 'Target'],
     [
-        ['1', 'GitHub Releases', 'All 8 SDKs', '90%+', '90%', 'P0', 'Mar 10'],
+        ['1', 'GitHub Releases', 'All 10 SDKs', '90%+', '90%', 'P0', 'Mar 10'],
         ['2', 'Unity Asset Store', 'Unity', '93%', '70%', 'P0', 'Mar 15'],
         ['3', 'npm Registry', 'JavaScript', '92%', '85%', 'P1', 'Mar 18'],
         ['4', 'Nakama Community', 'All', '90%+', '50%', 'P1', 'Mar 12'],

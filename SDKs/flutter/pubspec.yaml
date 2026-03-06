@@ -6,6 +6,12 @@ version: 5.1.0
 homepage: https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/
 repository: https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/tree/main/SDKs/flutter
 issue_tracker: https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues
+topics:
+  - nakama
+  - game-sdk
+  - multiplayer
+  - authentication
+  - leaderboard
 
 environment:
   sdk: ">=3.0.0 <4.0.0"

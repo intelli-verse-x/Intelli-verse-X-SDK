@@ -5,7 +5,9 @@ export interface IVXWeb3Config {
   nakamaPort?: number;
   nakamaServerKey?: string;
   useSSL?: boolean;
+  enableAnalytics?: boolean;
   enableDebugLogs?: boolean;
+  verboseLogging?: boolean;
 
   /** Default chain ID (e.g. 1 for Ethereum mainnet, 137 for Polygon). */
   chainId?: number;
@@ -22,7 +24,9 @@ export const DEFAULT_WEB3_CONFIG: Required<IVXWeb3Config> = {
   nakamaPort: 7350,
   nakamaServerKey: 'defaultkey',
   useSSL: false,
+  enableAnalytics: true,
   enableDebugLogs: false,
+  verboseLogging: false,
   chainId: 1,
   thirdwebClientId: '',
   moralisApiKey: '',

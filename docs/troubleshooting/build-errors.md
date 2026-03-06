@@ -282,5 +282,5 @@ If using multiple SDKs with shared dependencies:
 
 1. Clear `Library/` folder and reimport
 2. Check Unity console for full error
-3. Search [GitHub Issues](https://github.com/AhamedAzmi/IntelliVerseX/issues)
-4. Post on [GitHub Discussions](https://github.com/AhamedAzmi/IntelliVerseX/discussions)
+3. Search [GitHub Issues](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues)
+4. Post on [GitHub Discussions](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/discussions)

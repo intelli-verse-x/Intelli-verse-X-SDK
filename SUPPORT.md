@@ -16,6 +16,8 @@ Need help with IntelliVerseX SDK? Here's how to get support.
 | JavaScript | `SDKs/javascript/` |
 | C / C++ | `SDKs/cpp/` |
 | Java / Android | `SDKs/java/` |
+| Flutter / Dart | `SDKs/flutter/` |
+| Web3 / TypeScript | `SDKs/web3/` |
 
 ---
 
@@ -37,8 +39,8 @@ Need help with IntelliVerseX SDK? Here's how to get support.
 Before asking a question:
 
 1. **Search Documentation** — Use the search feature on the docs site
-2. **Search Issues** — [GitHub Issues](https://github.com/AhamedAzmi/IntelliVerseX/issues)
-3. **Search Discussions** — [GitHub Discussions](https://github.com/AhamedAzmi/IntelliVerseX/discussions)
+2. **Search Issues** — [GitHub Issues](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues)
+3. **Search Discussions** — [GitHub Discussions](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/discussions)
 
 ---
 
@@ -52,7 +54,7 @@ Best for:
 - Sharing projects
 - Community help
 
-[Ask on GitHub Discussions](https://github.com/AhamedAzmi/IntelliVerseX/discussions)
+[Ask on GitHub Discussions](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/discussions)
 
 ### Discord (Free)
 
@@ -69,7 +71,7 @@ Best for:
 
 Found a bug? Report it on GitHub:
 
-[Create Bug Report](https://github.com/AhamedAzmi/IntelliVerseX/issues/new?template=bug_report.md)
+[Create Bug Report](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues/new?template=bug_report.md)
 
 **Include:**
 - Unity version
@@ -85,7 +87,7 @@ Found a bug? Report it on GitHub:
 
 Have an idea? We'd love to hear it:
 
-[Request Feature](https://github.com/AhamedAzmi/IntelliVerseX/issues/new?template=feature_request.md)
+[Request Feature](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues/new?template=feature_request.md)
 
 ---
 
@@ -119,9 +121,9 @@ Contact: enterprise@intelli-verse-x.ai
 
 Before reaching out, please:
 
-- [ ] Check the [documentation](https://intelliversex.github.io/docs)
-- [ ] Search [existing issues](https://github.com/AhamedAzmi/IntelliVerseX/issues)
-- [ ] Search [discussions](https://github.com/AhamedAzmi/IntelliVerseX/discussions)
+- [ ] Check the [documentation](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/)
+- [ ] Search [existing issues](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues)
+- [ ] Search [discussions](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/discussions)
 - [ ] Collect relevant information (version, platform, logs)
 - [ ] Create minimal reproduction if possible
 
@@ -131,6 +133,7 @@ Before reaching out, please:
 
 | Version | Support Level |
 |---------|---------------|
+| 5.1.x | ✅ Active support |
 | 5.0.x | ✅ Active support |
 | 4.2.x | ⚠️ Security fixes only |
 | 4.1.x | ❌ End of life |
@@ -144,10 +147,10 @@ We recommend always using the latest version.
 
 | Resource | Link |
 |----------|------|
-| Documentation | [intelliversex.github.io/docs](https://intelliversex.github.io/docs) |
-| GitHub Repository | [github.com/AhamedAzmi/IntelliVerseX](https://github.com/AhamedAzmi/IntelliVerseX) |
-| Release Notes | [Releases](https://github.com/AhamedAzmi/IntelliVerseX/releases) |
-| Changelog | [CHANGELOG.md](https://github.com/AhamedAzmi/IntelliVerseX/blob/main/docs/changelog.md) |
+| Documentation | [intelli-verse-x.github.io](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/) |
+| GitHub Repository | [Intelli-verse-X/Intelli-verse-X-Unity-SDK](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK) |
+| Release Notes | [Releases](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/releases) |
+| Changelog | [CHANGELOG.md](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/blob/main/CHANGELOG.md) |
 | Discord | [discord.gg/intelliversex](https://discord.gg/intelliversex) |
 
 ---

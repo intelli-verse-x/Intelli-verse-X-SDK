@@ -46,7 +46,7 @@
     "@heroiclabs/nakama-js": ">=2.7.0"
   },
   "devDependencies": {
-    "@heroiclabs/nakama-js": "^2.9.0",
+    "@heroiclabs/nakama-js": "^2.8.0",
     "tsup": "^8.0.0",
     "typescript": "^5.4.0",
     "vitest": "^2.0.0"

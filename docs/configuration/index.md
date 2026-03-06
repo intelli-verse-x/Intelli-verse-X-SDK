@@ -90,7 +90,7 @@ public class EnvironmentConfig : ScriptableObject
     public Environment currentEnvironment = Environment.Development;
     
     [Header("Development")]
-    public string devBackendUrl = "localhost:7350";
+    public string devBackendUrl; // Prefer loading from config/keys.json (key: devBackendUrl). See config/keys.example.json.
     public bool devEnableLogging = true;
     public bool devUseTestAds = true;
     
@@ -178,12 +178,15 @@ await IVXFeatureFlags.RefreshAsync();
 
 ### 1. Keep Secrets Secure
 
+All sensitive values (API keys, auth URLs, backend URLs) live in a **single common file** so they are not hardcoded. Copy `config/keys.example.json` to `config/keys.json`, fill in values, and do not commit `config/keys.json`. See [config/README.md](../../config/README.md).
+
 ```csharp
 // ❌ Don't hardcode secrets
 public string apiKey = "sk_live_xxxx";
 
-// ✅ Use secure storage or environment variables
-public string apiKey => Environment.GetEnvironmentVariable("API_KEY");
+// ✅ Load from the common config file (config/keys.json)
+// Unity: use IVXSecretsLoader.Load() or read config/keys.json from project root (see AuthService).
+// Or use environment variables: Environment.GetEnvironmentVariable("API_KEY");
 ```
 
 ### 2. Use ScriptableObjects

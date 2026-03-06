@@ -352,6 +352,6 @@ public class MigrationTest : MonoBehaviour
 If you encounter issues during migration:
 
 1. Check [Troubleshooting](../troubleshooting/index.md) docs
-2. Search [GitHub Issues](https://github.com/AhamedAzmi/IntelliVerseX/issues)
-3. Post on [GitHub Discussions](https://github.com/AhamedAzmi/IntelliVerseX/discussions)
+2. Search [GitHub Issues](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues)
+3. Post on [GitHub Discussions](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/discussions)
 4. Contact support: sdk@intelli-verse-x.ai

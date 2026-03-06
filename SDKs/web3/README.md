@@ -2,6 +2,10 @@
 
 > Web3 game development SDK — Wallet auth (MetaMask/WalletConnect), NFT rewards, token gating, on-chain leaderboards, backed by Nakama + Hiro.
 
+## Configuration and secrets
+
+Sensitive or environment-specific values (e.g. `moralisApiKey`, Nakama host/port) should not be hardcoded. Use the repo **common config file**: copy `config/keys.example.json` to `config/keys.json` in the repo root, fill in values, and do not commit `config/keys.json`. See [config/README.md](../../config/README.md). When initializing the SDK, set `moralisApiKey` from that file or from the environment (e.g. `process.env.IVX_MORALIS_API_KEY`).
+
 ## Requirements
 
 - Node.js 18+ or modern browser with a Web3 wallet (MetaMask, Coinbase Wallet, etc.)

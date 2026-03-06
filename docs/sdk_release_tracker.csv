@@ -1,6 +1,6 @@
 Channel,Platform/SDK,Readiness %,Status,Priority,Target Date,Owner,Blockers,Notes
 Unity Asset Store,Unity / .NET,75%,In Progress,P0 - Critical,2026-03-15,,Asset Store publisher account; screenshots; demo video; store listing copy,"Primary channel - 599 files, 30 modules, 23 Hiro + 3 Satori systems, production-ready SDK"
-GitHub Releases,All Platforms,90%,In Progress,P0 - Critical,2026-03-10,,Clean repo; release tags; license headers; CHANGELOG,"All 8 SDKs now at 90%+ readiness with tests, examples, error handling"
+GitHub Releases,All Platforms,90%,In Progress,P0 - Critical,2026-03-10,,Clean repo; release tags; license headers; CHANGELOG,"All 10 platform SDKs now at 90%+ readiness with tests, examples, error handling"
 OpenUPM,Unity / .NET,60%,Not Started,P1 - High,2026-03-20,,Register package on openupm.com; verify install flow,Professional Unity teams prefer UPM over Asset Store
 npm Registry,JavaScript / TypeScript,85%,In Progress,P1 - High,2026-03-18,,npm account setup; publish dry-run; bundle optimization,"SDK at 92% - tests, examples, typed API complete"
 Unreal Marketplace,Unreal Engine,50%,In Progress,P2 - Medium,2026-04-10,,Marketplace account; real UE5 build test; plugin packaging,"SDK at 91% - delegates, examples, error handling complete"

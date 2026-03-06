@@ -136,6 +136,24 @@ SDKs/godot/.import/
 SDKs/defold/build/
 SDKs/defold/.internal/
 
+# Web3 SDK
+SDKs/web3/node_modules/
+SDKs/web3/dist/
+SDKs/web3/*.tgz
+
+# Flutter SDK
+SDKs/flutter/.dart_tool/
+SDKs/flutter/.pub-cache/
+SDKs/flutter/pubspec.lock
+
+# Environment and secrets (prevent leaking secrets in future commits)
+.env
+.env.*
+**/credentials.*
+**/secrets.*
+config/keys.json
+config/secrets.json
+
 # IDE files (cross-platform)
 .idea/
 *.iml
