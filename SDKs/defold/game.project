@@ -1,0 +1,9 @@
+[project]
+title = IntelliVerseX SDK
+version = 5.1.0
+
+[library]
+include_dirs = intelliversex
+
+[dependencies]
+nakama = https://github.com/heroiclabs/nakama-defold/archive/refs/tags/v3.5.0.zip

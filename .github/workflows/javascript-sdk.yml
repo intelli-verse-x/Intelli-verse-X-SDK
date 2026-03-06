@@ -1,0 +1,42 @@
+name: JavaScript SDK
+
+on:
+  push:
+    paths:
+      - 'SDKs/javascript/**'
+  pull_request:
+    paths:
+      - 'SDKs/javascript/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: SDKs/javascript/package-lock.json
+
+      - name: Install dependencies
+        working-directory: SDKs/javascript
+        run: npm ci
+
+      - name: Lint
+        working-directory: SDKs/javascript
+        run: npm run lint --if-present
+
+      - name: Build
+        working-directory: SDKs/javascript
+        run: npm run build
+
+      - name: Test
+        working-directory: SDKs/javascript
+        run: npm test --if-present

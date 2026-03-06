@@ -86,21 +86,48 @@ var sanitizedInput = SanitizeUserInput(rawInput);
 
 ## Known Security Considerations
 
-### WebGL Limitations
+### WebGL / Browser Limitations
 
-WebGL builds have reduced security:
+WebGL and JavaScript browser builds have reduced security:
 - No native encryption
-- Data stored in IndexedDB (not encrypted)
+- Data stored in IndexedDB / localStorage (not encrypted)
+- Session tokens accessible via browser dev tools
 - Consider additional server-side validation
+
+### Platform-Specific Notes
+
+| Platform | Session Storage | Encryption |
+|----------|----------------|------------|
+| Unity (Mobile) | PlayerPrefs (encrypted) | AES-256 |
+| Unity (WebGL) | IndexedDB | None |
+| Unreal | GConfig (Game.ini) | File-system level |
+| Godot | ConfigFile (user://) | None by default |
+| Defold | sys.save | None by default |
+| JavaScript | localStorage | None |
+| C/C++ | File-based | None by default |
+| Java | java.util.prefs | None by default |
+
+For all non-Unity platforms, sensitive data should be protected at the OS/filesystem level. SSL/TLS is enforced for all server communication.
 
 ### Debug Builds
 
-Debug builds may expose sensitive information:
+Debug builds may expose sensitive information. Disable debug logging in production:
+
 ```csharp
-// Disable in production
+// Unity
 #if !DEVELOPMENT_BUILD
     IVXLogger.SetLevel(LogLevel.Error);
 #endif
+```
+
+```typescript
+// JavaScript
+ivx.initialize({ enableDebugLogs: false });
+```
+
+```java
+// Java
+IVXConfig.builder().enableDebugLogs(false).build();
 ```
 
 ## Security Changelog

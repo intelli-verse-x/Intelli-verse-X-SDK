@@ -1,0 +1,49 @@
+Task ID,Platform,Task,Category,Priority,Estimated Hours,Status,Assigned To,Sprint,Dependencies,Notes
+U-001,Unity,Asset Store publisher account setup,Distribution,P0,2,Not Started,,,,"Create Heroic Labs / IntelliVerse-X publisher account"
+U-002,Unity,Asset Store listing — screenshots + video,Distribution,P0,8,Not Started,,,,5-8 screenshots + 1 demo video
+U-003,Unity,Asset Store listing — description + metadata,Distribution,P0,4,Not Started,,,,"Title, description, keywords, categories"
+U-004,Unity,Asset Store submission review,Distribution,P0,1,Not Started,,,U-001 U-002 U-003,Asset Store review takes 5-15 business days
+U-005,Unity,OpenUPM package registration,Distribution,P1,2,Not Started,,,,Register com.intelliversex.sdk on openupm.com
+U-006,Unity,GitHub release v5.1.0 tag,Distribution,P0,1,Not Started,,,,"Tag, changelog, release notes"
+U-007,Unity,Free Core vs Paid Pro split,Strategy,P2,16,Not Started,,,,"Decide which modules are free vs premium"
+GH-001,All,Clean up repo for public release,Distribution,P0,4,Not Started,,,,"Remove internal files, check license headers"
+GH-002,All,Create GitHub release with binaries,Distribution,P0,4,Not Started,,,GH-001,"Per-platform zips, changelogs"
+GH-003,All,Add GitHub Discussions / Wiki,Community,P1,2,Not Started,,,,Enable discussions for community support
+JS-001,JavaScript,npm install + build verification,Engineering,P1,4,Not Started,,,,"Run npm ci && npm run build, fix any issues"
+JS-002,JavaScript,Write unit tests (vitest),Engineering,P1,16,Not Started,,,,Cover auth / profile / wallet / leaderboard / storage
+JS-003,JavaScript,Browser example (HTML page),Samples,P1,4,Not Started,,,JS-001,Simple HTML page with auth + leaderboard
+JS-004,JavaScript,Node.js example,Samples,P1,4,Not Started,,,JS-001,CLI script showing auth + RPC
+JS-005,JavaScript,npm publish dry-run,Distribution,P1,2,Not Started,,,JS-001 JS-002,Verify package contents and metadata
+JS-006,JavaScript,Bundle size optimization,Engineering,P2,8,Not Started,,,JS-001,Tree-shaking / minification analysis
+UE-001,Unreal,Build-test against NakamaUnreal plugin,Engineering,P2,16,Not Started,,,,"Set up UE5 project, compile, test"
+UE-002,Unreal,Blueprint example project,Samples,P2,16,Not Started,,,UE-001,Simple game with auth + leaderboard Blueprints
+UE-003,Unreal,Real-time socket implementation,Engineering,P2,8,Not Started,,,UE-001,WebSocket matchmaking and chat
+UE-004,Unreal,Unreal Marketplace packaging,Distribution,P2,8,Not Started,,,UE-001 UE-002,"Icon, description, screenshots"
+UE-005,Unreal,Automated tests,Engineering,P2,12,Not Started,,,UE-001,Unreal Automation Framework tests
+GD-001,Godot,Test against Nakama Godot 4 addon,Engineering,P2,8,Not Started,,,,"Set up Godot project, verify all APIs"
+GD-002,Godot,Example Godot project,Samples,P2,12,Not Started,,,GD-001,Simple game scene with auth + leaderboard
+GD-003,Godot,GUT unit tests,Engineering,P2,12,Not Started,,,GD-001,Godot Unit Test framework
+GD-004,Godot,Godot Asset Library submission,Distribution,P2,4,Not Started,,,GD-001 GD-002,Submit to Godot asset library
+DF-001,Defold,Test against Nakama Defold client,Engineering,P2,8,Not Started,,,,Set up Defold project
+DF-002,Defold,Example Defold project,Samples,P2,8,Not Started,,,DF-001,
+CC-001,Cocos2d-x,CMake build test with nakama-cpp,Engineering,P3,12,Not Started,,,,Cross-platform build verification
+CC-002,Cocos2d-x,Example Cocos2d-x project,Samples,P3,12,Not Started,,,CC-001,
+CPP-001,C/C++,CMake build test with nakama-cpp,Engineering,P3,8,Not Started,,,,
+CPP-002,C/C++,vcpkg / Conan package,Distribution,P3,8,Not Started,,,CPP-001,C++ package manager publishing
+CPP-003,C/C++,Example application,Samples,P3,8,Not Started,,,CPP-001,
+JV-001,Java,Gradle build test with nakama-java,Engineering,P3,8,Not Started,,,,
+JV-002,Java,JUnit test suite,Engineering,P3,12,Not Started,,,JV-001,
+JV-003,Java,Android example project,Samples,P3,16,Not Started,,,JV-001,Android Studio project with auth
+JV-004,Java,Maven Central publishing,Distribution,P3,8,Not Started,,,JV-001 JV-002,
+FL-001,Flutter,Create Flutter SDK (Dart),Engineering,P4,40,Not Started,,,,"New platform — needs nakama-dart or REST API client"
+FL-002,Flutter,Pub.dev publishing,Distribution,P4,4,Not Started,,,FL-001,
+W3-001,Web3,Token reward integration,Engineering,P4,40,Not Started,,,,"Thirdweb / Moralis connector"
+W3-002,Web3,NFT quest reward system,Engineering,P4,40,Not Started,,,W3-001,
+DP-001,Developer Portal,Design developer.intelliversex.com,Infrastructure,P1,16,Not Started,,,,"Landing page, SDK downloads, docs link"
+DP-002,Developer Portal,Build SDK download API,Infrastructure,P1,16,Not Started,,,DP-001,Per-platform download links + version tracking
+DP-003,Developer Portal,Quest dashboard MVP,Infrastructure,P2,40,Not Started,,,DP-001,SaaS dashboard for managing quests
+MK-001,Marketing,Reddit launch posts,Marketing,P1,4,Not Started,,,GH-001,"r/gamedev, r/unity3d, r/godot, r/indiegames"
+MK-002,Marketing,Product Hunt launch,Marketing,P2,8,Not Started,,,DP-001,"Maker page, screenshots, video"
+MK-003,Marketing,Nakama community showcase,Marketing,P1,4,Not Started,,,GH-001,"Forum post, Discord announcement"
+MK-004,Marketing,Itch.io tools page,Distribution,P2,4,Not Started,,,GH-001,Package SDKs for itch.io
+MK-005,Marketing,CodeCanyon listing,Distribution,P3,8,Not Started,,,,Premium listing with documentation bundle

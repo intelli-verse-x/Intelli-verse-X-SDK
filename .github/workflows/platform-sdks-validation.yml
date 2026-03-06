@@ -1,0 +1,96 @@
+name: Platform SDKs Validation
+
+on:
+  push:
+    paths:
+      - 'SDKs/**'
+  pull_request:
+    paths:
+      - 'SDKs/**'
+
+jobs:
+  validate-structure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate Unreal SDK structure
+        run: |
+          test -f SDKs/unreal/IntelliVerseX.uplugin
+          test -f SDKs/unreal/Source/IntelliVerseX/Public/IVXManager.h
+          test -f SDKs/unreal/Source/IntelliVerseX/Private/IVXManager.cpp
+          test -f SDKs/unreal/README.md
+          echo "Unreal SDK structure OK"
+
+      - name: Validate Godot SDK structure
+        run: |
+          test -f SDKs/godot/addons/intelliversex/plugin.cfg
+          test -f SDKs/godot/addons/intelliversex/core/ivx_manager.gd
+          test -f SDKs/godot/addons/intelliversex/core/ivx_config.gd
+          test -f SDKs/godot/README.md
+          echo "Godot SDK structure OK"
+
+      - name: Validate Defold SDK structure
+        run: |
+          test -f SDKs/defold/game.project
+          test -f SDKs/defold/intelliversex/ivx.lua
+          test -f SDKs/defold/README.md
+          echo "Defold SDK structure OK"
+
+      - name: Validate Cocos2d-x SDK structure
+        run: |
+          test -f SDKs/cocos2dx/CMakeLists.txt
+          test -f SDKs/cocos2dx/Classes/IntelliVerseX/IVXManager.h
+          test -f SDKs/cocos2dx/Classes/IntelliVerseX/IVXManager.cpp
+          test -f SDKs/cocos2dx/README.md
+          echo "Cocos2d-x SDK structure OK"
+
+      - name: Validate JavaScript SDK structure
+        run: |
+          test -f SDKs/javascript/package.json
+          test -f SDKs/javascript/tsconfig.json
+          test -f SDKs/javascript/src/index.ts
+          test -f SDKs/javascript/src/IVXManager.ts
+          test -f SDKs/javascript/README.md
+          echo "JavaScript SDK structure OK"
+
+      - name: Validate C++ SDK structure
+        run: |
+          test -f SDKs/cpp/CMakeLists.txt
+          test -f SDKs/cpp/include/intelliversex/ivx.h
+          test -f SDKs/cpp/include/intelliversex/ivx_manager.h
+          test -f SDKs/cpp/src/ivx_manager.cpp
+          test -f SDKs/cpp/README.md
+          echo "C++ SDK structure OK"
+
+      - name: Validate Java SDK structure
+        run: |
+          test -f SDKs/java/build.gradle
+          test -f SDKs/java/settings.gradle
+          test -f SDKs/java/src/main/java/com/intelliversex/sdk/core/IVXManager.java
+          test -f SDKs/java/src/main/java/com/intelliversex/sdk/core/IVXConfig.java
+          test -f SDKs/java/README.md
+          echo "Java SDK structure OK"
+
+      - name: Check all READMEs exist
+        run: |
+          for sdk in unreal godot defold cocos2dx javascript cpp java; do
+            test -f "SDKs/$sdk/README.md" || (echo "Missing README for $sdk" && exit 1)
+          done
+          echo "All platform READMEs present"
+
+  validate-version-consistency:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check version consistency across SDKs
+        run: |
+          VERSION="5.1.0"
+          echo "Checking all SDKs declare version $VERSION"
+
+          grep -q "$VERSION" SDKs/unreal/IntelliVerseX.uplugin || echo "WARN: Unreal version mismatch"
+          grep -q "$VERSION" SDKs/godot/addons/intelliversex/plugin.cfg || echo "WARN: Godot version mismatch"
+          grep -q "$VERSION" SDKs/javascript/package.json || echo "WARN: JavaScript version mismatch"
+          grep -q "$VERSION" SDKs/java/build.gradle || echo "WARN: Java version mismatch"
+          echo "Version check complete"

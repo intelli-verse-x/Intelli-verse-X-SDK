@@ -1,0 +1,54 @@
+{
+  "name": "@intelliversex/sdk",
+  "version": "5.1.0",
+  "description": "IntelliVerseX SDK for JavaScript/TypeScript — Auth, Backend (Nakama), Analytics, Social, Monetization, and more.",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "lint": "eslint src/",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "intelliversex",
+    "nakama",
+    "game-sdk",
+    "multiplayer",
+    "leaderboard",
+    "authentication"
+  ],
+  "author": "IntelliVerse-X <support@intelli-verse-x.ai>",
+  "license": "MIT",
+  "homepage": "https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git",
+    "directory": "SDKs/javascript"
+  },
+  "bugs": {
+    "url": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues"
+  },
+  "peerDependencies": {
+    "@heroiclabs/nakama-js": ">=2.7.0"
+  },
+  "devDependencies": {
+    "@heroiclabs/nakama-js": "^2.9.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^2.0.0"
+  }
+}

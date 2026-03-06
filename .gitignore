@@ -97,3 +97,49 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# ==== Multi-Platform SDK Ignores ====
+
+# JavaScript SDK
+SDKs/javascript/node_modules/
+SDKs/javascript/dist/
+SDKs/javascript/*.tgz
+
+# Java SDK
+SDKs/java/.gradle/
+SDKs/java/build/
+SDKs/java/bin/
+SDKs/java/.idea/
+
+# C/C++ SDK
+SDKs/cpp/build/
+SDKs/cpp/cmake-build-*/
+SDKs/cpp/*.o
+SDKs/cpp/*.a
+SDKs/cpp/*.so
+SDKs/cpp/*.dylib
+
+# Cocos2d-x SDK
+SDKs/cocos2dx/build/
+SDKs/cocos2dx/cmake-build-*/
+
+# Unreal SDK
+SDKs/unreal/Binaries/
+SDKs/unreal/Intermediate/
+SDKs/unreal/Saved/
+
+# Godot SDK
+SDKs/godot/.godot/
+SDKs/godot/.import/
+
+# Defold SDK
+SDKs/defold/build/
+SDKs/defold/.internal/
+
+# IDE files (cross-platform)
+.idea/
+*.iml
+.vscode/*.log
+
+# Cursor AI
+.cursor/

@@ -4,15 +4,31 @@ Need help with IntelliVerseX SDK? Here's how to get support.
 
 ---
 
-## 📖 Documentation
+## Supported Platforms
+
+| Platform | SDK Location |
+|----------|-------------|
+| Unity / .NET | `Assets/_IntelliVerseXSDK/` |
+| Unreal Engine | `SDKs/unreal/` |
+| Godot Engine | `SDKs/godot/` |
+| Defold | `SDKs/defold/` |
+| Cocos2d-x | `SDKs/cocos2dx/` |
+| JavaScript | `SDKs/javascript/` |
+| C / C++ | `SDKs/cpp/` |
+| Java / Android | `SDKs/java/` |
+
+---
+
+## Documentation
 
 **Start here:** Most questions are answered in our documentation.
 
-- [Full Documentation](https://intelliversex.github.io/docs)
-- [Getting Started Guide](https://intelliversex.github.io/docs/getting-started/)
-- [API Reference](https://intelliversex.github.io/docs/api/)
-- [Troubleshooting](https://intelliversex.github.io/docs/troubleshooting/)
-- [FAQ](https://intelliversex.github.io/docs/troubleshooting/faq/)
+- [Full Documentation](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/)
+- [Platform SDKs](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/platforms/)
+- [Getting Started Guide](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/getting-started/)
+- [API Reference](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/api/)
+- [Troubleshooting](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/troubleshooting/)
+- [FAQ](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/troubleshooting/faq/)
 
 ---
 

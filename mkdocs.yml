@@ -2,7 +2,7 @@
 # https://squidfunk.github.io/mkdocs-material/
 
 site_name: IntelliVerseX SDK
-site_description: Complete modular game development SDK for Unity
+site_description: Complete modular game development SDK for Unity, Unreal, Godot, Defold, Cocos2d-x, JavaScript, C++, and Java
 site_author: IntelliVerse-X Team
 site_url: https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/
 
@@ -59,6 +59,16 @@ nav:
     - Quick Start: getting-started/quickstart.md
     - Requirements: getting-started/requirements.md
     - Project Setup: getting-started/project-setup.md
+  - Platform SDKs:
+    - platforms/index.md
+    - Unity / .NET: platforms/unity.md
+    - Unreal Engine: platforms/unreal.md
+    - Godot Engine: platforms/godot.md
+    - Defold: platforms/defold.md
+    - Cocos2d-x Engine: platforms/cocos2dx.md
+    - JavaScript: platforms/javascript.md
+    - C / C++: platforms/cpp.md
+    - Java / Android: platforms/java.md
   - Configuration:
     - configuration/index.md
     - Game Configuration: configuration/game-config.md

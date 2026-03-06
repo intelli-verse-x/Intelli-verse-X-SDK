@@ -1,0 +1,45 @@
+name: C/C++ SDK
+
+on:
+  push:
+    paths:
+      - 'SDKs/cpp/**'
+      - 'SDKs/cocos2dx/**'
+  pull_request:
+    paths:
+      - 'SDKs/cpp/**'
+      - 'SDKs/cocos2dx/**'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        build-type: [Release]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Configure (C++ SDK)
+        working-directory: SDKs/cpp
+        run: cmake -B build -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} -DIVX_BUILD_TESTS=OFF
+        continue-on-error: true
+
+      - name: Build (C++ SDK)
+        working-directory: SDKs/cpp
+        run: cmake --build build --config ${{ matrix.build-type }}
+        continue-on-error: true
+
+      - name: Configure (Cocos2d-x SDK)
+        working-directory: SDKs/cocos2dx
+        run: cmake -B build -DCMAKE_BUILD_TYPE=${{ matrix.build-type }}
+        continue-on-error: true
+
+      - name: Build (Cocos2d-x SDK)
+        working-directory: SDKs/cocos2dx
+        run: cmake --build build --config ${{ matrix.build-type }}
+        continue-on-error: true

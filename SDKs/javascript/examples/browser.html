@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IntelliVerseX SDK - Browser Example</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { color: #333; }
+    .status { padding: 0.5rem 1rem; border-radius: 6px; margin: 0.5rem 0; }
+    .success { background: #d4edda; color: #155724; }
+    .error { background: #f8d7da; color: #721c24; }
+    .info { background: #d1ecf1; color: #0c5460; }
+    button { padding: 0.5rem 1rem; margin: 0.25rem; cursor: pointer; border: 1px solid #ccc; border-radius: 4px; background: #fff; }
+    button:hover { background: #f0f0f0; }
+    pre { background: #f5f5f5; padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.85rem; }
+    input { padding: 0.4rem; margin: 0.25rem; border: 1px solid #ccc; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>IntelliVerseX SDK - Browser Example</h1>
+
+  <h2>1. Configuration</h2>
+  <label>Host: <input id="host" value="127.0.0.1"></label>
+  <label>Port: <input id="port" value="7350" type="number"></label>
+  <label>Key: <input id="key" value="defaultkey"></label>
+  <br>
+  <button onclick="initSDK()">Initialize SDK</button>
+
+  <h2>2. Authentication</h2>
+  <button onclick="authDevice()">Auth (Device)</button>
+  <button onclick="authEmail()">Auth (Email)</button>
+
+  <h2>3. Features</h2>
+  <button onclick="getProfile()">Fetch Profile</button>
+  <button onclick="getWallet()">Fetch Wallet</button>
+  <button onclick="getLeaderboard()">Fetch Leaderboard</button>
+  <button onclick="doLogout()">Logout</button>
+
+  <h2>Log</h2>
+  <div id="log"></div>
+
+  <script type="module">
+    import { IVXManager } from '../dist/index.mjs';
+
+    const ivx = IVXManager.getInstance();
+    window.ivx = ivx;
+
+    function log(msg, type = 'info') {
+      const el = document.getElementById('log');
+      el.innerHTML = `<div class="status ${type}">${new Date().toLocaleTimeString()} - ${msg}</div>` + el.innerHTML;
+    }
+
+    ivx.on('initialized', () => log('SDK initialized', 'success'));
+    ivx.on('authSuccess', (uid) => log(`Authenticated: ${uid}`, 'success'));
+    ivx.on('authError', (err) => log(`Auth error: ${err.message}`, 'error'));
+    ivx.on('error', (err) => log(`Error: ${err.message}`, 'error'));
+
+    window.initSDK = () => {
+      try {
+        ivx.initialize({
+          nakamaHost: document.getElementById('host').value,
+          nakamaPort: parseInt(document.getElementById('port').value),
+          nakamaServerKey: document.getElementById('key').value,
+          enableDebugLogs: true,
+        });
+      } catch (e) {
+        log(e.message, 'error');
+      }
+    };
+
+    window.authDevice = async () => {
+      try {
+        await ivx.authenticateDevice();
+      } catch (e) { log(e.message, 'error'); }
+    };
+
+    window.authEmail = async () => {
+      const email = prompt('Email:', 'test@example.com');
+      const pass = prompt('Password:', 'password123');
+      if (!email || !pass) return;
+      try {
+        await ivx.authenticateEmail(email, pass, true);
+      } catch (e) { log(e.message, 'error'); }
+    };
+
+    window.getProfile = async () => {
+      try {
+        const p = await ivx.fetchProfile();
+        log(`<pre>${JSON.stringify(p, null, 2)}</pre>`, 'success');
+      } catch (e) { log(e.message, 'error'); }
+    };
+
+    window.getWallet = async () => {
+      try {
+        const w = await ivx.fetchWallet();
+        log(`<pre>${JSON.stringify(w, null, 2)}</pre>`, 'success');
+      } catch (e) { log(e.message, 'error'); }
+    };
+
+    window.getLeaderboard = async () => {
+      try {
+        const r = await ivx.fetchLeaderboard('weekly_leaderboard', 10);
+        log(`<pre>${JSON.stringify(r, null, 2)}</pre>`, 'success');
+      } catch (e) { log(e.message, 'error'); }
+    };
+
+    window.doLogout = () => {
+      ivx.clearSession();
+      log('Session cleared', 'info');
+    };
+
+    if (ivx.restoreSession()) {
+      log('Session restored from localStorage', 'success');
+    }
+  </script>
+</body>
+</html>
