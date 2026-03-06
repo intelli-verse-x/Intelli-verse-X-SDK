@@ -317,10 +317,30 @@ export class IVXWeb3Manager {
     }
   }
 
+  async updateProfile(displayName?: string, avatarUrl?: string, langTag?: string): Promise<void> {
+    this.ensureSession();
+    try {
+      await this._client!.updateAccount(this._session!, {
+        display_name: displayName,
+        avatar_url: avatarUrl,
+        lang_tag: langTag,
+      });
+      this.log('Profile updated');
+    } catch (e) {
+      const error = this.toIVXError(e);
+      this.emit('error', error);
+      throw error;
+    }
+  }
+
   async fetchWallet(): Promise<Record<string, unknown>> {
     const result = await this.callRpc('hiro_economy_list', '{}');
     this.emit('walletUpdated', result as Record<string, number>);
     return result;
+  }
+
+  async grantCurrency(currencyId: string, amount: number): Promise<Record<string, unknown>> {
+    return this.callRpc('hiro_economy_grant', JSON.stringify({ currencies: { [currencyId]: Math.floor(amount) } }));
   }
 
   async submitScore(leaderboardId: string, score: number): Promise<void> {
@@ -374,9 +394,11 @@ export class IVXWeb3Manager {
       const result = await this._client!.readStorageObjects(this._session!, {
         object_ids: [{ collection, key, user_id: this.userId }],
       });
-      return (result.objects && result.objects.length > 0)
+      const data = (result.objects && result.objects.length > 0)
         ? this.safeParseJson(result.objects[0].value)
         : null;
+      this.emit('storageRead', data);
+      return data;
     } catch (e) {
       const error = this.toIVXError(e);
       this.emit('error', error);

@@ -43,35 +43,35 @@ describe('IVXWeb3Manager', () => {
     expect(handler).toHaveBeenCalledOnce();
   });
 
-  it('should throw on connectWallet before init', () => {
+  it('should throw on connectWallet before init', async () => {
     const mgr = IVXWeb3Manager.getInstance();
-    expect(() => mgr.connectWallet()).rejects.toMatchObject({
+    await expect(mgr.connectWallet()).rejects.toMatchObject({
       code: -1,
       message: expect.stringContaining('not initialized'),
     });
   });
 
-  it('should throw on authenticateDevice before init', () => {
+  it('should throw on authenticateDevice before init', async () => {
     const mgr = IVXWeb3Manager.getInstance();
-    expect(() => mgr.authenticateDevice()).rejects.toMatchObject({
+    await expect(mgr.authenticateDevice()).rejects.toMatchObject({
       code: -1,
       message: expect.stringContaining('not initialized'),
     });
   });
 
-  it('should throw on fetchProfile without session', () => {
+  it('should throw on fetchProfile without session', async () => {
     const mgr = IVXWeb3Manager.getInstance();
     mgr.initialize({ nakamaHost: '127.0.0.1' });
-    expect(() => mgr.fetchProfile()).rejects.toMatchObject({
+    await expect(mgr.fetchProfile()).rejects.toMatchObject({
       code: -1,
       message: expect.stringContaining('No valid session'),
     });
   });
 
-  it('should throw on callRpc without session', () => {
+  it('should throw on callRpc without session', async () => {
     const mgr = IVXWeb3Manager.getInstance();
     mgr.initialize({ nakamaHost: '127.0.0.1' });
-    expect(() => mgr.callRpc('test')).rejects.toMatchObject({
+    await expect(mgr.callRpc('test')).rejects.toMatchObject({
       code: -1,
       message: expect.stringContaining('No valid session'),
     });

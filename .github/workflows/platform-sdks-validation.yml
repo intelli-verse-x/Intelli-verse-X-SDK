@@ -72,9 +72,27 @@ jobs:
           test -f SDKs/java/README.md
           echo "Java SDK structure OK"
 
+      - name: Validate Flutter SDK structure
+        run: |
+          test -f SDKs/flutter/pubspec.yaml
+          test -f SDKs/flutter/lib/intelliversex_sdk.dart
+          test -f SDKs/flutter/lib/src/ivx_manager.dart
+          test -f SDKs/flutter/lib/src/ivx_config.dart
+          test -f SDKs/flutter/README.md
+          echo "Flutter SDK structure OK"
+
+      - name: Validate Web3 SDK structure
+        run: |
+          test -f SDKs/web3/package.json
+          test -f SDKs/web3/tsconfig.json
+          test -f SDKs/web3/src/index.ts
+          test -f SDKs/web3/src/IVXWeb3Manager.ts
+          test -f SDKs/web3/README.md
+          echo "Web3 SDK structure OK"
+
       - name: Check all READMEs exist
         run: |
-          for sdk in unreal godot defold cocos2dx javascript cpp java; do
+          for sdk in unreal godot defold cocos2dx javascript cpp java flutter web3; do
             test -f "SDKs/$sdk/README.md" || (echo "Missing README for $sdk" && exit 1)
           done
           echo "All platform READMEs present"
@@ -93,4 +111,6 @@ jobs:
           grep -q "$VERSION" SDKs/godot/addons/intelliversex/plugin.cfg || echo "WARN: Godot version mismatch"
           grep -q "$VERSION" SDKs/javascript/package.json || echo "WARN: JavaScript version mismatch"
           grep -q "$VERSION" SDKs/java/build.gradle || echo "WARN: Java version mismatch"
+          grep -q "$VERSION" SDKs/flutter/pubspec.yaml || echo "WARN: Flutter version mismatch"
+          grep -q "$VERSION" SDKs/web3/package.json || echo "WARN: Web3 version mismatch"
           echo "Version check complete"

@@ -16,9 +16,10 @@ class IVXManager {
 
   Client? _client;
   Session? _session;
-  late IVXConfig _config;
+  IVXConfig _config = const IVXConfig();
   bool _initialized = false;
   final Map<IVXEvent, Set<IVXEventHandler>> _listeners = {};
+  String? _cachedDeviceId;
 
   IVXManager._();
 
@@ -376,8 +377,12 @@ class IVXManager {
   }
 
   String _generateDeviceId() {
-    final now = DateTime.now().millisecondsSinceEpoch;
-    return 'dart-$now';
+    if (_cachedDeviceId != null) return _cachedDeviceId!;
+    final now = DateTime.now().microsecondsSinceEpoch.toRadixString(36);
+    final rand1 = (DateTime.now().millisecond * 31337).toRadixString(36);
+    final rand2 = now.hashCode.abs().toRadixString(36);
+    _cachedDeviceId = 'dart-$now-$rand1-$rand2';
+    return _cachedDeviceId!;
   }
 
   Map<String, dynamic> _safeDecodeJson(dynamic value) {

@@ -1,0 +1,36 @@
+name: Flutter SDK
+
+on:
+  push:
+    paths:
+      - 'SDKs/flutter/**'
+  pull_request:
+    paths:
+      - 'SDKs/flutter/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        sdk: ['3.0.0', '3.2.0', 'stable']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Dart ${{ matrix.sdk }}
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: ${{ matrix.sdk }}
+
+      - name: Install dependencies
+        working-directory: SDKs/flutter
+        run: dart pub get
+
+      - name: Analyze
+        working-directory: SDKs/flutter
+        run: dart analyze --fatal-infos
+
+      - name: Test
+        working-directory: SDKs/flutter
+        run: dart test

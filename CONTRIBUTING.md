@@ -58,6 +58,8 @@ We welcome:
 | JavaScript | `SDKs/javascript/` | TypeScript |
 | C / C++ | `SDKs/cpp/` | C++ |
 | Java / Android | `SDKs/java/` | Java |
+| Flutter / Dart | `SDKs/flutter/` | Dart |
+| Web3 | `SDKs/web3/` | TypeScript |
 
 ---
 
@@ -99,6 +101,16 @@ We welcome:
 - CMake 3.14+
 - C++17 compiler
 - [Nakama C++ SDK](https://github.com/heroiclabs/nakama-cpp)
+
+### Flutter SDK
+
+- Dart SDK 3.0+
+- Run `dart pub get` in `SDKs/flutter/`
+
+### Web3 SDK
+
+- Node.js 18+
+- Run `npm install` in `SDKs/web3/`
 
 ### Clone Repository
 
