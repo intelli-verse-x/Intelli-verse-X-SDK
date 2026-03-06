@@ -5,10 +5,10 @@ OpenUPM,Unity / .NET,60%,Not Started,P1 - High,2026-03-20,,Register package on o
 npm Registry,JavaScript / TypeScript,85%,In Progress,P1 - High,2026-03-18,,npm account setup; publish dry-run; bundle optimization,"SDK at 92% - tests, examples, typed API complete"
 Unreal Marketplace,Unreal Engine,50%,In Progress,P2 - Medium,2026-04-10,,Marketplace account; real UE5 build test; plugin packaging,"SDK at 91% - delegates, examples, error handling complete"
 Godot Asset Library,Godot Engine,55%,In Progress,P2 - Medium,2026-04-05,,Asset library submission; real Godot 4 build test,"SDK at 91% - GUT tests, examples, null-safety complete"
-Pub.dev,Flutter / Dart,0%,Not Started,P3 - Low,2026-05-15,,Flutter SDK not yet created - needs new development,Growing casual / gamified app market
+Pub.dev,Flutter / Dart,85%,In Progress,P2 - Medium,2026-04-01,,pub.dev account; publish dry-run; verify install flow,"SDK at 91% - singleton, tests, typed API complete"
 Itch.io Tools,All Platforms,30%,Not Started,P2 - Medium,2026-04-01,,Create itch.io page; package SDK bundles per platform,Great indie dev discovery channel
 CodeCanyon,Unity + JS,20%,Not Started,P3 - Low,2026-05-01,,Create premium listing; documentation package; demo,Paid plugin marketplace
-Web3 Platforms,JavaScript,0%,Not Started,P4 - Future,2026-06-01,,Token/NFT reward integration; Thirdweb/Moralis connectors,Requires Web3 reward system in backend
+Web3 Platforms,TypeScript,85%,In Progress,P2 - Medium,2026-04-15,,npm publish; server-side RPC endpoints for NFT/token queries,"SDK at 92% - wallet auth, NFT queries, token gating, tests complete"
 Developer Portal,All Platforms,10%,Planning,P1 - High,2026-04-01,,Build developer.intelliversex.com; SDK downloads; API docs; dashboard,Critical infrastructure
 Nakama Community,All Platforms,50%,Not Started,P1 - High,2026-03-12,,Prepare showcase post; sample configs; community plugin listing,"All SDKs production-ready, good story to tell"
 GameDev Market,Unity + Unreal,10%,Not Started,P3 - Low,2026-05-15,,Create listing; screenshots; documentation,Secondary indie marketplace

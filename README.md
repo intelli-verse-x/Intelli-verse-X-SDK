@@ -1,6 +1,6 @@
 # IntelliVerseX SDK
 
-> **Complete modular game development SDK** — Integrate Auth, Identity, Analytics, Backend (Nakama), Social/Referrals, Monetization, and more into your games across **8 platforms**.
+> **Complete modular game development SDK** — Integrate Auth, Identity, Analytics, Backend (Nakama), Social/Referrals, Monetization, and more into your games across **10 platforms**.
 
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/Version-5.1.0-orange.svg)](CHANGELOG.md)
@@ -26,6 +26,8 @@ IntelliVerseX provides official SDK wrappers for all major game engines and plat
 | **JavaScript** | TypeScript / JS | [Guide](SDKs/javascript/README.md) | [SDKs/javascript](SDKs/javascript/) |
 | **C / C++** | C++ | [Guide](SDKs/cpp/README.md) | [SDKs/cpp](SDKs/cpp/) |
 | **Java / Android** | Java | [Guide](SDKs/java/README.md) | [SDKs/java](SDKs/java/) |
+| **Flutter / Dart** | Dart | [Guide](SDKs/flutter/README.md) | [SDKs/flutter](SDKs/flutter/) |
+| **Web3** | TypeScript | [Guide](SDKs/web3/README.md) | [SDKs/web3](SDKs/web3/) |
 
 Each SDK wraps the official [Nakama client library](https://heroiclabs.com/docs/nakama/client-libraries/) for its platform, adding IntelliVerseX features like managed auth flows, automatic metadata sync, wallet management, and Hiro/Satori system integration.
 
@@ -33,24 +35,27 @@ Each SDK wraps the official [Nakama client library](https://heroiclabs.com/docs/
 
 ## Features
 
-| Feature | Unity | Unreal | Godot | Defold | Cocos2d-x | JS | C++ | Java |
-|---------|:-----:|:------:|:-----:|:------:|:---------:|:--:|:---:|:----:|
-| Device Auth | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
-| Email Auth | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
-| Google Auth | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
-| Apple Auth | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
-| Profile Management | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
-| Wallet / Economy | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
-| Leaderboards | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
-| Cloud Storage | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
-| RPC Calls | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
-| Real-time Socket | Yes | -- | Yes | Yes | -- | Yes | -- | -- |
-| Hiro Systems | Yes | RPC | RPC | RPC | RPC | RPC | RPC | RPC |
-| Satori Analytics | Yes | -- | -- | -- | -- | -- | -- | -- |
-| Monetization (Ads/IAP) | Yes | -- | -- | -- | -- | -- | -- | -- |
-| Localization | Yes | -- | -- | -- | -- | -- | -- | -- |
-| Social / Friends | Yes | -- | -- | -- | -- | -- | -- | -- |
-| Quiz System | Yes | -- | -- | -- | -- | -- | -- | -- |
+| Feature | Unity | Unreal | Godot | Defold | Cocos2d-x | JS | C++ | Java | Flutter | Web3 |
+|---------|:-----:|:------:|:-----:|:------:|:---------:|:--:|:---:|:----:|:-------:|:----:|
+| Device Auth | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
+| Email Auth | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | -- |
+| Google Auth | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | -- |
+| Apple Auth | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | -- |
+| Wallet Auth | -- | -- | -- | -- | -- | -- | -- | -- | -- | Yes |
+| Profile Management | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
+| Wallet / Economy | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
+| Leaderboards | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
+| Cloud Storage | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
+| RPC Calls | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
+| Real-time Socket | Yes | -- | Yes | Yes | -- | Yes | -- | -- | -- | -- |
+| Hiro Systems | Yes | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC |
+| NFT / Token Queries | -- | -- | -- | -- | -- | -- | -- | -- | -- | Yes |
+| Token Gating | -- | -- | -- | -- | -- | -- | -- | -- | -- | Yes |
+| Satori Analytics | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| Monetization (Ads/IAP) | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| Localization | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| Social / Friends | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| Quiz System | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 
 **Yes** = Full native support | **RPC** = Available via server RPC calls | **--** = Planned
 
@@ -137,7 +142,9 @@ Intelli-verse-X-Unity-SDK/
 |   |-- cocos2dx/                  # Cocos2d-x / CMake
 |   |-- javascript/                # npm / TypeScript
 |   |-- cpp/                       # Native C++ / CMake
-|   +-- java/                      # Java / Gradle / Android
+|   |-- java/                      # Java / Gradle / Android
+|   |-- flutter/                   # Flutter / Dart (pub.dev)
+|   +-- web3/                      # Web3 / TypeScript (ethers.js)
 |-- docs/                          # MkDocs documentation
 |-- .github/workflows/             # CI/CD
 |-- tools/                         # Dev utilities
@@ -160,6 +167,8 @@ Each SDK is built on top of the official Heroic Labs Nakama client:
 | JavaScript | nakama-js | 218 | [heroiclabs/nakama-js](https://github.com/heroiclabs/nakama-js) |
 | C / C++ | nakama-cpp | 87 | [heroiclabs/nakama-cpp](https://github.com/heroiclabs/nakama-cpp) |
 | Java / Android | nakama-java | 37 | [heroiclabs/nakama-java](https://github.com/heroiclabs/nakama-java) |
+| Flutter / Dart | nakama (pub.dev) | 148 | [heroiclabs/nakama-dart](https://github.com/heroiclabs/nakama-dart) |
+| Web3 | nakama-js + ethers | 218 / 7.9k | [heroiclabs/nakama-js](https://github.com/heroiclabs/nakama-js) + [ethers-io/ethers.js](https://github.com/ethers-io/ethers.js) |
 
 ---
 

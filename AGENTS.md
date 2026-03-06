@@ -184,7 +184,9 @@ Intelli-verse-X-Unity-SDK/
 |   |-- cocos2dx/               # Cocos2d-x / CMake
 |   |-- javascript/             # npm / TypeScript
 |   |-- cpp/                    # Native C++ / CMake
-|   +-- java/                   # Java / Gradle / Android
+|   |-- java/                   # Java / Gradle / Android
+|   |-- flutter/                # Flutter / Dart (pub.dev)
+|   +-- web3/                   # Web3 / TypeScript (ethers.js)
 |-- docs/                       # MkDocs documentation
 |   +-- platforms/              # Per-platform docs
 |-- .github/workflows/          # CI/CD
@@ -217,7 +219,7 @@ A task is complete when:
 | Unity Version | 6000.2.8f1 |
 | Package Name | com.intelliversex.sdk |
 | Root Namespace | `IntelliVerseX` |
-| Target Platforms | Unity, Unreal, Godot, Defold, Cocos2d-x, JS, C++, Java |
+| Target Platforms | Unity, Unreal, Godot, Defold, Cocos2d-x, JS, C++, Java, Flutter, Web3 |
 | Min Unity Version | 2021.3 LTS |
 | SDK Version | 5.1.0 |
 
