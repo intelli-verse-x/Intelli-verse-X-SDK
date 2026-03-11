@@ -37,7 +37,7 @@ Yes, the SDK is free and open-source under the MIT license. Backend services may
 
 **Recommended: Git URL (via Package Manager)**
 ```
-https://github.com/AhamedAzmi/IntelliVerseX.git?path=/Assets/_IntelliVerseXSDK
+https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=/Assets/_IntelliVerseXSDK
 ```
 
 See [Installation Guide](../getting-started/installation.md) for all methods.
@@ -293,5 +293,5 @@ IntelliVerseXSDK.EnableDebugMode(true);
 ## Still Have Questions?
 
 - 📖 Check the [full documentation](../index.md)
-- 🐛 Report issues on [GitHub](https://github.com/AhamedAzmi/IntelliVerseX/issues)
+- 🐛 Report issues on [GitHub](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues)
 - 📧 Contact support@intelli-verse-x.ai

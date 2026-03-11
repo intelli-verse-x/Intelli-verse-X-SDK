@@ -1,0 +1,36 @@
+name: Java SDK
+
+on:
+  push:
+    paths:
+      - 'SDKs/java/**'
+  pull_request:
+    paths:
+      - 'SDKs/java/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java-version: [11, 17, 21]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build
+        working-directory: SDKs/java
+        run: ./gradlew build
+
+      - name: Test
+        working-directory: SDKs/java
+        run: ./gradlew test

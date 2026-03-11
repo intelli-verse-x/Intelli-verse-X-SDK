@@ -5,6 +5,8 @@
         "IntelliVerseX.Core",
         "IntelliVerseX.Backend",
         "IntelliVerseX.Identity",
+        "IntelliVerseX.Hiro",
+        "IntelliVerseX.Satori",
         "NakamaRuntime",
         "Newtonsoft.Json",
         "Unity.TextMeshPro"

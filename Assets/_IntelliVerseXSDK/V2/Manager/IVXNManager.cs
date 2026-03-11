@@ -1636,6 +1636,11 @@ private void CreateClientIfNeeded()
 
         private void SafeInvokeOnInitialized(bool success)
         {
+            if (success)
+            {
+                InitializeHiroAndSatori();
+            }
+
             try
             {
                 OnInitialized?.Invoke(success);
@@ -1643,6 +1648,47 @@ private void CreateClientIfNeeded()
             catch (Exception ex)
             {
                 Log($"Error in OnInitialized: {ex.Message}", isWarning: true);
+            }
+        }
+
+        private void InitializeHiroAndSatori()
+        {
+            if (_client == null || _session == null) return;
+
+            try
+            {
+                var hiro = IntelliVerseX.Hiro.IVXHiroCoordinator.Instance;
+                if (hiro != null && !hiro.IsInitialized)
+                {
+                    hiro.InitializeSystems(_client, _session);
+                    Log("Hiro systems auto-initialized.");
+                }
+                else if (hiro != null)
+                {
+                    hiro.RefreshSession(_session);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Hiro auto-init failed: {ex.Message}", isWarning: true);
+            }
+
+            try
+            {
+                var satori = IntelliVerseX.Satori.IVXSatoriClient.Instance;
+                if (satori != null && !satori.IsInitialized)
+                {
+                    satori.Initialize(_client, _session);
+                    Log("Satori client auto-initialized.");
+                }
+                else if (satori != null)
+                {
+                    satori.RefreshSession(_session);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Satori auto-init failed: {ex.Message}", isWarning: true);
             }
         }
 

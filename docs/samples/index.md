@@ -290,4 +290,4 @@ Import all sample assets via Package Manager to ensure dependencies.
 
 - Check [Troubleshooting](../troubleshooting/index.md)
 - Review [Module Documentation](../modules/index.md)
-- Ask in [GitHub Discussions](https://github.com/AhamedAzmi/IntelliVerseX/discussions)
+- Ask in [GitHub Discussions](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/discussions)

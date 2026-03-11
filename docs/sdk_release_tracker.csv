@@ -1,0 +1,18 @@
+Channel,Platform/SDK,Readiness %,Status,Priority,Target Date,Owner,Blockers,Notes
+Unity Asset Store,Unity / .NET,75%,In Progress,P0 - Critical,2026-03-15,,Asset Store publisher account; screenshots; demo video; store listing copy,"Primary channel - 599 files, 30 modules, 23 Hiro + 3 Satori systems, production-ready SDK"
+GitHub Releases,All Platforms,90%,In Progress,P0 - Critical,2026-03-10,,Clean repo; release tags; license headers; CHANGELOG,"All 10 platform SDKs now at 90%+ readiness with tests, examples, error handling"
+OpenUPM,Unity / .NET,60%,Not Started,P1 - High,2026-03-20,,Register package on openupm.com; verify install flow,Professional Unity teams prefer UPM over Asset Store
+npm Registry,JavaScript / TypeScript,85%,In Progress,P1 - High,2026-03-18,,npm account setup; publish dry-run; bundle optimization,"SDK at 92% - tests, examples, typed API complete"
+Unreal Marketplace,Unreal Engine,50%,In Progress,P2 - Medium,2026-04-10,,Marketplace account; real UE5 build test; plugin packaging,"SDK at 91% - delegates, examples, error handling complete"
+Godot Asset Library,Godot Engine,55%,In Progress,P2 - Medium,2026-04-05,,Asset library submission; real Godot 4 build test,"SDK at 91% - GUT tests, examples, null-safety complete"
+Pub.dev,Flutter / Dart,85%,In Progress,P2 - Medium,2026-04-01,,pub.dev account; publish dry-run; verify install flow,"SDK at 91% - singleton, tests, typed API complete"
+Itch.io Tools,All Platforms,30%,Not Started,P2 - Medium,2026-04-01,,Create itch.io page; package SDK bundles per platform,Great indie dev discovery channel
+CodeCanyon,Unity + JS,20%,Not Started,P3 - Low,2026-05-01,,Create premium listing; documentation package; demo,Paid plugin marketplace
+Web3 Platforms,TypeScript,85%,In Progress,P2 - Medium,2026-04-15,,npm publish; server-side RPC endpoints for NFT/token queries,"SDK at 92% - wallet auth, NFT queries, token gating, tests complete"
+Developer Portal,All Platforms,10%,Planning,P1 - High,2026-04-01,,Build developer.intelliversex.com; SDK downloads; API docs; dashboard,Critical infrastructure
+Nakama Community,All Platforms,50%,Not Started,P1 - High,2026-03-12,,Prepare showcase post; sample configs; community plugin listing,"All SDKs production-ready, good story to tell"
+GameDev Market,Unity + Unreal,10%,Not Started,P3 - Low,2026-05-15,,Create listing; screenshots; documentation,Secondary indie marketplace
+Reddit / Indie Communities,All Platforms,30%,Planning,P1 - High,2026-03-15,,Prepare launch posts for r/gamedev r/unity3d r/godot r/indiegames,High-impact free marketing
+Product Hunt,Developer Portal,5%,Not Started,P2 - Medium,2026-04-15,,Prepare Product Hunt launch; screenshots; demo video,One-time high-visibility launch event
+Maven Central,Java / Android,40%,Not Started,P2 - Medium,2026-04-15,,Maven Central publishing; Sonatype account; GPG signing,"SDK at 91% - async API, thread-safe, JUnit tests"
+vcpkg / Conan,C / C++,20%,Not Started,P3 - Low,2026-05-01,,Package manager submission; build recipes,"SDK at 91% - config validation, proper UUIDs, safe JSON"

@@ -1,0 +1,60 @@
+{
+  "name": "@intelliversex/sdk-web3",
+  "version": "5.1.0",
+  "description": "IntelliVerseX Web3 SDK — Wallet auth (MetaMask/WalletConnect), NFT rewards, token gating, and on-chain leaderboards, backed by Nakama + Hiro.",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "lint": "eslint src/",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "intelliversex",
+    "nakama",
+    "web3",
+    "nft",
+    "blockchain",
+    "wallet",
+    "metamask",
+    "thirdweb",
+    "moralis",
+    "game-sdk"
+  ],
+  "author": "IntelliVerse-X <support@intelli-verse-x.ai>",
+  "license": "MIT",
+  "homepage": "https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git",
+    "directory": "SDKs/web3"
+  },
+  "bugs": {
+    "url": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues"
+  },
+  "peerDependencies": {
+    "@heroiclabs/nakama-js": ">=2.7.0",
+    "ethers": ">=6.0.0"
+  },
+  "devDependencies": {
+    "@heroiclabs/nakama-js": "^2.8.0",
+    "ethers": "^6.13.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^2.0.0"
+  }
+}

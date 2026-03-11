@@ -1,0 +1,42 @@
+Tier,#,Platform,Monthly Users / Reach,Revenue Model,SDK Required,Integration Effort,Priority for Quiz Game,Status,Notes
+Tier 1 - Major Portals,1,Poki,80M+,Ad revenue share,Poki SDK,Medium,P0 - Critical,Not Started,Largest web game portal; curated submissions
+Tier 1 - Major Portals,2,CrazyGames,40M+,Ad revenue share (70%),CrazyGames SDK,Medium,P0 - Critical,Not Started,"3,000+ developers; strong discovery"
+Tier 1 - Major Portals,3,Y8,30M+,Ad revenue share,Y8 SDK,Medium,P2 - Medium,Not Started,One of the oldest portals; huge catalog
+Tier 1 - Major Portals,4,Newgrounds,10M+,Ad revenue share + Supporter,None,Low,P1 - High,Not Started,Strong indie community; creative freedom
+Tier 1 - Major Portals,5,Kongregate,8M+,Ads + Virtual Goods API,Kongregate SDK,Medium,P2 - Medium,Not Started,Established platform; achievement system
+Tier 1 - Major Portals,6,Addicting Games,5M+,Ad revenue share,None,Low,P2 - Medium,Not Started,Classic casual game portal
+Tier 1 - Major Portals,7,Armor Games,3M+,Ad revenue share,None,Low,P2 - Medium,Not Started,Quality-focused indie portal
+Tier 2 - Distribution Networks,8,GameDistribution,7500+ publishers,50% rev share,GD SDK,Medium,P1 - High,Not Started,"One upload reaches thousands of publishers"
+Tier 2 - Distribution Networks,9,GameMonetize,3500+ publishers,45% rev share (90% self-pub),GM SDK,Medium,P2 - Medium,Not Started,"Net 30 payout; $30 min via PayPal/USDT"
+Tier 2 - Distribution Networks,10,GamePix,1000+ publishers,Revenue share,GamePix SDK,Medium,P2 - Medium,Not Started,Focus on quality HTML5 games
+Tier 2 - Distribution Networks,11,Softgames,500M+ monthly reach,Revenue share,Softgames SDK,Medium,P2 - Medium,Not Started,Mobile web focused; carrier deals
+Tier 3 - Self-Publishing / Indie,12,itch.io,Large indie community,Free / PWYW / Paid,None,Low,P0 - Critical,Not Started,"Instant publish; full control; build community"
+Tier 3 - Self-Publishing / Indie,13,Game Jolt,Growing,Free + ad revenue,None,Low,P1 - High,Not Started,Community-driven; game jams
+Tier 3 - Self-Publishing / Indie,14,Miniplay,Medium,Ad revenue share,None,Low,P3 - Low,Not Started,Spanish market strong
+Tier 3 - Self-Publishing / Indie,15,SilverGames,Medium,Ad revenue share,None,Low,P3 - Low,Not Started,Curated casual games
+Tier 3 - Self-Publishing / Indie,16,WebGamer,Niche,Ad-free / domain iframing,None,Low,P3 - Low,Not Started,Clean UX; ad-free
+Tier 4 - Social / Messaging,17,Telegram Mini Apps,900M+,IAP + Ads,Bot API + Mini Apps SDK,High,P0 - Critical,Not Started,"Viral sharing in chats; leaderboards built-in; quiz games thrive"
+Tier 4 - Social / Messaging,18,Discord Activities,200M+,IAP + Subscriptions,Embedded App SDK,High,P1 - High,Not Started,Play inside Discord voice channels
+Tier 4 - Social / Messaging,19,Facebook Instant Games,2B+,Ads + IAP,FB Instant Games SDK,High,P1 - High,Not Started,"Messenger + Facebook feed; social viral loop"
+Tier 4 - Social / Messaging,20,LINE Games,200M+ (Asia),IAP,LINE SDK,High,P3 - Low,Not Started,"Huge in Japan, Thailand, Taiwan"
+Tier 4 - Social / Messaging,21,WeChat Mini Games,1.3B+ (China),IAP,WeChat SDK,Very High,P3 - Low,Not Started,Dominant in China; requires Chinese entity
+Tier 4 - Social / Messaging,22,Snapchat Games,400M+,Ads,Snap SDK,High,P3 - Low,Not Started,Younger demographic; multiplayer focus
+Tier 4 - Social / Messaging,23,VK Games,100M+ (Russia/CIS),Ads + IAP,VK Bridge SDK,High,P3 - Low,Not Started,Major in Russia and CIS countries
+Tier 5 - App Stores (PWA/TWA),24,Google Play Store (TWA),2B+ Android,Ads + IAP,TWA wrapper,Medium,P2 - Medium,Not Started,Wrap WebGL as Android app via Trusted Web Activity
+Tier 5 - App Stores (PWA/TWA),25,Microsoft Store (PWA),1B+ Windows,Ads + IAP,PWA manifest,Low,P2 - Medium,Not Started,Windows 10/11 store; auto-indexed PWAs
+Tier 5 - App Stores (PWA/TWA),26,Samsung Galaxy Store,Samsung devices,Ads + IAP,PWA / TWA,Medium,P3 - Low,Not Started,Pre-installed on Samsung devices
+Tier 5 - App Stores (PWA/TWA),27,Amazon Appstore,Fire devices,Ads + IAP,Hosted Web App,Medium,P3 - Low,Not Started,"Fire tablets, Fire TV"
+Tier 6 - Gaming Platforms,28,Now.gg,Growing,Cloud gaming,None,Low,P2 - Medium,Not Started,Play in browser; mobile-first
+Tier 6 - Gaming Platforms,29,iogames.space,.io community,Free,None,Low,P3 - Low,Not Started,Best for multiplayer .io style games
+Tier 6 - Gaming Platforms,30,Lagged.com,Growing,Ad revenue share,None,Low,P3 - Low,Not Started,Growing casual community
+Tier 6 - Gaming Platforms,31,Kizi,Medium,Ad revenue share,None,Low,P3 - Low,Not Started,Family-friendly focus
+Tier 6 - Gaming Platforms,32,Friv,Large casual,Ad revenue share,None,Low,P3 - Low,Not Started,Massive casual audience
+Tier 6 - Gaming Platforms,33,PlayOnRay,Growing,80% rev share,Ray SDK,Medium,P2 - Medium,Not Started,"Developer-friendly; high revenue share"
+Tier 6 - Gaming Platforms,34,Zihit.com,Niche,Revenue share,None,Low,P3 - Low,Not Started,"Dev tools; analytics; performance-focused"
+Tier 7 - Web3 / Crypto,35,TON (Telegram Open Network),Telegram users,Token rewards,TON SDK,High,P2 - Medium,Not Started,"Telegram + TON token rewards; huge in 2025-2026"
+Tier 7 - Web3 / Crypto,36,Gala Games,Web3 community,Token rewards,Gala SDK,High,P3 - Low,Not Started,Blockchain-based gaming platform
+Tier 7 - Web3 / Crypto,37,Immutable X,Web3 community,NFT assets,IMX SDK,High,P3 - Low,Not Started,NFT-based game assets
+Tier 8 - Embedding / White-Label,38,Own Website,Direct traffic,Ads + Direct,None,Low,P0 - Critical,Not Started,"Full control; best margins; your domain"
+Tier 8 - Embedding / White-Label,39,News / Media Sites,Licensing deals,License fee,None,Low,P2 - Medium,Not Started,"MSN, Yahoo Games, AOL embed HTML5 games"
+Tier 8 - Embedding / White-Label,40,Education Portals,School traffic,Free / Licensed,None,Low,P2 - Medium,Not Started,"If quiz/educational: Coolmath Games, ABCya, PBS Kids"
+Tier 8 - Embedding / White-Label,41,Corporate Training,Enterprise,License / SaaS,None,Medium,P3 - Low,Not Started,Quiz games for corporate L&D platforms

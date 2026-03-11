@@ -1,0 +1,9 @@
+{
+  "_comment": "Copy this file to keys.json and fill in values. Never commit keys.json. All code and docs that need secrets should load from config/keys.json (see config/README.md).",
+  "authBaseUrl": "http://localhost:3000/auth",
+  "devBackendUrl": "localhost:7350",
+  "prodBackendUrl": "",
+  "apiKey": "",
+  "moralisApiKey": "",
+  "mcpServerUrl": "http://localhost:8080/mcp"
+}

@@ -1,6 +1,6 @@
 # Contributing to IntelliVerseX SDK
 
-Thank you for your interest in contributing to IntelliVerseX SDK! This document provides guidelines and information for contributors.
+Thank you for your interest in contributing to IntelliVerseX SDK! This document provides guidelines for contributors across all supported platforms.
 
 ---
 
@@ -19,7 +19,7 @@ Thank you for your interest in contributing to IntelliVerseX SDK! This document 
 
 ## Code of Conduct
 
-This project follows the [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/version/2/1/code_of_conduct/). By participating, you are expected to uphold this code.
+This project follows the [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/version/2/1/code_of_conduct/). See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) in this repository. By participating, you are expected to uphold this code.
 
 **In short:** Be respectful, inclusive, and constructive.
 
@@ -31,45 +31,98 @@ This project follows the [Contributor Covenant Code of Conduct](https://www.cont
 
 We welcome:
 
-- 🐛 **Bug fixes** — Fix issues in existing code
-- ✨ **Features** — Add new functionality
-- 📖 **Documentation** — Improve docs, add examples
-- 🧪 **Tests** — Add or improve test coverage
-- 🌍 **Translations** — Add new languages
+- Bug fixes — Fix issues in existing code
+- Features — Add new functionality
+- Documentation — Improve docs, add examples
+- Tests — Add or improve test coverage
+- Translations — Add new languages
+- **New platform SDKs** — Improve or extend platform support
 
 ### Not Accepted
 
 - Breaking changes without discussion
 - Features outside project scope
-- Changes to third-party SDKs
+- Changes to third-party SDKs or Nakama client libraries
+
+---
+
+## Supported Platforms
+
+| Platform | Location | Language |
+|----------|----------|----------|
+| Unity / .NET | `Assets/_IntelliVerseXSDK/` | C# |
+| Unreal Engine | `SDKs/unreal/` | C++ |
+| Godot Engine | `SDKs/godot/` | GDScript |
+| Defold | `SDKs/defold/` | Lua |
+| Cocos2d-x | `SDKs/cocos2dx/` | C++ |
+| JavaScript | `SDKs/javascript/` | TypeScript |
+| C / C++ | `SDKs/cpp/` | C++ |
+| Java / Android | `SDKs/java/` | Java |
+| Flutter / Dart | `SDKs/flutter/` | Dart |
+| Web3 | `SDKs/web3/` | TypeScript |
 
 ---
 
 ## Development Setup
 
-### Prerequisites
+### Prerequisites (all platforms)
 
-- Unity 2021.3 LTS or later (2023.3+ recommended)
 - Git
-- IDE with C# support (VS Code, Rider, Visual Studio)
+- A Nakama server instance for testing (see [docker-compose.yml](../docker-compose.yml))
+
+### Unity SDK
+
+- Unity 2023.3 LTS or later
+- IDE: VS Code, Rider, or Visual Studio
+
+### Unreal SDK
+
+- Unreal Engine 5.3+
+- [Nakama Unreal Plugin](https://github.com/heroiclabs/nakama-unreal)
+
+### Godot SDK
+
+- Godot 4.2+
+- [Nakama Godot addon](https://github.com/heroiclabs/nakama-godot)
+
+### JavaScript SDK
+
+- Node.js 18+
+- Run `npm install` in `SDKs/javascript/`
+
+### Java SDK
+
+- JDK 11+
+- Gradle 7+
+- Run `./gradlew build` in `SDKs/java/`
+
+### C/C++ SDK
+
+- CMake 3.14+
+- C++17 compiler
+- [Nakama C++ SDK](https://github.com/heroiclabs/nakama-cpp)
+
+### Flutter SDK
+
+- Dart SDK 3.0+
+- Run `dart pub get` in `SDKs/flutter/`
+
+### Web3 SDK
+
+- Node.js 18+
+- Run `npm install` in `SDKs/web3/`
 
 ### Clone Repository
 
 ```bash
-git clone https://github.com/AhamedAzmi/IntelliVerseX.git
-cd IntelliVerseX
+git clone https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git
+cd Intelli-verse-X-Unity-SDK
 ```
 
-### Open in Unity
+### Unity First Run
 
-1. Open Unity Hub
-2. Click "Add" → Select cloned folder
-3. Open project with Unity 2023.3+
-
-### First Run
-
-1. Open `Assets/_IntelliVerseXSDK/Samples/Scenes/IVX_AuthTest.unity`
-2. Run the SDK Setup Wizard: `IntelliVerse-X → Setup Wizard`
+1. Open in Unity 2023.3+
+2. Run the SDK Setup Wizard: `IntelliVerse-X > Setup Wizard`
 3. Verify no compilation errors
 
 ---
@@ -180,7 +233,9 @@ Describe how you tested the changes
 
 ## Coding Standards
 
-### Naming Conventions
+### Per-Platform Conventions
+
+#### Unity (C#)
 
 | Element | Convention | Example |
 |---------|------------|---------|
@@ -189,99 +244,81 @@ Describe how you tested the changes
 | Private fields | `_camelCase` | `_isInitialized` |
 | Public properties | PascalCase | `IsReady` |
 | Constants | `UPPER_SNAKE` | `MAX_RETRY_COUNT` |
-| Methods | PascalCase | `InitializeAsync()` |
 | Events | `On` + PascalCase | `OnAuthChanged` |
 | Async methods | + `Async` suffix | `ConnectAsync()` |
 
-### Code Style
+#### Unreal (C++)
 
-```csharp
-using System;
-using UnityEngine;
+| Element | Convention | Example |
+|---------|------------|---------|
+| Classes | `UIVX` / `FIVX` prefix | `UIVXManager` |
+| Functions | PascalCase | `AuthenticateWithDevice()` |
+| Members | `bPascal` (bool) | `bIsInitialized` |
+| Delegates | `FOn` prefix | `FOnIVXInitialized` |
 
-namespace IntelliVerseX.ModuleName
-{
-    /// <summary>
-    /// Brief description of the class.
-    /// </summary>
-    public class IVXExampleClass : MonoBehaviour
-    {
-        #region Constants
-        private const int MAX_ITEMS = 100;
-        #endregion
+#### Godot (GDScript)
 
-        #region Serialized Fields
-        [SerializeField] private float _duration = 1f;
-        #endregion
+| Element | Convention | Example |
+|---------|------------|---------|
+| Classes | `IVX` + PascalCase | `IVXConfig` |
+| Functions | snake_case | `authenticate_device()` |
+| Signals | snake_case | `auth_success` |
+| Constants | UPPER_SNAKE | `SDK_VERSION` |
 
-        #region Private Fields
-        private bool _isInitialized;
-        #endregion
+#### JavaScript / TypeScript
 
-        #region Properties
-        public bool IsInitialized => _isInitialized;
-        #endregion
+| Element | Convention | Example |
+|---------|------------|---------|
+| Classes | `IVX` + PascalCase | `IVXManager` |
+| Methods | camelCase | `authenticateDevice()` |
+| Interfaces | `IVX` + PascalCase | `IVXProfile` |
+| Constants | UPPER_SNAKE | `SDK_VERSION` |
 
-        #region Unity Lifecycle
-        private void Awake()
-        {
-            // Implementation
-        }
-        #endregion
+#### Java
 
-        #region Public Methods
-        /// <summary>
-        /// Initializes the component.
-        /// </summary>
-        public void Initialize()
-        {
-            if (_isInitialized) return;
-            _isInitialized = true;
-        }
-        #endregion
+| Element | Convention | Example |
+|---------|------------|---------|
+| Classes | `IVX` + PascalCase | `IVXManager` |
+| Methods | camelCase | `authenticateDevice()` |
+| Constants | UPPER_SNAKE | `SDK_VERSION` |
+| Packages | `com.intelliversex.sdk.*` | `com.intelliversex.sdk.core` |
 
-        #region Private Methods
-        private void DoSomething()
-        {
-            // Implementation
-        }
-        #endregion
-    }
-}
-```
+#### Flutter / Dart
 
-### Do's and Don'ts
+| Element | Convention | Example |
+|---------|------------|---------|
+| Classes | `IVX` + PascalCase | `IVXManager` |
+| Methods | camelCase | `authenticateDevice()` |
+| Constants | camelCase | `sdkVersion` |
+| Private | `_` prefix | `_initialized` |
+| Events | `IVXEvent` enum | `IVXEvent.authSuccess` |
 
-**Do:**
-```csharp
-// Use nullable operators
-var result = manager?.GetData();
+#### Web3 (TypeScript)
 
-// Cache component references
-private Transform _cachedTransform;
-void Awake() => _cachedTransform = transform;
+| Element | Convention | Example |
+|---------|------------|---------|
+| Classes | `IVX` + PascalCase | `IVXWeb3Manager` |
+| Methods | camelCase | `connectWallet()` |
+| Interfaces | `IVX` + PascalCase | `IVXWalletInfo` |
+| Constants | UPPER_SNAKE | `SDK_VERSION` |
 
-// Use async/await
-public async Task<Data> FetchDataAsync() { }
-```
+#### C/C++ Native
 
-**Don't:**
-```csharp
-// Don't use Find in Update
-void Update()
-{
-    var obj = GameObject.Find("Player"); // ❌
-}
+| Element | Convention | Example |
+|---------|------------|---------|
+| Namespace | `ivx` | `ivx::Manager` |
+| Classes | PascalCase | `Manager`, `Config` |
+| Methods | camelCase | `authDevice()` |
+| Members | `_camelCase` | `_initialized` |
 
-// Don't leave TODO comments
-// TODO: Fix this later ❌
+#### Defold (Lua)
 
-// Don't ignore null checks
-public void Process(Data data)
-{
-    data.Value = 5; // ❌ Could be null
-}
-```
+| Element | Convention | Example |
+|---------|------------|---------|
+| Module | lowercase | `ivx` |
+| Functions | snake_case | `authenticate_device()` |
+| Constants | UPPER_SNAKE | `SDK_VERSION` |
+| Private | `_` prefix | `_on_auth_success()` |
 
 ---
 
@@ -350,7 +387,7 @@ mkdocs serve
 
 ## Questions?
 
-- 💬 [GitHub Discussions](https://github.com/AhamedAzmi/IntelliVerseX/discussions)
+- 💬 [GitHub Discussions](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/discussions)
 - 📧 [Email](mailto:contribute@intelli-verse-x.ai)
 
 ---

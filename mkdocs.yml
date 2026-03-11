@@ -2,7 +2,7 @@
 # https://squidfunk.github.io/mkdocs-material/
 
 site_name: IntelliVerseX SDK
-site_description: Complete modular game development SDK for Unity
+site_description: Complete modular game development SDK for Unity, Unreal, Godot, Defold, Cocos2d-x, JavaScript, C++, Java, Flutter, and Web3
 site_author: IntelliVerse-X Team
 site_url: https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/
 
@@ -59,6 +59,18 @@ nav:
     - Quick Start: getting-started/quickstart.md
     - Requirements: getting-started/requirements.md
     - Project Setup: getting-started/project-setup.md
+  - Platform SDKs:
+    - platforms/index.md
+    - Unity / .NET: platforms/unity.md
+    - Unreal Engine: platforms/unreal.md
+    - Godot Engine: platforms/godot.md
+    - Defold: platforms/defold.md
+    - Cocos2d-x Engine: platforms/cocos2dx.md
+    - JavaScript: platforms/javascript.md
+    - C / C++: platforms/cpp.md
+    - Java / Android: platforms/java.md
+    - Flutter / Dart: platforms/flutter.md
+    - Web3: platforms/web3.md
   - Configuration:
     - configuration/index.md
     - Game Configuration: configuration/game-config.md
@@ -88,6 +100,9 @@ nav:
     - Monetization API: api/monetization.md
     - Localization API: api/localization.md
     - Analytics API: api/analytics.md
+    - Storage API: api/storage.md
+    - Leaderboards API: api/leaderboards.md
+    - Quiz API: api/quiz.md
     - UI API: api/ui.md
   - Samples:
     - samples/index.md
@@ -96,6 +111,14 @@ nav:
     - Friends Demo: samples/friends-demo.md
     - Ads Demo: samples/ads-demo.md
     - Quiz Demo: samples/quiz-demo.md
+    - Weekly Quiz Demo: samples/weekly-quiz-demo.md
+    - Wallet Demo: samples/wallet-demo.md
+    - UI Demo: samples/ui-demo.md
+    - Localization Demo: samples/localization-demo.md
+    - Profile Demo: samples/profile-demo.md
+    - More Of Us Demo: samples/more-of-us-demo.md
+    - Daily Quiz Demo: samples/daily-quiz-demo.md
+    - Analytics Demo: samples/analytics-demo.md
   - Guides:
     - guides/index.md
     - Authentication Flow: guides/auth-flow.md
@@ -103,6 +126,12 @@ nav:
     - Ad Integration: guides/ad-integration.md
     - Localization Setup: guides/localization-setup.md
     - Migration Guide: guides/migration.md
+    - Leaderboard Integration: guides/leaderboard-integration.md
+    - Friends Integration: guides/friends-integration.md
+    - Theming: guides/theming.md
+    - Testing: guides/testing.md
+    - Privacy: guides/privacy.md
+    - Custom Modules: guides/custom-modules.md
   - Troubleshooting:
     - troubleshooting/index.md
     - Build Errors: troubleshooting/build-errors.md

@@ -17,15 +17,30 @@
 
 ---
 
-## 🛠️ PROJECT SPECS
+## PROJECT SPECS
 
 | Property | Value |
 |----------|-------|
-| **Project** | IntelliVerseX Unity SDK |
-| **Type** | Unity UPM Package |
+| **Project** | IntelliVerseX Multi-Platform SDK |
+| **Type** | Unity UPM Package + Cross-Platform SDKs |
 | **Unity Version** | 6000.2.8f1 |
-| **Platforms** | Android, iOS, WebGL, Standalone |
+| **Platforms** | Unity, Unreal, Godot, Defold, Cocos2d-x, JS, C++, Java/Android |
 | **Package Name** | com.intelliversex.sdk |
+
+---
+
+## PLATFORM SDKs
+
+| Platform | Location | Language | Nakama Client |
+|----------|----------|----------|---------------|
+| **Unity / .NET** | `Assets/_IntelliVerseXSDK/` | C# | nakama-unity |
+| **Unreal Engine** | `SDKs/unreal/` | C++ / Blueprints | nakama-unreal |
+| **Godot Engine** | `SDKs/godot/` | GDScript | nakama-godot |
+| **Defold** | `SDKs/defold/` | Lua | nakama-defold |
+| **Cocos2d-x** | `SDKs/cocos2dx/` | C++ | nakama-cpp |
+| **JavaScript** | `SDKs/javascript/` | TypeScript | nakama-js |
+| **C / C++** | `SDKs/cpp/` | C++ | nakama-cpp |
+| **Java / Android** | `SDKs/java/` | Java | nakama-java |
 
 ---
 
@@ -47,31 +62,43 @@
 
 ---
 
-## 📁 FOLDER STRUCTURE
+## FOLDER STRUCTURE
 
 ```
-Assets/_IntelliVerseXSDK/
-├── Core/                    # SDK core, configuration
-├── Identity/                # Authentication providers
-├── Backend/                 # Nakama integration
-├── Analytics/               # Event tracking
-├── Monetization/            # Ads and IAP
-│   ├── Ads/                 # Ad providers
-│   └── IAP/                 # In-app purchases
-├── Localization/            # Language support
-├── Social/                  # Social features
-├── Leaderboard/             # Rankings
-├── Quiz/                    # Quiz support
-├── Storage/                 # Cloud storage
-├── Networking/              # Network utilities
-├── Editor/                  # Editor tools
-├── Examples/                # Sample code
-├── UI/                      # UI components
-├── V2/                      # Next-gen features
-├── Documentation~/          # External docs
-├── README.md                # Package readme
-├── CHANGELOG.md             # Version history
-└── package.json             # UPM manifest
+Intelli-verse-X-Unity-SDK/
+|-- Assets/_IntelliVerseXSDK/      # Unity SDK (UPM Package)
+|   |-- Core/                      # SDK core, configuration
+|   |-- Identity/                  # Authentication providers
+|   |-- Backend/                   # Nakama integration
+|   |-- Analytics/                 # Event tracking
+|   |-- Monetization/              # Ads and IAP
+|   |-- Localization/              # Language support
+|   |-- Social/                    # Social features
+|   |-- Leaderboard/               # Rankings
+|   |-- Quiz/                      # Quiz support
+|   |-- Storage/                   # Cloud storage
+|   |-- Hiro/                      # Hiro systems integration
+|   |-- Satori/                    # Satori analytics
+|   |-- V2/                        # Next-gen features
+|   +-- Editor/                    # Editor tools
+|-- SDKs/
+|   |-- unreal/                    # Unreal Engine 5 Plugin
+|   |   +-- Source/IntelliVerseX/  # C++ source
+|   |-- godot/                     # Godot 4 Addon
+|   |   +-- addons/intelliversex/  # GDScript source
+|   |-- defold/                    # Defold Library Module
+|   |   +-- intelliversex/         # Lua source
+|   |-- cocos2dx/                  # Cocos2d-x / CMake
+|   |   +-- Classes/IntelliVerseX/ # C++ source
+|   |-- javascript/                # npm / TypeScript
+|   |   +-- src/                   # TypeScript source
+|   |-- cpp/                       # Native C++ / CMake
+|   |   |-- include/intelliversex/ # Public headers
+|   |   +-- src/                   # Implementation
+|   +-- java/                      # Java / Gradle / Android
+|       +-- src/main/java/         # Java source
+|-- docs/                          # MkDocs documentation
++-- .github/workflows/             # CI/CD
 ```
 
 ---

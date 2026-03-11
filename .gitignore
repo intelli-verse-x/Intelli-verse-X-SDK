@@ -97,3 +97,67 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# ==== Multi-Platform SDK Ignores ====
+
+# JavaScript SDK
+SDKs/javascript/node_modules/
+SDKs/javascript/dist/
+SDKs/javascript/*.tgz
+
+# Java SDK
+SDKs/java/.gradle/
+SDKs/java/build/
+SDKs/java/bin/
+SDKs/java/.idea/
+
+# C/C++ SDK
+SDKs/cpp/build/
+SDKs/cpp/cmake-build-*/
+SDKs/cpp/*.o
+SDKs/cpp/*.a
+SDKs/cpp/*.so
+SDKs/cpp/*.dylib
+
+# Cocos2d-x SDK
+SDKs/cocos2dx/build/
+SDKs/cocos2dx/cmake-build-*/
+
+# Unreal SDK
+SDKs/unreal/Binaries/
+SDKs/unreal/Intermediate/
+SDKs/unreal/Saved/
+
+# Godot SDK
+SDKs/godot/.godot/
+SDKs/godot/.import/
+
+# Defold SDK
+SDKs/defold/build/
+SDKs/defold/.internal/
+
+# Web3 SDK
+SDKs/web3/node_modules/
+SDKs/web3/dist/
+SDKs/web3/*.tgz
+
+# Flutter SDK
+SDKs/flutter/.dart_tool/
+SDKs/flutter/.pub-cache/
+SDKs/flutter/pubspec.lock
+
+# Environment and secrets (prevent leaking secrets in future commits)
+.env
+.env.*
+**/credentials.*
+**/secrets.*
+config/keys.json
+config/secrets.json
+
+# IDE files (cross-platform)
+.idea/
+*.iml
+.vscode/*.log
+
+# Cursor AI
+.cursor/

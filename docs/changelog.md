@@ -6,36 +6,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## [5.0.0] - 2025-01-13
+## [5.1.0] - 2026-03-02
 
 ### 🚀 Added
-- **Modular Architecture** - SDK now uses Unity Assembly Definitions for better separation
-- **Daily Quiz System** - New quiz module with backend integration
-- **Weekly Quiz Tournament** - Competitive weekly quizzes with leaderboards
-- **WebGL Monetization** - Platform-specific ad support for WebGL
-- **Secure Storage** - AES-256 encrypted local storage
-- **Cloud Sync** - Automatic data synchronization with Nakama
-- **More of Us** - Cross-game promotion module
-- **Rate App Manager** - Native rating prompts for iOS/Android
-- **Deep Linking** - App link handling for social features
+- **IP Geolocation Service** - IVXIPGeolocationService with 6 free API providers, parallel fetch, caching, fallback
+- **Flutter / Dart SDK** - Full IVXManager with auth, profile, wallet, leaderboards, storage, RPC
+- **Web3 / TypeScript SDK** - IVXWeb3Manager with MetaMask/EIP-1193, wallet signature auth, NFT queries, token gating
+- Non-blocking IP geolocation fetch during login
 
 ### 🔧 Changed
-- **Unified Backend** - Consolidated all backend calls through `IVXNakamaManager`
-- **Simplified Auth** - Streamlined authentication flow with `IVXAuthService`
-- **Improved Logging** - Category-based logging with `IVXLogger`
-- **Better Error Handling** - Descriptive error codes and messages
-- **Performance Optimizations** - Reduced GC allocations in hot paths
+- Consolidated geolocation services into single IVXIPGeolocationService
+- Total platform count: **10 SDKs** (added Flutter and Web3)
 
-### 🗑️ Removed
-- **Retention Module** - Removed retention/check-in features (moved to backend-only)
-- **Legacy Friends Config** - Simplified friends configuration
-- **Deprecated APIs** - Removed deprecated methods from v4.x
+---
+
+## [5.0.0] - 2026-02-27
+
+### 🚀 Added
+- **Friends Module** - IVXFriendsManager, IVXFriendSlot, IVXFriendsPanel
+- Real-time friend status updates via Nakama
+- DOTween animations for list transitions
+- All test scenes synced to UPM Samples~/TestScenes
 
 ### 🐛 Fixed
-- Fixed null reference in `UserSessionManager` on cold start
-- Fixed WebGL build errors with `IVXAdsManager`
-- Fixed iOS compilation warnings for Apple Auth
-- Fixed Android 14 notification permissions
+- DOTween animation stacking in Friends panel
+- Tab switching race conditions
+
+---
+
+## [4.0.0] - 2026-02-23
+
+### 🚀 Added
+- **IVXPanelForgotPassword** - Complete forgot password UI panel
+- **Weekly Quiz System** - IVXWeeklyQuizManager, IVXWeeklyQuizService
+- **Ads System** - IVXAdsTestController, IVXAdsBootstrap prefab
+- **Test Scenes** - AdsTest, AuthTest, LeaderboardTest, WalletTest, WeeklyQuizTest
+
+### 🐛 Fixed
+- Auth canvas panel transitions and state management
+- OTP panel auto-focus and resend cooldown edge cases
 
 ---
 
@@ -210,7 +219,8 @@ The following features will be removed in v6.0:
 
 | Version | Unity Support | Status |
 |---------|---------------|--------|
-| 5.0.x | 2021.3+ | ✅ Current |
+| 5.1.x | 2023.3+ | ✅ Current |
+| 5.0.x | 2023.3+ | ✅ Active |
 | 4.2.x | 2021.3+ | ⚠️ Security fixes only |
 | 4.1.x | 2020.3+ | ❌ End of life |
 | 4.0.x | 2020.3+ | ❌ End of life |

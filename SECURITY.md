@@ -4,6 +4,7 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 5.1.x   | :white_check_mark: |
 | 5.0.x   | :white_check_mark: |
 | 4.2.x   | :white_check_mark: |
 | 4.1.x   | :x:                |
@@ -55,8 +56,10 @@ When using IntelliVerseX SDK:
 // ❌ Don't hardcode secrets
 public string apiKey = "sk_live_xxxx";
 
-// ✅ Use secure storage
-var apiKey = IVXSecureStorage.GetString("api_key");
+// ✅ Use the common config file (config/keys.json) or secure storage
+// Copy config/keys.example.json to config/keys.json, fill values, never commit keys.json. See config/README.md.
+// In Unity, AuthService reads authBaseUrl from config/keys.json; for other keys load from that file or use IVXSecureStorage.
+var apiKey = IVXSecureStorage.GetString("api_key"); // or read from config/keys.json (see config/README.md)
 ```
 
 ### Data Encryption
@@ -86,24 +89,58 @@ var sanitizedInput = SanitizeUserInput(rawInput);
 
 ## Known Security Considerations
 
-### WebGL Limitations
+### WebGL / Browser Limitations
 
-WebGL builds have reduced security:
+WebGL and JavaScript browser builds have reduced security:
 - No native encryption
-- Data stored in IndexedDB (not encrypted)
+- Data stored in IndexedDB / localStorage (not encrypted)
+- Session tokens accessible via browser dev tools
 - Consider additional server-side validation
+
+### Platform-Specific Notes
+
+| Platform | Session Storage | Encryption |
+|----------|----------------|------------|
+| Unity (Mobile) | PlayerPrefs (encrypted) | AES-256 |
+| Unity (WebGL) | IndexedDB | None |
+| Unreal | GConfig (Game.ini) | File-system level |
+| Godot | ConfigFile (user://) | None by default |
+| Defold | sys.save | None by default |
+| JavaScript | localStorage | None |
+| C/C++ | File-based | None by default |
+| Java | java.util.prefs | None by default |
+| Flutter/Dart | SharedPreferences | None by default |
+| Web3 | Browser wallet + localStorage | TLS only |
+
+For all non-Unity platforms, sensitive data should be protected at the OS/filesystem level. SSL/TLS is enforced for all server communication.
 
 ### Debug Builds
 
-Debug builds may expose sensitive information:
+Debug builds may expose sensitive information. Disable debug logging in production:
+
 ```csharp
-// Disable in production
+// Unity
 #if !DEVELOPMENT_BUILD
     IVXLogger.SetLevel(LogLevel.Error);
 #endif
 ```
 
+```typescript
+// JavaScript
+ivx.initialize({ enableDebugLogs: false });
+```
+
+```java
+// Java
+IVXConfig.builder().enableDebugLogs(false).build();
+```
+
 ## Security Changelog
+
+### v5.1.0 (2026-03-02)
+- Added Flutter/Dart and Web3/TypeScript SDK security considerations
+- Web3 wallet signature authentication (EIP-191)
+- Secure device ID caching in Flutter SDK
 
 ### v5.0.0 (2025-01-13)
 - Upgraded encryption to AES-256

@@ -1,6 +1,29 @@
 # IntelliVerseX SDK - Dependencies Guide
 
-This guide covers all dependencies for the IntelliVerseX Unity SDK.
+This guide covers all dependencies for the IntelliVerseX SDK across all supported platforms.
+
+---
+
+## Platform Dependencies (Nakama Client Libraries)
+
+Each platform requires its respective Nakama client library:
+
+| Platform | Nakama Client | Install Method |
+|----------|---------------|----------------|
+| Unity / .NET | [nakama-unity](https://github.com/heroiclabs/nakama-unity) | UPM / Asset Store |
+| Unreal Engine | [nakama-unreal](https://github.com/heroiclabs/nakama-unreal) | Plugin |
+| Godot Engine | [nakama-godot](https://github.com/heroiclabs/nakama-godot) | Addon |
+| Defold | [nakama-defold](https://github.com/heroiclabs/nakama-defold) | Library URL |
+| Cocos2d-x | [nakama-cpp](https://github.com/heroiclabs/nakama-cpp) | CMake |
+| JavaScript | [@heroiclabs/nakama-js](https://github.com/heroiclabs/nakama-js) | npm |
+| C / C++ | [nakama-cpp](https://github.com/heroiclabs/nakama-cpp) | CMake |
+| Java / Android | [nakama-java](https://github.com/heroiclabs/nakama-java) | Gradle / Maven |
+| Flutter / Dart | [nakama](https://pub.dev/packages/nakama) | pub.dev / pubspec.yaml |
+| Web3 | [@heroiclabs/nakama-js](https://github.com/heroiclabs/nakama-js) + [ethers](https://www.npmjs.com/package/ethers) | npm |
+
+---
+
+## Unity-Specific Dependencies
 
 ---
 

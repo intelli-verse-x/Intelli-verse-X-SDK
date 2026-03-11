@@ -170,34 +170,30 @@ This document defines how AI agents (and humans) work in this repository.
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 Intelli-verse-X-Unity-SDK/
-├── .cursor/                    # Context authority system
-│   ├── context.md              # Master context
-│   ├── architecture.md         # System structure
-│   ├── naming-and-style.md     # Naming conventions
-│   ├── assumptions.md          # Explicit assumptions
-│   ├── NON_GOALS.md            # Scope boundaries
-│   ├── rules/                  # Rule files
-│   │   ├── core/               # Core rules
-│   │   └── upm/                # UPM-specific rules
-│   ├── memory/                 # Decision memory
-│   └── examples/               # Code templates
-├── docs/                       # Documentation
-│   ├── context/                # Context docs
-│   ├── architecture/           # Architecture docs
-│   │   └── adr/                # Architecture Decision Records
-│   └── tracking/               # Tracking docs
-├── Assets/                     # Unity assets
-│   └── _IntelliVerseXSDK/      # SDK folder
-├── .cursorrules                # Cursor AI rules
-├── .cursorignore               # File access rules
-├── .cursorindexingignore       # Indexing exclusions
-├── AGENT.md                    # Project intelligence
-├── AGENTS.md                   # This file
-└── README.md                   # Repository readme
+|-- .cursor/                    # Context authority system
+|-- Assets/                     # Unity assets
+|   +-- _IntelliVerseXSDK/      # Unity SDK (UPM Package)
+|-- SDKs/                       # Cross-platform SDKs
+|   |-- unreal/                 # Unreal Engine 5 Plugin
+|   |-- godot/                  # Godot 4 Addon
+|   |-- defold/                 # Defold Library Module
+|   |-- cocos2dx/               # Cocos2d-x / CMake
+|   |-- javascript/             # npm / TypeScript
+|   |-- cpp/                    # Native C++ / CMake
+|   |-- java/                   # Java / Gradle / Android
+|   |-- flutter/                # Flutter / Dart (pub.dev)
+|   +-- web3/                   # Web3 / TypeScript (ethers.js)
+|-- docs/                       # MkDocs documentation
+|   +-- platforms/              # Per-platform docs
+|-- .github/workflows/          # CI/CD
+|-- tools/                      # Dev utilities
+|-- AGENT.md                    # Project intelligence
+|-- AGENTS.md                   # This file
++-- README.md                   # Repository readme
 ```
 
 ---
@@ -216,15 +212,16 @@ A task is complete when:
 
 ---
 
-## 🎮 Unity Project Quick Facts
+## Project Quick Facts
 
 | Property | Value |
 |----------|-------|
 | Unity Version | 6000.2.8f1 |
 | Package Name | com.intelliversex.sdk |
 | Root Namespace | `IntelliVerseX` |
-| Target Platforms | Android, iOS, WebGL, Standalone |
+| Target Platforms | Unity, Unreal, Godot, Defold, Cocos2d-x, JS, C++, Java, Flutter, Web3 |
 | Min Unity Version | 2021.3 LTS |
+| SDK Version | 5.1.0 |
 
 ---
 

@@ -1,0 +1,37 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "5.1.0",
+  "FriendlyName": "IntelliVerseX SDK",
+  "Description": "Complete modular game development SDK — Auth, Backend (Nakama), Analytics, Social, Monetization, and more for Unreal Engine.",
+  "Category": "Networking",
+  "CreatedBy": "IntelliVerse-X",
+  "CreatedByURL": "https://intelliversex.com",
+  "DocsURL": "https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/",
+  "MarketplaceURL": "",
+  "SupportURL": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues",
+  "CanContainContent": true,
+  "IsBetaVersion": true,
+  "IsExperimentalVersion": false,
+  "Installed": false,
+  "Modules": [
+    {
+      "Name": "IntelliVerseX",
+      "Type": "Runtime",
+      "LoadingPhase": "Default",
+      "PlatformAllowList": [
+        "Win64",
+        "Mac",
+        "Linux",
+        "Android",
+        "IOS"
+      ]
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "NakamaUnreal",
+      "Enabled": true
+    }
+  ]
+}
