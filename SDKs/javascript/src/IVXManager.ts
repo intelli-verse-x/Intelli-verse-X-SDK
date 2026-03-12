@@ -186,7 +186,7 @@ export class IVXManager {
         avatarUrl: account.user?.avatar_url ?? '',
         langTag: account.user?.lang_tag ?? '',
         metadata: this.safeParseJson(account.user?.metadata),
-        wallet: this.safeParseJson(account.wallet),
+        wallet: this.safeParseJson(account.wallet) as Record<string, number>,
       };
       this.emit('profileLoaded', profile);
       return profile;
@@ -230,7 +230,7 @@ export class IVXManager {
   async submitScore(leaderboardId: string, score: number): Promise<void> {
     this.ensureSession();
     try {
-      await this._client!.writeLeaderboardRecord(this._session!, leaderboardId, { score });
+      await this._client!.writeLeaderboardRecord(this._session!, leaderboardId, { score: String(score) });
       this.log(`Score submitted: ${score} to ${leaderboardId}`);
     } catch (e: unknown) {
       const error = this.toIVXError(e);
@@ -245,7 +245,7 @@ export class IVXManager {
       const result = await this._client!.listLeaderboardRecords(this._session!, leaderboardId, undefined, limit);
       const records: IVXLeaderboardRecord[] = (result.records ?? []).map(r => ({
         ownerId: r.owner_id ?? '',
-        username: r.username?.value ?? r.username ?? '',
+        username: IVXManager.normalizeUsername(r.username),
         score: Number(r.score ?? 0),
         rank: Number(r.rank ?? 0),
       }));
@@ -264,7 +264,7 @@ export class IVXManager {
     this.ensureSession();
     try {
       await this._client!.writeStorageObjects(this._session!, [
-        { collection, key, value: JSON.stringify(value), permission_read: 1, permission_write: 1 },
+        { collection, key, value: JSON.stringify(value) as unknown as object, permission_read: 1, permission_write: 1 },
       ]);
       this.log(`Storage write: ${collection}/${key}`);
     } catch (e: unknown) {
@@ -297,7 +297,7 @@ export class IVXManager {
   async callRpc(rpcId: string, payload = '{}'): Promise<Record<string, unknown>> {
     this.ensureSession();
     try {
-      const result = await this._client!.rpc(this._session!, rpcId, payload);
+      const result = await this._client!.rpc(this._session!, rpcId, payload as unknown as object);
       this.log(`RPC ${rpcId} response received`);
       const data = result.payload ? this.safeParseJson(result.payload) : {};
       this.emit('rpcResponse', rpcId, data);
@@ -334,7 +334,7 @@ export class IVXManager {
     this.saveString(REFRESH_TOKEN_KEY, session.refresh_token);
     this.log(`Authenticated - UserId: ${session.user_id}`);
     this.syncMetadata();
-    this.emit('authSuccess', session.user_id);
+    this.emit('authSuccess', session.user_id ?? '');
   }
 
   private async syncMetadata(): Promise<void> {
@@ -380,8 +380,18 @@ export class IVXManager {
     return '';
   }
 
-  private safeParseJson(value: unknown): Record<string, any> {
-    if (typeof value === 'object' && value !== null) return value as Record<string, any>;
+  /** Normalize leaderboard record username (string or { value } from Nakama). */
+  private static normalizeUsername(username: unknown): string {
+    if (typeof username === 'string') return username;
+    if (username && typeof username === 'object' && 'value' in username) {
+      const v = (username as { value?: unknown }).value;
+      return typeof v === 'string' ? v : '';
+    }
+    return '';
+  }
+
+  private safeParseJson(value: unknown): Record<string, unknown> {
+    if (typeof value === 'object' && value !== null) return value as Record<string, unknown>;
     if (typeof value !== 'string' || value === '') return {};
     try {
       return JSON.parse(value);

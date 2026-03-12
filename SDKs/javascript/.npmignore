@@ -1,0 +1,12 @@
+# Tests and tooling (do not ship to consumers)
+src/__tests__/
+**/*.test.ts
+**/*.spec.ts
+vitest.config.*
+examples/
+
+# Dev and CI
+node_modules/
+.git/
+*.log
+.DS_Store
