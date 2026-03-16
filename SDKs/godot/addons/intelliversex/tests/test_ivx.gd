@@ -37,12 +37,12 @@ func test_config_custom_values():
 	var cfg = IVXConfig.new()
 	cfg.nakama_host = "play.example.com"
 	cfg.nakama_port = 443
-	cfg.nakama_scheme = "https"
+	cfg.nakama_use_ssl = true
 	cfg.enable_debug_logs = true
 
 	assert_eq(cfg.nakama_host, "play.example.com")
 	assert_eq(cfg.nakama_port, 443)
-	assert_eq(cfg.nakama_scheme, "https")
+	assert_eq(cfg.nakama_scheme, "https", "nakama_scheme should be https when nakama_use_ssl is true")
 	assert_true(cfg.enable_debug_logs)
 
 

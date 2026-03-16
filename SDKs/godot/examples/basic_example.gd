@@ -41,7 +41,7 @@ func _initialize_sdk() -> void:
 	cfg.nakama_host = server_host
 	cfg.nakama_port = server_port
 	cfg.nakama_server_key = server_key
-	cfg.nakama_scheme = "https" if use_ssl else "http"
+	cfg.nakama_use_ssl = use_ssl
 	cfg.enable_debug_logs = debug_logs
 
 	ivx.initialize(cfg)
@@ -78,6 +78,8 @@ func _on_auth_success(_session) -> void:
 
 func _on_auth_error(message: String) -> void:
 	printerr("Auth failed: %s" % message)
+	if "Could not connect" in message or "Is the Nakama server running" in message:
+		print("Tip: Start Nakama (e.g. Docker: docker run -d -p 7350:7350 heroiclabs/nakama) or set Server Host/Port in Inspector. Local Nakama is usually HTTP (Use Ssl = false).")
 
 
 # ---------------------------------------------------------------------------
@@ -98,7 +100,7 @@ func _post_auth_flow() -> void:
 
 func _demo_profile() -> void:
 	print("\n--- Profile ---")
-	var profile := await ivx.fetch_profile()
+	var profile: Dictionary = await ivx.fetch_profile()
 	if profile.is_empty():
 		print("  (could not fetch profile)")
 		return
@@ -107,7 +109,7 @@ func _demo_profile() -> void:
 	print("  Avatar URL   : %s" % profile.get("avatar_url", ""))
 	print("  Language      : %s" % profile.get("lang_tag", ""))
 
-	var ok := await ivx.update_profile("GodotPlayer", "", "en")
+	var ok: bool = await ivx.update_profile("GodotPlayer", "", "en")
 	if ok:
 		print("  Profile updated successfully")
 
@@ -122,10 +124,10 @@ func _on_profile_loaded(profile: Dictionary) -> void:
 
 func _demo_wallet() -> void:
 	print("\n--- Wallet ---")
-	var wallet := await ivx.fetch_wallet()
+	var wallet: Dictionary = await ivx.fetch_wallet()
 	print("  Current wallet: %s" % str(wallet))
 
-	var grant_result := await ivx.grant_currency("coins", 100)
+	var grant_result: Dictionary = await ivx.grant_currency("coins", 100)
 	print("  Grant result  : %s" % str(grant_result))
 
 
@@ -141,10 +143,10 @@ func _demo_leaderboard() -> void:
 	print("\n--- Leaderboard ---")
 	var leaderboard_id := "weekly_high_scores"
 
-	var submitted := await ivx.submit_score(leaderboard_id, randi_range(500, 5000))
+	var submitted: bool = await ivx.submit_score(leaderboard_id, randi_range(500, 5000))
 	print("  Score submitted: %s" % str(submitted))
 
-	var records := await ivx.fetch_leaderboard(leaderboard_id, 10)
+	var records: Array = await ivx.fetch_leaderboard(leaderboard_id, 10)
 	print("  Top %d records:" % records.size())
 	for r in records:
 		print("    #%s  %s — %d pts" % [str(r.rank), r.username, r.score])
@@ -163,10 +165,10 @@ func _demo_storage() -> void:
 		"last_save": Time.get_datetime_string_from_system(),
 	}
 
-	var written := await ivx.write_storage("player_saves", "slot_1", save_data)
+	var written: bool = await ivx.write_storage("player_saves", "slot_1", save_data)
 	print("  Write OK: %s" % str(written))
 
-	var loaded := await ivx.read_storage("player_saves", "slot_1")
+	var loaded: Dictionary = await ivx.read_storage("player_saves", "slot_1")
 	if loaded.is_empty():
 		print("  (nothing loaded)")
 	else:

@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://caih24qmwvnwv"]
+
+[ext_resource type="Script" uid="uid://b2v5vip1l0gjj" path="res://examples/basic_example.gd" id="1_script"]
+
+[node name="Main" type="Node" unique_id=1225355425]
+
+[node name="IntelliVerseXExample" type="Node" parent="." unique_id=1602531205]
+script = ExtResource("1_script")
