@@ -1,0 +1,2 @@
+# Ignore tests folder so Godot does not parse test_ivx.gd when GUT addon is not installed.
+# To run tests, use a project that has GUT installed or remove this file.
