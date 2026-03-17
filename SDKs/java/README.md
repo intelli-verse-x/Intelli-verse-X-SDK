@@ -5,7 +5,7 @@
 ## Requirements
 
 - Java 11+ / Android API 21+
-- [Nakama Java Client](https://github.com/heroiclabs/nakama-java) v2.9+
+- [Nakama Java Client](https://github.com/heroiclabs/nakama-java) v2.5+
 - Gradle 7+
 
 ## Installation
@@ -14,7 +14,7 @@
 
 ```groovy
 dependencies {
-    implementation 'com.intelliversex:sdk:5.1.0'
+    implementation 'ai.intelli-verse-x:sdk:5.1.0'
 }
 ```
 
@@ -22,7 +22,7 @@ dependencies {
 
 ```xml
 <dependency>
-    <groupId>com.intelliversex</groupId>
+    <groupId>ai.intelli-verse-x</groupId>
     <artifactId>sdk</artifactId>
     <version>5.1.0</version>
 </dependency>
@@ -33,6 +33,12 @@ dependencies {
 ```bash
 cd SDKs/java
 ./gradlew build
+```
+
+To run the example (requires a local Nakama server):
+
+```bash
+./gradlew runExample
 ```
 
 ## Quick Start

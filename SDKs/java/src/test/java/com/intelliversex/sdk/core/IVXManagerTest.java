@@ -1,5 +1,11 @@
 package com.intelliversex.sdk.core;
 
+/*
+ * Copyright (c) 2026 Intelli-verse-X
+ *
+ * MIT License — see LICENSE in the project root.
+ */
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

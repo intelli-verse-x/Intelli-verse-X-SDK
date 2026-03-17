@@ -1,5 +1,11 @@
 package com.intelliversex.sdk.examples;
 
+/*
+ * Copyright (c) 2026 Intelli-verse-X
+ *
+ * MIT License — see LICENSE in the project root.
+ */
+
 import com.intelliversex.sdk.core.IVXConfig;
 import com.intelliversex.sdk.core.IVXManager;
 import com.intelliversex.sdk.core.IVXProfile;
