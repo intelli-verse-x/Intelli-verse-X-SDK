@@ -8,28 +8,6 @@
 - CMake 3.14+
 - [Nakama C++ SDK](https://github.com/heroiclabs/nakama-cpp) v2.8+
 
-## Local development setup
-
-If you clone nakama-cpp next to this SDK under the same repo:
-
-- **Nakama C++ clone:** `D:\work\Unityprojects\Intelli-verse-X-Unity-SDK\SDKs\nakama-cpp`
-- **Nakama install prefix:** `D:\work\Unityprojects\Intelli-verse-X-Unity-SDK\SDKs\nakama-cpp-install`
-
-From a Developer PowerShell (or terminal with CMake and compiler in PATH):
-
-```powershell
-# 1) Build and install Nakama C++ SDK
-cd D:\work\Unityprojects\Intelli-verse-X-Unity-SDK\SDKs\nakama-cpp
-cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="D:\work\Unityprojects\Intelli-verse-X-Unity-SDK\SDKs\nakama-cpp-install"
-cmake --build build --config Release
-cmake --install build --config Release
-
-# 2) Build IntelliVerseX C++ SDK
-cd D:\work\Unityprojects\Intelli-verse-X-Unity-SDK\SDKs\cpp
-cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="D:\work\Unityprojects\Intelli-verse-X-Unity-SDK\SDKs\nakama-cpp-install"
-cmake --build build --config Release
-```
-
 ## Installation
 
 ### CMake (Recommended)
@@ -64,9 +42,10 @@ int main() {
     auto& mgr = ivx::Manager::instance();
 
     ivx::Config cfg;
-    cfg.host = "127.0.0.1";
-    cfg.port = 7350;
+    cfg.host = "nakama-rest.intelli-verse-x.ai";
+    cfg.port = 443;
     cfg.serverKey = "defaultkey";
+    cfg.useSSL = true;
     cfg.debugLogs = true;
 
     mgr.init(cfg);
