@@ -12,9 +12,10 @@ async function main() {
   ivx.on('error', (err) => console.error('Error:', err.message));
 
   ivx.initialize({
-    nakamaHost: process.env.NAKAMA_HOST || '127.0.0.1',
-    nakamaPort: parseInt(process.env.NAKAMA_PORT || '7350'),
+    nakamaHost: process.env.NAKAMA_HOST || 'nakama-rest.intelli-verse-x.ai',
+    nakamaPort: parseInt(process.env.NAKAMA_PORT || '443'),
     nakamaServerKey: process.env.NAKAMA_KEY || 'defaultkey',
+    useSSL: true,
     enableDebugLogs: true,
   });
 

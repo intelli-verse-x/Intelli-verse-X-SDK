@@ -8,7 +8,7 @@ local log = require "nakama.util.log"
 
 local M = {}
 
-M.SDK_VERSION = "5.1.0"
+M.SDK_VERSION = "5.2.0"
 
 local config = {}
 local client = nil
@@ -22,10 +22,10 @@ local SESSION_FILE = sys.get_save_file("intelliversex", "session")
 --- Configure the SDK.
 --- @param opts table Configuration: host, port, server_key, use_ssl, debug
 function M.configure(opts)
-    config.host = opts.host or "127.0.0.1"
-    config.port = opts.port or 7350
+    config.host = opts.host or "nakama-rest.intelli-verse-x.ai"
+    config.port = opts.port or 443
     config.server_key = opts.server_key or "defaultkey"
-    config.use_ssl = opts.use_ssl or false
+    config.use_ssl = opts.use_ssl ~= false and true or false
     config.debug = opts.debug or false
 
     local scheme = config.use_ssl and "https" or "http"

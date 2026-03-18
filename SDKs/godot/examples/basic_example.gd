@@ -16,10 +16,10 @@ extends Node
 ##   - An IVXConfig resource exists at res://intelliversex_config.tres
 ##     (or create one in code as shown below).
 
-@export var server_host: String = "127.0.0.1"
-@export var server_port: int = 7350
+@export var server_host: String = "nakama-rest.intelli-verse-x.ai"
+@export var server_port: int = 443
 @export var server_key: String = "defaultkey"
-@export var use_ssl: bool = false
+@export var use_ssl: bool = true
 @export var debug_logs: bool = true
 
 var ivx: Node
