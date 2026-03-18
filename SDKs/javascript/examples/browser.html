@@ -21,9 +21,10 @@
   <h1>IntelliVerseX SDK - Browser Example</h1>
 
   <h2>1. Configuration</h2>
-  <label>Host: <input id="host" value="127.0.0.1"></label>
-  <label>Port: <input id="port" value="7350" type="number"></label>
+  <label>Host: <input id="host" value="nakama-rest.intelli-verse-x.ai"></label>
+  <label>Port: <input id="port" value="443" type="number"></label>
   <label>Key: <input id="key" value="defaultkey"></label>
+  <label>SSL: <input id="ssl" type="checkbox" checked></label>
   <br>
   <button onclick="initSDK()">Initialize SDK</button>
 
@@ -62,6 +63,7 @@
           nakamaHost: document.getElementById('host').value,
           nakamaPort: parseInt(document.getElementById('port').value),
           nakamaServerKey: document.getElementById('key').value,
+          useSSL: document.getElementById('ssl').checked,
           enableDebugLogs: true,
         });
       } catch (e) {
