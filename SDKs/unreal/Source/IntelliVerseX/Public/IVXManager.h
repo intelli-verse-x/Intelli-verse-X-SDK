@@ -8,6 +8,8 @@
 #include "NakamaRealtimeClient.h"
 #include "IVXManager.generated.h"
 
+DECLARE_LOG_CATEGORY_EXTERN(LogIVX, Log, All);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnIVXInitialized);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnIVXAuthenticated);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnIVXError, const FString&, ErrorMessage);
@@ -52,6 +54,10 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "IntelliVerseX|Socket")
     void DisconnectSocket();
+
+    /** Validates Nakama config (host, port, server key). Returns empty string if OK, otherwise an error message. Call before or without InitializeSDK. */
+    UFUNCTION(BlueprintCallable, Category = "IntelliVerseX|Diagnostics", meta = (DisplayName = "Validate Nakama Config"))
+    static FString ValidateNakamaConfig(UIVXConfig* Config);
 
     UFUNCTION(BlueprintPure, Category = "IntelliVerseX")
     bool IsInitialized() const { return bIsInitialized; }
@@ -131,10 +137,35 @@ private:
 
     bool bIsInitialized = false;
 
+    /** Pending RPC context for AddDynamic callbacks (Nakama uses dynamic delegates, no CreateLambda). */
+    FString PendingRpcId;
+    enum class ERpcPurpose : uint8 { None, Wallet, Grant, Generic, Sync };
+    ERpcPurpose PendingRpcPurpose = ERpcPurpose::None;
+
     void SaveSessionToLocal(UNakamaSession* Session);
     UNakamaSession* LoadSessionFromLocal();
-    void OnAuthSuccess(UNakamaSession* Session);
-    void OnAuthError(const FNakamaError& Error);
+
+    UFUNCTION()
+    void OnAuthSuccess(UNakamaSession* LoginData);
+    UFUNCTION()
+    void OnAuthError(const FNakamaError& ErrorData);
+    /** Called when ivx_sync_metadata RPC fails (e.g. not registered on server). Non-fatal: we only log, no OnError. */
+    UFUNCTION()
+    void OnSyncMetadataError(const FNakamaError& ErrorData);
+    UFUNCTION()
+    void OnGetAccountSuccess(const FNakamaAccount& AccountData);
+    UFUNCTION()
+    void OnUpdateAccountSuccess();
+    UFUNCTION()
+    void OnRpcSuccess(const FNakamaRPC& rpc);
+    UFUNCTION()
+    void OnWriteLeaderboardSuccess(const FNakamaLeaderboardRecord& Record);
+    UFUNCTION()
+    void OnListLeaderboardSuccess(const FNakamaLeaderboardRecordList& RecordsList);
+    UFUNCTION()
+    void OnStorageWriteSuccess(const FNakamaStoreObjectAcks& StorageObjectsAcks);
+    UFUNCTION()
+    void OnStorageReadSuccess(const FNakamaStorageObjectList& StorageObjects);
 
     FString GetPersistentDeviceId() const;
     void SyncPlayerMetadata();
