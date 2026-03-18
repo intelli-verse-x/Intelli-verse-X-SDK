@@ -1,20 +1,17 @@
-# Push to your fork (hasanraza31) — run these on your machine
+# Push SDK Branches to Your Fork
 
-Git **push** from this environment failed with:  
-`Authentication failed for 'https://github.com/hasanraza31/Intelli-verse-X-Unity-SDK.git/'`  
-So you need to push from your own machine where you are logged in (GitHub CLI, credential manager, or PAT).
+Run these from the **repo root** on your machine (where you are logged into GitHub).  
+Push from this environment failed with authentication, so use your own machine (GitHub CLI, credential manager, or PAT).
 
-**Remote:** Your fork is already added as `fork`.  
-If you use a different remote name for your fork, replace `fork` with that name below.
+**Remote:** Use your fork remote name (e.g. `fork`). If you don’t have it:
 
----
+```bash
+git remote add fork https://github.com/hasanraza31/Intelli-verse-X-Unity-SDK.git
+```
 
-## Commands to run (in repo root)
+## Push each SDK branch
 
-```powershell
-cd "d:\work\Unityprojects\Intelli-verse-X-Unity-SDK"
-
-# Push each branch to your fork (you can run these one by one)
+```bash
 git push fork add-cpp-sdk
 git push fork add-defold-sdk
 git push fork add-godot-sdk
@@ -23,18 +20,18 @@ git push fork add-javascript-sdk
 git push fork add-unreal-sdk
 ```
 
-If any branch does not exist on the fork yet, Git will create it. If you get "rejected (non-fast-forward)", pull first, e.g.:
+If a branch already exists on the fork and you’ve merged main locally, a normal push is enough. Use `--force-with-lease` only if you’re sure (e.g. after a rebase).
 
-```powershell
+If you get "rejected (non-fast-forward)", pull first, e.g.:
+
+```bash
 git checkout add-cpp-sdk
 git pull fork add-cpp-sdk --rebase
 git push fork add-cpp-sdk
 ```
 
-Then open (or update) PRs from **hasanraza31/Intelli-verse-X-Unity-SDK** → **intelli-verse-x/Intelli-verse-X-Unity-SDK** for each branch.
+## Then create or update PRs
 
----
-
-## Note about add-javascript-sdk
-
-`add-javascript-sdk` was created from the branch that was checked out when `git checkout main` failed (due to local changes). So it may be based on **add-java-sdk** instead of **main**. When you open a PR from `add-javascript-sdk` into `main`, the diff will still show only the JavaScript SDK commit if the rest of the history matches main; if the PR shows extra files, create a new branch from `main` and cherry-pick only the JS commit, then push that branch and open the PR from it.
+- Go to **https://github.com/hasanraza31/Intelli-verse-X-Unity-SDK**.
+- For each branch, open a PR **into** `intelli-verse-x/Intelli-verse-X-Unity-SDK` → `main`.
+- Base: `main`, compare: your branch (e.g. `add-unreal-sdk`).
