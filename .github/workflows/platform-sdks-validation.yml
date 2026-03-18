@@ -28,6 +28,7 @@ jobs:
           test -f SDKs/godot/addons/intelliversex/core/ivx_manager.gd
           test -f SDKs/godot/addons/intelliversex/core/ivx_config.gd
           test -f SDKs/godot/README.md
+          test -f SDKs/godot/project.godot
           echo "Godot SDK structure OK"
 
       - name: Validate Defold SDK structure
@@ -96,6 +97,20 @@ jobs:
             test -f "SDKs/$sdk/README.md" || (echo "Missing README for $sdk" && exit 1)
           done
           echo "All platform READMEs present"
+
+  godot-build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build-test Godot addon (Godot 4.2 headless)
+        run: |
+          docker run --rm -v "$PWD":/project -w /project/SDKs/godot \
+            godotengine/godot:4.2.2-stable \
+            --headless --path . --quit-after 5
+        env:
+          # Avoid interactive prompts and reduce log noise
+          GODOT_DISABLE_LEAK_CHECKS: 1
 
   validate-version-consistency:
     runs-on: ubuntu-latest

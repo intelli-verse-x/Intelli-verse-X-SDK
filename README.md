@@ -5,6 +5,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/Version-5.1.0-orange.svg)](CHANGELOG.md)
 [![Documentation](https://img.shields.io/badge/Docs-Online-blue.svg)](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/)
+[![openupm](https://img.shields.io/npm/v/com.intelliversex.sdk?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.intelliversex.sdk)
 
 <p align="center">
   <a href="https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/"><strong>Read the Full Documentation</strong></a>
@@ -18,7 +19,7 @@ IntelliVerseX provides official SDK wrappers for all major game engines and plat
 
 | Platform | Language | Getting Started | Source |
 |----------|----------|----------------|--------|
-| **Unity Engine / .NET** | C# | [Guide](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/getting-started/quickstart/) | [Assets/\_IntelliVerseXSDK](Assets/_IntelliVerseXSDK/) |
+| **Unity Engine / .NET** | C# | [Guide](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/getting-started/quickstart/) | [Assets/Intelli-verse-X-SDK](Assets/Intelli-verse-X-SDK/) |
 | **Unreal Engine** | C++ / Blueprints | [Guide](SDKs/unreal/README.md) | [SDKs/unreal](SDKs/unreal/) |
 | **Godot Engine** | GDScript | [Guide](SDKs/godot/README.md) | [SDKs/godot](SDKs/godot/) |
 | **Defold** | Lua | [Guide](SDKs/defold/README.md) | [SDKs/defold](SDKs/defold/) |
@@ -63,12 +64,33 @@ Each SDK wraps the official [Nakama client library](https://heroiclabs.com/docs/
 
 ## Quick Start (Unity)
 
-Add to your `Packages/manifest.json`:
+### Option A: OpenUPM (recommended)
+
+Add the [OpenUPM](https://openupm.com) scoped registry and dependency to `Packages/manifest.json`:
+
+```json
+{
+  "scopedRegistries": [
+    {
+      "name": "package.openupm.com",
+      "url": "https://package.openupm.com",
+      "scopes": ["com.intelliversex"]
+    }
+  ],
+  "dependencies": {
+    "com.intelliversex.sdk": "5.1.0"
+  }
+}
+```
+
+Or use the OpenUPM CLI: `openupm add com.intelliversex.sdk`
+
+### Option B: Git URL
 
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/Intelli-verse-X-SDK"
   }
 }
 ```
@@ -134,7 +156,7 @@ Each platform SDK provides:
 ```
 Intelli-verse-X-Unity-SDK/
 |-- Assets/
-|   +-- _IntelliVerseXSDK/        # Unity SDK (UPM Package)
+|   +-- Intelli-verse-X-SDK/      # Unity SDK (UPM Package)
 |-- SDKs/
 |   |-- unreal/                    # Unreal Engine 5 Plugin
 |   |-- godot/                     # Godot 4 Addon

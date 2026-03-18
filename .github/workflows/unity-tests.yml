@@ -9,11 +9,13 @@ on:
     branches: [main, develop]
     paths:
       - 'Assets/_IntelliVerseXSDK/**'
+      - 'Assets/Intelli-verse-X-SDK/**'
       - '.github/workflows/unity-tests.yml'
   pull_request:
     branches: [main, develop]
     paths:
       - 'Assets/_IntelliVerseXSDK/**'
+      - 'Assets/Intelli-verse-X-SDK/**'
       - '.github/workflows/unity-tests.yml'
   workflow_dispatch:
     inputs:
@@ -23,7 +25,7 @@ on:
         type: string
 
 env:
-  PACKAGE_PATH: Assets/_IntelliVerseXSDK
+  PACKAGE_PATH: Assets/Intelli-verse-X-SDK
 
 jobs:
   # Job 1: Validate package structure before running tests
