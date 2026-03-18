@@ -52,9 +52,10 @@ public class Main {
         IVXManager ivx = IVXManager.getInstance();
 
         IVXConfig config = IVXConfig.builder()
-            .nakamaHost("127.0.0.1")
-            .nakamaPort(7350)
+            .nakamaHost("nakama-rest.intelli-verse-x.ai")
+            .nakamaPort(443)
             .nakamaServerKey("defaultkey")
+            .useSSL(true)
             .enableDebugLogs(true)
             .build();
 
@@ -92,8 +93,8 @@ public class GameActivity extends AppCompatActivity {
         IVXManager ivx = IVXManager.getInstance();
 
         IVXConfig config = IVXConfig.builder()
-            .nakamaHost("your-server.com")
-            .nakamaPort(7350)
+            .nakamaHost("nakama-rest.intelli-verse-x.ai")
+            .nakamaPort(443)
             .useSSL(true)
             .enableDebugLogs(BuildConfig.DEBUG)
             .build();
