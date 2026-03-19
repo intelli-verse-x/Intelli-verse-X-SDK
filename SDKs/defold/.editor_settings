@@ -1,0 +1,22 @@
+{
+  :code {
+    :breakpoints [
+    ]
+  }
+  :workflow {
+    :open-tabs [
+      [
+        [
+          "/main/main.collection"
+          :scene
+        ]
+      ]
+    ]
+    :recent-files [
+      [
+        "/main/main.collection"
+        :scene
+      ]
+    ]
+  }
+}
