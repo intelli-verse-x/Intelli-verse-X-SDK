@@ -5,10 +5,10 @@
 namespace IntelliVerseX {
 
 struct IVXConfig {
-    std::string nakamaHost = "127.0.0.1";
-    int nakamaPort = 7350;
+    std::string nakamaHost = "nakama-rest.intelli-verse-x.ai";
+    int nakamaPort = 443;
     std::string nakamaServerKey = "defaultkey";
-    bool useSSL = false;
+    bool useSSL = true;
 
     std::string cognitoRegion;
     std::string cognitoUserPoolId;

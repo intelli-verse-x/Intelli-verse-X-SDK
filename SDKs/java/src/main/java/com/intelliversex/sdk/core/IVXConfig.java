@@ -6,18 +6,18 @@ package com.intelliversex.sdk.core;
  * Use the {@link Builder} to construct a validated instance:
  * <pre>{@code
  * IVXConfig config = IVXConfig.builder()
- *         .nakamaHost("127.0.0.1")
- *         .nakamaPort(7350)
+ *         .nakamaHost("nakama-rest.intelli-verse-x.ai")
+ *         .nakamaPort(443)
  *         .nakamaServerKey("defaultkey")
  *         .enableDebugLogs(true)
  *         .build();
  * }</pre>
  */
 public class IVXConfig {
-    private String nakamaHost = "127.0.0.1";
-    private int nakamaPort = 7350;
+    private String nakamaHost = "nakama-rest.intelli-verse-x.ai";
+    private int nakamaPort = 443;
     private String nakamaServerKey = "defaultkey";
-    private boolean useSSL = false;
+    private boolean useSSL = true;
 
     private String cognitoRegion = "";
     private String cognitoUserPoolId = "";
