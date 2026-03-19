@@ -29,8 +29,8 @@ func test_config_resource_exists():
 func test_config_defaults():
 	var cfg = IVXConfig.new()
 	assert_eq(cfg.nakama_server_key, "defaultkey", "Default server key should be 'defaultkey'")
-	assert_eq(cfg.nakama_host, "127.0.0.1", "Default host should be localhost")
-	assert_eq(cfg.nakama_port, 7350, "Default port should be 7350")
+	assert_eq(cfg.nakama_host, "nakama-rest.intelli-verse-x.ai", "Default host should be IntelliVerse")
+	assert_eq(cfg.nakama_port, 443, "Default port should be 443")
 
 
 func test_config_custom_values():

@@ -20,10 +20,10 @@ export interface IVXWeb3Config {
 }
 
 export const DEFAULT_WEB3_CONFIG: Required<IVXWeb3Config> = {
-  nakamaHost: '127.0.0.1',
-  nakamaPort: 7350,
+  nakamaHost: 'nakama-rest.intelli-verse-x.ai',
+  nakamaPort: 443,
   nakamaServerKey: 'defaultkey',
-  useSSL: false,
+  useSSL: true,
   enableAnalytics: true,
   enableDebugLogs: false,
   verboseLogging: false,

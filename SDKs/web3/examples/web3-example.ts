@@ -21,8 +21,8 @@ async function main() {
   ivx.on('error', (err) => console.error('Error:', err.message));
 
   ivx.initialize({
-    nakamaHost: '127.0.0.1',
-    nakamaPort: 7350,
+    nakamaHost: 'nakama-rest.intelli-verse-x.ai',
+    nakamaPort: 443,
     nakamaServerKey: 'defaultkey',
     chainId: 137,
     enableDebugLogs: true,
