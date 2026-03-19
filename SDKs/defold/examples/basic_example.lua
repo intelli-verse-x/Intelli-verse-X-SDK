@@ -15,13 +15,12 @@
 
 local ivx = require "intelliversex.ivx"
 
--- Configuration — adjust for your environment (matches Unity SDK config)
+-- Configuration — adjust for your environment
 local SERVER_HOST = "127.0.0.1"
 local SERVER_PORT = 7350
 local SERVER_KEY  = "defaultkey"
 local USE_SSL     = false
 local DEBUG_LOGS  = true
-local GAME_ID     = ""  -- optional; set if your backend uses create_or_sync_user RPC
 
 local LEADERBOARD_ID = "weekly_high_scores"
 
@@ -53,7 +52,6 @@ function _configure_sdk()
         server_key = SERVER_KEY,
         use_ssl    = USE_SSL,
         debug      = DEBUG_LOGS,
-        game_id    = GAME_ID,
     })
 
     print("[Example] SDK initialized: " .. tostring(ivx.is_initialized()))

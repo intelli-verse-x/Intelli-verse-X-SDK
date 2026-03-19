@@ -1,6 +1,0 @@
---- Run IntelliVerseX SDK tests on startup.
---- Attach this script to a game object in main.collection, then press Play.
-function init(self)
-    local t = require "tests.test_ivx"
-    t.run_all()
-end

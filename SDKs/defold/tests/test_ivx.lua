@@ -127,8 +127,8 @@ function M.test_module_exports_all_functions()
             "restore_session", "clear_session", "disconnect_socket",
             "has_valid_session", "get_user_id", "get_username",
             "fetch_profile", "update_profile",
-            "fetch_wallet", "grant_currency", "fetch_wallet_balances",
-            "submit_score", "submit_score_and_sync", "fetch_leaderboard", "fetch_all_leaderboards",
+            "fetch_wallet", "grant_currency",
+            "submit_score", "fetch_leaderboard",
             "write_storage", "read_storage",
             "call_rpc", "connect_socket",
         }
@@ -211,7 +211,7 @@ function M.test_configure_accepts_custom_options()
     end)
 end
 
-function M.test_configure_defaults()
+function M.test_configure_defaults():
     run_test("configure() fills in defaults for missing fields", function()
         package.loaded["intelliversex.ivx"] = nil
         local ivx = require "intelliversex.ivx"
@@ -268,13 +268,13 @@ function M.test_callback_registration()
 end
 
 function M.test_error_callback_fires_when_not_initialized()
-    run_test("auth emits auth_error callback when not initialized", function()
+    run_test("auth emits error callback when not initialized", function()
         package.loaded["intelliversex.ivx"] = nil
         local ivx = require "intelliversex.ivx"
         local error_msg = nil
-        ivx.on("auth_error", function(msg) error_msg = msg end)
+        ivx.on("error", function(msg) error_msg = msg end)
         ivx.authenticate_device("test-id")
-        assert_not_nil(error_msg, "auth_error callback should have fired")
+        assert_not_nil(error_msg, "error callback should have fired")
         assert_eq(error_msg, "SDK not initialized", "error message")
     end)
 end
