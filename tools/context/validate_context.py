@@ -215,33 +215,65 @@ def _validate_command_registry(repo: Path) -> List[Finding]:
     return findings
 
 
+def _strip_unity_editor_blocks(text: str) -> str:
+    """
+    Remove #if UNITY_EDITOR ... #endif blocks so we don't flag
+    'using UnityEditor' that is already guarded (runtime build never compiles it).
+    Handles single-level blocks only (nested #if left as-is for simplicity).
+    """
+    out: List[str] = []
+    in_editor_block = False
+    depth = 0
+    for line in text.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("#if UNITY_EDITOR"):
+            in_editor_block = True
+            depth = 1
+            continue
+        if in_editor_block:
+            if stripped.startswith("#if"):
+                depth += 1
+            elif stripped.startswith("#endif"):
+                depth -= 1
+                if depth == 0:
+                    in_editor_block = False
+            continue
+        out.append(line)
+    return "\n".join(out)
+
+
 def _validate_runtime_no_unityeditor(repo: Path) -> List[Finding]:
     """
     Prevents UnityEditor usage in runtime code paths inside our SDK package.
+    Ignores 'using UnityEditor' when it appears only inside #if UNITY_EDITOR blocks.
     This does NOT scan third-party folders.
     """
     findings: List[Finding] = []
-    sdk_root = repo / "Assets" / "_IntelliVerseXSDK"
-    if not sdk_root.exists():
-        return findings
-
-    editor_using = re.compile(r"^\s*using\s+UnityEditor\s*;\s*$", re.MULTILINE)
-
-    for file_path in sdk_root.rglob("*.cs"):
-        rel = _normalize_slashes(str(file_path.relative_to(repo)))
-        # Allowed in Editor folders and Editor tests.
-        if "/Editor/" in rel or "/Tests~/Editor/" in rel:
+    for sdk_name in ("_IntelliVerseXSDK", "Intelli-verse-X-SDK"):
+        sdk_root = repo / "Assets" / sdk_name
+        if not sdk_root.exists():
             continue
 
-        text = _read_text(file_path)
-        if editor_using.search(text):
-            findings.append(
-                Finding(
-                    "RUNTIME_UNITYEDITOR",
-                    f"UnityEditor used in runtime file: {rel}",
-                    "Move this code under an Editor/ folder or use an Editor asmdef.",
+        editor_using = re.compile(r"^\s*using\s+UnityEditor\s*;\s*$", re.MULTILINE)
+
+        for file_path in sdk_root.rglob("*.cs"):
+            rel = _normalize_slashes(str(file_path.relative_to(repo)))
+            # Allowed in Editor folders and Editor tests.
+            if "/Editor/" in rel or "/Tests~/Editor/" in rel:
+                continue
+
+            text = _read_text(file_path)
+            # Don't flag UnityEditor when it's only inside #if UNITY_EDITOR (runtime never compiles it)
+            text_without_editor_blocks = _strip_unity_editor_blocks(text)
+            if editor_using.search(text_without_editor_blocks):
+                findings.append(
+                    Finding(
+                        "RUNTIME_UNITYEDITOR",
+                        f"UnityEditor used in runtime file: {rel}",
+                        "Move this code under an Editor/ folder or use an Editor asmdef.",
+                    )
                 )
-            )
+        break  # only one SDK folder expected
 
     return findings
 
@@ -259,7 +291,15 @@ def _validate_todo_fixme_baseline(repo: Path) -> List[Finding]:
         ]
 
     baseline = _load_todo_baseline(baseline_path)
-    current = _scan_todo_fixme_cs(repo, "Assets/_IntelliVerseXSDK")
+    current: Set[Tuple[str, str]] = set()
+    for sdk_rel in ("Assets/_IntelliVerseXSDK", "Assets/Intelli-verse-X-SDK"):
+        scanned = _scan_todo_fixme_cs(repo, sdk_rel)
+        # Normalize to _IntelliVerseXSDK for baseline comparison (CI uses _IntelliVerseXSDK)
+        for path, line in scanned:
+            norm_path = path.replace("Intelli-verse-X-SDK", "_IntelliVerseXSDK")
+            current.add((norm_path, line))
+        if current:
+            break
 
     new_items = sorted(current - baseline)
     removed_items = sorted(baseline - current)
