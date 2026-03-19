@@ -2,32 +2,8 @@
 title = IntelliVerseX SDK
 version = 5.1.0
 
-[bootstrap]
-main_collection = /main/main.collectionc
-
-[script]
-shared_state = 1
-
 [library]
-include_dirs = intelliversex, tests, nakama
+include_dirs = intelliversex
 
 [dependencies]
 nakama = https://github.com/heroiclabs/nakama-defold/archive/refs/tags/v3.5.0.zip
-
-[display]
-width = 960
-height = 640
-high_dpi = 1
-
-[physics]
-gravity_y = -1000.0
-scale = 0.01
-
-[input]
-game_binding = /input/game.input_bindingc
-
-[android]
-input_method = HiddenInputField
-
-[html5]
-scale_mode = stretch
