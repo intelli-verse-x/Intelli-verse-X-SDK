@@ -1,5 +1,11 @@
 package com.intelliversex.sdk.core;
 
+/*
+ * Copyright (c) 2026 Intelli-verse-X
+ *
+ * MIT License — see LICENSE in the project root.
+ */
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -28,8 +34,8 @@ class IVXManagerTest {
         void defaultBuilderIsValid() {
             IVXConfig cfg = IVXConfig.builder().build();
             assertNotNull(cfg);
-            assertEquals("127.0.0.1", cfg.getNakamaHost());
-            assertEquals(7350, cfg.getNakamaPort());
+            assertEquals("nakama-rest.intelli-verse-x.ai", cfg.getNakamaHost());
+            assertEquals(443, cfg.getNakamaPort());
             assertEquals("defaultkey", cfg.getNakamaServerKey());
         }
 
@@ -103,7 +109,7 @@ class IVXManagerTest {
             String s = cfg.toString();
             assertNotNull(s);
             assertTrue(s.contains("IVXConfig{"));
-            assertTrue(s.contains("127.0.0.1"));
+            assertTrue(s.contains("nakama-rest.intelli-verse-x.ai"));
         }
 
         @Test
