@@ -191,7 +191,7 @@ export class IVXWeb3Manager {
 
       this.log(`Wallet authenticated - UserId: ${session.user_id}`);
       this.syncMetadata();
-      this.emit('authSuccess', session.user_id);
+      this.emit('authSuccess', session.user_id ?? '');
     } catch (e) {
       const error = this.toIVXError(e);
       this.emit('authError', error);
@@ -208,7 +208,7 @@ export class IVXWeb3Manager {
       this._session = session;
       this.log(`Device authenticated - UserId: ${session.user_id}`);
       this.syncMetadata();
-      this.emit('authSuccess', session.user_id);
+      this.emit('authSuccess', session.user_id ?? '');
     } catch (e) {
       const error = this.toIVXError(e);
       this.emit('authError', error);
@@ -346,7 +346,7 @@ export class IVXWeb3Manager {
   async submitScore(leaderboardId: string, score: number): Promise<void> {
     this.ensureSession();
     try {
-      await this._client!.writeLeaderboardRecord(this._session!, leaderboardId, { score });
+      await this._client!.writeLeaderboardRecord(this._session!, leaderboardId, { score: String(score) });
       this.log(`Score submitted: ${score} to ${leaderboardId}`);
     } catch (e) {
       const error = this.toIVXError(e);
@@ -361,7 +361,7 @@ export class IVXWeb3Manager {
       const result = await this._client!.listLeaderboardRecords(this._session!, leaderboardId, undefined, limit);
       const records: IVXLeaderboardRecord[] = (result.records ?? []).map(r => ({
         ownerId: r.owner_id ?? '',
-        username: r.username?.value ?? r.username ?? '',
+        username: (typeof r.username === 'object' && r.username && 'value' in r.username ? (r.username as { value: string }).value : r.username) ?? '',
         score: Number(r.score ?? 0),
         rank: Number(r.rank ?? 0),
       }));
@@ -378,7 +378,7 @@ export class IVXWeb3Manager {
     this.ensureSession();
     try {
       await this._client!.writeStorageObjects(this._session!, [
-        { collection, key, value: JSON.stringify(value), permission_read: 1, permission_write: 1 },
+        { collection, key, value: JSON.stringify(value) as unknown as object, permission_read: 1, permission_write: 1 },
       ]);
       this.log(`Storage write: ${collection}/${key}`);
     } catch (e) {
@@ -409,7 +409,7 @@ export class IVXWeb3Manager {
   async callRpc(rpcId: string, payload = '{}'): Promise<Record<string, unknown>> {
     this.ensureSession();
     try {
-      const result = await this._client!.rpc(this._session!, rpcId, payload);
+      const result = await this._client!.rpc(this._session!, rpcId, payload as unknown as object);
       this.log(`RPC ${rpcId} response received`);
       const data = result.payload ? this.safeParseJson(result.payload) : {};
       this.emit('rpcResponse', rpcId, data);
