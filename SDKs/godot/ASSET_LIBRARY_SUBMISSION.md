@@ -22,7 +22,7 @@ Fill the form at [Submit Assets](https://godotengine.org/asset-library/asset/sub
 | **Asset Name** | `IntelliVerseX SDK` (or "IntelliVerseX Godot SDK") |
 | **Category** | Addons → Scripts (or Networking if available) |
 | **Godot version** | 4.2 (tested up to 4.6.x) |
-| **Version** | Match `plugin.cfg` / `SDK_VERSION` (e.g. `5.1.0`) |
+| **Version** | Match `plugin.cfg` / `SDK_VERSION` (e.g. `5.2.0`) |
 | **Repository host** | GitHub (or your Git host) |
 | **Repository URL** | Your repo URL, e.g. `https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK` |
 | **Issues URL** | Same repo issues, e.g. `https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues` |

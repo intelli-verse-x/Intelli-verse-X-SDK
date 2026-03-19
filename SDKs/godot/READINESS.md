@@ -8,7 +8,7 @@ Use this list now that the scene runs with no errors. Work in order.
 
 1. **Run the scene (F5).** If you see a connection error: start Nakama (e.g. `docker run -d -p 7350:7350 heroiclabs/nakama`) or set **Server Host** / **Port** on **IntelliVerseXExample**. Use **Use Ssl** = false for local HTTP Nakama.
 2. **Icon:** Add a square icon (min 128×128) to the repo and note its raw URL for the submission form.
-3. **Version:** Ensure `plugin.cfg` and `ivx_manager.gd` (`SDK_VERSION`) match (e.g. `5.1.0`).
+3. **Version:** Ensure `plugin.cfg` and `ivx_manager.gd` (`SDK_VERSION`) match (e.g. `5.2.0`).
 4. **CHANGELOG:** Add a Godot SDK entry for this release.
 5. **Submit:** Use [ASSET_LIBRARY_SUBMISSION.md](ASSET_LIBRARY_SUBMISSION.md) to fill the form (name, category, Godot 4.2, repo URL, download commit, icon URL, license, description).
 
@@ -59,7 +59,7 @@ Do this in the Editor so the addon is ready for the Asset Library:
 ## 2. Asset Library prerequisites
 
 - [ ] **Icon:** Create or choose a square icon (min 128×128 px), upload to your repo, and note the **raw** URL (e.g. `https://raw.githubusercontent.com/ORG/REPO/main/SDKs/godot/icon.png`). You will need this for the submission form.
-- [ ] **Version:** Confirm `addons/intelliversex/plugin.cfg` and `ivx_manager.gd` (`SDK_VERSION`) both say the same version (e.g. `5.1.0`).
+- [ ] **Version:** Confirm `addons/intelliversex/plugin.cfg` and `ivx_manager.gd` (`SDK_VERSION`) both say the same version (e.g. `5.2.0`).
 - [ ] **CHANGELOG:** Add a Godot SDK entry to the repo CHANGELOG (or `SDKs/godot/CHANGELOG.md`) for this release.
 
 ---

@@ -1,6 +1,6 @@
 # IntelliVerseX Godot SDK — Changelog
 
-## [5.1.0] — Godot 4.2+
+## [5.2.0] — Godot 4.2+
 
 - Initial Godot 4 addon release.
 - Auth (device, email, Google, Apple, custom), session restore.

@@ -67,7 +67,7 @@ Use this list to make the Godot SDK production-ready: fix errors, verify data fl
 
 - [ ] **README.md** — Requirements (Godot 4.2+, Nakama addon), install steps, Quick Start, and feature table are correct.
 - [ ] **API/signals** — Public methods and signals (e.g. `initialized`, `auth_success`, `auth_error`, `error`, `profile_loaded`, `wallet_updated`) documented in README or linked docs.
-- [ ] **Version** — Same version in `addons/intelliversex/plugin.cfg` and `ivx_manager.gd` (`SDK_VERSION`); matches repo/release version (e.g. 5.1.0).
+- [ ] **Version** — Same version in `addons/intelliversex/plugin.cfg` and `ivx_manager.gd` (`SDK_VERSION`); matches repo/release version (e.g. 5.2.0).
 - [ ] **CHANGELOG** — Godot-specific changes noted in repo CHANGELOG (or a short `SDKs/godot/CHANGELOG.md` if the project uses per-SDK logs).
 
 ---
