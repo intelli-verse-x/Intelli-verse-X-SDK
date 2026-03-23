@@ -192,9 +192,6 @@ LightingData.asset     binary
 # Gradle wrapper: must be LF on all platforms so Linux CI can run ./gradlew
 SDKs/java/gradlew       text eol=lf
 
-# VS Code (avoid CRLF churn on Windows)
-.vscode/settings.json   text eol=lf
-
 # Build system
 CMakeLists.txt          text
 *.cmake                 text
