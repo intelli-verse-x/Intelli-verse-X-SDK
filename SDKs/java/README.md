@@ -1,6 +1,6 @@
 # IntelliVerseX Java / Android SDK
 
-> Complete modular game development SDK for Java and Android ΓÇö Auth, Backend (Nakama), Analytics, Social, Monetization, and more.
+> Complete modular game development SDK for Java and Android — Auth, Backend (Nakama), Analytics, Social, Monetization, and more.
 
 ## Requirements
 
