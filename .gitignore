@@ -137,10 +137,10 @@ SDKs/godot/.import/
 SDKs/defold/build/
 SDKs/defold/.internal/
 
-# Web3 SDK (re-add when SDK is merged to main)
-# SDKs/web3/node_modules/
-# SDKs/web3/dist/
-# SDKs/web3/*.tgz
+# Web3 SDK
+SDKs/web3/node_modules/
+SDKs/web3/dist/
+SDKs/web3/*.tgz
 
 # Local Nakama C++ clone / experiments (not part of the repo)
 SDKs/nakama-cpp/
