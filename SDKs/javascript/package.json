@@ -20,7 +20,6 @@
     "build": "tsup src/index.ts --format cjs,esm && tsc -p tsconfig.build.json",
     "build:prod": "tsup src/index.ts --format cjs,esm --minify && tsc -p tsconfig.build.json",
     "dev": "tsup src/index.ts --format cjs,esm --watch",
-    "lint": "eslint src/",
     "test": "vitest run",
     "test:watch": "vitest",
     "prepublishOnly": "npm run build:prod",

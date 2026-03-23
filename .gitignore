@@ -150,8 +150,6 @@ SDKs/flutter/.pub-cache/
 SDKs/flutter/pubspec.lock
 
 # Environment and secrets (prevent leaking secrets in future commits)
-.env
-.env.*
 **/credentials.*
 **/secrets.*
 config/keys.json
@@ -171,3 +169,5 @@ SDKs/nakama-cpp/
 
 # Cursor AI
 .cursor/
+config.bat
+node_modules
