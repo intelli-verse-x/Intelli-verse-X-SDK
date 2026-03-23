@@ -159,6 +159,9 @@ config/secrets.json
 *.iml
 .vscode/*.log
 
+# Local clones / nested repos (never commit as part of this monorepo)
+SDKs/nakama-cpp/
+
 # Editor / merge backups (never commit)
 *.bak
 *.bak.*

@@ -31,9 +31,10 @@ ivx.on('error', (error) => {
 });
 
 ivx.initialize({
-  nakamaHost: '127.0.0.1',
-  nakamaPort: 7350,
+  nakamaHost: 'nakama-rest.intelli-verse-x.ai',
+  nakamaPort: 443,
   nakamaServerKey: 'defaultkey',
+  useSSL: true,
   enableDebugLogs: true,
 });
 
@@ -63,7 +64,7 @@ console.log('Leaderboard:', records);
 const { IVXManager } = require('@intelliversex/sdk');
 
 const ivx = IVXManager.getInstance();
-ivx.initialize({ nakamaHost: '127.0.0.1' });
+ivx.initialize({ nakamaHost: 'nakama-rest.intelli-verse-x.ai' });
 ```
 
 ### Browser (Script Tag)
@@ -73,7 +74,7 @@ ivx.initialize({ nakamaHost: '127.0.0.1' });
 <script src="https://unpkg.com/@intelliversex/sdk/dist/index.js"></script>
 <script>
   const ivx = IntelliVerseX.IVXManager.getInstance();
-  ivx.initialize({ nakamaHost: '127.0.0.1' });
+  ivx.initialize({ nakamaHost: 'nakama-rest.intelli-verse-x.ai' });
   ivx.authenticateDevice().then(() => {
     console.log('Ready!', ivx.username);
   });

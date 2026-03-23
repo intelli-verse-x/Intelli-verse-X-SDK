@@ -139,4 +139,4 @@ This SDK wraps the official [Nakama Java Client](https://github.com/heroiclabs/n
 
 ## License
 
-MIT License ΓÇö see [LICENSE](../../LICENSE)
+MIT License — see [LICENSE](../../LICENSE)
