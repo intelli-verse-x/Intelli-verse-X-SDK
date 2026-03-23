@@ -2,15 +2,17 @@ package com.intelliversex.sdk.core;
 
 import com.heroiclabs.nakama.Client;
 import com.heroiclabs.nakama.DefaultClient;
+import com.heroiclabs.nakama.DefaultSession;
+import com.heroiclabs.nakama.PermissionRead;
+import com.heroiclabs.nakama.PermissionWrite;
 import com.heroiclabs.nakama.Session;
+import com.heroiclabs.nakama.StorageObjectId;
+import com.heroiclabs.nakama.StorageObjectWrite;
 import com.heroiclabs.nakama.api.Account;
 import com.heroiclabs.nakama.api.LeaderboardRecord;
 import com.heroiclabs.nakama.api.LeaderboardRecordList;
 import com.heroiclabs.nakama.api.Rpc;
-import com.heroiclabs.nakama.api.StorageObjectAcks;
 import com.heroiclabs.nakama.api.StorageObjects;
-import com.heroiclabs.nakama.api.WriteStorageObject;
-import com.heroiclabs.nakama.api.ReadStorageObjectId;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -40,7 +42,7 @@ import java.util.prefs.Preferences;
  * {@link #initialize(IVXConfig)}.
  */
 public class IVXManager {
-    public static final String SDK_VERSION = "5.1.0";
+    public static final String SDK_VERSION = "5.2.0";
 
     private static final String PREF_SESSION_TOKEN = "ivx_session_token";
     private static final String PREF_REFRESH_TOKEN = "ivx_refresh_token";
@@ -84,7 +86,7 @@ public class IVXManager {
     public Session getSession() { return session; }
     public String getUserId() { return session != null ? session.getUserId() : ""; }
     public String getUsername() { return session != null ? session.getUsername() : ""; }
-    public boolean hasValidSession() { return session != null && !session.isExpired(); }
+    public boolean hasValidSession() { return session != null && !session.IsExpired(); }
 
     // ─── Events ─────────────────────────────────────────────────
 
@@ -285,8 +287,8 @@ public class IVXManager {
 
         if (token.isEmpty()) return false;
 
-        session = DefaultClient.restoreSession(token, refresh);
-        if (session.isExpired()) {
+        session = DefaultSession.restore(token, refresh);
+        if (session.IsExpired()) {
             session = null;
             return false;
         }
@@ -384,7 +386,7 @@ public class IVXManager {
         ensureSession();
 
         try {
-            LeaderboardRecordList result = client.listLeaderboardRecords(session, leaderboardId, null, null, limit).get();
+            LeaderboardRecordList result = client.listLeaderboardRecords(session, leaderboardId, null, -1, limit).get();
             List<Map<String, Object>> records = new ArrayList<>();
             for (LeaderboardRecord r : result.getRecordsList()) {
                 Map<String, Object> record = new HashMap<>();
@@ -411,13 +413,13 @@ public class IVXManager {
         ensureSession();
 
         try {
-            WriteStorageObject obj = WriteStorageObject.newBuilder()
-                    .setCollection(collection)
-                    .setKey(key)
-                    .setValue(valueJson)
-                    .setPermissionRead(1)
-                    .setPermissionWrite(1)
-                    .build();
+            StorageObjectWrite obj = new StorageObjectWrite(
+                    collection,
+                    key,
+                    valueJson,
+                    PermissionRead.OWNER_READ,
+                    PermissionWrite.OWNER_WRITE
+            );
             client.writeStorageObjects(session, obj).get();
             log("Storage write: " + collection + "/" + key);
         } catch (Exception e) {
@@ -429,11 +431,9 @@ public class IVXManager {
         ensureSession();
 
         try {
-            ReadStorageObjectId id = ReadStorageObjectId.newBuilder()
-                    .setCollection(collection)
-                    .setKey(key)
-                    .setUserId(getUserId())
-                    .build();
+            StorageObjectId id = new StorageObjectId(collection);
+            id.setKey(key);
+            id.setUserId(getUserId());
             StorageObjects result = client.readStorageObjects(session, id).get();
             if (result.getObjectsCount() > 0) {
                 return result.getObjects(0).getValue();

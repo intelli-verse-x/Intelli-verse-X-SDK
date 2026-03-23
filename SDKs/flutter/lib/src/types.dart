@@ -1,4 +1,4 @@
-const String sdkVersion = '5.1.0';
+const String sdkVersion = '5.2.0';
 
 class IVXProfile {
   final String userId;

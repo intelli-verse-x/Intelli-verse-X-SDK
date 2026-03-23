@@ -5,16 +5,25 @@
 ## Requirements
 
 - Java 11+ / Android API 21+
-- [Nakama Java Client](https://github.com/heroiclabs/nakama-java) v2.9+
+- [Nakama Java Client](https://github.com/heroiclabs/nakama-java) (via [JitPack](https://jitpack.io/#heroiclabs/nakama-java), e.g. `v2.5.3`)
 - Gradle 7+
 
 ## Installation
+
+Your `repositories` must include **JitPack** (transitive Nakama client):
+
+```groovy
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+```
 
 ### Gradle
 
 ```groovy
 dependencies {
-    implementation 'com.intelliversex:sdk:5.1.0'
+    implementation 'com.intelliversex:sdk:5.2.0'
 }
 ```
 
@@ -24,7 +33,7 @@ dependencies {
 <dependency>
     <groupId>com.intelliversex</groupId>
     <artifactId>sdk</artifactId>
-    <version>5.1.0</version>
+    <version>5.2.0</version>
 </dependency>
 ```
 
