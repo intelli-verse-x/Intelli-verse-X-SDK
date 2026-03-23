@@ -11,7 +11,7 @@ signal profile_loaded(profile: Dictionary)
 signal wallet_updated(wallet: Dictionary)
 signal error(message: String)
 
-const SDK_VERSION := "5.2.0"
+const SDK_VERSION := "5.1.0"
 const SESSION_TOKEN_KEY := "ivx_session_token"
 const REFRESH_TOKEN_KEY := "ivx_refresh_token"
 const DEVICE_ID_KEY := "ivx_device_id"

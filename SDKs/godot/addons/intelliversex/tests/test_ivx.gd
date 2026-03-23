@@ -55,7 +55,7 @@ func test_not_initialized_by_default():
 
 
 func test_sdk_version_set():
-	assert_eq(manager.SDK_VERSION, "5.2.0", "SDK version constant should be 5.2.0")
+	assert_eq(manager.SDK_VERSION, "5.1.0", "SDK version constant should be 5.1.0")
 
 
 func test_initialize_sets_flag():
