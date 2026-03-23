@@ -1,3 +1,6 @@
+-- Copyright (c) 2026 Intelli-verse-X
+-- MIT License — see LICENSE in the project root.
+
 --- IntelliVerseX SDK for Defold
 --- Central module for Nakama integration: auth, profile, wallet, leaderboards, storage, RPC.
 --- @module ivx

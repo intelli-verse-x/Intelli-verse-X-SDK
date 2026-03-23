@@ -1,3 +1,6 @@
+-- Copyright (c) 2026 Intelli-verse-X
+-- MIT License — see LICENSE in the project root.
+
 --- IntelliVerseX Defold SDK — unit tests.
 ---
 --- Run with any Lua test runner (e.g. busted, luaunit) or Defold's built-in

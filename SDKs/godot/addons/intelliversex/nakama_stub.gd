@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Intelli-verse-X
+# MIT License — see LICENSE in the project root.
+
 ## Stub used when the real Nakama addon is not installed.
 ## Allows the project to open and parse without errors.
 ## Install addons/com.heroiclabs.nakama from https://github.com/heroiclabs/nakama-godot for real backend.

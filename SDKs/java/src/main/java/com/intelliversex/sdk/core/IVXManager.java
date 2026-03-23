@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Intelli-verse-X
+// MIT License — see LICENSE in the project root.
+
 package com.intelliversex.sdk.core;
 
 import com.heroiclabs.nakama.Client;
