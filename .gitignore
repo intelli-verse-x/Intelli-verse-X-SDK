@@ -142,9 +142,6 @@ SDKs/web3/node_modules/
 SDKs/web3/dist/
 SDKs/web3/*.tgz
 
-# Local Nakama C++ clone / experiments (not part of the repo)
-SDKs/nakama-cpp/
-
 # Flutter SDK
 SDKs/flutter/.dart_tool/
 SDKs/flutter/.pub-cache/

@@ -2,7 +2,7 @@
 # https://squidfunk.github.io/mkdocs-material/
 
 site_name: IntelliVerseX SDK
-site_description: Complete modular game development SDK for Unity, Unreal, Godot, Defold, Cocos2d-x, JavaScript, C++, Java, and Flutter
+site_description: Complete modular game development SDK for Unity, Unreal, Godot, Defold, Cocos2d-x, JavaScript, C++, Java, Flutter, and Web3
 site_author: IntelliVerse-X Team
 site_url: https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/
 
@@ -70,6 +70,7 @@ nav:
     - C / C++: platforms/cpp.md
     - Java / Android: platforms/java.md
     - Flutter / Dart: platforms/flutter.md
+    - Web3: platforms/web3.md
   - Configuration:
     - configuration/index.md
     - Game Configuration: configuration/game-config.md

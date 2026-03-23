@@ -6,19 +6,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## [5.2.0] - 2026-03-17
-
-### Fixed
-
-- **Java / Android SDK** — Committed the Gradle wrapper (`gradlew`, `gradlew.bat`, `gradle/wrapper/*`) so CI and contributors can run `./gradlew` on Linux/macOS/Windows.
-- **CI** — Java SDK workflow: normalize `gradlew` line endings and `chmod +x` before build; run `clean build` + tests.
-
-### Changed
-
-- **Web3 SDK** — Removed from the `main` branch while still in active development; restore from a feature branch when ready to ship. Web3 CI workflow removed; platform validation and docs updated accordingly.
-
----
-
 ## [5.1.0] - 2026-03-02
 
 ### 🚀 Added

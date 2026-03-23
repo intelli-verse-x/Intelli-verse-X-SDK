@@ -80,37 +80,37 @@ void Manager::init(const Config& cfg) {
 void Manager::authDevice(const std::string& id, SuccessCb ok, ErrorCb err) {
     if (!_init) { if (err) err({-1, "Not initialized"}); return; }
     std::string rid = id.empty() ? deviceId() : id;
-    _client->authenticateDevice(rid, std::nullopt, true, {},
+    _client->authenticateDevice(rid, Nakama::opt::nullopt, true, {},
         [this, ok](Nakama::NSessionPtr s) { onAuth(s); if (ok) ok(); },
-        [err](const Nakama::NError& e) { if (err) err({static_cast<int>(e.code), e.message}); });
+        [err](const Nakama::NError& e) { if (err) err({e.code, e.message}); });
 }
 
 void Manager::authEmail(const std::string& email, const std::string& pw, bool create, SuccessCb ok, ErrorCb err) {
     if (!_init) { if (err) err({-1, "Not initialized"}); return; }
     _client->authenticateEmail(email, pw, "", create, {},
         [this, ok](Nakama::NSessionPtr s) { onAuth(s); if (ok) ok(); },
-        [err](const Nakama::NError& e) { if (err) err({static_cast<int>(e.code), e.message}); });
+        [err](const Nakama::NError& e) { if (err) err({e.code, e.message}); });
 }
 
 void Manager::authGoogle(const std::string& token, SuccessCb ok, ErrorCb err) {
     if (!_init) { if (err) err({-1, "Not initialized"}); return; }
     _client->authenticateGoogle(token, "", true, {},
         [this, ok](Nakama::NSessionPtr s) { onAuth(s); if (ok) ok(); },
-        [err](const Nakama::NError& e) { if (err) err({static_cast<int>(e.code), e.message}); });
+        [err](const Nakama::NError& e) { if (err) err({e.code, e.message}); });
 }
 
 void Manager::authApple(const std::string& token, SuccessCb ok, ErrorCb err) {
     if (!_init) { if (err) err({-1, "Not initialized"}); return; }
     _client->authenticateApple(token, "", true, {},
         [this, ok](Nakama::NSessionPtr s) { onAuth(s); if (ok) ok(); },
-        [err](const Nakama::NError& e) { if (err) err({static_cast<int>(e.code), e.message}); });
+        [err](const Nakama::NError& e) { if (err) err({e.code, e.message}); });
 }
 
 void Manager::authCustom(const std::string& id, SuccessCb ok, ErrorCb err) {
     if (!_init) { if (err) err({-1, "Not initialized"}); return; }
     _client->authenticateCustom(id, "", true, {},
         [this, ok](Nakama::NSessionPtr s) { onAuth(s); if (ok) ok(); },
-        [err](const Nakama::NError& e) { if (err) err({static_cast<int>(e.code), e.message}); });
+        [err](const Nakama::NError& e) { if (err) err({e.code, e.message}); });
 }
 
 // --- session ---
@@ -142,17 +142,17 @@ void Manager::fetchProfile(ProfileCb ok, ErrorCb err) {
     if (!hasSession()) { if (err) err({-1, "No session"}); return; }
     _client->getAccount(_session,
         [ok](const Nakama::NAccount& a) {
-            Profile p{a.user.id, a.user.username, a.user.displayName, a.user.avatarUrl, a.user.lang, a.user.metadata, a.wallet};
+            Profile p{a.user.id, a.user.username, a.user.displayName, a.user.avatarUrl, a.user.langTag, a.user.metadata, a.wallet};
             if (ok) ok(p);
         },
-        [err](const Nakama::NError& e) { if (err) err({static_cast<int>(e.code), e.message}); });
+        [err](const Nakama::NError& e) { if (err) err({e.code, e.message}); });
 }
 
 void Manager::updateProfile(const std::string& dn, const std::string& av, const std::string& lt, SuccessCb ok, ErrorCb err) {
     if (!hasSession()) { if (err) err({-1, "No session"}); return; }
-    _client->updateAccount(_session, std::nullopt, dn, av, lt, std::nullopt, std::nullopt,
+    _client->updateAccount(_session, Nakama::opt::nullopt, dn, av, lt, Nakama::opt::nullopt,
         [this, ok]() { log("Profile updated"); if (ok) ok(); },
-        [err](const Nakama::NError& e) { if (err) err({static_cast<int>(e.code), e.message}); });
+        [err](const Nakama::NError& e) { if (err) err({e.code, e.message}); });
 }
 
 // --- wallet ---
@@ -172,21 +172,21 @@ void Manager::grantCurrency(const std::string& cid, int64_t amt, StringCb ok, Er
 
 void Manager::submitScore(const std::string& lid, int64_t score, SuccessCb ok, ErrorCb err) {
     if (!hasSession()) { if (err) err({-1, "No session"}); return; }
-    _client->writeLeaderboardRecord(_session, lid, score, std::nullopt, std::nullopt,
+    _client->writeLeaderboardRecord(_session, lid, score, Nakama::opt::nullopt, Nakama::opt::nullopt, Nakama::opt::nullopt,
         [this, ok, lid, score](const Nakama::NLeaderboardRecord&) { log("Score " + std::to_string(score) + " -> " + lid); if (ok) ok(); },
-        [err](const Nakama::NError& e) { if (err) err({static_cast<int>(e.code), e.message}); });
+        [err](const Nakama::NError& e) { if (err) err({e.code, e.message}); });
 }
 
 void Manager::fetchLeaderboard(const std::string& lid, int limit, LeaderboardCb ok, ErrorCb err) {
     if (!hasSession()) { if (err) err({-1, "No session"}); return; }
-    _client->listLeaderboardRecords(_session, lid, {}, limit, std::nullopt,
+    _client->listLeaderboardRecords(_session, lid, {}, limit, Nakama::opt::nullopt,
         [ok](Nakama::NLeaderboardRecordListPtr list) {
             std::vector<LeaderboardRecord> out;
             if (list) {
                 for (auto& r : list->records) {
                     LeaderboardRecord rec;
                     rec.ownerId = r.ownerId;
-                    rec.username = r.username;
+                    rec.username = r.username.has_value() ? r.username.value() : "";
                     rec.score = r.score;
                     rec.rank = r.rank;
                     out.push_back(rec);
@@ -194,7 +194,7 @@ void Manager::fetchLeaderboard(const std::string& lid, int limit, LeaderboardCb 
             }
             if (ok) ok(out);
         },
-        [err](const Nakama::NError& e) { if (err) err({static_cast<int>(e.code), e.message}); });
+        [err](const Nakama::NError& e) { if (err) err({e.code, e.message}); });
 }
 
 // --- storage ---
@@ -203,12 +203,10 @@ void Manager::writeStorage(const std::string& col, const std::string& key, const
     if (!hasSession()) { if (err) err({-1, "No session"}); return; }
     Nakama::NStorageObjectWrite w;
     w.collection = col; w.key = key; w.value = json;
-    w.version = "";
-    w.permissionRead = Nakama::NStoragePermissionRead::OWNER_READ;
-    w.permissionWrite = Nakama::NStoragePermissionWrite::OWNER_WRITE;
+    w.permissionRead = 1; w.permissionWrite = 1;
     _client->writeStorageObjects(_session, {w},
         [this, ok, col, key](const Nakama::NStorageObjectAcks&) { log("Write " + col + "/" + key); if (ok) ok(); },
-        [err](const Nakama::NError& e) { if (err) err({static_cast<int>(e.code), e.message}); });
+        [err](const Nakama::NError& e) { if (err) err({e.code, e.message}); });
 }
 
 void Manager::readStorage(const std::string& col, const std::string& key, StringCb ok, ErrorCb err) {
@@ -217,7 +215,7 @@ void Manager::readStorage(const std::string& col, const std::string& key, String
     r.collection = col; r.key = key; r.userId = userId();
     _client->readStorageObjects(_session, {r},
         [ok](const Nakama::NStorageObjects& objs) { if (ok) ok(objs.empty() ? "{}" : objs[0].value); },
-        [err](const Nakama::NError& e) { if (err) err({static_cast<int>(e.code), e.message}); });
+        [err](const Nakama::NError& e) { if (err) err({e.code, e.message}); });
 }
 
 // --- rpc ---
@@ -226,7 +224,7 @@ void Manager::rpc(const std::string& id, const std::string& payload, StringCb ok
     if (!hasSession()) { if (err) err({-1, "No session"}); return; }
     _client->rpc(_session, id, payload,
         [this, ok, id](const Nakama::NRpc& r) { log("RPC " + id + " OK"); if (ok) ok(r.payload); },
-        [this, err, id](const Nakama::NError& e) { log("RPC " + id + " FAIL: " + e.message); if (err) err({static_cast<int>(e.code), e.message}); });
+        [this, err, id](const Nakama::NError& e) { log("RPC " + id + " FAIL: " + e.message); if (err) err({e.code, e.message}); });
 }
 
 // --- tick ---
