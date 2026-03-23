@@ -23,7 +23,7 @@ repositories {
 
 ```groovy
 dependencies {
-    implementation 'com.intelliversex:sdk:5.2.0'
+    implementation 'ai.intelli-verse-x:sdk:5.2.0'
 }
 ```
 
@@ -31,7 +31,7 @@ dependencies {
 
 ```xml
 <dependency>
-    <groupId>com.intelliversex</groupId>
+    <groupId>ai.intelli-verse-x</groupId>
     <artifactId>sdk</artifactId>
     <version>5.2.0</version>
 </dependency>
@@ -139,4 +139,4 @@ This SDK wraps the official [Nakama Java Client](https://github.com/heroiclabs/n
 
 ## License
 
-MIT License — see [LICENSE](../../LICENSE)
+MIT License ╬ô├ç├╢ see [LICENSE](../../LICENSE)
