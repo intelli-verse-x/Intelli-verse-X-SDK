@@ -16,6 +16,8 @@
 local ivx = require "intelliversex.ivx"
 
 -- Configuration — adjust for your environment
+local SERVER_HOST = "nakama-rest.intelli-verse-x.ai"
+local SERVER_PORT = 443
 local SERVER_KEY  = "defaultkey"
 local USE_SSL     = true
 local DEBUG_LOGS  = true

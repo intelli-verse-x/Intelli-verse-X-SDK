@@ -43,8 +43,9 @@ void ExampleScene::initializeSDK() {
     setStatus("Initializing SDK...");
 
     IntelliVerseX::IVXConfig config;
-    config.nakamaHost = "127.0.0.1";
-    config.nakamaPort = 7350;
+    config.nakamaHost = "nakama-rest.intelli-verse-x.ai";
+    config.nakamaPort = 443;
+    config.useSSL = true;
     config.nakamaServerKey = "defaultkey";
     config.enableDebugLogs = true;
 
