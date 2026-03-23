@@ -34,10 +34,12 @@ tasks.register('runExample', JavaExec) {
 
 repositories {
     mavenCentral()
-    maven { url = uri("https://jitpack.io") }
+    // Nakama Java client is published via JitPack (not Maven Central under com.heroiclabs.nakama-java)
+    maven { url = uri('https://jitpack.io') }
 }
 
 dependencies {
+    // heroiclabs/nakama-java releases: https://github.com/heroiclabs/nakama-java/releases
     api 'com.github.heroiclabs:nakama-java:v2.5.3'
     implementation 'com.google.code.gson:gson:2.10.1'
 

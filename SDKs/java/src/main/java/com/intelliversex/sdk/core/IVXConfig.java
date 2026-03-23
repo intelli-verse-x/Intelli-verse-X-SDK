@@ -12,9 +12,10 @@ package com.intelliversex.sdk.core;
  * Use the {@link Builder} to construct a validated instance:
  * <pre>{@code
  * IVXConfig config = IVXConfig.builder()
- *         .nakamaHost("127.0.0.1")
- *         .nakamaPort(7350)
+ *         .nakamaHost("nakama-rest.intelli-verse-x.ai")
+ *         .nakamaPort(443)
  *         .nakamaServerKey("defaultkey")
+ *         .useSSL(true)
  *         .enableDebugLogs(true)
  *         .build();
  * }</pre>

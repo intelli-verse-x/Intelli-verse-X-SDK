@@ -16,7 +16,7 @@ namespace ivx {
 /// access, protect calls with an external mutex.
 class Manager {
 public:
-    static constexpr const char* VERSION = "5.1.0";
+    static constexpr const char* VERSION = "5.2.0";
 
     static Manager& instance();
 
