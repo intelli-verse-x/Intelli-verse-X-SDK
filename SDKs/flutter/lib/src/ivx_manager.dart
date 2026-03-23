@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Intelli-verse-X
-// MIT License — see LICENSE in the project root.
-
 import 'dart:convert';
 
 import 'package:nakama/nakama.dart';

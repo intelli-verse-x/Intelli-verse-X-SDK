@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Maintenance
 - Removed 157 committed C++ build artifacts from `SDKs/cpp/test_package/build/`.
-- Added MIT license headers to all 46 IntelliVerseX-owned source files across 8 SDKs.
+- Added MIT license headers to all 40 IntelliVerseX-owned source files across 7 SDKs.
 - Cleaned up Web3 SDK leftover files from `main`.
 
 ---
