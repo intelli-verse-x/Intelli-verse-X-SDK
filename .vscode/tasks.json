@@ -2,6 +2,27 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Build and Open IVX_Test (Unreal)",
+      "type": "shell",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "\"E:\\Unreal Project\\IVX_Test\\BuildAndOpen.bat\""
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "Build IVX_TestEditor and launch Unreal Editor. Close the editor first."
+    },
+    {
       "label": "Context: Validate (CI)",
       "type": "shell",
       "command": "python",

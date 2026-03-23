@@ -11,16 +11,16 @@ class INTELLIVERSEX_API UIVXConfig : public UPrimaryDataAsset
 
 public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Nakama")
-    FString NakamaHost = TEXT("127.0.0.1");
+    FString NakamaHost = TEXT("nakama-rest.intelli-verse-x.ai");
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Nakama")
-    int32 NakamaPort = 7350;
+    int32 NakamaPort = 443;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Nakama")
     FString NakamaServerKey = TEXT("defaultkey");
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Nakama")
-    bool bUseSSL = false;
+    bool bUseSSL = true;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Identity")
     FString CognitoRegion;

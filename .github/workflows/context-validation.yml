@@ -9,6 +9,7 @@ on:
     paths:
       - '.cursor/**'
       - 'Assets/_IntelliVerseXSDK/**'
+      - 'Assets/Intelli-verse-X-SDK/**'
       - 'docs/**'
       - 'AGENT.md'
       - 'AGENTS.md'
