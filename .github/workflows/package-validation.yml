@@ -8,11 +8,13 @@ on:
     branches: [main, develop]
     paths:
       - 'Assets/_IntelliVerseXSDK/**'
+      - 'Assets/Intelli-verse-X-SDK/**'
       - 'package.json'
   pull_request:
     branches: [main, develop]
     paths:
       - 'Assets/_IntelliVerseXSDK/**'
+      - 'Assets/Intelli-verse-X-SDK/**'
       - 'package.json'
 
 jobs:
@@ -37,6 +39,8 @@ jobs:
             PACKAGE_PATH="."
           elif [ -f "Assets/_IntelliVerseXSDK/package.json" ]; then
             PACKAGE_PATH="Assets/_IntelliVerseXSDK"
+          elif [ -f "Assets/Intelli-verse-X-SDK/package.json" ]; then
+            PACKAGE_PATH="Assets/Intelli-verse-X-SDK"
           else
             echo "::error::No package.json found!"
             exit 1
