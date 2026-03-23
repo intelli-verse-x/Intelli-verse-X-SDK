@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.intelliversex'
-version = '5.1.0'
+version = '5.2.0'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -15,10 +15,13 @@ java {
 
 repositories {
     mavenCentral()
+    // Nakama Java client is published via JitPack (not Maven Central under com.heroiclabs.nakama-java)
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    api 'com.heroiclabs.nakama-java:nakama-java:2.9.0'
+    // heroiclabs/nakama-java releases: https://github.com/heroiclabs/nakama-java/releases
+    api 'com.github.heroiclabs:nakama-java:v2.5.3'
     implementation 'com.google.code.gson:gson:2.10.1'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'

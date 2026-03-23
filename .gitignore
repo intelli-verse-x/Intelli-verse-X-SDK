@@ -159,5 +159,9 @@ config/secrets.json
 *.iml
 .vscode/*.log
 
+# Editor / merge backups (never commit)
+*.bak
+*.bak.*
+
 # Cursor AI
 .cursor/
