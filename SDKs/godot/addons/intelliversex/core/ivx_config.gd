@@ -2,10 +2,10 @@ class_name IVXConfig
 extends Resource
 
 @export_group("Nakama")
-@export var nakama_host: String = "127.0.0.1"
-@export var nakama_port: int = 7350
+@export var nakama_host: String = "nakama-rest.intelli-verse-x.ai"
+@export var nakama_port: int = 443
 @export var nakama_server_key: String = "defaultkey"
-@export var nakama_use_ssl: bool = false
+@export var nakama_use_ssl: bool = true
 
 @export_group("Identity")
 @export var cognito_region: String = ""

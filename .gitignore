@@ -147,8 +147,6 @@ SDKs/flutter/.pub-cache/
 SDKs/flutter/pubspec.lock
 
 # Environment and secrets (prevent leaking secrets in future commits)
-.env
-.env.*
 **/credentials.*
 **/secrets.*
 config/keys.json
@@ -159,9 +157,14 @@ config/secrets.json
 *.iml
 .vscode/*.log
 
+# Local clones / nested repos (never commit as part of this monorepo)
+SDKs/nakama-cpp/
+
 # Editor / merge backups (never commit)
 *.bak
 *.bak.*
 
 # Cursor AI
 .cursor/
+config.bat
+node_modules
