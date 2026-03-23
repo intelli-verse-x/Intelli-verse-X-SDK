@@ -9,10 +9,10 @@
 namespace ivx {
 
 struct Config {
-    std::string host = "nakama-rest.intelli-verse-x.ai";
-    int port = 443;
+    std::string host = "127.0.0.1";
+    int port = 7350;
     std::string serverKey = "defaultkey";
-    bool useSSL = true;
+    bool useSSL = false;
     bool debugLogs = false;
     bool verboseLogs = false;
 

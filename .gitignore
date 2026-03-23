@@ -142,17 +142,12 @@ SDKs/web3/node_modules/
 SDKs/web3/dist/
 SDKs/web3/*.tgz
 
-# Local Nakama C++ clone / experiments (not part of the repo)
-SDKs/nakama-cpp/
-
 # Flutter SDK
 SDKs/flutter/.dart_tool/
 SDKs/flutter/.pub-cache/
 SDKs/flutter/pubspec.lock
 
 # Environment and secrets (prevent leaking secrets in future commits)
-.env
-.env.*
 **/credentials.*
 **/secrets.*
 config/keys.json
@@ -172,3 +167,5 @@ SDKs/nakama-cpp/
 
 # Cursor AI
 .cursor/
+config.bat
+node_modules
