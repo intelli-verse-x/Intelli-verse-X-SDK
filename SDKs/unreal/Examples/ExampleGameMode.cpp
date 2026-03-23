@@ -35,9 +35,10 @@ void AExampleGameMode::InitGame(const FString& MapName, const FString& Options, 
     if (!SDKConfig)
     {
         SDKConfig = NewObject<UIVXConfig>(this);
-        SDKConfig->NakamaHost = TEXT("127.0.0.1");
-        SDKConfig->NakamaPort = 7350;
+        SDKConfig->NakamaHost = TEXT("nakama-rest.intelli-verse-x.ai");
+        SDKConfig->NakamaPort = 443;
         SDKConfig->NakamaServerKey = TEXT("defaultkey");
+        SDKConfig->bUseSSL = true;
         SDKConfig->bEnableDebugLogs = true;
     }
 
