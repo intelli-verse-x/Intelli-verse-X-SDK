@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.0] - 2026-03-17
+
+### Fixed
+- **Java / Android SDK** — Committed the Gradle wrapper (`gradlew`, `gradlew.bat`, `gradle/wrapper/*`) so CI and contributors can run `./gradlew` on Linux/macOS/Windows.
+- **CI** — Java SDK workflow: normalize `gradlew` line endings and `chmod +x` before build; run `clean build` + tests.
+
+### Changed
+- **Web3 SDK** — Removed from the `main` branch while still in active development; restore from a feature branch when ready to ship. Web3 CI workflow removed; platform validation and docs updated accordingly.
+
+### Maintenance
+- Removed 157 committed C++ build artifacts from `SDKs/cpp/test_package/build/`.
+- Added MIT license headers to all 46 IntelliVerseX-owned source files across 8 SDKs.
+- Cleaned up Web3 SDK leftover files from `main`.
+
+---
+
 ## [5.1.0] - 2026-03-02
 
 ### Added
@@ -133,6 +149,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Unity Support | Status |
 |---------|---------------|--------|
+| 5.2.x | 2023.3+ | Current |
 | 5.1.x | 2023.3+ | Active |
 | 5.0.x | 2023.3+ | Active |
 | 4.2.x | 2021.3+ | Security fixes only |
