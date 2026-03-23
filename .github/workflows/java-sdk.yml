@@ -28,7 +28,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Fix gradlew line endings (CRLF can break on Linux)
+      - name: Fix gradlew line endings and make executable (Linux)
         working-directory: SDKs/java
         run: |
           sed -i 's/\r$//' gradlew 2>/dev/null || true
