@@ -189,6 +189,7 @@ LightingData.asset     binary
 *.java                  text diff=java
 *.gradle                text
 *.properties            text
+SDKs/java/gradlew       text eol=lf
 
 # Build system
 CMakeLists.txt          text

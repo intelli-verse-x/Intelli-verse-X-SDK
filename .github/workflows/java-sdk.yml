@@ -27,6 +27,10 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
+      - name: Make gradlew executable (Linux)
+        working-directory: SDKs/java
+        run: chmod +x gradlew
+
       - name: Build
         working-directory: SDKs/java
         run: ./gradlew build

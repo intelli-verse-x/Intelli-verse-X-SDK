@@ -1,0 +1,4 @@
+# Local Gradle (keep gradle/wrapper/ committed for CI)
+.gradle/
+build/
+out/
