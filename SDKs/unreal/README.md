@@ -98,6 +98,17 @@ See the [full documentation](https://intelli-verse-x.github.io/Intelli-verse-X-U
 
 This SDK wraps the official [Nakama Unreal Client](https://github.com/heroiclabs/nakama-unreal) (249 stars, 74 forks).
 
+## Testing
+
+1. Add this plugin to a project (e.g. copy to `Plugins/IntelliVerseX/`), enable it and Nakama, add `IntelliVerseX` to your game module's `Build.cs`.
+2. In a Game Mode (C++ or Blueprint), get `UIVXManager` from the Game Instance, call `InitializeSDK` with an `IVXConfig` (or defaults), then `AuthenticateWithDevice`; bind to `OnInitialized` / `OnError` and run `FetchProfile` / `FetchWallet` when ready.
+3. Press Play and check **Output Log** (filter: `IVX`) for init, auth, profile, and wallet messages.
+4. For a full checklist (build, Game Mode, PIE, Nakama), see **RELEASE.md** and, if you use it, the IVX_Test project's **TESTING_SDK.md**.
+
+## Releasing
+
+See **[RELEASE.md](RELEASE.md)** for publishing to GitHub, Unreal Marketplace, and GameDev Market (packaging, versioning, submission).
+
 ## License
 
 MIT License — see [LICENSE](../../LICENSE)

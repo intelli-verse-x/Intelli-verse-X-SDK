@@ -3,7 +3,7 @@
 #include "Misc/Guid.h"
 #include "JsonObjectConverter.h"
 
-DEFINE_LOG_CATEGORY_STATIC(LogIVX, Log, All);
+DEFINE_LOG_CATEGORY(LogIVX);
 
 static const FString IVX_SESSION_TOKEN_KEY = TEXT("IVX_SessionToken");
 static const FString IVX_REFRESH_TOKEN_KEY = TEXT("IVX_RefreshToken");
@@ -22,12 +22,45 @@ void UIVXManager::Deinitialize()
     Super::Deinitialize();
 }
 
+FString UIVXManager::ValidateNakamaConfig(UIVXConfig* Config)
+{
+    if (!Config)
+    {
+        return TEXT("Config is null.");
+    }
+    if (Config->NakamaHost.IsEmpty())
+    {
+        return TEXT("Nakama Host is empty. Set it in IVXConfig (e.g. 127.0.0.1).");
+    }
+    if (Config->NakamaPort <= 0 || Config->NakamaPort > 65535)
+    {
+        return FString::Printf(TEXT("Nakama Port %d is invalid. Use 7350 for default HTTP."), Config->NakamaPort);
+    }
+    if (Config->NakamaServerKey.IsEmpty())
+    {
+        return TEXT("Nakama Server Key is empty. Set it in IVXConfig (e.g. defaultkey).");
+    }
+    if (Config->NakamaHost.Contains(TEXT("http://")) || Config->NakamaHost.Contains(TEXT("https://")))
+    {
+        return TEXT("Nakama Host must not include http:// or https://. Use host only (e.g. 127.0.0.1).");
+    }
+    return FString();
+}
+
 void UIVXManager::InitializeSDK(UIVXConfig* Config)
 {
     if (!Config)
     {
         LogError(TEXT("InitializeSDK called with null config"));
         OnError.Broadcast(TEXT("Config is null"));
+        return;
+    }
+
+    FString ValidationError = ValidateNakamaConfig(Config);
+    if (!ValidationError.IsEmpty())
+    {
+        LogError(FString::Printf(TEXT("IVX Config invalid: %s"), *ValidationError));
+        OnError.Broadcast(ValidationError);
         return;
     }
 
@@ -62,17 +95,12 @@ void UIVXManager::AuthenticateWithDevice(const FString& DeviceId)
 
     FString ResolvedId = DeviceId.IsEmpty() ? GetPersistentDeviceId() : DeviceId;
 
-    auto SuccessCallback = FOnAuthUpdate::CreateLambda([this](UNakamaSession* Session)
-    {
-        OnAuthSuccess(Session);
-    });
+    FOnAuthUpdate SuccessCallback;
+    SuccessCallback.AddDynamic(this, &UIVXManager::OnAuthSuccess);
+    FOnError ErrorCallback;
+    ErrorCallback.AddDynamic(this, &UIVXManager::OnAuthError);
 
-    auto ErrorCallback = FOnError::CreateLambda([this](const FNakamaError& Error)
-    {
-        OnAuthError(Error);
-    });
-
-    NakamaClient->AuthenticateDevice(ResolvedId, true, FString(), {}, SuccessCallback, ErrorCallback);
+    NakamaClient->AuthenticateDevice(ResolvedId, FString(), true, {}, SuccessCallback, ErrorCallback);
 }
 
 void UIVXManager::AuthenticateWithEmail(const FString& Email, const FString& Password, bool bCreate)
@@ -83,15 +111,10 @@ void UIVXManager::AuthenticateWithEmail(const FString& Email, const FString& Pas
         return;
     }
 
-    auto SuccessCallback = FOnAuthUpdate::CreateLambda([this](UNakamaSession* Session)
-    {
-        OnAuthSuccess(Session);
-    });
-
-    auto ErrorCallback = FOnError::CreateLambda([this](const FNakamaError& Error)
-    {
-        OnAuthError(Error);
-    });
+    FOnAuthUpdate SuccessCallback;
+    SuccessCallback.AddDynamic(this, &UIVXManager::OnAuthSuccess);
+    FOnError ErrorCallback;
+    ErrorCallback.AddDynamic(this, &UIVXManager::OnAuthError);
 
     NakamaClient->AuthenticateEmail(Email, Password, FString(), bCreate, {}, SuccessCallback, ErrorCallback);
 }
@@ -104,15 +127,10 @@ void UIVXManager::AuthenticateWithGoogle(const FString& Token)
         return;
     }
 
-    auto SuccessCallback = FOnAuthUpdate::CreateLambda([this](UNakamaSession* Session)
-    {
-        OnAuthSuccess(Session);
-    });
-
-    auto ErrorCallback = FOnError::CreateLambda([this](const FNakamaError& Error)
-    {
-        OnAuthError(Error);
-    });
+    FOnAuthUpdate SuccessCallback;
+    SuccessCallback.AddDynamic(this, &UIVXManager::OnAuthSuccess);
+    FOnError ErrorCallback;
+    ErrorCallback.AddDynamic(this, &UIVXManager::OnAuthError);
 
     NakamaClient->AuthenticateGoogle(Token, FString(), true, {}, SuccessCallback, ErrorCallback);
 }
@@ -125,15 +143,10 @@ void UIVXManager::AuthenticateWithApple(const FString& Token)
         return;
     }
 
-    auto SuccessCallback = FOnAuthUpdate::CreateLambda([this](UNakamaSession* Session)
-    {
-        OnAuthSuccess(Session);
-    });
-
-    auto ErrorCallback = FOnError::CreateLambda([this](const FNakamaError& Error)
-    {
-        OnAuthError(Error);
-    });
+    FOnAuthUpdate SuccessCallback;
+    SuccessCallback.AddDynamic(this, &UIVXManager::OnAuthSuccess);
+    FOnError ErrorCallback;
+    ErrorCallback.AddDynamic(this, &UIVXManager::OnAuthError);
 
     NakamaClient->AuthenticateApple(Token, FString(), true, {}, SuccessCallback, ErrorCallback);
 }
@@ -146,15 +159,10 @@ void UIVXManager::AuthenticateWithCustomId(const FString& CustomId)
         return;
     }
 
-    auto SuccessCallback = FOnAuthUpdate::CreateLambda([this](UNakamaSession* Session)
-    {
-        OnAuthSuccess(Session);
-    });
-
-    auto ErrorCallback = FOnError::CreateLambda([this](const FNakamaError& Error)
-    {
-        OnAuthError(Error);
-    });
+    FOnAuthUpdate SuccessCallback;
+    SuccessCallback.AddDynamic(this, &UIVXManager::OnAuthSuccess);
+    FOnError ErrorCallback;
+    ErrorCallback.AddDynamic(this, &UIVXManager::OnAuthError);
 
     NakamaClient->AuthenticateCustom(CustomId, FString(), true, {}, SuccessCallback, ErrorCallback);
 }
@@ -223,34 +231,35 @@ void UIVXManager::FetchProfile()
         return;
     }
 
-    auto SuccessCallback = FOnUserAccount::CreateLambda([this](const FNakamaAccount& Account)
-    {
-        TSharedPtr<FJsonObject> Json = MakeShareable(new FJsonObject());
-        Json->SetStringField(TEXT("user_id"), Account.User.Id);
-        Json->SetStringField(TEXT("username"), Account.User.Username);
-        Json->SetStringField(TEXT("display_name"), Account.User.DisplayName);
-        Json->SetStringField(TEXT("avatar_url"), Account.User.AvatarUrl);
-        Json->SetStringField(TEXT("lang_tag"), Account.User.LangTag);
-        Json->SetStringField(TEXT("metadata"), Account.User.Metadata);
-        Json->SetStringField(TEXT("wallet"), Account.Wallet);
-        Json->SetStringField(TEXT("email"), Account.Email);
-        Json->SetStringField(TEXT("create_time"), Account.User.CreatedAt.ToString());
-        Json->SetStringField(TEXT("update_time"), Account.User.UpdatedAt.ToString());
-
-        FString ProfileJson;
-        TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&ProfileJson);
-        FJsonSerializer::Serialize(Json.ToSharedRef(), Writer);
-
-        LogDebug(FString::Printf(TEXT("Profile loaded for: %s"), *Account.User.Username));
-        OnProfileLoaded.Broadcast(ProfileJson);
-    });
-
-    auto ErrorCallback = FOnError::CreateLambda([this](const FNakamaError& Error)
-    {
-        OnError.Broadcast(Error.Message);
-    });
+    FOnUserAccountInfo SuccessCallback;
+    SuccessCallback.AddDynamic(this, &UIVXManager::OnGetAccountSuccess);
+    FOnError ErrorCallback;
+    ErrorCallback.AddDynamic(this, &UIVXManager::OnAuthError);
 
     NakamaClient->GetAccount(CurrentSession, SuccessCallback, ErrorCallback);
+}
+
+void UIVXManager::OnGetAccountSuccess(const FNakamaAccount& AccountData)
+{
+    const FNakamaUser& User = AccountData.User;
+    TSharedPtr<FJsonObject> Json = MakeShareable(new FJsonObject());
+    Json->SetStringField(TEXT("user_id"), User.Id);
+    Json->SetStringField(TEXT("username"), User.Username);
+    Json->SetStringField(TEXT("display_name"), User.DisplayName);
+    Json->SetStringField(TEXT("avatar_url"), User.AvatarUrl);
+    Json->SetStringField(TEXT("lang_tag"), User.Language);
+    Json->SetStringField(TEXT("metadata"), User.MetaData);
+    Json->SetStringField(TEXT("wallet"), AccountData.Wallet);
+    Json->SetStringField(TEXT("email"), AccountData.Email);
+    Json->SetStringField(TEXT("create_time"), User.CreatedAt.ToString());
+    Json->SetStringField(TEXT("update_time"), User.updatedAt.ToString());
+
+    FString ProfileJson;
+    TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&ProfileJson);
+    FJsonSerializer::Serialize(Json.ToSharedRef(), Writer);
+
+    LogDebug(FString::Printf(TEXT("Profile loaded for: %s"), *User.Username));
+    OnProfileLoaded.Broadcast(ProfileJson);
 }
 
 void UIVXManager::UpdateProfile(const FString& DisplayName, const FString& AvatarUrl, const FString& LangTag)
@@ -261,17 +270,17 @@ void UIVXManager::UpdateProfile(const FString& DisplayName, const FString& Avata
         return;
     }
 
-    auto SuccessCallback = FOnComplete::CreateLambda([this]()
-    {
-        LogDebug(TEXT("Profile updated"));
-    });
+    FOnUpdateAccount SuccessCallback;
+    SuccessCallback.AddDynamic(this, &UIVXManager::OnUpdateAccountSuccess);
+    FOnError ErrorCallback;
+    ErrorCallback.AddDynamic(this, &UIVXManager::OnAuthError);
 
-    auto ErrorCallback = FOnError::CreateLambda([this](const FNakamaError& Error)
-    {
-        OnError.Broadcast(Error.Message);
-    });
+    NakamaClient->UpdateAccount(CurrentSession, FString(), DisplayName, AvatarUrl, LangTag, FString(), FString(), SuccessCallback, ErrorCallback);
+}
 
-    NakamaClient->UpdateAccount(CurrentSession, FString(), DisplayName, AvatarUrl, LangTag, FString(), SuccessCallback, ErrorCallback);
+void UIVXManager::OnUpdateAccountSuccess()
+{
+    LogDebug(TEXT("Profile updated"));
 }
 
 void UIVXManager::FetchWallet()
@@ -282,17 +291,11 @@ void UIVXManager::FetchWallet()
         return;
     }
 
-    auto SuccessCallback = FOnRpc::CreateLambda([this](const FNakamaRPC& Rpc)
-    {
-        LogDebug(FString::Printf(TEXT("Wallet fetched: %s"), *Rpc.Payload));
-        OnWalletLoaded.Broadcast(Rpc.Payload);
-    });
-
-    auto ErrorCallback = FOnError::CreateLambda([this](const FNakamaError& Error)
-    {
-        LogError(FString::Printf(TEXT("FetchWallet failed: %s"), *Error.Message));
-        OnError.Broadcast(Error.Message);
-    });
+    PendingRpcPurpose = ERpcPurpose::Wallet;
+    FOnRPC SuccessCallback;
+    SuccessCallback.AddDynamic(this, &UIVXManager::OnRpcSuccess);
+    FOnError ErrorCallback;
+    ErrorCallback.AddDynamic(this, &UIVXManager::OnAuthError);
 
     NakamaClient->RPC(CurrentSession, TEXT("hiro_economy_list"), TEXT("{}"), SuccessCallback, ErrorCallback);
 }
@@ -307,19 +310,36 @@ void UIVXManager::GrantCurrency(const FString& CurrencyId, int64 Amount)
 
     FString Payload = FString::Printf(TEXT("{\"currencies\":{\"%s\":%lld}}"), *CurrencyId, Amount);
 
-    auto SuccessCallback = FOnRpc::CreateLambda([this](const FNakamaRPC& Rpc)
-    {
-        LogDebug(FString::Printf(TEXT("Currency granted: %s"), *Rpc.Payload));
-        OnWalletLoaded.Broadcast(Rpc.Payload);
-    });
-
-    auto ErrorCallback = FOnError::CreateLambda([this](const FNakamaError& Error)
-    {
-        LogError(FString::Printf(TEXT("GrantCurrency failed: %s"), *Error.Message));
-        OnError.Broadcast(Error.Message);
-    });
+    PendingRpcPurpose = ERpcPurpose::Grant;
+    FOnRPC SuccessCallback;
+    SuccessCallback.AddDynamic(this, &UIVXManager::OnRpcSuccess);
+    FOnError ErrorCallback;
+    ErrorCallback.AddDynamic(this, &UIVXManager::OnAuthError);
 
     NakamaClient->RPC(CurrentSession, TEXT("hiro_economy_grant"), Payload, SuccessCallback, ErrorCallback);
+}
+
+void UIVXManager::OnRpcSuccess(const FNakamaRPC& rpc)
+{
+    switch (PendingRpcPurpose)
+    {
+    case ERpcPurpose::Wallet:
+    case ERpcPurpose::Grant:
+        LogDebug(FString::Printf(TEXT("Wallet RPC response: %s"), *rpc.Payload));
+        OnWalletLoaded.Broadcast(rpc.Payload);
+        break;
+    case ERpcPurpose::Generic:
+        LogDebug(FString::Printf(TEXT("RPC %s response: %s"), *PendingRpcId, *rpc.Payload));
+        OnRpcResult.Broadcast(PendingRpcId, rpc.Payload);
+        break;
+    case ERpcPurpose::Sync:
+        LogDebug(TEXT("Player metadata synced"));
+        break;
+    default:
+        break;
+    }
+    PendingRpcPurpose = ERpcPurpose::None;
+    PendingRpcId.Empty();
 }
 
 void UIVXManager::SubmitLeaderboardScore(const FString& LeaderboardId, int64 Score)
@@ -330,17 +350,17 @@ void UIVXManager::SubmitLeaderboardScore(const FString& LeaderboardId, int64 Sco
         return;
     }
 
-    auto SuccessCallback = FOnWriteLeaderboardRecord::CreateLambda([this](const FNakamaLeaderboardRecord& Record)
-    {
-        LogDebug(FString::Printf(TEXT("Score submitted: %lld"), Record.Score));
-    });
+    FOnWriteLeaderboardRecord SuccessCallback;
+    SuccessCallback.AddDynamic(this, &UIVXManager::OnWriteLeaderboardSuccess);
+    FOnError ErrorCallback;
+    ErrorCallback.AddDynamic(this, &UIVXManager::OnAuthError);
 
-    auto ErrorCallback = FOnError::CreateLambda([this](const FNakamaError& Error)
-    {
-        OnError.Broadcast(Error.Message);
-    });
+    NakamaClient->WriteLeaderboardRecord(CurrentSession, LeaderboardId, Score, 0, FString(), SuccessCallback, ErrorCallback);
+}
 
-    NakamaClient->WriteLeaderboardRecord(CurrentSession, LeaderboardId, Score, 0, FString(), FString(), SuccessCallback, ErrorCallback);
+void UIVXManager::OnWriteLeaderboardSuccess(const FNakamaLeaderboardRecord& Record)
+{
+    LogDebug(FString::Printf(TEXT("Score submitted: %lld"), Record.Score));
 }
 
 void UIVXManager::FetchLeaderboard(const FString& LeaderboardId, int32 Limit)
@@ -351,37 +371,37 @@ void UIVXManager::FetchLeaderboard(const FString& LeaderboardId, int32 Limit)
         return;
     }
 
-    auto SuccessCallback = FOnListLeaderboardRecords::CreateLambda([this](const FNakamaLeaderboardRecordList& List)
-    {
-        TSharedPtr<FJsonObject> Root = MakeShareable(new FJsonObject());
-        TArray<TSharedPtr<FJsonValue>> RecordsArray;
-
-        for (const auto& Record : List.Records)
-        {
-            TSharedPtr<FJsonObject> Entry = MakeShareable(new FJsonObject());
-            Entry->SetStringField(TEXT("owner_id"), Record.OwnerId);
-            Entry->SetStringField(TEXT("username"), Record.Username);
-            Entry->SetNumberField(TEXT("score"), Record.Score);
-            Entry->SetNumberField(TEXT("rank"), Record.Rank);
-            RecordsArray.Add(MakeShareable(new FJsonValueObject(Entry)));
-        }
-
-        Root->SetArrayField(TEXT("records"), RecordsArray);
-
-        FString ResultJson;
-        TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&ResultJson);
-        FJsonSerializer::Serialize(Root.ToSharedRef(), Writer);
-
-        LogDebug(FString::Printf(TEXT("Leaderboard fetched: %d records"), List.Records.Num()));
-        OnLeaderboardFetched.Broadcast(ResultJson);
-    });
-
-    auto ErrorCallback = FOnError::CreateLambda([this](const FNakamaError& Error)
-    {
-        OnError.Broadcast(Error.Message);
-    });
+    FOnListLeaderboardRecords SuccessCallback;
+    SuccessCallback.AddDynamic(this, &UIVXManager::OnListLeaderboardSuccess);
+    FOnError ErrorCallback;
+    ErrorCallback.AddDynamic(this, &UIVXManager::OnAuthError);
 
     NakamaClient->ListLeaderboardRecords(CurrentSession, LeaderboardId, {}, Limit, FString(), ENakamaLeaderboardListBy::BY_SCORE, SuccessCallback, ErrorCallback);
+}
+
+void UIVXManager::OnListLeaderboardSuccess(const FNakamaLeaderboardRecordList& RecordsList)
+{
+    TSharedPtr<FJsonObject> Root = MakeShareable(new FJsonObject());
+    TArray<TSharedPtr<FJsonValue>> RecordsArray;
+
+    for (const auto& Record : RecordsList.Records)
+    {
+        TSharedPtr<FJsonObject> Entry = MakeShareable(new FJsonObject());
+        Entry->SetStringField(TEXT("owner_id"), Record.OwnerId);
+        Entry->SetStringField(TEXT("username"), Record.Username);
+        Entry->SetNumberField(TEXT("score"), Record.Score);
+        Entry->SetNumberField(TEXT("rank"), Record.Rank);
+        RecordsArray.Add(MakeShareable(new FJsonValueObject(Entry)));
+    }
+
+    Root->SetArrayField(TEXT("records"), RecordsArray);
+
+    FString ResultJson;
+    TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&ResultJson);
+    FJsonSerializer::Serialize(Root.ToSharedRef(), Writer);
+
+    LogDebug(FString::Printf(TEXT("Leaderboard fetched: %d records"), RecordsList.Records.Num()));
+    OnLeaderboardFetched.Broadcast(ResultJson);
 }
 
 void UIVXManager::WriteStorageObject(const FString& Collection, const FString& Key, const FString& ValueJson)
@@ -396,20 +416,20 @@ void UIVXManager::WriteStorageObject(const FString& Collection, const FString& K
     WriteObj.Collection = Collection;
     WriteObj.Key = Key;
     WriteObj.Value = ValueJson;
-    WriteObj.PermissionRead = 1;
-    WriteObj.PermissionWrite = 1;
+    WriteObj.PermissionRead = ENakamaStoragePermissionRead::OWNER_READ;
+    WriteObj.PermissionWrite = ENakamaStoragePermissionWrite::OWNER_WRITE;
 
-    auto SuccessCallback = FOnStorageObjectAcks::CreateLambda([this](const FNakamaStoreObjectAcks& Acks)
-    {
-        LogDebug(TEXT("Storage write complete"));
-    });
-
-    auto ErrorCallback = FOnError::CreateLambda([this](const FNakamaError& Error)
-    {
-        OnError.Broadcast(Error.Message);
-    });
+    FOnStorageObjectAcks SuccessCallback;
+    SuccessCallback.AddDynamic(this, &UIVXManager::OnStorageWriteSuccess);
+    FOnError ErrorCallback;
+    ErrorCallback.AddDynamic(this, &UIVXManager::OnAuthError);
 
     NakamaClient->WriteStorageObjects(CurrentSession, { WriteObj }, SuccessCallback, ErrorCallback);
+}
+
+void UIVXManager::OnStorageWriteSuccess(const FNakamaStoreObjectAcks& StorageObjectsAcks)
+{
+    LogDebug(TEXT("Storage write complete"));
 }
 
 void UIVXManager::ReadStorageObject(const FString& Collection, const FString& Key)
@@ -425,24 +445,24 @@ void UIVXManager::ReadStorageObject(const FString& Collection, const FString& Ke
     ReadId.Key = Key;
     ReadId.UserId = GetUserId();
 
-    auto SuccessCallback = FOnStorageObjectsRead::CreateLambda([this](const FNakamaStorageObjectList& Objects)
-    {
-        FString ValueJson = TEXT("{}");
-        if (Objects.Objects.Num() > 0)
-        {
-            ValueJson = Objects.Objects[0].Value;
-        }
-
-        LogDebug(FString::Printf(TEXT("Storage read: %d objects"), Objects.Objects.Num()));
-        OnStorageRead.Broadcast(ValueJson);
-    });
-
-    auto ErrorCallback = FOnError::CreateLambda([this](const FNakamaError& Error)
-    {
-        OnError.Broadcast(Error.Message);
-    });
+    FOnStorageObjectsRead SuccessCallback;
+    SuccessCallback.AddDynamic(this, &UIVXManager::OnStorageReadSuccess);
+    FOnError ErrorCallback;
+    ErrorCallback.AddDynamic(this, &UIVXManager::OnAuthError);
 
     NakamaClient->ReadStorageObjects(CurrentSession, { ReadId }, SuccessCallback, ErrorCallback);
+}
+
+void UIVXManager::OnStorageReadSuccess(const FNakamaStorageObjectList& StorageObjects)
+{
+    FString ValueJson = TEXT("{}");
+    if (StorageObjects.Objects.Num() > 0)
+    {
+        ValueJson = StorageObjects.Objects[0].Value;
+    }
+
+    LogDebug(FString::Printf(TEXT("Storage read: %d objects"), StorageObjects.Objects.Num()));
+    OnStorageRead.Broadcast(ValueJson);
 }
 
 void UIVXManager::CallRpc(const FString& RpcId, const FString& PayloadJson)
@@ -453,34 +473,70 @@ void UIVXManager::CallRpc(const FString& RpcId, const FString& PayloadJson)
         return;
     }
 
-    auto SuccessCallback = FOnRpc::CreateLambda([this, RpcId](const FNakamaRPC& Rpc)
-    {
-        LogDebug(FString::Printf(TEXT("RPC %s response: %s"), *RpcId, *Rpc.Payload));
-        OnRpcResult.Broadcast(RpcId, Rpc.Payload);
-    });
-
-    auto ErrorCallback = FOnError::CreateLambda([this, RpcId](const FNakamaError& Error)
-    {
-        LogError(FString::Printf(TEXT("RPC %s failed: %s"), *RpcId, *Error.Message));
-        OnError.Broadcast(Error.Message);
-    });
+    PendingRpcId = RpcId;
+    PendingRpcPurpose = ERpcPurpose::Generic;
+    FOnRPC SuccessCallback;
+    SuccessCallback.AddDynamic(this, &UIVXManager::OnRpcSuccess);
+    FOnError ErrorCallback;
+    ErrorCallback.AddDynamic(this, &UIVXManager::OnAuthError);
 
     NakamaClient->RPC(CurrentSession, RpcId, PayloadJson, SuccessCallback, ErrorCallback);
 }
 
-void UIVXManager::OnAuthSuccess(UNakamaSession* Session)
+void UIVXManager::OnAuthSuccess(UNakamaSession* LoginData)
 {
-    CurrentSession = Session;
-    SaveSessionToLocal(Session);
-    LogDebug(FString::Printf(TEXT("Authenticated — UserId: %s, Username: %s"), *Session->GetUserId(), *Session->GetUsername()));
+    CurrentSession = LoginData;
+    SaveSessionToLocal(LoginData);
+    LogDebug(FString::Printf(TEXT("Authenticated — UserId: %s, Username: %s"), *LoginData->GetUserId(), *LoginData->GetUsername()));
     SyncPlayerMetadata();
     OnAuthenticated.Broadcast();
 }
 
-void UIVXManager::OnAuthError(const FNakamaError& Error)
+void UIVXManager::OnAuthError(const FNakamaError& ErrorData)
 {
-    LogError(FString::Printf(TEXT("Auth failed: %s"), *Error.Message));
-    OnError.Broadcast(Error.Message);
+    FString Msg = ErrorData.Message;
+    const bool bRpcNotFound = Msg.Contains(TEXT("RPC function not found"));
+
+    if (bRpcNotFound)
+    {
+        switch (PendingRpcPurpose)
+        {
+        case ERpcPurpose::Wallet:
+            UE_LOG(LogIVX, Warning, TEXT("Wallet RPC not on server, returning empty wallet: %s"), *Msg);
+            OnWalletLoaded.Broadcast(TEXT("{}"));
+            break;
+        case ERpcPurpose::Grant:
+            UE_LOG(LogIVX, Warning, TEXT("Grant RPC not on server, skipping: %s"), *Msg);
+            break;
+        case ERpcPurpose::Generic:
+            UE_LOG(LogIVX, Warning, TEXT("RPC %s not on server: %s"), *PendingRpcId, *Msg);
+            OnRpcResult.Broadcast(PendingRpcId, TEXT("{}"));
+            break;
+        default:
+            LogError(FString::Printf(TEXT("Auth/RPC error: %s"), *Msg));
+            OnError.Broadcast(Msg);
+            break;
+        }
+        PendingRpcPurpose = ERpcPurpose::None;
+        PendingRpcId.Empty();
+        return;
+    }
+
+    if (Msg.Contains(TEXT("Failed to process request")) || Msg.Contains(TEXT("Request failed")))
+    {
+        Msg += TEXT(" [Check: 1) Nakama server running  2) Host/port correct in IVXConfig  3) Server key matches  4) Firewall/network]");
+    }
+    LogError(FString::Printf(TEXT("Auth failed: %s"), *Msg));
+    OnError.Broadcast(Msg);
+    PendingRpcPurpose = ERpcPurpose::None;
+    PendingRpcId.Empty();
+}
+
+void UIVXManager::OnSyncMetadataError(const FNakamaError& ErrorData)
+{
+    PendingRpcPurpose = ERpcPurpose::None;
+    PendingRpcId.Empty();
+    UE_LOG(LogIVX, Warning, TEXT("Metadata sync skipped (ivx_sync_metadata RPC not on server): %s"), *ErrorData.Message);
 }
 
 void UIVXManager::SaveSessionToLocal(UNakamaSession* Session)
@@ -540,15 +596,11 @@ void UIVXManager::SyncPlayerMetadata()
 
     FString Payload = FString::Printf(TEXT("{\"metadata\":%s}"), *MetaString);
 
-    auto SuccessCallback = FOnRpc::CreateLambda([this](const FNakamaRPC& Rpc)
-    {
-        LogDebug(TEXT("Player metadata synced"));
-    });
-
-    auto ErrorCallback = FOnError::CreateLambda([this](const FNakamaError& Error)
-    {
-        LogDebug(FString::Printf(TEXT("Metadata sync failed (non-fatal): %s"), *Error.Message));
-    });
+    PendingRpcPurpose = ERpcPurpose::Sync;
+    FOnRPC SuccessCallback;
+    SuccessCallback.AddDynamic(this, &UIVXManager::OnRpcSuccess);
+    FOnError ErrorCallback;
+    ErrorCallback.AddDynamic(this, &UIVXManager::OnSyncMetadataError);
 
     NakamaClient->RPC(CurrentSession, TEXT("ivx_sync_metadata"), Payload, SuccessCallback, ErrorCallback);
 }

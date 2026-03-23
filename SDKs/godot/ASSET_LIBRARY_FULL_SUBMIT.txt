@@ -1,0 +1,59 @@
+================================================================================
+GODOT ASSET LIBRARY — FULL SUBMISSION (COPY-PASTE)
+Submit at: https://godotengine.org/asset-library/asset/submit
+================================================================================
+
+--- ASSET NAME ---
+IntelliVerseX SDK
+
+--- CATEGORY ---
+Addons → Scripts
+(If "Scripts" is not available, choose Addons → Networking.)
+
+--- GODOT VERSION ---
+4.2
+
+--- VERSION ---
+5.1.0
+
+--- REPOSITORY HOST ---
+Custom
+
+--- REPOSITORY URL ---
+https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK
+
+--- ISSUES URL ---
+https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues
+
+--- DOWNLOAD (Commit or URL — paste when host is Custom) ---
+https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/releases/download/godot-v5.1.0/IntelliVerseX-Godot-5.1.0.zip
+
+--- ICON URL ---
+https://raw.githubusercontent.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/main/SDKs/godot/icon.png
+(IMPORTANT: Commit and push icon.png from SDKs/godot/ to main so this URL resolves. No ?raw=true.)
+
+--- LICENSE ---
+MIT
+
+--- DESCRIPTION (plain text — paste exactly; Asset Library uses plain text) ---
+IntelliVerseX SDK provides a complete game backend for Godot 4.2 and newer. It adds authentication (device, email, Google, Apple, custom), session restore, profile management, wallet and economy, leaderboards, cloud storage, RPC calls, and real-time socket support using the Nakama server.
+
+Requirements: Godot 4.2 or newer (tested up to 4.6). You must install the official Nakama Godot addon for backend features. Get it from https://github.com/heroiclabs/nakama-godot and copy the addons/com.heroiclabs.nakama folder into your project addons folder.
+
+The download is a Godot project ZIP. It contains addons/intelliversex (this SDK) and an example scene. To use in your own project: copy the addons/intelliversex folder from the downloaded project into your project addons folder. To run the example: open the downloaded project in Godot and press F5.
+
+Enable the IntelliVerseX plugin in Project, Project Settings, Plugins. Then create an IVXConfig with your Nakama host, port, and server key and call IntelliVerseX.initialize(config). See the included example script for the full flow.
+
+--- PREVIEW (optional — up to 3) ---
+Leave empty for now, or add direct image/YouTube URLs later. Each must be a direct link (e.g. raw.githubusercontent.com for images). No HTML page links.
+
+================================================================================
+BEFORE YOU SUBMIT — CHECKLIST
+================================================================================
+[ ] icon.png is committed and pushed to main at SDKs/godot/icon.png so the Icon URL loads.
+[ ] Repository host is set to Custom and the Download field has the release ZIP URL above.
+[ ] You are logged in to the Godot Asset Library.
+[ ] License in your repo root and in addons/intelliversex/ matches MIT.
+[ ] Description is pasted as plain text (no markdown formatting in the form).
+
+================================================================================

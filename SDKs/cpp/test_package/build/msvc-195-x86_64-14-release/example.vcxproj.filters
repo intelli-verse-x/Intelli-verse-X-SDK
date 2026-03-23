@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\work\Unityprojects\Intelli-verse-X-Unity-SDK\SDKs\cpp\test_package\src\example.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\work\Unityprojects\Intelli-verse-X-Unity-SDK\SDKs\cpp\test_package\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{9E79B16E-4093-318D-B1A9-8172B9DD5199}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
