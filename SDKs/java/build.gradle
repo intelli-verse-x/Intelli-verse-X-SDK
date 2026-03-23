@@ -1,7 +1,6 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'signing'
 }
 
 group = 'ai.intelli-verse-x'
@@ -14,28 +13,10 @@ java {
     withJavadocJar()
 }
 
-sourceSets {
-    examples {
-        java {
-            srcDir 'examples'
-        }
-        compileClasspath = sourceSets.main.output + sourceSets.main.compileClasspath
-        runtimeClasspath = sourceSets.main.output + sourceSets.main.runtimeClasspath
-    }
-}
-
-tasks.register('runExample', JavaExec) {
-    group = 'application'
-    description = 'Run BasicExample (requires local Nakama server)'
-    dependsOn compileExamplesJava
-    classpath = sourceSets.examples.output + sourceSets.examples.runtimeClasspath
-    mainClass = 'com.intelliversex.sdk.examples.BasicExample'
-}
-
 repositories {
     mavenCentral()
     // Nakama Java client is published via JitPack (not Maven Central under com.heroiclabs.nakama-java)
-    maven { url = uri('https://jitpack.io') }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -51,22 +32,13 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-tasks.named('javadoc') {
-    options.encoding = 'UTF-8'
-    options.addStringOption('Xdoclint:none', '-quiet')
-}
-
 publishing {
     publications {
         maven(MavenPublication) {
             from components.java
-            groupId = project.group
-            artifactId = 'sdk'
-            version = project.version
             pom {
-                packaging = 'jar'
                 name = 'IntelliVerseX SDK'
-                description = 'Complete modular game development SDK for Java/Android — Auth, Backend (Nakama), Profile, Wallet, Leaderboards, Storage, RPC.'
+                description = 'Complete modular game development SDK for Java/Android'
                 url = 'https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK'
                 licenses {
                     license {
@@ -74,41 +46,7 @@ publishing {
                         url = 'https://opensource.org/licenses/MIT'
                     }
                 }
-                scm {
-                    connection = 'scm:git:git://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git'
-                    developerConnection = 'scm:git:ssh://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git'
-                    url = 'https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK'
-                }
-                developers {
-                    developer {
-                        name = 'IntelliVerseX'
-                        organization = 'Intelli-verse-X'
-                        organizationUrl = 'https://github.com/Intelli-verse-X'
-                    }
-                }
             }
         }
-    }
-    repositories {
-        maven {
-            name = 'centralPortal'
-            url = 'https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/'
-            credentials {
-                username = project.findProperty('ossrhStagingApiUsername') ?: System.getenv('OSSRH_STAGING_API_USERNAME') ?: ''
-                password = project.findProperty('ossrhStagingApiPassword') ?: System.getenv('OSSRH_STAGING_API_PASSWORD') ?: ''
-            }
-        }
-    }
-}
-
-signing {
-    def keyId = project.findProperty('signing.keyId')?.toString()
-    def secretKey = project.findProperty('signing.secretKeyRingFile')
-    def password = project.findProperty('signing.password')?.toString()
-    if (keyId && secretKey && password) {
-        sign publishing.publications.maven
-    } else if (project.hasProperty('signing.gnupg.keyName')) {
-        useGpgCmd()
-        sign publishing.publications.maven
     }
 }

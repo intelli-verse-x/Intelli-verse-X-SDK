@@ -1,6 +1,6 @@
 # IntelliVerseX Java / Android SDK
 
-> Complete modular game development SDK for Java and Android ΓÇö Auth, Backend (Nakama), Analytics, Social, Monetization, and more.
+> Complete modular game development SDK for Java and Android — Auth, Backend (Nakama), Analytics, Social, Monetization, and more.
 
 ## Requirements
 
@@ -23,7 +23,7 @@ repositories {
 
 ```groovy
 dependencies {
-    implementation 'ai.intelli-verse-x:sdk:5.2.0'
+    implementation 'com.intelliversex:sdk:5.2.0'
 }
 ```
 
@@ -31,7 +31,7 @@ dependencies {
 
 ```xml
 <dependency>
-    <groupId>ai.intelli-verse-x</groupId>
+    <groupId>com.intelliversex</groupId>
     <artifactId>sdk</artifactId>
     <version>5.2.0</version>
 </dependency>
@@ -139,4 +139,4 @@ This SDK wraps the official [Nakama Java Client](https://github.com/heroiclabs/n
 
 ## License
 
-MIT License ╬ô├ç├╢ see [LICENSE](../../LICENSE)
+MIT License — see [LICENSE](../../LICENSE)
