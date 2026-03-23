@@ -1,0 +1,13 @@
+logger:
+  level: INFO
+
+runtime:
+  go_modules:
+    - intelliversex-server
+  http_key: "defaulthttpkey"
+
+leaderboard:
+  safe_create: true
+
+session:
+  token_expiry_sec: 7200

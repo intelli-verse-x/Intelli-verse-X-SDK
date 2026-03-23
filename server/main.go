@@ -1,0 +1,54 @@
+// Copyright (c) 2026 Intelli-verse-X
+// MIT License — see LICENSE in the project root.
+
+package main
+
+import (
+	"context"
+	"database/sql"
+
+	"github.com/heroiclabs/nakama-common/runtime"
+
+	"intelliversex-server/rpcs"
+)
+
+func InitModule(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, initializer runtime.Initializer) error {
+	logger.Info("IntelliVerseX server module loaded")
+
+	// Shared RPCs (all 8 SDKs)
+	if err := initializer.RegisterRpc("ivx_sync_metadata", rpcs.SyncMetadata); err != nil {
+		return err
+	}
+	if err := initializer.RegisterRpc("hiro_economy_list", rpcs.EconomyList); err != nil {
+		return err
+	}
+	if err := initializer.RegisterRpc("hiro_economy_grant", rpcs.EconomyGrant); err != nil {
+		return err
+	}
+
+	// Unity RPCs
+	if err := initializer.RegisterRpc("create_or_sync_user", rpcs.CreateOrSyncUser); err != nil {
+		return err
+	}
+	if err := initializer.RegisterRpc("submit_score_and_sync", rpcs.SubmitScoreAndSync); err != nil {
+		return err
+	}
+	if err := initializer.RegisterRpc("get_all_leaderboards", rpcs.GetAllLeaderboards); err != nil {
+		return err
+	}
+	if err := initializer.RegisterRpc("get_wallet_balance", rpcs.GetWalletBalance); err != nil {
+		return err
+	}
+	if err := initializer.RegisterRpc("update_wallet_balance", rpcs.UpdateWalletBalance); err != nil {
+		return err
+	}
+	if err := initializer.RegisterRpc("calculate_score_reward", rpcs.CalculateScoreReward); err != nil {
+		return err
+	}
+	if err := initializer.RegisterRpc("update_game_reward_config", rpcs.UpdateGameRewardConfig); err != nil {
+		return err
+	}
+
+	logger.Info("IntelliVerseX: all 10 RPCs registered")
+	return nil
+}
