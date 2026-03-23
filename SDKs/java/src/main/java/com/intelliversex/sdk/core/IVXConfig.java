@@ -1,5 +1,11 @@
 package com.intelliversex.sdk.core;
 
+/*
+ * Copyright (c) 2026 Intelli-verse-X
+ *
+ * MIT License — see LICENSE in the project root.
+ */
+
 /**
  * Configuration for the IntelliVerseX SDK.
  * <p>

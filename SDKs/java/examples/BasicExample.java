@@ -1,5 +1,11 @@
 package com.intelliversex.sdk.examples;
 
+/*
+ * Copyright (c) 2026 Intelli-verse-X
+ *
+ * MIT License — see LICENSE in the project root.
+ */
+
 import com.intelliversex.sdk.core.IVXConfig;
 import com.intelliversex.sdk.core.IVXManager;
 import com.intelliversex.sdk.core.IVXProfile;
@@ -25,10 +31,10 @@ public class BasicExample {
 
         // ── 1. Configure ──────────────────────────────────────────────
         IVXConfig config = IVXConfig.builder()
-                .nakamaHost("127.0.0.1")
-                .nakamaPort(7350)
+                .nakamaHost("nakama-rest.intelli-verse-x.ai")
+                .nakamaPort(443)
                 .nakamaServerKey("defaultkey")
-                .useSSL(false)
+                .useSSL(true)
                 .enableDebugLogs(true)
                 .build();
 
