@@ -1,20 +1,29 @@
 # IntelliVerseX Java / Android SDK
 
-> Complete modular game development SDK for Java and Android — Auth, Backend (Nakama), Analytics, Social, Monetization, and more.
+> Complete modular game development SDK for Java and Android ΓÇö Auth, Backend (Nakama), Analytics, Social, Monetization, and more.
 
 ## Requirements
 
 - Java 11+ / Android API 21+
-- [Nakama Java Client](https://github.com/heroiclabs/nakama-java) v2.5+
+- [Nakama Java Client](https://github.com/heroiclabs/nakama-java) (via [JitPack](https://jitpack.io/#heroiclabs/nakama-java), e.g. `v2.5.3`)
 - Gradle 7+
 
 ## Installation
+
+Your `repositories` must include **JitPack** (transitive Nakama client):
+
+```groovy
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+```
 
 ### Gradle
 
 ```groovy
 dependencies {
-    implementation 'ai.intelli-verse-x:sdk:5.1.0'
+    implementation 'ai.intelli-verse-x:sdk:5.2.0'
 }
 ```
 
@@ -24,7 +33,7 @@ dependencies {
 <dependency>
     <groupId>ai.intelli-verse-x</groupId>
     <artifactId>sdk</artifactId>
-    <version>5.1.0</version>
+    <version>5.2.0</version>
 </dependency>
 ```
 
@@ -33,12 +42,6 @@ dependencies {
 ```bash
 cd SDKs/java
 ./gradlew build
-```
-
-To run the example (requires a local Nakama server):
-
-```bash
-./gradlew runExample
 ```
 
 ## Quick Start
@@ -52,10 +55,9 @@ public class Main {
         IVXManager ivx = IVXManager.getInstance();
 
         IVXConfig config = IVXConfig.builder()
-            .nakamaHost("nakama-rest.intelli-verse-x.ai")
-            .nakamaPort(443)
+            .nakamaHost("127.0.0.1")
+            .nakamaPort(7350)
             .nakamaServerKey("defaultkey")
-            .useSSL(true)
             .enableDebugLogs(true)
             .build();
 
@@ -93,8 +95,8 @@ public class GameActivity extends AppCompatActivity {
         IVXManager ivx = IVXManager.getInstance();
 
         IVXConfig config = IVXConfig.builder()
-            .nakamaHost("nakama-rest.intelli-verse-x.ai")
-            .nakamaPort(443)
+            .nakamaHost("your-server.com")
+            .nakamaPort(7350)
             .useSSL(true)
             .enableDebugLogs(BuildConfig.DEBUG)
             .build();
@@ -137,4 +139,4 @@ This SDK wraps the official [Nakama Java Client](https://github.com/heroiclabs/n
 
 ## License
 
-MIT License — see [LICENSE](../../LICENSE)
+MIT License ╬ô├ç├╢ see [LICENSE](../../LICENSE)
