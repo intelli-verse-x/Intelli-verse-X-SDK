@@ -17,29 +17,30 @@ IntelliVerseX provides official SDK wrappers for all major game engines and plat
 | [C / C++](cpp.md) | C++ | [nakama-cpp](https://github.com/heroiclabs/nakama-cpp) | Beta |
 | [Java / Android](java.md) | Java | [nakama-java](https://github.com/heroiclabs/nakama-java) | Beta |
 | [Flutter / Dart](flutter.md) | Dart | [nakama](https://pub.dev/packages/nakama) | Beta |
-| [Web3 (Thirdweb / Moralis)](web3.md) | TypeScript | [nakama-js](https://github.com/heroiclabs/nakama-js) + [ethers](https://docs.ethers.org/) | Beta |
+
+> **Web3 (TypeScript):** In active development; not shipped on `main` yet. See [Web3](web3.md) for status.
 
 ---
 
 ## Feature Matrix
 
-| Feature | Unity | Unreal | Godot | Defold | Cocos2d-x | JS | C++ | Java | Flutter | Web3 |
-|---------|:-----:|:------:|:-----:|:------:|:---------:|:--:|:---:|:----:|:-------:|:----:|
-| Device Auth | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Email Auth | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | -- |
-| Social Auth | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | -- |
-| Wallet Auth | -- | -- | -- | -- | -- | -- | -- | -- | -- | :white_check_mark: |
-| Profile | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Wallet | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Leaderboards | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Storage | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| RPC | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Real-time | :white_check_mark: | Planned | :white_check_mark: | :white_check_mark: | Planned | :white_check_mark: | Planned | Planned | Planned | Planned |
-| NFT / Tokens | -- | -- | -- | -- | -- | -- | -- | -- | -- | :white_check_mark: |
-| Token Gating | -- | -- | -- | -- | -- | -- | -- | -- | -- | :white_check_mark: |
-| Hiro | Native | Via RPC | Via RPC | Via RPC | Via RPC | Via RPC | Via RPC | Via RPC | Via RPC | Via RPC |
-| Satori | Native | Planned | Planned | Planned | Planned | Planned | Planned | Planned | Planned | Planned |
-| Monetization | Native | Planned | Planned | Planned | Planned | Planned | Planned | Planned | Planned | Planned |
+| Feature | Unity | Unreal | Godot | Defold | Cocos2d-x | JS | C++ | Java | Flutter |
+|---------|:-----:|:------:|:-----:|:------:|:---------:|:--:|:---:|:----:|:-------:|
+| Device Auth | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Email Auth | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Social Auth | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Wallet Auth | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| Profile | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Wallet | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Leaderboards | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Storage | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| RPC | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Real-time | :white_check_mark: | Planned | :white_check_mark: | :white_check_mark: | Planned | :white_check_mark: | Planned | Planned | Planned |
+| NFT / Tokens | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| Token Gating | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| Hiro | Native | Via RPC | Via RPC | Via RPC | Via RPC | Via RPC | Via RPC | Via RPC | Via RPC |
+| Satori | Native | Planned | Planned | Planned | Planned | Planned | Planned | Planned | Planned |
+| Monetization | Native | Planned | Planned | Planned | Planned | Planned | Planned | Planned | Planned |
 
 ---
 
@@ -122,7 +123,3 @@ Choose your platform and follow the Getting Started guide:
 === "Flutter/Dart"
 
     See [Flutter Getting Started](flutter.md) for pub.dev installation.
-
-=== "Web3"
-
-    See [Web3 Getting Started](web3.md) for wallet auth and NFT integration.

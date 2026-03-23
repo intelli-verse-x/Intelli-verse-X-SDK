@@ -19,10 +19,10 @@ int main() {
 
     // ── 1. Configure ──
     ivx::Config cfg;
-    cfg.host       = "127.0.0.1";
-    cfg.port       = 7350;
+    cfg.host       = "nakama-rest.intelli-verse-x.ai";
+    cfg.port       = 443;
     cfg.serverKey  = "defaultkey";
-    cfg.useSSL     = false;
+    cfg.useSSL     = true;
     cfg.debugLogs  = true;
     cfg.storagePath = ".";       // writable directory for session/device files
 
