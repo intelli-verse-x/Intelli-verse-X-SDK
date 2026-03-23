@@ -1,24 +1,19 @@
 package com.intelliversex.sdk.core;
 
-/*
- * Copyright (c) 2026 Intelli-verse-X
- *
- * MIT License — see LICENSE in the project root.
- */
-
 import com.heroiclabs.nakama.Client;
 import com.heroiclabs.nakama.DefaultClient;
 import com.heroiclabs.nakama.DefaultSession;
+import com.heroiclabs.nakama.PermissionRead;
+import com.heroiclabs.nakama.PermissionWrite;
 import com.heroiclabs.nakama.Session;
+import com.heroiclabs.nakama.StorageObjectId;
+import com.heroiclabs.nakama.StorageObjectWrite;
 import com.heroiclabs.nakama.api.Account;
 import com.heroiclabs.nakama.api.LeaderboardRecord;
 import com.heroiclabs.nakama.api.LeaderboardRecordList;
 import com.heroiclabs.nakama.api.Rpc;
 import com.heroiclabs.nakama.api.StorageObjects;
-import com.heroiclabs.nakama.PermissionRead;
-import com.heroiclabs.nakama.PermissionWrite;
-import com.heroiclabs.nakama.StorageObjectId;
-import com.heroiclabs.nakama.StorageObjectWrite;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.protobuf.StringValue;
@@ -47,7 +42,7 @@ import java.util.prefs.Preferences;
  * {@link #initialize(IVXConfig)}.
  */
 public class IVXManager {
-    public static final String SDK_VERSION = "5.1.0";
+    public static final String SDK_VERSION = "5.2.0";
 
     private static final String PREF_SESSION_TOKEN = "ivx_session_token";
     private static final String PREF_REFRESH_TOKEN = "ivx_refresh_token";
@@ -91,9 +86,9 @@ public class IVXManager {
     public Session getSession() { return session; }
     public String getUserId() { return session != null ? session.getUserId() : ""; }
     public String getUsername() { return session != null ? session.getUsername() : ""; }
-    public boolean hasValidSession() { return session != null && !session.isExpired(new Date()); }
+    public boolean hasValidSession() { return session != null && !session.IsExpired(); }
 
-    // ─── Events ─────────────────────────────────────────────────
+    // ΓöÇΓöÇΓöÇ Events ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
     @SuppressWarnings("unchecked")
     public <T> void on(String event, Consumer<T> handler) {
@@ -110,7 +105,7 @@ public class IVXManager {
         }
     }
 
-    // ─── Init ───────────────────────────────────────────────────
+    // ΓöÇΓöÇΓöÇ Init ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
     public synchronized void initialize(IVXConfig config) {
         Objects.requireNonNull(config, "config must not be null");
@@ -124,11 +119,11 @@ public class IVXManager {
         );
 
         this.initialized = true;
-        log("SDK initialized — " + config.getBaseUrl());
+        log("SDK initialized ΓÇö " + config.getBaseUrl());
         emit("initialized", null);
     }
 
-    // ─── Auth (blocking) ────────────────────────────────────────
+    // ΓöÇΓöÇΓöÇ Auth (blocking) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
     public void authenticateDevice(String deviceId) {
         ensureInitialized();
@@ -187,7 +182,7 @@ public class IVXManager {
         }
     }
 
-    // ─── Auth (async) ───────────────────────────────────────────
+    // ΓöÇΓöÇΓöÇ Auth (async) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
     /**
      * Authenticates with a device ID asynchronously.
@@ -284,7 +279,7 @@ public class IVXManager {
         });
     }
 
-    // ─── Session ────────────────────────────────────────────────
+    // ΓöÇΓöÇΓöÇ Session ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
     public synchronized boolean restoreSession() {
         String token = prefs.get(PREF_SESSION_TOKEN, "");
@@ -293,7 +288,7 @@ public class IVXManager {
         if (token.isEmpty()) return false;
 
         session = DefaultSession.restore(token, refresh);
-        if (session.isExpired(new Date())) {
+        if (session.IsExpired()) {
             session = null;
             return false;
         }
@@ -311,7 +306,7 @@ public class IVXManager {
         log("Session cleared");
     }
 
-    // ─── Profile ────────────────────────────────────────────────
+    // ΓöÇΓöÇΓöÇ Profile ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
     /**
      * Fetches the current player's profile (blocking).
@@ -360,7 +355,7 @@ public class IVXManager {
         }
     }
 
-    // ─── Wallet ─────────────────────────────────────────────────
+    // ΓöÇΓöÇΓöÇ Wallet ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
     public String fetchWallet() {
         return callRpc("hiro_economy_list", "{}");
@@ -374,7 +369,7 @@ public class IVXManager {
         return callRpc("hiro_economy_grant", gson.toJson(payload));
     }
 
-    // ─── Leaderboard ────────────────────────────────────────────
+    // ΓöÇΓöÇΓöÇ Leaderboard ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
     public void submitScore(String leaderboardId, long score) {
         ensureSession();
@@ -391,7 +386,7 @@ public class IVXManager {
         ensureSession();
 
         try {
-            LeaderboardRecordList result = client.listLeaderboardRecords(session, leaderboardId, Collections.emptyList(), -1, limit, null).get();
+            LeaderboardRecordList result = client.listLeaderboardRecords(session, leaderboardId, null, -1, limit).get();
             List<Map<String, Object>> records = new ArrayList<>();
             for (LeaderboardRecord r : result.getRecordsList()) {
                 Map<String, Object> record = new HashMap<>();
@@ -412,16 +407,19 @@ public class IVXManager {
         }
     }
 
-    // ─── Storage ────────────────────────────────────────────────
+    // ΓöÇΓöÇΓöÇ Storage ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
     public void writeStorage(String collection, String key, String valueJson) {
         ensureSession();
 
         try {
             StorageObjectWrite obj = new StorageObjectWrite(
-                    collection, key, valueJson,
+                    collection,
+                    key,
+                    valueJson,
                     PermissionRead.OWNER_READ,
-                    PermissionWrite.OWNER_WRITE);
+                    PermissionWrite.OWNER_WRITE
+            );
             client.writeStorageObjects(session, obj).get();
             log("Storage write: " + collection + "/" + key);
         } catch (Exception e) {
@@ -447,7 +445,7 @@ public class IVXManager {
         }
     }
 
-    // ─── RPC ────────────────────────────────────────────────────
+    // ΓöÇΓöÇΓöÇ RPC ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
     /**
      * Calls a server RPC endpoint (blocking).
@@ -491,14 +489,14 @@ public class IVXManager {
         });
     }
 
-    // ─── Internal ───────────────────────────────────────────────
+    // ΓöÇΓöÇΓöÇ Internal ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
     private synchronized void onAuthSuccess(Session newSession) {
         this.session = newSession;
         prefs.put(PREF_SESSION_TOKEN, newSession.getAuthToken());
         prefs.put(PREF_REFRESH_TOKEN, newSession.getRefreshToken());
         flushPrefs();
-        log("Authenticated — UserId: " + newSession.getUserId());
+        log("Authenticated ΓÇö UserId: " + newSession.getUserId());
         syncMetadata();
         emit("authSuccess", newSession.getUserId());
     }
@@ -535,7 +533,7 @@ public class IVXManager {
         try {
             prefs.flush();
         } catch (BackingStoreException e) {
-            log("WARNING: Could not flush preferences — " + e.getMessage());
+            log("WARNING: Could not flush preferences ΓÇö " + e.getMessage());
         }
     }
 
