@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
-group = 'com.intelliversex'
+group = 'ai.intelli-verse-x'
 version = '5.2.0'
 
 java {
