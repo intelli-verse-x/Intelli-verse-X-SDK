@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Intelli-verse-X
+// MIT License — see LICENSE in the project root.
+
 /// IntelliVerseX C++ SDK — unit tests (assert-based, no framework dependency).
 /// Compile: g++ -std=c++17 -I../include test_ivx.cpp ../src/ivx_manager.cpp -lnakama-sdk -o test_ivx
 

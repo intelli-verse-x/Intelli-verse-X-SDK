@@ -1,3 +1,0 @@
-D:/work/Unityprojects/Intelli-verse-X-Unity-SDK/SDKs/cpp/test_package/build/msvc-195-x86_64-17-release/CMakeFiles/example.dir
-D:/work/Unityprojects/Intelli-verse-X-Unity-SDK/SDKs/cpp/test_package/build/msvc-195-x86_64-17-release/CMakeFiles/ALL_BUILD.dir
-D:/work/Unityprojects/Intelli-verse-X-Unity-SDK/SDKs/cpp/test_package/build/msvc-195-x86_64-17-release/CMakeFiles/ZERO_CHECK.dir

@@ -113,6 +113,7 @@ SDKs/java/.idea/
 
 # C/C++ SDK
 SDKs/cpp/build/
+SDKs/cpp/test_package/build/
 SDKs/cpp/cmake-build-*/
 SDKs/cpp/*.o
 SDKs/cpp/*.a

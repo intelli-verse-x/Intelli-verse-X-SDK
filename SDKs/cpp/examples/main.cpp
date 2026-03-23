@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Intelli-verse-X
+// MIT License — see LICENSE in the project root.
+
 /// IntelliVerseX C++ SDK — complete usage example.
 /// Compile: g++ -std=c++17 -I../include main.cpp ../src/ivx_manager.cpp -lnakama-sdk -o example
 

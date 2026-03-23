@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Intelli-verse-X
+// MIT License — see LICENSE in the project root.
+
 #include "IntelliVerseX/IVXManager.h"
 #include "cocos2d.h"
 #include <cstdio>

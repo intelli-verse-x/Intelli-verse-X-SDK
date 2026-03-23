@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Intelli-verse-X
+// MIT License — see LICENSE in the project root.
+
 import { Client, Session, Socket } from '@heroiclabs/nakama-js';
 import { IVXConfig, DEFAULT_CONFIG, validateConfig } from './IVXConfig';
 import { SDK_VERSION } from './types';

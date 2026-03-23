@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Intelli-verse-X
+// MIT License — see LICENSE in the project root.
+
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { IVXManager } from '../IVXManager';
 import { SDK_VERSION } from '../types';
