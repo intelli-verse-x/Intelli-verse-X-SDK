@@ -43,6 +43,28 @@ namespace IntelliVerseX.Hiro
         public IVXBaseSystem Base { get; private set; }
         public IVXLeaderboardsSystem Leaderboards { get; private set; }
 
+        // Retention
+        public IVXRetentionSystem Retention { get; private set; }
+        public IVXStreakShieldSystem StreakShield { get; private set; }
+        public IVXSessionBoosterSystem SessionBoosters { get; private set; }
+        public IVXAppointmentSystem Appointments { get; private set; }
+        public IVXLimitedDailyContentSystem DailyContent { get; private set; }
+
+        // Monetization Optimization
+        public IVXIAPTriggerSystem IAPTriggers { get; private set; }
+        public IVXSmartAdTimerSystem SmartAdTimer { get; private set; }
+        public IVXAdRevenueOptimizerSystem AdRevenueOptimizer { get; private set; }
+        public IVXOfferwallSystem Offerwall { get; private set; }
+
+        // Engagement
+        public IVXSpinWheelSystem SpinWheel { get; private set; }
+        public IVXSocialPressureSystem SocialPressure { get; private set; }
+
+        // Social Extension
+        public IVXFriendQuestSystem FriendQuests { get; private set; }
+        public IVXFriendStreakSystem FriendStreaks { get; private set; }
+        public IVXFriendBattleSystem FriendBattles { get; private set; }
+
         #endregion
 
         #region Events
@@ -106,8 +128,30 @@ namespace IntelliVerseX.Hiro
             Base = new IVXBaseSystem(_rpcClient);
             Leaderboards = new IVXLeaderboardsSystem(_rpcClient);
 
+            // Retention
+            Retention = new IVXRetentionSystem(_rpcClient);
+            StreakShield = new IVXStreakShieldSystem(_rpcClient);
+            SessionBoosters = new IVXSessionBoosterSystem(_rpcClient);
+            Appointments = new IVXAppointmentSystem(_rpcClient);
+            DailyContent = new IVXLimitedDailyContentSystem(_rpcClient);
+
+            // Monetization Optimization
+            IAPTriggers = new IVXIAPTriggerSystem(_rpcClient);
+            SmartAdTimer = new IVXSmartAdTimerSystem(_rpcClient);
+            AdRevenueOptimizer = new IVXAdRevenueOptimizerSystem(_rpcClient);
+            Offerwall = new IVXOfferwallSystem(_rpcClient);
+
+            // Engagement
+            SpinWheel = new IVXSpinWheelSystem(_rpcClient);
+            SocialPressure = new IVXSocialPressureSystem(_rpcClient);
+
+            // Social Extension
+            FriendQuests = new IVXFriendQuestSystem(_rpcClient);
+            FriendStreaks = new IVXFriendStreakSystem(_rpcClient);
+            FriendBattles = new IVXFriendBattleSystem(_rpcClient);
+
             _initialized = true;
-            Debug.Log("[IVXHiro] All 20 systems initialized.");
+            Debug.Log("[IVXHiro] All 33 systems initialized.");
             OnInitialized?.Invoke(true);
         }
 

@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.3.0] - 2026-04-01
+
+### Added
+
+#### Retention Module (Hiro)
+- **IVXRetentionSystem** — Server-authoritative retention tracking (login streaks, comebacks, milestones)
+- **IVXStreakShieldSystem** — Consumable streak shields with purchase and auto-consume
+- **IVXSessionBoosterSystem** — Time-gated multiplier bonuses (XP, coins, etc.)
+- **IVXAppointmentSystem** — Scheduled time-limited reward windows
+
+#### Monetization Optimization Layer (Hiro)
+- **IVXIAPTriggerSystem** — Dynamic IAP offer triggering based on player behavior
+- **IVXSmartAdTimerSystem** — Server-managed ad pacing with cooldown and availability tracking
+- **IVXAdRevenueOptimizerSystem** — Ad placement configuration with eCPM floors and frequency caps
+- **IVXOfferwallSystem** — Third-party offerwall integration with offer listing and reward claiming
+
+#### Engagement Module (Hiro)
+- **IVXSpinWheelSystem** — Server-authoritative spin wheel with configurable segments and cooldowns
+- **IVXSocialPressureSystem** — Social proof data feeds (recent purchases, live player counts, friend activity)
+
+#### Social Extension (Hiro)
+- **IVXFriendQuestSystem** — Cooperative friend quests with progress contribution and reward claiming
+- **IVXFriendStreakSystem** — Bilateral friend streaks tracking daily interactions
+- **IVXFriendBattleSystem** — Asynchronous friend battle challenges with score submission
+
+#### Platform Utilities
+- **IVXDeepLinkManager** — Cross-platform deep link handler with route registration and callback system
+- **IVXEdgeToEdgeHelper** — Safe area inset utilities for edge-to-edge display
+- **IVXFoldableHelper** — Foldable device state detection and screen configuration tracking
+- **IVXPlatformOptimizer** — Cross-platform performance optimizer with quality presets and thermal management
+
+### Changed
+- **IVXHiroCoordinator** — Integrated 13 new Hiro systems (total: 33 systems initialized)
+- Added `IntelliVerseX.Platform.asmdef` assembly definition for the new Platform module
+
+---
+
 ## [5.2.0] - 2026-03-17
 
 ### Fixed

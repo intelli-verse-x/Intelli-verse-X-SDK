@@ -34,8 +34,22 @@ namespace IntelliVerseX.Analytics
             }
         }
 
-        private const string GAME_ID = "33b245c8-a23f-4f9c-a06e-189885cc22a1";
-        
+        private static string _gameId = string.Empty;
+
+        /// <summary>
+        /// Sets the Game ID for analytics. Must be called before Initialize().
+        /// Each game should set its own unique ID.
+        /// </summary>
+        public static void SetGameId(string gameId)
+        {
+            if (string.IsNullOrWhiteSpace(gameId))
+            {
+                Debug.LogError("[IVXAnalyticsManager] Game ID cannot be null or empty");
+                return;
+            }
+            _gameId = gameId;
+        }
+
         private IClient _nakamaClient;
         private ISession _nakamaSession;
         private bool _isInitialized;
@@ -77,6 +91,11 @@ namespace IntelliVerseX.Analytics
             _nakamaSession = session;
             _isInitialized = true;
 
+            if (string.IsNullOrEmpty(_gameId))
+            {
+                Debug.LogWarning("[IVXAnalyticsManager] Game ID not set. Call SetGameId() before Initialize() for proper analytics tracking.");
+            }
+
             Debug.Log("[IVXAnalyticsManager] Initialized successfully");
 
             // Auto-start session
@@ -103,20 +122,7 @@ namespace IntelliVerseX.Analytics
             try
             {
                 // Prepare payload
-                var payload = new Dictionary<string, object>
-                {
-                    { "gameID", GAME_ID },
-                    { "eventName", eventName },
-                    { "properties", properties ?? new Dictionary<string, object>() },
-                    { "timestamp", DateTimeOffset.UtcNow.ToUnixTimeSeconds() }
-                };
-
-                string jsonPayload = JsonUtility.ToJson(new EventPayload
-                {
-                    gameID = GAME_ID,
-                    eventName = eventName,
-                    properties = properties ?? new Dictionary<string, object>()
-                });
+                string jsonPayload = SerializeEventPayload(_gameId, eventName, properties);
 
                 Debug.Log($"[IVXAnalyticsManager] Tracking event: {eventName}");
 
@@ -150,22 +156,7 @@ namespace IntelliVerseX.Analytics
                 _sessionKey = $"session_{_nakamaSession.UserId}_{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
                 _sessionStartTime = Time.realtimeSinceStartup;
 
-                var deviceInfo = new Dictionary<string, object>
-                {
-                    { "platform", Application.platform.ToString() },
-                    { "version", Application.version },
-                    { "deviceModel", SystemInfo.deviceModel },
-                    { "operatingSystem", SystemInfo.operatingSystem }
-                };
-
-                var payload = new SessionStartPayload
-                {
-                    gameID = GAME_ID,
-                    sessionKey = _sessionKey,
-                    deviceInfo = deviceInfo
-                };
-
-                string jsonPayload = JsonUtility.ToJson(payload);
+                string jsonPayload = SerializeSessionStartPayload(_gameId, _sessionKey);
 
                 Debug.Log($"[IVXAnalyticsManager] Starting session: {_sessionKey}");
 
@@ -197,14 +188,7 @@ namespace IntelliVerseX.Analytics
             {
                 float duration = Time.realtimeSinceStartup - _sessionStartTime;
 
-                var payload = new SessionEndPayload
-                {
-                    gameID = GAME_ID,
-                    sessionKey = _sessionKey,
-                    duration = (int)duration
-                };
-
-                string jsonPayload = JsonUtility.ToJson(payload);
+                string jsonPayload = $"{{\"gameID\":\"{_gameId}\",\"sessionKey\":\"{_sessionKey}\",\"duration\":{(int)duration}}}";
 
                 Debug.Log($"[IVXAnalyticsManager] Ending session: {_sessionKey} (duration: {duration}s)");
 
@@ -299,30 +283,70 @@ namespace IntelliVerseX.Analytics
             
             Debug.Log("[IVXAnalyticsManager] Reset complete");
         }
-    }
 
-    // Payload classes for JSON serialization
-    [Serializable]
-    internal class EventPayload
-    {
-        public string gameID;
-        public string eventName;
-        public Dictionary<string, object> properties;
-    }
+        #region JSON Serialization Helpers
 
-    [Serializable]
-    internal class SessionStartPayload
-    {
-        public string gameID;
-        public string sessionKey;
-        public Dictionary<string, object> deviceInfo;
-    }
+        private static string SerializeEventPayload(string gameId, string eventName, Dictionary<string, object> properties)
+        {
+            var sb = new System.Text.StringBuilder(256);
+            sb.Append("{\"gameID\":\"").Append(EscapeJson(gameId))
+              .Append("\",\"eventName\":\"").Append(EscapeJson(eventName))
+              .Append("\",\"timestamp\":").Append(DateTimeOffset.UtcNow.ToUnixTimeSeconds())
+              .Append(",\"properties\":");
+            SerializeDictionary(sb, properties);
+            sb.Append('}');
+            return sb.ToString();
+        }
 
-    [Serializable]
-    internal class SessionEndPayload
-    {
-        public string gameID;
-        public string sessionKey;
-        public int duration;
+        private static string SerializeSessionStartPayload(string gameId, string sessionKey)
+        {
+            var sb = new System.Text.StringBuilder(256);
+            sb.Append("{\"gameID\":\"").Append(EscapeJson(gameId))
+              .Append("\",\"sessionKey\":\"").Append(EscapeJson(sessionKey))
+              .Append("\",\"deviceInfo\":{")
+              .Append("\"platform\":\"").Append(EscapeJson(Application.platform.ToString()))
+              .Append("\",\"version\":\"").Append(EscapeJson(Application.version))
+              .Append("\",\"deviceModel\":\"").Append(EscapeJson(SystemInfo.deviceModel))
+              .Append("\",\"operatingSystem\":\"").Append(EscapeJson(SystemInfo.operatingSystem))
+              .Append("\"}}");
+            return sb.ToString();
+        }
+
+        private static void SerializeDictionary(System.Text.StringBuilder sb, Dictionary<string, object> dict)
+        {
+            if (dict == null || dict.Count == 0)
+            {
+                sb.Append("{}");
+                return;
+            }
+
+            sb.Append('{');
+            bool first = true;
+            foreach (var kvp in dict)
+            {
+                if (!first) sb.Append(',');
+                first = false;
+                sb.Append('"').Append(EscapeJson(kvp.Key)).Append("\":");
+                if (kvp.Value == null)
+                    sb.Append("null");
+                else if (kvp.Value is string s)
+                    sb.Append('"').Append(EscapeJson(s)).Append('"');
+                else if (kvp.Value is bool b)
+                    sb.Append(b ? "true" : "false");
+                else if (kvp.Value is int || kvp.Value is long || kvp.Value is float || kvp.Value is double || kvp.Value is decimal)
+                    sb.Append(Convert.ToString(kvp.Value, System.Globalization.CultureInfo.InvariantCulture));
+                else
+                    sb.Append('"').Append(EscapeJson(kvp.Value.ToString())).Append('"');
+            }
+            sb.Append('}');
+        }
+
+        private static string EscapeJson(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return string.Empty;
+            return s.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t");
+        }
+
+        #endregion
     }
 }

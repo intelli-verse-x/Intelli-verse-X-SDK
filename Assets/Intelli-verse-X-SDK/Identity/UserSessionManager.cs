@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using IntelliVerseX.Storage;
 using UnityEngine;
 
 namespace IntelliVerseX.Identity
@@ -40,7 +41,7 @@ namespace IntelliVerseX.Identity
         /// <summary>Returns true if a valid session exists.</summary>
         public static bool HasSession => UserSessionManager.HasSession;
         
-        /// <summary>Gets the path where the session is persisted.</summary>
+        /// <summary>Legacy on-disk session file path (pre–secure storage). Used for migration only.</summary>
         public static string SessionPath => UserSessionManager.SessionPath;
         
         /// <summary>Saves the session to disk.</summary>
@@ -67,6 +68,7 @@ namespace IntelliVerseX.Identity
 public static class UserSessionManager
 {
     private const string FileName = "user_session.json";
+    private const string SecureSessionKey = "ivx_user_session";
     private static readonly object _lock = new object();
     private static UserSession _cached;
 
@@ -105,6 +107,10 @@ public static class UserSessionManager
         public DateTime SavedAtUtc;
     }
 
+    /// <summary>
+    /// Legacy on-disk path for session JSON before migration to <see cref="IntelliVerseX.Storage.IVXSecureStorage"/>.
+    /// Used only to migrate existing installs; new sessions are stored under the secure key <c>ivx_user_session</c>.
+    /// </summary>
     public static string SessionPath =>
         Path.Combine(Application.persistentDataPath, FileName);
 
@@ -165,15 +171,23 @@ public static class UserSessionManager
 
         lock (_lock)
         {
-            // Atomic write
-            var tmp = SessionPath + ".tmp";
-            File.WriteAllText(tmp, json, Encoding.UTF8);
-            if (File.Exists(SessionPath)) File.Delete(SessionPath);
-            File.Move(tmp, SessionPath);
+            IVXSecureStorage.SetString(SecureSessionKey, json);
+            if (File.Exists(SessionPath))
+            {
+                try
+                {
+                    File.Delete(SessionPath);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning($"[UserSession] Could not delete legacy session file: {ex.Message}");
+                }
+            }
+
             _cached = session;
         }
 #if UNITY_EDITOR
-        Debug.Log($"[UserSession] Saved to {SessionPath}");
+        Debug.Log($"[UserSession] Saved to secure storage ({SecureSessionKey})");
 #endif
     }
 
@@ -224,7 +238,18 @@ public static class UserSessionManager
         lock (_lock)
         {
             _cached = null;
-            if (File.Exists(SessionPath)) File.Delete(SessionPath);
+            IVXSecureStorage.DeleteKey(SecureSessionKey);
+            if (File.Exists(SessionPath))
+            {
+                try
+                {
+                    File.Delete(SessionPath);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning($"[UserSession] Could not delete legacy session file: {ex.Message}");
+                }
+            }
         }
 #if UNITY_EDITOR
         Debug.Log("[UserSession] Cleared.");
@@ -300,8 +325,24 @@ public static class UserSessionManager
     {
         try
         {
-            if (!File.Exists(SessionPath)) return null;
-            var json = File.ReadAllText(SessionPath, Encoding.UTF8);
+            string json = IVXSecureStorage.GetString(SecureSessionKey, "");
+            if (string.IsNullOrWhiteSpace(json) && File.Exists(SessionPath))
+            {
+                json = File.ReadAllText(SessionPath, Encoding.UTF8);
+                if (!string.IsNullOrWhiteSpace(json))
+                {
+                    IVXSecureStorage.SetString(SecureSessionKey, json);
+                    try
+                    {
+                        File.Delete(SessionPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogWarning($"[UserSession] Migrated legacy file but could not delete: {ex.Message}");
+                    }
+                }
+            }
+
             if (string.IsNullOrWhiteSpace(json)) return null;
             return JsonUtility.FromJson<UserSession>(json);
         }

@@ -17,6 +17,8 @@ namespace IntelliVerseX.Social
         private const int DEFAULT_MAX_MEMBERS = 50;
 
         private static bool _isQuitting;
+        private static Type _cachedNakamaManagerType;
+        private static bool _hasCheckedNakamaManagerType;
 
         private IClient _client;
         private ISession _session;
@@ -352,7 +354,12 @@ namespace IntelliVerseX.Social
 
         private static object FindNakamaManager()
         {
-            Type managerType = Type.GetType("IntelliVerseX.Backend.Nakama.IVXNManager, IntelliVerseX.V2");
+            if (!_hasCheckedNakamaManagerType)
+            {
+                _cachedNakamaManagerType = Type.GetType("IntelliVerseX.Backend.Nakama.IVXNManager, IntelliVerseX.V2");
+                _hasCheckedNakamaManagerType = true;
+            }
+            Type managerType = _cachedNakamaManagerType;
             if (managerType == null)
             {
                 return null;

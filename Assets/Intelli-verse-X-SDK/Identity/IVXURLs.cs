@@ -9,6 +9,8 @@
 
 using UnityEngine.Networking;
 
+namespace IntelliVerseX.Identity
+{
 /// <summary>
 /// Centralized API endpoints for IntelliVerse-X platform.
 /// Static class - zero allocations, instant access.
@@ -33,8 +35,17 @@ public static class IVXURLs
     /// <summary>Payment services gateway</summary>
     public const string PaymentBaseUrl = "https://payment.intelli-verse-x.ai/";
     
-    /// <summary>Default Game ID for QuizVerse</summary>
-    public const string GameId = "a6bde9e8-ebc5-4c7b-9254-02e9c0e02d74";
+    /// <summary>Default game ID (QuizVerse) used when <see cref="GameId"/> is not overridden.</summary>
+    public const string DefaultGameId = "a6bde9e8-ebc5-4c7b-9254-02e9c0e02d74";
+
+    private static string _gameId = DefaultGameId;
+
+    /// <summary>Configurable game ID for API calls. Set at startup to override the default.</summary>
+    public static string GameId
+    {
+        get => string.IsNullOrWhiteSpace(_gameId) ? DefaultGameId : _gameId;
+        set => _gameId = value?.Trim() ?? string.Empty;
+    }
     
     // ========================================================================
     // AUTHENTICATION - LOGIN
@@ -396,4 +407,5 @@ public static class IVXURLs
     public const string ClaimSignupReward = BaseUrl + "api/user/user/claim-signup-reward";
     
     #endregion
+}
 }

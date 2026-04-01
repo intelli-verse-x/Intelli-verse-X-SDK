@@ -222,6 +222,8 @@ namespace IntelliVerseX.Social.UI
             _cts?.Dispose();
             _cts = null;
 
+            CleanupButtonListeners();
+
             // Kill any running animations to prevent errors
             IVXFriendsAnimations.KillAnimations(panelCanvasGroup);
             IVXFriendsAnimations.KillAnimations(friendsContentCanvasGroup);
@@ -237,6 +239,18 @@ namespace IntelliVerseX.Social.UI
             {
                 _instance = null;
             }
+        }
+
+        private void CleanupButtonListeners()
+        {
+            if (friendsTabButton != null) friendsTabButton.onClick.RemoveAllListeners();
+            if (requestsTabButton != null) requestsTabButton.onClick.RemoveAllListeners();
+            if (searchTabButton != null) searchTabButton.onClick.RemoveAllListeners();
+            if (closeButton != null) closeButton.onClick.RemoveAllListeners();
+            if (searchButton != null) searchButton.onClick.RemoveAllListeners();
+            if (searchInput != null) searchInput.onSubmit.RemoveAllListeners();
+            if (confirmYesButton != null) confirmYesButton.onClick.RemoveAllListeners();
+            if (confirmNoButton != null) confirmNoButton.onClick.RemoveAllListeners();
         }
 
         private void Update()

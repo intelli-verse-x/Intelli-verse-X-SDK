@@ -5,15 +5,17 @@ using System.Linq;
 using System.Net.NetworkInformation; // Not available in WebGL
 #endif
 
-public static class DeviceInfoHelper
+namespace IntelliVerseX.Identity
 {
-    private const string PseudoIdKey = "DeviceInfoHelper_PseudoId";
-
-    /// <summary>
-    /// Returns the required login fields: fromDevice ("webgl" or "machine") and macAddress (real or stable pseudo).
-    /// </summary>
-    public static void GetLoginDeviceFields(out string fromDevice, out string macAddress)
+    public static class DeviceInfoHelper
     {
+        private const string PseudoIdKey = "DeviceInfoHelper_PseudoId";
+
+        /// <summary>
+        /// Returns the required login fields: fromDevice ("webgl" or "machine") and macAddress (real or stable pseudo).
+        /// </summary>
+        public static void GetLoginDeviceFields(out string fromDevice, out string macAddress)
+        {
 #if UNITY_WEBGL
         fromDevice = "webgl";
         // WebGL cannot access hardware identifiers; use a stable pseudo-id
@@ -51,8 +53,9 @@ public static class DeviceInfoHelper
 
             return FormatMac(raw);
         }
-        catch
+        catch (Exception ex)
         {
+            Debug.LogWarning($"[DeviceInfoHelper] TryGetPrimaryMacAddress failed: {ex.Message}");
             return string.Empty;
         }
     }
@@ -92,4 +95,5 @@ public static class DeviceInfoHelper
         return !string.IsNullOrWhiteSpace(value)
                && System.Text.RegularExpressions.Regex.IsMatch(value.Trim(), @"^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$");
     }
+}
 }

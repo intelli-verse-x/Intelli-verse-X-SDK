@@ -102,7 +102,6 @@ namespace IntelliVerseX.Auth.UI
         private const string PP_LOGIN_TYPE = "IVX_auth.login_type";
 
         private const string DEFAULT_FROM_DEVICE = "machine";
-        private const string DEFAULT_MAC = "00:1A:2B:3C:4D:5E";
 
         #endregion
 
@@ -376,7 +375,7 @@ namespace IntelliVerseX.Auth.UI
                     email = email,
                     password = password,
                     fromDevice = DEFAULT_FROM_DEVICE,
-                    macAddress = DEFAULT_MAC
+                    macAddress = SystemInfo.deviceUniqueIdentifier
                 };
 
                 using (var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(15)))
@@ -602,19 +601,22 @@ namespace IntelliVerseX.Auth.UI
         private void SignInWithGoogle()
         {
             AnimateButton(_googleSignInButton);
-            Debug.Log($"[{nameof(IVXPanelLogin)}] Google Sign-In requested");
+            ShowError("Google sign-in is coming soon.");
+            Debug.Log($"[{nameof(IVXPanelLogin)}] Google Sign-In requested (not yet available)");
         }
 
         private void SignInWithApple()
         {
             AnimateButton(_appleSignInButton);
-            Debug.Log($"[{nameof(IVXPanelLogin)}] Apple Sign-In requested");
+            ShowError("Apple sign-in is coming soon.");
+            Debug.Log($"[{nameof(IVXPanelLogin)}] Apple Sign-In requested (not yet available)");
         }
 
         private void SignInWithFacebook()
         {
             AnimateButton(_facebookSignInButton);
-            Debug.Log($"[{nameof(IVXPanelLogin)}] Facebook Sign-In requested");
+            ShowError("Facebook sign-in is coming soon.");
+            Debug.Log($"[{nameof(IVXPanelLogin)}] Facebook Sign-In requested (not yet available)");
         }
 
         #endregion

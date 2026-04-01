@@ -2,7 +2,8 @@
     "name": "IntelliVerseX.Core",
     "rootNamespace": "IntelliVerseX.Core",
     "references": [
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "IntelliVerseX.Storage"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

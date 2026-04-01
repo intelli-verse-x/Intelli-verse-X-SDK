@@ -3,6 +3,7 @@
 // ============================================================================
 
 using System;
+using UnityEngine;
 
 namespace IntelliVerseX.Social
 {
@@ -11,6 +12,17 @@ namespace IntelliVerseX.Social
     /// </summary>
     public static class IVXFriendsEvents
     {
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
+        {
+            OnFriendListChanged = null;
+            OnFriendAdded = null;
+            OnFriendRemoved = null;
+            OnFriendRequestReceived = null;
+            OnFriendPresenceChanged = null;
+            OnFriendsError = null;
+        }
+
         public static event Action OnFriendListChanged;
         public static event Action<string> OnFriendAdded;
         public static event Action<string> OnFriendRemoved;

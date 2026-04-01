@@ -19,7 +19,7 @@ namespace IntelliVerseX.Editor
     {
         #region Constants
 
-        private const string SDK_ROOT = "Assets/_IntelliVerseXSDK";
+        private const string SDK_ROOT = "Assets/Intelli-verse-X-SDK";
         private const string EXPORT_FOLDER = "IVX_SDK_Export";
 
         #endregion
@@ -337,8 +337,6 @@ namespace IntelliVerseX.Editor
             config.includeDocumentation = EditorGUILayout.Toggle("Documentation", config.includeDocumentation);
             config.includeEditor = EditorGUILayout.Toggle("Editor Tools", config.includeEditor);
             config.includeIntroScene = EditorGUILayout.Toggle("Intro Scene Assets", config.includeIntroScene);
-            
-            config.includeIntroScene = EditorGUILayout.Toggle("Include Intro Scene", config.includeIntroScene);
 
             EditorGUILayout.EndVertical();
 
@@ -569,13 +567,13 @@ namespace IntelliVerseX.Editor
             }
 
             // Check for APIManager
-            if (!File.Exists(Path.Combine(Application.dataPath, "_IntelliVerseXSDK/Identity/APIManager.cs")))
+            if (!File.Exists(Path.Combine(Application.dataPath, "Intelli-verse-X-SDK/Identity/APIManager.cs")))
             {
                 validationErrors.Add("APIManager.cs not found - API calls will not work");
             }
 
             // Check for UserSessionManager
-            if (!File.Exists(Path.Combine(Application.dataPath, "_IntelliVerseXSDK/Identity/UserSessionManager.cs")))
+            if (!File.Exists(Path.Combine(Application.dataPath, "Intelli-verse-X-SDK/Identity/UserSessionManager.cs")))
             {
                 validationErrors.Add("UserSessionManager.cs not found - authentication will not work");
             }
@@ -651,7 +649,7 @@ namespace IntelliVerseX.Editor
 
             try
             {
-                var sourcePath = Path.Combine(Application.dataPath, "_IntelliVerseXSDK");
+                var sourcePath = Path.Combine(Application.dataPath, "Intelli-verse-X-SDK");
                 
                 if (Directory.Exists(targetPath))
                 {

@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -29,6 +30,18 @@ namespace IntelliVerseX.Games.Leaderboard
         public static event Action<IVXGScoreSubmissionResponse> OnScoreSubmitted;
         public static event Action<IVXGAllLeaderboardsResponse> OnLeaderboardsFetched;
         public static event Action<string> OnError;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
+        {
+            _currentWinStreak = 0;
+            OnScoreSubmitted = null;
+            OnLeaderboardsFetched = null;
+            OnError = null;
+            _cachedNakamaManager = null;
+            _nakamaManagerType = null;
+            _typeCache.Clear();
+        }
 
         #region Public API
 
@@ -88,8 +101,10 @@ namespace IntelliVerseX.Games.Leaderboard
                     return null;
                 }
 
+#if UNITY_EDITOR
                 Log($"SubmitScoreAsync identity → apiUserId={apiUserId}, nakamaUserId={nakamaUserId}, " +
                     $"username={username}, gameId={gameId}, deviceId={deviceId}");
+#endif
 
                 // Build payload
                 var payload = new
@@ -126,7 +141,11 @@ namespace IntelliVerseX.Games.Leaderboard
                 };
 
                 var jsonPayload = JsonConvert.SerializeObject(payload);
+#if UNITY_EDITOR
                 Log($"SubmitScoreAsync JSON → {jsonPayload}");
+#else
+                Log($"SubmitScoreAsync: score={score}, subscore={subscore}");
+#endif
 
                 var client = GetClient(mgr);
                 var session = GetSession(mgr);
@@ -214,8 +233,10 @@ namespace IntelliVerseX.Games.Leaderboard
                     return null;
                 }
 
+#if UNITY_EDITOR
                 Log($"GetAllLeaderboardsAsync identity → apiUserId={apiUserId}, nakamaUserId={nakamaUserId}, " +
                     $"gameId={gameId}, deviceId={deviceId}, limit={limit}");
+#endif
 
                 var payload = new
                 {
@@ -601,10 +622,21 @@ namespace IntelliVerseX.Games.Leaderboard
 
         private static object _cachedNakamaManager;
         private static Type _nakamaManagerType;
+        private static readonly Dictionary<string, Type> _typeCache = new Dictionary<string, Type>();
 
         private static object GetNakamaManager()
         {
-            if (_cachedNakamaManager != null) return _cachedNakamaManager;
+            if (_cachedNakamaManager != null)
+            {
+                if (_cachedNakamaManager is UnityEngine.Object unityObj && unityObj == null)
+                {
+                    _cachedNakamaManager = null;
+                }
+                else
+                {
+                    return _cachedNakamaManager;
+                }
+            }
 
             // Try to find IVXNManager via reflection
             _nakamaManagerType = FindType("IntelliVerseX.Backend.Nakama.IVXNManager");
@@ -830,16 +862,79 @@ namespace IntelliVerseX.Games.Leaderboard
 
         private static Type FindType(string typeName)
         {
+            if (string.IsNullOrEmpty(typeName))
+                return null;
+
+            if (_typeCache.TryGetValue(typeName, out var cached))
+                return cached;
+
             var type = Type.GetType(typeName);
-            if (type != null) return type;
+            if (type != null)
+            {
+                _typeCache[typeName] = type;
+                return type;
+            }
 
             type = Type.GetType($"{typeName}, Assembly-CSharp");
-            if (type != null) return type;
+            if (type != null)
+            {
+                _typeCache[typeName] = type;
+                return type;
+            }
 
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                type = assembly.GetType(typeName);
-                if (type != null) return type;
+                try
+                {
+                    type = assembly.GetType(typeName);
+                }
+                catch
+                {
+                    continue;
+                }
+
+                if (type != null)
+                {
+                    _typeCache[typeName] = type;
+                    return type;
+                }
+            }
+
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                Type[] types;
+                try
+                {
+                    types = assembly.GetTypes();
+                }
+                catch (ReflectionTypeLoadException ex)
+                {
+                    if (ex.Types == null)
+                        continue;
+                    foreach (var t in ex.Types)
+                    {
+                        if (t != null && (t.Name == typeName || t.FullName == typeName))
+                        {
+                            _typeCache[typeName] = t;
+                            return t;
+                        }
+                    }
+
+                    continue;
+                }
+                catch
+                {
+                    continue;
+                }
+
+                foreach (var t in types)
+                {
+                    if (t != null && (t.Name == typeName || t.FullName == typeName))
+                    {
+                        _typeCache[typeName] = t;
+                        return t;
+                    }
+                }
             }
 
             return null;

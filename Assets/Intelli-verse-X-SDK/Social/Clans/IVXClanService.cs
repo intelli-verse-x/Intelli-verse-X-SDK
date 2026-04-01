@@ -17,6 +17,9 @@ namespace IntelliVerseX.Social
         private const string RPC_GET_USER_GROUPS = "get_user_groups";
         private const string RPC_CREATE_GAME_GROUP = "create_game_group";
 
+        private static Type _cachedNakamaManagerType;
+        private static bool _hasCheckedNakamaManagerType;
+
         /// <summary>
         /// Ensures the shared Nakama manager is initialized for the current user.
         /// Handles stale tokens by attempting Nakama-level session refresh.
@@ -39,7 +42,12 @@ namespace IntelliVerseX.Social
                                      "Will attempt Nakama-level refresh if an existing session exists.");
                 }
 
-                Type managerType = Type.GetType("IntelliVerseX.Backend.Nakama.IVXNManager, IntelliVerseX.V2");
+                if (!_hasCheckedNakamaManagerType)
+                {
+                    _cachedNakamaManagerType = Type.GetType("IntelliVerseX.Backend.Nakama.IVXNManager, IntelliVerseX.V2");
+                    _hasCheckedNakamaManagerType = true;
+                }
+                Type managerType = _cachedNakamaManagerType;
                 if (managerType == null)
                 {
                     Debug.LogError($"{LOG_TAG} IVXNManager type not found. Check IntelliVerseX.V2 assembly.");

@@ -4694,27 +4694,40 @@ namespace IntelliVerseX.Editor
         /// This is the most reliable way to check if SDK scripts are available,
         /// regardless of whether they're in Assets or Packages.
         /// </summary>
+        private static readonly Dictionary<string, Type> _typeCache = new Dictionary<string, Type>();
+
         private static Type GetTypeByName(string fullName)
         {
             if (string.IsNullOrEmpty(fullName)) return null;
-            
-            // Try direct type lookup first
+
+            if (_typeCache.TryGetValue(fullName, out var cached))
+                return cached;
+
             var type = Type.GetType(fullName);
-            if (type != null) return type;
-            
-            // Search all loaded assemblies
+            if (type != null)
+            {
+                _typeCache[fullName] = type;
+                return type;
+            }
+
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 try
                 {
                     type = assembly.GetType(fullName);
-                    if (type != null) return type;
+                    if (type != null)
+                    {
+                        _typeCache[fullName] = type;
+                        return type;
+                    }
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // Ignore assemblies that can't be searched
+                    Debug.LogWarning($"[IVXSDKSetupWizard] Assembly scan error for {fullName}: {ex.Message}");
                 }
             }
+
+            _typeCache[fullName] = null;
             return null;
         }
 

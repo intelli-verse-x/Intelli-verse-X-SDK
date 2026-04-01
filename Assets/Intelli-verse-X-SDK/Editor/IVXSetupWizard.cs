@@ -122,7 +122,7 @@ namespace IntelliVerseX.Editor
             EditorGUILayout.LabelField("What you'll need:", EditorStyles.boldLabel);
             GUILayout.Space(5);
             EditorGUILayout.LabelField("• Internet connection for package installation");
-            EditorGUILayout.LabelField("• Unity 2021.3 or later");
+            EditorGUILayout.LabelField("• Unity 2023.3 LTS or Unity 6 (6000.x) or later");
             EditorGUILayout.LabelField("• ~5 minutes of your time");
             
             GUILayout.Space(20);

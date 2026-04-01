@@ -17,6 +17,9 @@ namespace IntelliVerseX.Social.UI
         private const int RETRY_DELAY_MS = 2000;
         private const int MAX_INIT_RETRIES = 3;
 
+        private static Type _cachedNakamaManagerType;
+        private static bool _hasCheckedNakamaManagerType;
+
         [Header("Behavior")]
         [SerializeField] private bool _loadCurrentClanOnStart = true;
         [SerializeField] private bool _searchClansOnStart = true;
@@ -304,7 +307,12 @@ namespace IntelliVerseX.Social.UI
                 return "Access token has expired. Re-login from IVX_AuthTest.";
             }
 
-            System.Type managerType = System.Type.GetType("IntelliVerseX.Backend.Nakama.IVXNManager, IntelliVerseX.V2");
+            if (!_hasCheckedNakamaManagerType)
+            {
+                _cachedNakamaManagerType = System.Type.GetType("IntelliVerseX.Backend.Nakama.IVXNManager, IntelliVerseX.V2");
+                _hasCheckedNakamaManagerType = true;
+            }
+            System.Type managerType = _cachedNakamaManagerType;
             if (managerType == null)
             {
                 return "IVXNManager type not found. Check assembly definitions.";

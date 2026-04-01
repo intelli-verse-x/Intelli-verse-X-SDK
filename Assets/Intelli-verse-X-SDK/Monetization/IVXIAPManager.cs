@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using IntelliVerseX.Storage;
 
 namespace IntelliVerseX.Monetization
 {
@@ -247,8 +248,18 @@ namespace IntelliVerseX.Monetization
             // Example:
             // m_StoreController.InitiatePurchase(productId);
 
-            // For testing, simulate success
+#if UNITY_EDITOR
             SimulatePurchaseForTesting(productId, onComplete);
+#else
+            Debug.LogError("[IVXIAPManager] No IAP SDK integrated. Integrate Unity IAP or another IAP provider.");
+            onComplete?.Invoke(new IVXPurchaseResult
+            {
+                success = false,
+                productId = productId,
+                error = "No IAP SDK integrated"
+            });
+            OnPurchaseFailed?.Invoke("No IAP SDK integrated");
+#endif
         }
 
         /// <summary>
@@ -276,9 +287,13 @@ namespace IntelliVerseX.Monetization
             //     });
             // }
 
-            // For testing
+#if UNITY_EDITOR
             onComplete?.Invoke(true);
             OnRestoreComplete?.Invoke();
+#else
+            Debug.LogError("[IVXIAPManager] No IAP SDK integrated for restore purchases.");
+            onComplete?.Invoke(false);
+#endif
         }
 
         /// <summary>
@@ -297,8 +312,7 @@ namespace IntelliVerseX.Monetization
             // var product = m_StoreController.products.WithID(productId);
             // return product != null && product.hasReceipt;
 
-            // For testing, check PlayerPrefs
-            return PlayerPrefs.GetInt($"IVX_IAP_Purchased_{productId}", 0) == 1;
+            return IVXSecureStorage.GetInt($"IVX_IAP_Purchased_{productId}", 0) == 1;
         }
 
         /// <summary>
@@ -327,8 +341,7 @@ namespace IntelliVerseX.Monetization
             // For non-consumables, mark as purchased
             if (product != null && product.type == IVXProductType.NonConsumable)
             {
-                PlayerPrefs.SetInt($"IVX_IAP_Purchased_{productId}", 1);
-                PlayerPrefs.Save();
+                IVXSecureStorage.SetInt($"IVX_IAP_Purchased_{productId}", 1);
             }
 
             var result = new IVXPurchaseResult
@@ -386,9 +399,8 @@ namespace IntelliVerseX.Monetization
         {
             foreach (var product in _products.Values)
             {
-                PlayerPrefs.DeleteKey($"IVX_IAP_Purchased_{product.productId}");
+                IVXSecureStorage.DeleteKey($"IVX_IAP_Purchased_{product.productId}");
             }
-            PlayerPrefs.Save();
             Debug.Log("[IVXIAPManager] Purchase data cleared");
         }
     }

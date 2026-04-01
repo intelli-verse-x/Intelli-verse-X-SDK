@@ -13,25 +13,42 @@ namespace IntelliVerseX.Backend
     public class IVXBackendService : MonoBehaviour
     {
         private static IVXBackendService _instance;
+        private static readonly object _instanceLock = new object();
+        private static bool _isQuitting;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
+        {
+            _instance = null;
+            _isQuitting = false;
+        }
+
         public static IVXBackendService Instance
         {
             get
             {
-                if (_instance == null)
+                if (_isQuitting) return null;
+
+                lock (_instanceLock)
                 {
-                    var go = new GameObject("IVXBackendService");
-                    _instance = go.AddComponent<IVXBackendService>();
-                    DontDestroyOnLoad(go);
+                    if (_instance == null)
+                    {
+                        var go = new GameObject("IVXBackendService");
+                        _instance = go.AddComponent<IVXBackendService>();
+                        DontDestroyOnLoad(go);
+                    }
+                    return _instance;
                 }
-                return _instance;
             }
         }
+
+        public static bool HasInstance => _instance != null && !_isQuitting;
 
         [Header("Nakama Configuration")]
         [SerializeField] private string scheme = "https";
         [SerializeField] private string host = "nakama-rest.intelli-verse-x.ai";
         [SerializeField] private int port = 443;
-        [SerializeField] private string serverKey = "defaultkey";
+        [SerializeField] private string serverKey = "";
 
         private IClient _client;
         private ISession _session;
@@ -53,6 +70,19 @@ namespace IntelliVerseX.Backend
             DontDestroyOnLoad(gameObject);
         }
 
+        private void OnApplicationQuit()
+        {
+            _isQuitting = true;
+        }
+
+        private void OnDestroy()
+        {
+            if (_instance == this)
+            {
+                _instance = null;
+            }
+        }
+
         /// <summary>
         /// Initialize Nakama client.
         /// </summary>
@@ -61,7 +91,7 @@ namespace IntelliVerseX.Backend
             if (_client == null)
             {
                 _client = new Client(scheme, host, port, serverKey, UnityWebRequestAdapter.Instance);
-                Debug.Log($"[QUIZVERSE][BACKEND] Nakama client initialized - {scheme}://{host}:{port}");
+                Debug.Log($"[IVXBackendService] Nakama client initialized - {scheme}://{host}:{port}");
             }
         }
 
@@ -92,10 +122,10 @@ namespace IntelliVerseX.Backend
                 if (string.IsNullOrEmpty(username))
                 {
                     username = $"Guest_{UnityEngine.Random.Range(1000, 9999)}";
-                    Debug.LogWarning($"[QUIZVERSE][BACKEND] No username available, using fallback: {username}");
+                    Debug.LogWarning($"[IVXBackendService] No username available, using fallback: {username}");
                 }
 
-                Debug.Log($"[QUIZVERSE][BACKEND] Authenticating with Nakama - Device: {deviceId}, Username: {username}");
+                Debug.Log($"[IVXBackendService] Authenticating with Nakama - Device: {deviceId}, Username: {username}");
 
                 _session = await _client.AuthenticateDeviceAsync(deviceId, create: true, username: username);
 
@@ -105,18 +135,18 @@ namespace IntelliVerseX.Backend
                     IntelliVerseXUserIdentity.SetNakamaAuth(_session.UserId, _session.AuthToken);
 
                     _isInitialized = true;
-                    Debug.Log($"[QUIZVERSE][BACKEND] Authentication successful - NakamaUserId: {_session.UserId}, Expires: {_session.ExpireTime}");
+                    Debug.Log($"[IVXBackendService] Authentication successful - NakamaUserId: {_session.UserId}, Expires: {_session.ExpireTime}");
                     return true;
                 }
                 else
                 {
-                    Debug.LogError("[QUIZVERSE][BACKEND] Authentication failed - session is null");
+                    Debug.LogError("[IVXBackendService] Authentication failed - session is null");
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[QUIZVERSE][BACKEND] Authentication failed: {ex.Message}\nStack: {ex.StackTrace}");
+                Debug.LogError($"[IVXBackendService] Authentication failed: {ex.Message}\nStack: {ex.StackTrace}");
                 return false;
             }
         }
@@ -131,7 +161,7 @@ namespace IntelliVerseX.Backend
                 return true;
             }
 
-            Debug.Log("[QUIZVERSE][BACKEND] Session invalid or expired, re-authenticating...");
+            Debug.Log("[IVXBackendService] Session invalid or expired, re-authenticating...");
             return await AuthenticateAsync();
         }
 
@@ -142,7 +172,7 @@ namespace IntelliVerseX.Backend
         {
             _session = null;
             _isInitialized = false;
-            Debug.Log("[QUIZVERSE][BACKEND] Session cleared");
+            Debug.Log("[IVXBackendService] Session cleared");
         }
     }
 }

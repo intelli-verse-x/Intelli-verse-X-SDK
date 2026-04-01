@@ -1,11 +1,13 @@
 using System;
 using UnityEngine;
+using IntelliVerseX.Storage;
 
 namespace IntelliVerseX.Core
 {
     /// <summary>
     /// Main identity manager for IntelliVerse-X SDK.
     /// Provides static API for accessing user identity across all systems.
+    /// All sensitive data is stored using IVXSecureStorage (encrypted PlayerPrefs).
     /// 
     /// Usage:
     ///   string username = IntelliVerseXIdentity.Username;
@@ -17,7 +19,7 @@ namespace IntelliVerseX.Core
     /// </summary>
     public class IntelliVerseXIdentity : MonoBehaviour
     {
-        // PlayerPrefs Keys
+        // Secure Storage Keys
         private const string PREF_USERNAME = "IVX_Username";
         private const string PREF_DEVICE_ID = "IVX_DeviceId";
         private const string PREF_GAME_ID = "IVX_GameId";
@@ -44,6 +46,7 @@ namespace IntelliVerseX.Core
         private const string PREF_ID_TOKEN = "IVX_IdToken";
         private const string PREF_REFRESH_TOKEN = "IVX_RefreshToken";
         private const string PREF_ACCESS_TOKEN_EXPIRY = "IVX_AccessTokenExpiry";
+        private const string PREF_IDENTITY_MIGRATED = "IVX_IdentityMigratedV1";
 
         private static IntelliVerseXIdentity _instance;
         private static IntelliVerseXConfig _config;
@@ -192,8 +195,7 @@ namespace IntelliVerseX.Core
             if (_currentUser == null) return;
             
             _currentUser.Username = username;
-            PlayerPrefs.SetString(PREF_USERNAME, username);
-            PlayerPrefs.Save();
+            IVXSecureStorage.SetString(PREF_USERNAME, username);
             
             OnIdentityUpdated?.Invoke();
         }
@@ -208,9 +210,8 @@ namespace IntelliVerseX.Core
             _currentUser.GameWalletId = gameWalletId;
             _currentUser.GlobalWalletId = globalWalletId;
             
-            PlayerPrefs.SetString(PREF_GAME_WALLET_ID, gameWalletId);
-            PlayerPrefs.SetString(PREF_GLOBAL_WALLET_ID, globalWalletId);
-            PlayerPrefs.Save();
+            IVXSecureStorage.SetString(PREF_GAME_WALLET_ID, gameWalletId);
+            IVXSecureStorage.SetString(PREF_GLOBAL_WALLET_ID, globalWalletId);
             
             OnIdentityUpdated?.Invoke();
         }
@@ -227,11 +228,10 @@ namespace IntelliVerseX.Core
             _currentUser.GameWalletCurrency = gameCurrency;
             _currentUser.GlobalWalletCurrency = globalCurrency;
             
-            PlayerPrefs.SetInt(PREF_GAME_WALLET_BALANCE, gameBalance);
-            PlayerPrefs.SetInt(PREF_GLOBAL_WALLET_BALANCE, globalBalance);
-            PlayerPrefs.SetString(PREF_GAME_WALLET_CURRENCY, gameCurrency);
-            PlayerPrefs.SetString(PREF_GLOBAL_WALLET_CURRENCY, globalCurrency);
-            PlayerPrefs.Save();
+            IVXSecureStorage.SetInt(PREF_GAME_WALLET_BALANCE, gameBalance);
+            IVXSecureStorage.SetInt(PREF_GLOBAL_WALLET_BALANCE, globalBalance);
+            IVXSecureStorage.SetString(PREF_GAME_WALLET_CURRENCY, gameCurrency);
+            IVXSecureStorage.SetString(PREF_GLOBAL_WALLET_CURRENCY, globalCurrency);
             
             OnWalletBalanceChanged?.Invoke(gameBalance, globalBalance);
         }
@@ -265,12 +265,12 @@ namespace IntelliVerseX.Core
             _currentUser.FirstName = firstName;
             _currentUser.LastName = lastName;
             _currentUser.Role = role;
-            _currentUser.IsAdult = isAdult ? "True" : "False";  // Convert bool to string
+            _currentUser.IsAdult = isAdult ? "True" : "False";
             _currentUser.LoginType = loginType;
             _currentUser.AccountStatus = accountStatus;
             _currentUser.KycStatus = kycStatus;
             
-            // Save to PlayerPrefs
+            // Save to secure storage
             SaveCognitoIdentityToPrefs();
             
             OnIdentityUpdated?.Invoke();
@@ -288,11 +288,10 @@ namespace IntelliVerseX.Core
             if (isGuest && _currentUser.GuestCreatedEpoch == 0)
             {
                 _currentUser.GuestCreatedEpoch = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                PlayerPrefs.SetString(PREF_GUEST_CREATED_EPOCH, _currentUser.GuestCreatedEpoch.ToString());
+                IVXSecureStorage.SetString(PREF_GUEST_CREATED_EPOCH, _currentUser.GuestCreatedEpoch.ToString());
             }
             
-            PlayerPrefs.SetInt(PREF_IS_GUEST, isGuest ? 1 : 0);
-            PlayerPrefs.Save();
+            IVXSecureStorage.SetInt(PREF_IS_GUEST, isGuest ? 1 : 0);
             
             OnIdentityUpdated?.Invoke();
         }
@@ -306,32 +305,30 @@ namespace IntelliVerseX.Core
             string deviceId = _currentUser?.DeviceId;
             string gameId = _currentUser?.GameId;
             
-            // Clear all other PlayerPrefs
-            PlayerPrefs.DeleteKey(PREF_USERNAME);
-            PlayerPrefs.DeleteKey(PREF_GAME_WALLET_ID);
-            PlayerPrefs.DeleteKey(PREF_GLOBAL_WALLET_ID);
-            PlayerPrefs.DeleteKey(PREF_GAME_WALLET_BALANCE);
-            PlayerPrefs.DeleteKey(PREF_GLOBAL_WALLET_BALANCE);
-            PlayerPrefs.DeleteKey(PREF_GAME_WALLET_CURRENCY);
-            PlayerPrefs.DeleteKey(PREF_GLOBAL_WALLET_CURRENCY);
-            PlayerPrefs.DeleteKey(PREF_COGNITO_USER_ID);
-            PlayerPrefs.DeleteKey(PREF_EMAIL);
-            PlayerPrefs.DeleteKey(PREF_IDP_USERNAME);
-            PlayerPrefs.DeleteKey(PREF_FIRST_NAME);
-            PlayerPrefs.DeleteKey(PREF_LAST_NAME);
-            PlayerPrefs.DeleteKey(PREF_WALLET_ADDRESS);
-            PlayerPrefs.DeleteKey(PREF_ROLE);
-            PlayerPrefs.DeleteKey(PREF_IS_ADULT);
-            PlayerPrefs.DeleteKey(PREF_LOGIN_TYPE);
-            PlayerPrefs.DeleteKey(PREF_ACCOUNT_STATUS);
-            PlayerPrefs.DeleteKey(PREF_KYC_STATUS);
-            PlayerPrefs.DeleteKey(PREF_IS_GUEST);
-            PlayerPrefs.DeleteKey(PREF_GUEST_CREATED_EPOCH);
-            PlayerPrefs.DeleteKey(PREF_ACCESS_TOKEN);
-            PlayerPrefs.DeleteKey(PREF_ID_TOKEN);
-            PlayerPrefs.DeleteKey(PREF_REFRESH_TOKEN);
-            PlayerPrefs.DeleteKey(PREF_ACCESS_TOKEN_EXPIRY);
-            PlayerPrefs.Save();
+            IVXSecureStorage.DeleteKey(PREF_USERNAME);
+            IVXSecureStorage.DeleteKey(PREF_GAME_WALLET_ID);
+            IVXSecureStorage.DeleteKey(PREF_GLOBAL_WALLET_ID);
+            IVXSecureStorage.DeleteKey(PREF_GAME_WALLET_BALANCE);
+            IVXSecureStorage.DeleteKey(PREF_GLOBAL_WALLET_BALANCE);
+            IVXSecureStorage.DeleteKey(PREF_GAME_WALLET_CURRENCY);
+            IVXSecureStorage.DeleteKey(PREF_GLOBAL_WALLET_CURRENCY);
+            IVXSecureStorage.DeleteKey(PREF_COGNITO_USER_ID);
+            IVXSecureStorage.DeleteKey(PREF_EMAIL);
+            IVXSecureStorage.DeleteKey(PREF_IDP_USERNAME);
+            IVXSecureStorage.DeleteKey(PREF_FIRST_NAME);
+            IVXSecureStorage.DeleteKey(PREF_LAST_NAME);
+            IVXSecureStorage.DeleteKey(PREF_WALLET_ADDRESS);
+            IVXSecureStorage.DeleteKey(PREF_ROLE);
+            IVXSecureStorage.DeleteKey(PREF_IS_ADULT);
+            IVXSecureStorage.DeleteKey(PREF_LOGIN_TYPE);
+            IVXSecureStorage.DeleteKey(PREF_ACCOUNT_STATUS);
+            IVXSecureStorage.DeleteKey(PREF_KYC_STATUS);
+            IVXSecureStorage.DeleteKey(PREF_IS_GUEST);
+            IVXSecureStorage.DeleteKey(PREF_GUEST_CREATED_EPOCH);
+            IVXSecureStorage.DeleteKey(PREF_ACCESS_TOKEN);
+            IVXSecureStorage.DeleteKey(PREF_ID_TOKEN);
+            IVXSecureStorage.DeleteKey(PREF_REFRESH_TOKEN);
+            IVXSecureStorage.DeleteKey(PREF_ACCESS_TOKEN_EXPIRY);
             
             // Recreate user with permanent IDs
             _currentUser = new IntelliVerseXUser
@@ -359,6 +356,8 @@ namespace IntelliVerseX.Core
 
         private void LoadOrCreateUser()
         {
+            MigrateToSecureStorage();
+
             _currentUser = new IntelliVerseXUser();
 
             // 1. Load or generate DeviceId (persistent, never changes)
@@ -368,15 +367,15 @@ namespace IntelliVerseX.Core
             _currentUser.GameId = GetOrCreateGameId();
 
             // 3. Load username
-            _currentUser.Username = PlayerPrefs.GetString(PREF_USERNAME, string.Empty);
+            _currentUser.Username = IVXSecureStorage.GetString(PREF_USERNAME, string.Empty);
 
             // 4. Load wallet IDs and balances
-            _currentUser.GameWalletId = PlayerPrefs.GetString(PREF_GAME_WALLET_ID, string.Empty);
-            _currentUser.GlobalWalletId = PlayerPrefs.GetString(PREF_GLOBAL_WALLET_ID, string.Empty);
-            _currentUser.GameWalletBalance = PlayerPrefs.GetInt(PREF_GAME_WALLET_BALANCE, 0);
-            _currentUser.GlobalWalletBalance = PlayerPrefs.GetInt(PREF_GLOBAL_WALLET_BALANCE, 0);
-            _currentUser.GameWalletCurrency = PlayerPrefs.GetString(PREF_GAME_WALLET_CURRENCY, "coins");
-            _currentUser.GlobalWalletCurrency = PlayerPrefs.GetString(PREF_GLOBAL_WALLET_CURRENCY, "gems");
+            _currentUser.GameWalletId = IVXSecureStorage.GetString(PREF_GAME_WALLET_ID, string.Empty);
+            _currentUser.GlobalWalletId = IVXSecureStorage.GetString(PREF_GLOBAL_WALLET_ID, string.Empty);
+            _currentUser.GameWalletBalance = IVXSecureStorage.GetInt(PREF_GAME_WALLET_BALANCE, 0);
+            _currentUser.GlobalWalletBalance = IVXSecureStorage.GetInt(PREF_GLOBAL_WALLET_BALANCE, 0);
+            _currentUser.GameWalletCurrency = IVXSecureStorage.GetString(PREF_GAME_WALLET_CURRENCY, "coins");
+            _currentUser.GlobalWalletCurrency = IVXSecureStorage.GetString(PREF_GLOBAL_WALLET_CURRENCY, "gems");
 
             // 5. Load Cognito identity
             LoadCognitoIdentityFromPrefs();
@@ -384,9 +383,42 @@ namespace IntelliVerseX.Core
             Debug.Log($"[IntelliVerseX] Identity loaded - Username: {_currentUser.Username}, DeviceId: {_currentUser.DeviceId}, GameId: {_currentUser.GameId}");
         }
 
+        /// <summary>
+        /// One-time migration of plaintext PlayerPrefs data to encrypted IVXSecureStorage.
+        /// Runs once per device; subsequent loads read encrypted values directly.
+        /// </summary>
+        private static void MigrateToSecureStorage()
+        {
+            if (IVXSecureStorage.GetInt(PREF_IDENTITY_MIGRATED, 0) == 1)
+                return;
+
+            Debug.Log("[IntelliVerseXIdentity] Migrating identity data to secure storage...");
+
+            string[] sensitiveKeys =
+            {
+                PREF_USERNAME, PREF_DEVICE_ID, PREF_GAME_ID,
+                PREF_GAME_WALLET_ID, PREF_GLOBAL_WALLET_ID,
+                PREF_GAME_WALLET_CURRENCY, PREF_GLOBAL_WALLET_CURRENCY,
+                PREF_COGNITO_USER_ID, PREF_EMAIL, PREF_IDP_USERNAME,
+                PREF_FIRST_NAME, PREF_LAST_NAME, PREF_WALLET_ADDRESS,
+                PREF_ROLE, PREF_LOGIN_TYPE, PREF_ACCOUNT_STATUS,
+                PREF_KYC_STATUS, PREF_GUEST_CREATED_EPOCH,
+                PREF_ACCESS_TOKEN, PREF_ID_TOKEN, PREF_REFRESH_TOKEN,
+                PREF_ACCESS_TOKEN_EXPIRY
+            };
+
+            foreach (string key in sensitiveKeys)
+            {
+                IVXSecureStorage.MigrateFromPlayerPrefs(key);
+            }
+
+            IVXSecureStorage.SetInt(PREF_IDENTITY_MIGRATED, 1);
+            Debug.Log("[IntelliVerseXIdentity] Migration complete.");
+        }
+
         private string GetOrCreateDeviceId()
         {
-            string deviceId = PlayerPrefs.GetString(PREF_DEVICE_ID, string.Empty);
+            string deviceId = IVXSecureStorage.GetString(PREF_DEVICE_ID, string.Empty);
 
             if (string.IsNullOrEmpty(deviceId))
             {
@@ -397,8 +429,7 @@ namespace IntelliVerseX.Core
                     deviceId = Guid.NewGuid().ToString();
                 }
                 
-                PlayerPrefs.SetString(PREF_DEVICE_ID, deviceId);
-                PlayerPrefs.Save();
+                IVXSecureStorage.SetString(PREF_DEVICE_ID, deviceId);
                 Debug.Log($"[IntelliVerseX] Generated new DeviceId: {deviceId}");
             }
 
@@ -407,13 +438,12 @@ namespace IntelliVerseX.Core
 
         private string GetOrCreateGameId()
         {
-            string gameId = PlayerPrefs.GetString(PREF_GAME_ID, string.Empty);
+            string gameId = IVXSecureStorage.GetString(PREF_GAME_ID, string.Empty);
 
             if (string.IsNullOrEmpty(gameId))
             {
                 gameId = Guid.NewGuid().ToString();
-                PlayerPrefs.SetString(PREF_GAME_ID, gameId);
-                PlayerPrefs.Save();
+                IVXSecureStorage.SetString(PREF_GAME_ID, gameId);
                 Debug.Log($"[IntelliVerseX] Generated new GameId: {gameId}");
             }
 
@@ -422,69 +452,68 @@ namespace IntelliVerseX.Core
 
         private void LoadCognitoIdentityFromPrefs()
         {
-            _currentUser.CognitoUserId = PlayerPrefs.GetString(PREF_COGNITO_USER_ID, string.Empty);
-            _currentUser.Email = PlayerPrefs.GetString(PREF_EMAIL, string.Empty);
-            _currentUser.IdpUsername = PlayerPrefs.GetString(PREF_IDP_USERNAME, string.Empty);
-            _currentUser.FirstName = PlayerPrefs.GetString(PREF_FIRST_NAME, string.Empty);
-            _currentUser.LastName = PlayerPrefs.GetString(PREF_LAST_NAME, string.Empty);
-            _currentUser.WalletAddress = PlayerPrefs.GetString(PREF_WALLET_ADDRESS, string.Empty);
-            _currentUser.Role = PlayerPrefs.GetString(PREF_ROLE, string.Empty);
-            _currentUser.IsAdult = PlayerPrefs.GetInt(PREF_IS_ADULT, 0) == 1 ? "True" : "False";  // Convert int to string
-            _currentUser.LoginType = PlayerPrefs.GetString(PREF_LOGIN_TYPE, string.Empty);
-            _currentUser.AccountStatus = PlayerPrefs.GetString(PREF_ACCOUNT_STATUS, string.Empty);
-            _currentUser.KycStatus = PlayerPrefs.GetString(PREF_KYC_STATUS, string.Empty);
+            _currentUser.CognitoUserId = IVXSecureStorage.GetString(PREF_COGNITO_USER_ID, string.Empty);
+            _currentUser.Email = IVXSecureStorage.GetString(PREF_EMAIL, string.Empty);
+            _currentUser.IdpUsername = IVXSecureStorage.GetString(PREF_IDP_USERNAME, string.Empty);
+            _currentUser.FirstName = IVXSecureStorage.GetString(PREF_FIRST_NAME, string.Empty);
+            _currentUser.LastName = IVXSecureStorage.GetString(PREF_LAST_NAME, string.Empty);
+            _currentUser.WalletAddress = IVXSecureStorage.GetString(PREF_WALLET_ADDRESS, string.Empty);
+            _currentUser.Role = IVXSecureStorage.GetString(PREF_ROLE, string.Empty);
+            _currentUser.IsAdult = IVXSecureStorage.GetInt(PREF_IS_ADULT, 0) == 1 ? "True" : "False";
+            _currentUser.LoginType = IVXSecureStorage.GetString(PREF_LOGIN_TYPE, string.Empty);
+            _currentUser.AccountStatus = IVXSecureStorage.GetString(PREF_ACCOUNT_STATUS, string.Empty);
+            _currentUser.KycStatus = IVXSecureStorage.GetString(PREF_KYC_STATUS, string.Empty);
             
             // Guest user fields
-            _currentUser.IsGuestUser = PlayerPrefs.GetInt(PREF_IS_GUEST, 0) == 1;
-            _currentUser.GuestCreatedEpoch = PlayerPrefs.HasKey(PREF_GUEST_CREATED_EPOCH) 
-                ? long.Parse(PlayerPrefs.GetString(PREF_GUEST_CREATED_EPOCH, "0")) 
+            _currentUser.IsGuestUser = IVXSecureStorage.GetInt(PREF_IS_GUEST, 0) == 1;
+            _currentUser.GuestCreatedEpoch = IVXSecureStorage.HasKey(PREF_GUEST_CREATED_EPOCH) 
+                ? long.Parse(IVXSecureStorage.GetString(PREF_GUEST_CREATED_EPOCH, "0")) 
                 : 0;
             
             // Tokens
-            _currentUser.AccessToken = PlayerPrefs.GetString(PREF_ACCESS_TOKEN, string.Empty);
-            _currentUser.IdToken = PlayerPrefs.GetString(PREF_ID_TOKEN, string.Empty);
-            _currentUser.RefreshToken = PlayerPrefs.GetString(PREF_REFRESH_TOKEN, string.Empty);
-            _currentUser.AccessTokenExpiryEpoch = PlayerPrefs.HasKey(PREF_ACCESS_TOKEN_EXPIRY)
-                ? long.Parse(PlayerPrefs.GetString(PREF_ACCESS_TOKEN_EXPIRY, "0"))
+            _currentUser.AccessToken = IVXSecureStorage.GetString(PREF_ACCESS_TOKEN, string.Empty);
+            _currentUser.IdToken = IVXSecureStorage.GetString(PREF_ID_TOKEN, string.Empty);
+            _currentUser.RefreshToken = IVXSecureStorage.GetString(PREF_REFRESH_TOKEN, string.Empty);
+            _currentUser.AccessTokenExpiryEpoch = IVXSecureStorage.HasKey(PREF_ACCESS_TOKEN_EXPIRY)
+                ? long.Parse(IVXSecureStorage.GetString(PREF_ACCESS_TOKEN_EXPIRY, "0"))
                 : 0;
         }
 
         private static void SaveCognitoIdentityToPrefs()
         {
-            PlayerPrefs.SetString(PREF_COGNITO_USER_ID, _currentUser.CognitoUserId ?? string.Empty);
-            PlayerPrefs.SetString(PREF_EMAIL, _currentUser.Email ?? string.Empty);
-            PlayerPrefs.SetString(PREF_IDP_USERNAME, _currentUser.IdpUsername ?? string.Empty);
-            PlayerPrefs.SetString(PREF_FIRST_NAME, _currentUser.FirstName ?? string.Empty);
-            PlayerPrefs.SetString(PREF_LAST_NAME, _currentUser.LastName ?? string.Empty);
-            PlayerPrefs.SetString(PREF_WALLET_ADDRESS, _currentUser.WalletAddress ?? string.Empty);
-            PlayerPrefs.SetString(PREF_ROLE, _currentUser.Role ?? string.Empty);
-            PlayerPrefs.SetInt(PREF_IS_ADULT, _currentUser.IsAdult == "True" ? 1 : 0);  // Convert string to int for storage
-            PlayerPrefs.SetString(PREF_LOGIN_TYPE, _currentUser.LoginType ?? string.Empty);
-            PlayerPrefs.SetString(PREF_ACCOUNT_STATUS, _currentUser.AccountStatus ?? string.Empty);
-            PlayerPrefs.SetString(PREF_KYC_STATUS, _currentUser.KycStatus ?? string.Empty);
-            PlayerPrefs.SetString(PREF_ACCESS_TOKEN, _currentUser.AccessToken ?? string.Empty);
-            PlayerPrefs.SetString(PREF_ID_TOKEN, _currentUser.IdToken ?? string.Empty);
-            PlayerPrefs.SetString(PREF_REFRESH_TOKEN, _currentUser.RefreshToken ?? string.Empty);
-            PlayerPrefs.SetString(PREF_ACCESS_TOKEN_EXPIRY, _currentUser.AccessTokenExpiryEpoch.ToString());
-            PlayerPrefs.Save();
+            IVXSecureStorage.SetString(PREF_COGNITO_USER_ID, _currentUser.CognitoUserId ?? string.Empty);
+            IVXSecureStorage.SetString(PREF_EMAIL, _currentUser.Email ?? string.Empty);
+            IVXSecureStorage.SetString(PREF_IDP_USERNAME, _currentUser.IdpUsername ?? string.Empty);
+            IVXSecureStorage.SetString(PREF_FIRST_NAME, _currentUser.FirstName ?? string.Empty);
+            IVXSecureStorage.SetString(PREF_LAST_NAME, _currentUser.LastName ?? string.Empty);
+            IVXSecureStorage.SetString(PREF_WALLET_ADDRESS, _currentUser.WalletAddress ?? string.Empty);
+            IVXSecureStorage.SetString(PREF_ROLE, _currentUser.Role ?? string.Empty);
+            IVXSecureStorage.SetInt(PREF_IS_ADULT, _currentUser.IsAdult == "True" ? 1 : 0);
+            IVXSecureStorage.SetString(PREF_LOGIN_TYPE, _currentUser.LoginType ?? string.Empty);
+            IVXSecureStorage.SetString(PREF_ACCOUNT_STATUS, _currentUser.AccountStatus ?? string.Empty);
+            IVXSecureStorage.SetString(PREF_KYC_STATUS, _currentUser.KycStatus ?? string.Empty);
+            IVXSecureStorage.SetString(PREF_ACCESS_TOKEN, _currentUser.AccessToken ?? string.Empty);
+            IVXSecureStorage.SetString(PREF_ID_TOKEN, _currentUser.IdToken ?? string.Empty);
+            IVXSecureStorage.SetString(PREF_REFRESH_TOKEN, _currentUser.RefreshToken ?? string.Empty);
+            IVXSecureStorage.SetString(PREF_ACCESS_TOKEN_EXPIRY, _currentUser.AccessTokenExpiryEpoch.ToString());
         }
 
         /// <summary>
-        /// Save current user data to PlayerPrefs
+        /// Save current user data to secure storage
         /// </summary>
         private void SaveUser()
         {
             if (_currentUser == null) return;
             
-            PlayerPrefs.SetString(PREF_USERNAME, _currentUser.Username ?? string.Empty);
-            PlayerPrefs.SetString(PREF_DEVICE_ID, _currentUser.DeviceId ?? string.Empty);
-            PlayerPrefs.SetString(PREF_GAME_ID, _currentUser.GameId ?? string.Empty);
-            PlayerPrefs.SetString(PREF_GAME_WALLET_ID, _currentUser.GameWalletId ?? string.Empty);
-            PlayerPrefs.SetString(PREF_GLOBAL_WALLET_ID, _currentUser.GlobalWalletId ?? string.Empty);
-            PlayerPrefs.SetInt(PREF_GAME_WALLET_BALANCE, _currentUser.GameWalletBalance);
-            PlayerPrefs.SetInt(PREF_GLOBAL_WALLET_BALANCE, _currentUser.GlobalWalletBalance);
-            PlayerPrefs.SetString(PREF_GAME_WALLET_CURRENCY, _currentUser.GameWalletCurrency ?? string.Empty);
-            PlayerPrefs.SetString(PREF_GLOBAL_WALLET_CURRENCY, _currentUser.GlobalWalletCurrency ?? string.Empty);
+            IVXSecureStorage.SetString(PREF_USERNAME, _currentUser.Username ?? string.Empty);
+            IVXSecureStorage.SetString(PREF_DEVICE_ID, _currentUser.DeviceId ?? string.Empty);
+            IVXSecureStorage.SetString(PREF_GAME_ID, _currentUser.GameId ?? string.Empty);
+            IVXSecureStorage.SetString(PREF_GAME_WALLET_ID, _currentUser.GameWalletId ?? string.Empty);
+            IVXSecureStorage.SetString(PREF_GLOBAL_WALLET_ID, _currentUser.GlobalWalletId ?? string.Empty);
+            IVXSecureStorage.SetInt(PREF_GAME_WALLET_BALANCE, _currentUser.GameWalletBalance);
+            IVXSecureStorage.SetInt(PREF_GLOBAL_WALLET_BALANCE, _currentUser.GlobalWalletBalance);
+            IVXSecureStorage.SetString(PREF_GAME_WALLET_CURRENCY, _currentUser.GameWalletCurrency ?? string.Empty);
+            IVXSecureStorage.SetString(PREF_GLOBAL_WALLET_CURRENCY, _currentUser.GlobalWalletCurrency ?? string.Empty);
             SaveCognitoIdentityToPrefs();
         }
     }

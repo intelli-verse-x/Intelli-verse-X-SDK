@@ -14,6 +14,13 @@ namespace IntelliVerseX.Core
         private static T _instance;
         private static bool _isQuitting = false;
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
+        {
+            _instance = null;
+            _isQuitting = false;
+        }
+
         /// <summary>
         /// Thread-safe singleton instance
         /// </summary>

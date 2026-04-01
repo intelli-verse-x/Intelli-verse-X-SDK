@@ -186,8 +186,15 @@ namespace IntelliVerseX.Backend
         private IPGeolocationResult _cachedResult;
         private float _lastFetchTime = float.MinValue;
         private readonly object _stateLock = new object();
-        private volatile bool _isOperationInProgress;
+        private int _isOperationInProgressFlag;
         private CancellationTokenSource _currentCts;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
+        {
+            _instance = null;
+            _isQuitting = false;
+        }
 
         #endregion
 
@@ -217,7 +224,7 @@ namespace IntelliVerseX.Backend
 
         #region Properties
 
-        public bool IsOperationInProgress => _isOperationInProgress;
+        public bool IsOperationInProgress => Interlocked.CompareExchange(ref _isOperationInProgressFlag, 0, 0) == 1;
         public bool HasCachedResult => _cachedResult != null && _cachedResult.Success;
         public IPGeolocationResult CachedResult => _cachedResult;
 
@@ -303,8 +310,7 @@ namespace IntelliVerseX.Backend
                 return _cachedResult;
             }
 
-            // Wait if operation in progress
-            if (_isOperationInProgress)
+            if (Interlocked.CompareExchange(ref _isOperationInProgressFlag, 1, 0) != 0)
             {
                 LogVerbose("Operation in progress, waiting...");
                 return await WaitForCurrentOperationAsync(ct);
@@ -331,7 +337,7 @@ namespace IntelliVerseX.Backend
         /// </summary>
         public void FetchLocationInBackground()
         {
-            if (_isOperationInProgress || IsCacheValid) return;
+            if (IsOperationInProgress || IsCacheValid) return;
             _ = GetLocationAsync(false);
         }
 
@@ -363,7 +369,7 @@ namespace IntelliVerseX.Backend
             catch (ObjectDisposedException) { }
             finally
             {
-                _isOperationInProgress = false;
+                Interlocked.Exchange(ref _isOperationInProgressFlag, 0);
             }
         }
 
@@ -373,7 +379,6 @@ namespace IntelliVerseX.Backend
 
         private async Task<IPGeolocationResult> FetchLocationInternalAsync(CancellationToken ct)
         {
-            _isOperationInProgress = true;
             _currentCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
             
             OnFetchStarted?.Invoke();
@@ -426,7 +431,7 @@ namespace IntelliVerseX.Backend
             }
             finally
             {
-                _isOperationInProgress = false;
+                Interlocked.Exchange(ref _isOperationInProgressFlag, 0);
                 _currentCts?.Dispose();
                 _currentCts = null;
                 OnFetchCompleted?.Invoke();
@@ -944,7 +949,7 @@ namespace IntelliVerseX.Backend
             int waitAttempts = 0;
             const int maxWaitAttempts = 150; // 15 seconds max
 
-            while (_isOperationInProgress && waitAttempts < maxWaitAttempts)
+            while (IsOperationInProgress && waitAttempts < maxWaitAttempts)
             {
                 ct.ThrowIfCancellationRequested();
                 await Task.Delay(100, ct);
@@ -982,7 +987,7 @@ namespace IntelliVerseX.Backend
         [ContextMenu("Debug: Log Cache Status")]
         private void DebugLogCacheStatus()
         {
-            Debug.Log($"[IVXIPGeo] Cache Valid: {IsCacheValid}, Has Result: {HasCachedResult}, In Progress: {_isOperationInProgress}");
+            Debug.Log($"[IVXIPGeo] Cache Valid: {IsCacheValid}, Has Result: {HasCachedResult}, In Progress: {IsOperationInProgress}");
             if (_cachedResult != null)
             {
                 Debug.Log($"[IVXIPGeo] Cached: {_cachedResult}");
@@ -999,19 +1004,33 @@ namespace IntelliVerseX.Backend
         [ContextMenu("Debug: Force Fetch")]
         private async void DebugForceFetch()
         {
-            var result = await GetLocationAsync(true);
-            Debug.Log($"[IVXIPGeo] Force fetch result: {result}");
+            try
+            {
+                var result = await GetLocationAsync(true);
+                Debug.Log($"[IVXIPGeo] Force fetch result: {result}");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
         }
 
         [ContextMenu("Debug: Test All APIs")]
         private async void DebugTestAllApis()
         {
-            Debug.Log("[IVXIPGeo] Testing all APIs...");
-            
-            foreach (var provider in _providers)
+            try
             {
-                var result = await FetchFromProviderAsync(provider, CancellationToken.None);
-                Debug.Log($"[IVXIPGeo] {provider.Name}: {(result.Success ? $"✓ {result.Country}, {result.City}" : $"✗ {result.Error}")}");
+                Debug.Log("[IVXIPGeo] Testing all APIs...");
+
+                foreach (var provider in _providers)
+                {
+                    var result = await FetchFromProviderAsync(provider, CancellationToken.None);
+                    Debug.Log($"[IVXIPGeo] {provider.Name}: {(result.Success ? $"✓ {result.Country}, {result.City}" : $"✗ {result.Error}")}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
             }
         }
 

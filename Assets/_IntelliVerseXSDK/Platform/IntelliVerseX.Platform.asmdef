@@ -1,0 +1,16 @@
+{
+    "name": "IntelliVerseX.Platform",
+    "rootNamespace": "IntelliVerseX.Platform",
+    "references": [
+        "IntelliVerseX.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

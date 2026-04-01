@@ -11,6 +11,7 @@ using Nakama;
 using Newtonsoft.Json;
 using IntelliVerseX.Core;
 using IntelliVerseX.Identity;
+using IntelliVerseX.Storage;
 
 namespace IntelliVerseX.Backend
 {
@@ -69,7 +70,7 @@ namespace IntelliVerseX.Backend
         protected int _currentWinStreak = 0;
 
         [Header("Initialization")]
-        [SerializeField] public bool _initializeOnStart = false;
+        [SerializeField] private bool _initializeOnStart = false;
 
         // Public accessors
         public IClient Client => _client;
@@ -237,8 +238,10 @@ namespace IntelliVerseX.Backend
         {
             try
             {
-                // 1) Try to restore previous Nakama session
-                var authToken = PlayerPrefs.GetString(PREF_AUTH_TOKEN, "");
+                // 1) Try to restore previous Nakama session (migrate legacy plaintext PlayerPrefs if needed)
+                IVXSecureStorage.MigrateFromPlayerPrefs(PREF_AUTH_TOKEN);
+                IVXSecureStorage.MigrateFromPlayerPrefs(PREF_REFRESH_TOKEN);
+                var authToken = IVXSecureStorage.GetString(PREF_AUTH_TOKEN, "");
                 if (!string.IsNullOrEmpty(authToken))
                 {
                     var restoredSession = global::Nakama.Session.Restore(authToken);
@@ -384,9 +387,8 @@ namespace IntelliVerseX.Backend
 
         protected virtual void SaveSession(ISession session)
         {
-            PlayerPrefs.SetString(PREF_AUTH_TOKEN, session.AuthToken);
-            PlayerPrefs.SetString(PREF_REFRESH_TOKEN, session.RefreshToken);
-            PlayerPrefs.Save();
+            IVXSecureStorage.SetString(PREF_AUTH_TOKEN, session.AuthToken);
+            IVXSecureStorage.SetString(PREF_REFRESH_TOKEN, session.RefreshToken);
             Debug.Log($"{GetLogPrefix()} Session saved");
         }
 

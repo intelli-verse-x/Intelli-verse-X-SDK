@@ -117,6 +117,10 @@ namespace IntelliVerseX.Monetization
         private static void EnsureRunner()
         {
             if (_runner != null) return;
+
+            _runner = UnityEngine.Object.FindFirstObjectByType<IVXAdsRunner>(FindObjectsInactive.Include);
+            if (_runner != null) return;
+
             var go = new GameObject("IVXAdsManager_Runner");
             UnityEngine.Object.DontDestroyOnLoad(go);
             _runner = go.AddComponent<IVXAdsRunner>();
@@ -847,10 +851,18 @@ namespace IntelliVerseX.Monetization
                 // Initialize Meta Audience Network
                 AudienceNetwork.AdSettings.SetAdvertiserTrackingEnabled(true);
                 
-                // Test mode
+                // Test mode: set IVXAdNetworkConfig.MetaAudienceTestDeviceHash before ads init
                 if (IVXAdNetworkConfig.TEST_MODE)
                 {
-                    AudienceNetwork.AdSettings.AddTestDevice("YOUR_TEST_DEVICE_HASH");
+                    string metaTestHash = IVXAdNetworkConfig.MetaAudienceTestDeviceHash;
+                    if (!string.IsNullOrWhiteSpace(metaTestHash))
+                    {
+                        AudienceNetwork.AdSettings.AddTestDevice(metaTestHash);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("[Meta] TEST_MODE is enabled but MetaAudienceTestDeviceHash is empty; skipping AddTestDevice.");
+                    }
                 }
 
                 Debug.Log("[Meta] Audience Network initialized");
@@ -898,6 +910,12 @@ namespace IntelliVerseX.Monetization
         private static void InitializeAppodeal()
         {
 #if APPODEAL
+            if (_appodealInitialized)
+            {
+                Debug.Log("[IVXAdsManager] Appodeal already initialized; skipping.");
+                return;
+            }
+
             try
             {
                 string appKey = IVXAdNetworkConfig.GetAppodealAppKey();
@@ -910,9 +928,16 @@ namespace IntelliVerseX.Monetization
 
                 int adTypes = IVXAdNetworkConfig.AD_TYPES;
 
+                // Unsubscribe before subscribe so repeated init cannot duplicate handlers
+                AppodealCallbacks.RewardedVideo.OnClosed -= OnAppodealRewardedClosed;
+                AppodealCallbacks.RewardedVideo.OnShowFailed -= OnAppodealRewardedShowFailed;
+                AppodealCallbacks.RewardedVideo.OnExpired -= OnAppodealRewardedExpired;
+                AppodealCallbacks.Interstitial.OnClosed -= OnAppodealInterstitialClosed;
+                AppodealCallbacks.Interstitial.OnShowFailed -= OnAppodealInterstitialShowFailed;
+                AppodealCallbacks.Interstitial.OnExpired -= OnAppodealInterstitialExpired;
+
                 // Init
                 Appodeal.Initialize(appKey, adTypes);
-                _appodealInitialized = true;
 
                 // Auto-cache
                 if (IVXAdNetworkConfig.APPODEAL_AUTO_CACHE)
@@ -929,6 +954,8 @@ namespace IntelliVerseX.Monetization
                 AppodealCallbacks.Interstitial.OnClosed += OnAppodealInterstitialClosed;
                 AppodealCallbacks.Interstitial.OnShowFailed += OnAppodealInterstitialShowFailed;
                 AppodealCallbacks.Interstitial.OnExpired += OnAppodealInterstitialExpired;
+
+                _appodealInitialized = true;
 
 #if UNITY_ANDROID || UNITY_IOS
                 // Prime the cache once

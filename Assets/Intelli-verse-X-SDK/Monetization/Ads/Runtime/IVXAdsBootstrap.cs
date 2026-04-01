@@ -4,6 +4,7 @@ using IntelliVerseX.Monetization;
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
@@ -529,20 +530,72 @@ namespace IntelliVerseX.Monetization.Ads
             if (config != null) IVXAdNetworkConfig.LoadConfig(config);
         }
 
+        private static readonly Dictionary<string, Type> _typeCache = new Dictionary<string, Type>();
+
         private static Type FindType(string typeName)
         {
+            if (string.IsNullOrEmpty(typeName))
+                return null;
+
+            if (_typeCache.TryGetValue(typeName, out var cached))
+                return cached;
+
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
+                Type type = null;
                 try
                 {
-                    foreach (var type in assembly.GetTypes())
+                    type = assembly.GetType(typeName);
+                }
+                catch
+                {
+                    continue;
+                }
+
+                if (type != null)
+                {
+                    _typeCache[typeName] = type;
+                    return type;
+                }
+            }
+
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                Type[] types;
+                try
+                {
+                    types = assembly.GetTypes();
+                }
+                catch (ReflectionTypeLoadException ex)
+                {
+                    if (ex.Types == null)
+                        continue;
+                    foreach (var t in ex.Types)
                     {
-                        if (type.Name == typeName || type.FullName == typeName)
-                            return type;
+                        if (t != null && (t.Name == typeName || t.FullName == typeName))
+                        {
+                            _typeCache[typeName] = t;
+                            return t;
+                        }
+                    }
+
+                    continue;
+                }
+                catch
+                {
+                    continue;
+                }
+
+                foreach (var t in types)
+                {
+                    if (t != null && (t.Name == typeName || t.FullName == typeName))
+                    {
+                        _typeCache[typeName] = t;
+                        return t;
                     }
                 }
-                catch { }
             }
+
             return null;
         }
     }

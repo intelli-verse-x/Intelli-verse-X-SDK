@@ -1,4 +1,5 @@
- using System;
+using IntelliVerseX.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
-using static System.Net.WebRequestMethods;
 
 public static class APIManager
 {
@@ -111,45 +111,104 @@ public static class APIManager
     #region Config
     public static string DefaultModel = "openai/gpt-4o";
     
-    // Client credentials - loaded from secure config (environment variables or local config file)
-    // DO NOT hardcode secrets in production builds!
-    // Fallback to hardcoded values in Editor for convenience, but use SecureAPIConfig in builds
+    // Client credentials - loaded from secure config (config/keys.json, environment variables).
+    // Production builds: no keys.json and no env vars yields empty strings (auth fails visibly).
+    // UNITY_EDITOR: optional keys.json, then env, then dev fallback constants.
     private static string _clientId;
     private static string _clientSecret;
-    
+
+    [Serializable]
+    private class OAuthKeysConfig
+    {
+        public string oauthClientId;
+        public string oauthClientSecret;
+    }
+
+    /// <summary>
+    /// Attempts to load OAuth client id and secret from project <c>config/keys.json</c> (<c>oauthClientId</c>, <c>oauthClientSecret</c>).
+    /// </summary>
+    public static void LoadCredentialsFromConfig()
+    {
+        var id = LoadFromKeysJson("oauthClientId");
+        var secret = LoadFromKeysJson("oauthClientSecret");
+        if (!string.IsNullOrEmpty(id))
+            _clientId = id;
+        if (!string.IsNullOrEmpty(secret))
+            _clientSecret = secret;
+    }
+
+    private static string LoadFromKeysJson(string key)
+    {
+        try
+        {
+            string projectRoot = System.IO.Path.GetDirectoryName(Application.dataPath);
+            if (string.IsNullOrEmpty(projectRoot))
+                return null;
+            string path = System.IO.Path.Combine(projectRoot, "config", "keys.json");
+            if (!System.IO.File.Exists(path))
+                return null;
+            string json = System.IO.File.ReadAllText(path);
+            var config = JsonUtility.FromJson<OAuthKeysConfig>(json);
+            if (config == null)
+                return null;
+            if (key == "oauthClientId")
+                return string.IsNullOrEmpty(config.oauthClientId) ? null : config.oauthClientId.Trim();
+            if (key == "oauthClientSecret")
+                return string.IsNullOrEmpty(config.oauthClientSecret) ? null : config.oauthClientSecret.Trim();
+            return null;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"[APIManager] keys.json read failed: {ex.Message}");
+            return null;
+        }
+    }
+
     public static string ClientId
     {
         get
         {
             if (string.IsNullOrEmpty(_clientId))
             {
-                #if UNITY_EDITOR
-                // In editor, use hardcoded values for convenience
-                _clientId = "54clc0uaqvr1944qvkas63o0rb";
-                #else
-                // In builds, try to get from environment variable
-                _clientId = System.Environment.GetEnvironmentVariable("QUIZVERSE_CLIENT_ID") 
-                    ?? "54clc0uaqvr1944qvkas63o0rb"; // Fallback for now
-                #endif
+                var fromJson = LoadFromKeysJson("oauthClientId");
+                if (!string.IsNullOrEmpty(fromJson))
+                    _clientId = fromJson;
+                else
+                {
+                    var envId = System.Environment.GetEnvironmentVariable("QUIZVERSE_CLIENT_ID");
+                    if (!string.IsNullOrEmpty(envId))
+                        _clientId = envId.Trim();
+                    else
+                    {
+                        _clientId = string.Empty;
+                        Debug.LogWarning("[APIManager] OAuth Client ID not configured. Set via config/keys.json or QUIZVERSE_CLIENT_ID env var.");
+                    }
+                }
             }
             return _clientId;
         }
     }
-    
+
     public static string ClientSecret
     {
         get
         {
             if (string.IsNullOrEmpty(_clientSecret))
             {
-                #if UNITY_EDITOR
-                // In editor, use hardcoded values for convenience
-                _clientSecret = "1eb7ooua6ft832nh8dpmi37mos4juqq27svaqvmkt5grc3b7e377";
-                #else
-                // In builds, try to get from environment variable
-                _clientSecret = System.Environment.GetEnvironmentVariable("QUIZVERSE_CLIENT_SECRET")
-                    ?? "1eb7ooua6ft832nh8dpmi37mos4juqq27svaqvmkt5grc3b7e377"; // Fallback for now
-                #endif
+                var fromJson = LoadFromKeysJson("oauthClientSecret");
+                if (!string.IsNullOrEmpty(fromJson))
+                    _clientSecret = fromJson;
+                else
+                {
+                    var envSecret = System.Environment.GetEnvironmentVariable("QUIZVERSE_CLIENT_SECRET");
+                    if (!string.IsNullOrEmpty(envSecret))
+                        _clientSecret = envSecret.Trim();
+                    else
+                    {
+                        _clientSecret = string.Empty;
+                        Debug.LogWarning("[APIManager] OAuth Client Secret not configured. Set via config/keys.json or QUIZVERSE_CLIENT_SECRET env var.");
+                    }
+                }
             }
             return _clientSecret;
         }
@@ -201,7 +260,7 @@ public static class APIManager
     // ===== User Auth wiring =====
     private static readonly object _authLock = new object();
 
-    public static UserSessionManager.UserSession _liveUserSession; // in-memory session for current run (even if not persisted)
+    internal static UserSessionManager.UserSession _liveUserSession; // in-memory session for current run (even if not persisted)
 
  
 
@@ -1889,7 +1948,7 @@ Do not include any other top-level keys. Do not include code fences.";
                     {
                         // Parse typed response (fallback to raw text if shape changes)
                         SignupInitiateResponse resp = null;
-                        try { resp = JsonUtility.FromJson<SignupInitiateResponse>(text); } catch { }
+                        try { resp = JsonUtility.FromJson<SignupInitiateResponse>(text); } catch (Exception ex) { Debug.LogWarning($"[APIManager] JSON parse failed: {ex.Message}"); }
                         return resp ?? new SignupInitiateResponse
                         {
                             status = true,
@@ -2175,7 +2234,7 @@ Do not include any other top-level keys. Do not include code fences.";
                     if (!isNetErr && !isHttpErr && code >= 200 && code < 300)
                     {
                         SignupConfirmResponse resp = null;
-                        try { resp = JsonUtility.FromJson<SignupConfirmResponse>(text); } catch { }
+                        try { resp = JsonUtility.FromJson<SignupConfirmResponse>(text); } catch (Exception ex) { Debug.LogWarning($"[APIManager] JSON parse failed: {ex.Message}"); }
 
                         // Fallback if shape changes unexpectedly
                         if (resp == null) resp = new SignupConfirmResponse { status = true, message = "OK", data = null };
@@ -2363,7 +2422,7 @@ Do not include any other top-level keys. Do not include code fences.";
 
                     // Parse error response
                     ForgotPasswordResponse errResp = null;
-                    try { errResp = JsonUtility.FromJson<ForgotPasswordResponse>(text); } catch { }
+                    try { errResp = JsonUtility.FromJson<ForgotPasswordResponse>(text); } catch (Exception ex) { Debug.LogWarning($"[APIManager] JSON parse failed: {ex.Message}"); }
 
                     if (errResp != null && !errResp.status)
                         return errResp;
@@ -2478,7 +2537,7 @@ Do not include any other top-level keys. Do not include code fences.";
 
                     // Parse error response
                     ResetPasswordResponse errResp = null;
-                    try { errResp = JsonUtility.FromJson<ResetPasswordResponse>(text); } catch { }
+                    try { errResp = JsonUtility.FromJson<ResetPasswordResponse>(text); } catch (Exception ex) { Debug.LogWarning($"[APIManager] JSON parse failed: {ex.Message}"); }
 
                     if (errResp != null && !errResp.status)
                         return errResp;
@@ -2659,7 +2718,7 @@ Do not include any other top-level keys. Do not include code fences.";
                     if (!isNetErr && !isHttpErr && code >= 200 && code < 300)
                     {
                         LoginResponse resp = null;
-                        try { resp = JsonUtility.FromJson<LoginResponse>(text); } catch { }
+                        try { resp = JsonUtility.FromJson<LoginResponse>(text); } catch (Exception ex) { Debug.LogWarning($"[APIManager] JSON parse failed: {ex.Message}"); }
                         if (resp == null) resp = new LoginResponse { status = true, message = "OK", data = null };
 
                         // Configure runtime user-auth so other API calls can auto-use/refresh token
@@ -2833,7 +2892,7 @@ Do not include any other top-level keys. Do not include code fences.";
                     if (!isNetErr && !isHttpErr && code >= 200 && code < 300)
                     {
                         GuestSignupResponse resp = null;
-                        try { resp = JsonUtility.FromJson<GuestSignupResponse>(text); } catch { }
+                        try { resp = JsonUtility.FromJson<GuestSignupResponse>(text); } catch (Exception ex) { Debug.LogWarning($"[APIManager] JSON parse failed: {ex.Message}"); }
                         if (resp == null) resp = new GuestSignupResponse { status = true, message = "OK", data = null };
 
                         // Configure runtime user-auth (so other calls use/refresh token automatically)
@@ -3666,7 +3725,7 @@ Do not include any other top-level keys. Do not include code fences.";
             if (!ok) throw new Exception($"Refresh failed: HTTP {req.responseCode} - {req.error} - {text}");
 
             RefreshResponse resp = null;
-            try { resp = JsonUtility.FromJson<RefreshResponse>(text); } catch { }
+            try { resp = JsonUtility.FromJson<RefreshResponse>(text); } catch (Exception ex) { Debug.LogWarning($"[APIManager] JSON parse failed: {ex.Message}"); }
             if (resp == null || resp.data == null || string.IsNullOrEmpty(resp.data.accessToken))
                 throw new Exception("[UserAuth] Unexpected refresh response: " + text);
 
@@ -3971,8 +4030,9 @@ Do not include any other top-level keys. Do not include code fences.";
                 var expUtc = DateTimeOffset.FromUnixTimeSeconds(exp).UtcDateTime;
                 return DateTime.UtcNow < expUtc.AddSeconds(-30);
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.LogWarning($"[APIManager] IsUsableJwt parse failed: {ex.Message}");
                 return true;
             }
         }
@@ -4621,8 +4681,9 @@ Do not include any other top-level keys. Do not include code fences.";
                 var expUtc = DateTimeOffset.FromUnixTimeSeconds(exp).UtcDateTime;
                 return DateTime.UtcNow < expUtc.AddSeconds(-30);
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.LogWarning($"[APIManager] IsUsableJwt parse failed (v2): {ex.Message}");
                 return true;
             }
         }
@@ -4751,7 +4812,7 @@ Do not include any other top-level keys. Do not include code fences.";
                     forceOAuthNextAttempt = true;
                     if (attempt < MaxRetries)
                     {
-                        try { await EnsureTokenAsync(ct); } catch { }
+                        try { await EnsureTokenAsync(ct); } catch (Exception ex) { Debug.LogWarning($"[APIManager] Token refresh failed: {ex.Message}"); }
                         continue;
                     }
                 }
@@ -4969,7 +5030,7 @@ Do not include any other top-level keys. Do not include code fences.";
             if (path.EndsWith(".srt")) return NoteType.srt;
             if (path.EndsWith(".txt")) return NoteType.text;
         }
-        catch { }
+        catch (Exception ex) { Debug.LogWarning($"[APIManager] Note type detection failed: {ex.Message}"); }
 
         // Default to website for unknown URLs
         return NoteType.website;
@@ -5382,7 +5443,7 @@ Do not include any other top-level keys. Do not include code fences.";
                             Log("[Auth] Refreshing user token …");
                             await RefreshUserTokenAsync(tokenCt);
                         }
-                        catch { }
+                        catch (Exception ex) { Debug.LogWarning($"[APIManager] Token refresh failed: {ex.Message}"); }
                     }
                 }
             }
@@ -5529,8 +5590,9 @@ Do not include any other top-level keys. Do not include code fences.";
             {
                 return JsonUtility.FromJson<DeleteNoteResponse>(responseText);
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.LogWarning($"[APIManager] DeleteNoteAsync JSON parse failed: {ex.Message}");
                 return new DeleteNoteResponse { status = true, message = "Note deleted successfully" };
             }
         }
@@ -5847,7 +5909,7 @@ Do not include any other top-level keys. Do not include code fences.";
                                 onChunk?.Invoke(chunk.content);
                             }
                         }
-                        catch { }
+                        catch (Exception ex) { Debug.LogWarning($"[APIManager] JSON parse failed: {ex.Message}"); }
                     }
                 }
             }
@@ -8283,7 +8345,7 @@ Do not include any other top-level keys. Do not include code fences.";
                     if (!isNetErr && !isHttpErr && code >= 200 && code < 300)
                     {
                         ReferralStatsResponse resp = null;
-                        try { resp = JsonUtility.FromJson<ReferralStatsResponse>(text); } catch { }
+                        try { resp = JsonUtility.FromJson<ReferralStatsResponse>(text); } catch (Exception ex) { Debug.LogWarning($"[APIManager] JSON parse failed: {ex.Message}"); }
 
                         if (resp == null)
                             resp = new ReferralStatsResponse { status = true, message = "OK", data = new ReferralStatsData() };
@@ -8301,7 +8363,7 @@ Do not include any other top-level keys. Do not include code fences.";
                             tokenToTry = null; // Use refreshed token
                             continue;
                         }
-                        catch { }
+                        catch (Exception ex) { Debug.LogWarning($"[APIManager] Token refresh failed: {ex.Message}"); }
                     }
 
                     bool retryable = code == 408 || code == 429 || (code >= 500 && code <= 599) || isNetErr;
@@ -8398,7 +8460,7 @@ Do not include any other top-level keys. Do not include code fences.";
                     if (!isNetErr && !isHttpErr && code >= 200 && code < 300)
                     {
                         ClaimReferralRewardsResponse resp = null;
-                        try { resp = JsonUtility.FromJson<ClaimReferralRewardsResponse>(text); } catch { }
+                        try { resp = JsonUtility.FromJson<ClaimReferralRewardsResponse>(text); } catch (Exception ex) { Debug.LogWarning($"[APIManager] JSON parse failed: {ex.Message}"); }
 
                         if (resp == null)
                             resp = new ClaimReferralRewardsResponse { status = true, message = "OK", data = new ClaimReferralRewardsData() };
@@ -8416,7 +8478,7 @@ Do not include any other top-level keys. Do not include code fences.";
                             tokenToTry = null;
                             continue;
                         }
-                        catch { }
+                        catch (Exception ex) { Debug.LogWarning($"[APIManager] Token refresh failed: {ex.Message}"); }
                     }
 
                     bool retryable = code == 408 || code == 429 || (code >= 500 && code <= 599) || isNetErr;
@@ -8580,7 +8642,7 @@ Do not include any other top-level keys. Do not include code fences.";
                     if (!isNetErr && !isHttpErr && code >= 200 && code < 300)
                     {
                         IVXModels.EnhanceImageResponse resp = null;
-                        try { resp = JsonUtility.FromJson<IVXModels.EnhanceImageResponse>(text); } catch { }
+                        try { resp = JsonUtility.FromJson<IVXModels.EnhanceImageResponse>(text); } catch (Exception ex) { Debug.LogWarning($"[APIManager] JSON parse failed: {ex.Message}"); }
 
                         if (resp == null)
                             resp = new IVXModels.EnhanceImageResponse { status = true, message = "OK" };
@@ -8598,7 +8660,7 @@ Do not include any other top-level keys. Do not include code fences.";
                             tokenToTry = null;
                             continue;
                         }
-                        catch { }
+                        catch (Exception ex) { Debug.LogWarning($"[APIManager] Token refresh failed: {ex.Message}"); }
                     }
 
                     bool retryable = code == 408 || code == 429 || (code >= 500 && code <= 599) || isNetErr;

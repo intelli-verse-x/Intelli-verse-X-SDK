@@ -233,7 +233,7 @@ int rank = await IVXGLeaderboardManager.GetPlayerRankAsync();");
             var managerType = FindType("IntelliVerseX.Backend.IVXNManager");
             if (managerType != null)
             {
-                var existing = UnityEngine.Object.FindObjectOfType(managerType);
+                var existing = UnityEngine.Object.FindAnyObjectByType(managerType);
                 if (existing == null)
                 {
                     var go = new GameObject("NakamaManager");
@@ -688,19 +688,30 @@ IVXAdsManager.HideBanner();");
             EditorGUILayout.Space(5);
         }
 
+        private static readonly Dictionary<string, Type> _typeCache = new Dictionary<string, Type>();
+
         private static Type FindType(string fullName)
         {
+            if (_typeCache.TryGetValue(fullName, out var cached))
+                return cached;
+
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 var type = assembly.GetType(fullName);
-                if (type != null) return type;
+                if (type != null)
+                {
+                    _typeCache[fullName] = type;
+                    return type;
+                }
             }
+
+            _typeCache[fullName] = null;
             return null;
         }
 
         private Canvas FindOrCreateCanvas()
         {
-            var canvas = UnityEngine.Object.FindObjectOfType<Canvas>();
+            var canvas = UnityEngine.Object.FindAnyObjectByType<Canvas>();
             if (canvas != null) return canvas;
 
             var go = new GameObject("Canvas");

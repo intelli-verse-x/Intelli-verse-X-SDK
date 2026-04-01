@@ -83,7 +83,7 @@ namespace IntelliVerseX.Editor
                     Description = "Core SDK foundation with singletons, config, and utilities",
                     Namespace = "IntelliVerseX.Core",
                     AssemblyName = "IntelliVerseX.Core",
-                    FolderPath = "Assets/_IntelliVerseXSDK/Core",
+                    FolderPath = "Assets/Intelli-verse-X-SDK/Core",
                     Dependencies = new List<ModuleType>(),
                     RequiredScripts = new List<string>
                     {
@@ -104,7 +104,7 @@ namespace IntelliVerseX.Editor
                     Description = "User identity, authentication, and session management",
                     Namespace = "IntelliVerseX.Identity",
                     AssemblyName = "IntelliVerseX.Identity",
-                    FolderPath = "Assets/_IntelliVerseXSDK/Identity",
+                    FolderPath = "Assets/Intelli-verse-X-SDK/Identity",
                     Dependencies = new List<ModuleType> { ModuleType.Core },
                     RequiredScripts = new List<string>
                     {
@@ -124,7 +124,7 @@ namespace IntelliVerseX.Editor
                     Description = "Nakama backend integration and services",
                     Namespace = "IntelliVerseX.Backend",
                     AssemblyName = "IntelliVerseX.Backend",
-                    FolderPath = "Assets/_IntelliVerseXSDK/Backend",
+                    FolderPath = "Assets/Intelli-verse-X-SDK/Backend",
                     Dependencies = new List<ModuleType> { ModuleType.Core, ModuleType.Identity },
                     RequiredScripts = new List<string>
                     {
@@ -149,7 +149,7 @@ namespace IntelliVerseX.Editor
                     Description = "HTTP requests with retry logic and offline detection",
                     Namespace = "IntelliVerseX.Networking",
                     AssemblyName = "IntelliVerseX.Networking",
-                    FolderPath = "Assets/_IntelliVerseXSDK/Networking",
+                    FolderPath = "Assets/Intelli-verse-X-SDK/Networking",
                     Dependencies = new List<ModuleType> { ModuleType.Core },
                     RequiredScripts = new List<string>
                     {
@@ -166,7 +166,7 @@ namespace IntelliVerseX.Editor
                     Description = "Secure storage with encryption and GDPR compliance",
                     Namespace = "IntelliVerseX.Storage",
                     AssemblyName = "IntelliVerseX.Storage",
-                    FolderPath = "Assets/_IntelliVerseXSDK/Storage",
+                    FolderPath = "Assets/Intelli-verse-X-SDK/Storage",
                     Dependencies = new List<ModuleType> { ModuleType.Core },
                     RequiredScripts = new List<string>
                     {
@@ -185,7 +185,7 @@ namespace IntelliVerseX.Editor
                     Description = "Quiz system with providers, sessions, and scoring",
                     Namespace = "IntelliVerseX.Quiz",
                     AssemblyName = "IntelliVerseX.Quiz",
-                    FolderPath = "Assets/_IntelliVerseXSDK/Quiz",
+                    FolderPath = "Assets/Intelli-verse-X-SDK/Quiz",
                     Dependencies = new List<ModuleType> { ModuleType.Core, ModuleType.Networking },
                     RequiredScripts = new List<string>
                     {
@@ -203,7 +203,7 @@ namespace IntelliVerseX.Editor
                     Description = "Daily, weekly, monthly, and global leaderboards",
                     Namespace = "IntelliVerseX.Games.Leaderboard",
                     AssemblyName = "IntelliVerseX.Games.Leaderboard",
-                    FolderPath = "Assets/_IntelliVerseXSDK/Leaderboard",
+                    FolderPath = "Assets/Intelli-verse-X-SDK/Leaderboard",
                     Dependencies = new List<ModuleType> { ModuleType.Core, ModuleType.Backend },
                     RequiredScripts = new List<string>
                     {
@@ -222,7 +222,7 @@ namespace IntelliVerseX.Editor
                     Description = "Dual-wallet system (game + global currency)",
                     Namespace = "IntelliVerseX.Core",
                     AssemblyName = "IntelliVerseX.Core",
-                    FolderPath = "Assets/_IntelliVerseXSDK/V2/Manager",
+                    FolderPath = "Assets/Intelli-verse-X-SDK/V2/Manager",
                     Dependencies = new List<ModuleType> { ModuleType.Core, ModuleType.Backend },
                     RequiredScripts = new List<string>
                     {
@@ -239,7 +239,7 @@ namespace IntelliVerseX.Editor
                     Description = "Friends system with search, requests, and chat",
                     Namespace = "IntelliVerseX.Social",
                     AssemblyName = "IntelliVerseX.Social",
-                    FolderPath = "Assets/_IntelliVerseXSDK/Social",
+                    FolderPath = "Assets/Intelli-verse-X-SDK/Social",
                     Dependencies = new List<ModuleType> { ModuleType.Core, ModuleType.Backend, ModuleType.Identity },
                     RequiredScripts = new List<string>
                     {
@@ -264,7 +264,7 @@ namespace IntelliVerseX.Editor
                     Description = "Multi-language support with RTL for 13 languages",
                     Namespace = "IntelliVerseX.Localization",
                     AssemblyName = "IntelliVerseX.Localization",
-                    FolderPath = "Assets/_IntelliVerseXSDK/Localization",
+                    FolderPath = "Assets/Intelli-verse-X-SDK/Localization",
                     Dependencies = new List<ModuleType> { ModuleType.Core },
                     SetupPriority = "Normal"
                 }
@@ -279,7 +279,7 @@ namespace IntelliVerseX.Editor
                     Description = "Unity IAP integration with subscriptions",
                     Namespace = "IntelliVerseX.IAP",
                     AssemblyName = "IntelliVerseX.IAP",
-                    FolderPath = "Assets/_IntelliVerseXSDK/IAP",
+                    FolderPath = "Assets/Intelli-verse-X-SDK/IAP",
                     Dependencies = new List<ModuleType> { ModuleType.Core },
                     RequiredScripts = new List<string>
                     {
@@ -299,7 +299,7 @@ namespace IntelliVerseX.Editor
                     Description = "Ad mediation with LevelPlay and Appodeal",
                     Namespace = "IntelliVerseX.Monetization",
                     AssemblyName = "IntelliVerseX.Monetization",
-                    FolderPath = "Assets/_IntelliVerseXSDK/Monetization",
+                    FolderPath = "Assets/Intelli-verse-X-SDK/Monetization",
                     Dependencies = new List<ModuleType> { ModuleType.Core },
                     RequiredPrefabs = new List<string>
                     {
@@ -317,7 +317,7 @@ namespace IntelliVerseX.Editor
                     Description = "Event tracking and user analytics",
                     Namespace = "IntelliVerseX.Analytics",
                     AssemblyName = "IntelliVerseX.Analytics",
-                    FolderPath = "Assets/_IntelliVerseXSDK/Analytics",
+                    FolderPath = "Assets/Intelli-verse-X-SDK/Analytics",
                     Dependencies = new List<ModuleType> { ModuleType.Core },
                     RequiredScripts = new List<string>
                     {
@@ -338,7 +338,7 @@ namespace IntelliVerseX.Editor
                     Description = "Reusable UI components and prefabs",
                     Namespace = "IntelliVerseX.UI",
                     AssemblyName = "IntelliVerseX.UI",
-                    FolderPath = "Assets/_IntelliVerseXSDK/UI",
+                    FolderPath = "Assets/Intelli-verse-X-SDK/UI",
                     Dependencies = new List<ModuleType> { ModuleType.Core },
                     SetupPriority = "Normal"
                 }
@@ -370,7 +370,7 @@ namespace IntelliVerseX.Editor
                     Description = "Logging, error handling, and performance monitoring",
                     Namespace = "IntelliVerseX.Diagnostics",
                     AssemblyName = "IntelliVerseX.Diagnostics",
-                    FolderPath = "Assets/_IntelliVerseXSDK/Diagnostics",
+                    FolderPath = "Assets/Intelli-verse-X-SDK/Diagnostics",
                     Dependencies = new List<ModuleType> { ModuleType.Core },
                     IsOptional = true,
                     SetupPriority = "Low"
@@ -384,7 +384,7 @@ namespace IntelliVerseX.Editor
                     Description = "Resource pooling and memory management",
                     Namespace = "IntelliVerseX.Resources",
                     AssemblyName = "IntelliVerseX.Resources",
-                    FolderPath = "Assets/_IntelliVerseXSDK/Resources",
+                    FolderPath = "Assets/Intelli-verse-X-SDK/Resources",
                     Dependencies = new List<ModuleType> { ModuleType.Core },
                     IsOptional = true,
                     SetupPriority = "Low"
