@@ -851,15 +851,17 @@ namespace IntelliVerseX.Backend
                     return;
 
                 var timestamp = PlayerPrefs.GetString(PREF_TIMESTAMP, "");
-                if (DateTime.TryParse(timestamp, out DateTime cachedTime))
+                if (!DateTime.TryParse(timestamp, out DateTime cachedTime))
                 {
-                    // Check if cache is still valid
-                    var elapsed = (DateTime.UtcNow - cachedTime).TotalSeconds;
-                    if (elapsed > _cacheDurationSeconds)
-                    {
-                        LogVerbose("Cached result expired");
-                        return;
-                    }
+                    LogVerbose("Cached timestamp missing or unparseable, discarding cache");
+                    return;
+                }
+
+                var elapsed = (DateTime.UtcNow - cachedTime).TotalSeconds;
+                if (elapsed > _cacheDurationSeconds)
+                {
+                    LogVerbose("Cached result expired");
+                    return;
                 }
 
                 var result = new IPGeolocationResult
