@@ -32,6 +32,7 @@ namespace IntelliVerseX.Editor
             "IVX_AuthTest.unity",      // Authentication testing
             "IVX_AdsTest.unity",       // Ads integration testing
             "IVX_DailyQuiz.unity",     // Daily quiz feature
+            "IVX_Clan.unity",          // Clan system testing
             "IVX_Friends.unity",       // Friends system testing
             "IVX_LeaderboardTest.unity", // Leaderboard testing
             "IVX_MoreOfUs.unity",      // More Of Us feature

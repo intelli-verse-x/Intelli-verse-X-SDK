@@ -53,6 +53,7 @@ namespace IntelliVerseX.Editor
             "IVX_AuthTest.unity",
             "IVX_AdsTest.unity",
             "IVX_DailyQuiz.unity",
+            "IVX_Clan.unity",
             "IVX_Friends.unity",
             "IVX_LeaderboardTest.unity",
             "IVX_MoreOfUs.unity",

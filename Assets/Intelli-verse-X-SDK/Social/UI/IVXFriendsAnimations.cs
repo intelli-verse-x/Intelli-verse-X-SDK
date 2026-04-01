@@ -312,7 +312,6 @@ namespace IntelliVerseX.Social.UI
 
         /// <summary>
         /// Animates tab switching with content fade.
-        /// Robust implementation that handles all edge cases.
         /// </summary>
         public static void AnimateTabSwitch(
             CanvasGroup outgoingContent,
@@ -320,81 +319,39 @@ namespace IntelliVerseX.Social.UI
             Action onSwitchPoint = null,
             Action onComplete = null)
         {
-            // Edge case: Both null - just invoke callbacks immediately
-            if (outgoingContent == null && incomingContent == null)
-            {
-                onSwitchPoint?.Invoke();
-                onComplete?.Invoke();
-                return;
-            }
-
 #if DOTWEEN
             // Kill any existing animations on both canvas groups first
             if (outgoingContent != null) outgoingContent.DOKill();
             if (incomingContent != null) incomingContent.DOKill();
 
             var sequence = DOTween.Sequence();
-            
-            // Check if outgoing content exists and is visible
-            bool hasOutgoing = outgoingContent != null && 
-                               outgoingContent.gameObject != null && 
-                               outgoingContent.gameObject.activeInHierarchy &&
-                               outgoingContent.alpha > 0f;
-            
-            // Check if incoming content exists (we'll activate it regardless of current state)
-            bool hasIncoming = incomingContent != null && incomingContent.gameObject != null;
+            bool hasOutgoing = outgoingContent != null && outgoingContent.gameObject.activeInHierarchy;
+            bool hasIncoming = incomingContent != null && incomingContent.gameObject.activeInHierarchy;
 
-            // Fade out current content (if active and visible)
+            // Fade out current content (if active)
             if (hasOutgoing)
             {
                 sequence.Append(outgoingContent.DOFade(0f, 0.15f).SetEase(Ease.InQuad));
             }
             else
             {
-                // No outgoing content or already hidden, just add a tiny delay
+                // No outgoing content, just add a tiny delay for visual smoothness
                 sequence.AppendInterval(0.01f);
             }
 
             // Call switch point callback at the midpoint
             sequence.AppendCallback(() => onSwitchPoint?.Invoke());
 
-            // Fade in new content
+            // Fade in new content (if active)
             if (hasIncoming)
             {
                 // Ensure starting alpha is 0 for incoming
                 incomingContent.alpha = 0f;
-                
-                // Ensure GameObject is active (belt and suspenders)
-                if (!incomingContent.gameObject.activeInHierarchy)
-                {
-                    incomingContent.gameObject.SetActive(true);
-                }
-                
                 sequence.Append(incomingContent.DOFade(1f, 0.15f).SetEase(Ease.OutQuad));
             }
-            else
-            {
-                // No incoming content, add small interval for timing
-                sequence.AppendInterval(0.01f);
-            }
 
-            // OnComplete callback - ensure final state is correct
-            sequence.OnComplete(() =>
-            {
-                // Ensure outgoing is fully hidden
-                if (outgoingContent != null && outgoingContent.gameObject != null)
-                {
-                    outgoingContent.alpha = 0f;
-                }
-                
-                // Ensure incoming is fully visible
-                if (incomingContent != null && incomingContent.gameObject != null)
-                {
-                    incomingContent.alpha = 1f;
-                }
-                
-                onComplete?.Invoke();
-            });
+            // OnComplete callback
+            sequence.OnComplete(() => onComplete?.Invoke());
             
             // Safety: ensure completion happens even if killed
             sequence.SetAutoKill(true);

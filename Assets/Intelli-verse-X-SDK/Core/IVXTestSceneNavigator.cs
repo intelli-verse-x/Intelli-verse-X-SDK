@@ -45,6 +45,7 @@ namespace IntelliVerseX.Core
             new SceneLink { Label = "Daily Quiz",  SceneName = "IVX_DailyQuiz",       ShowOnHome = true, ShowOnFeatureScenes = true },
             new SceneLink { Label = "Profile",     SceneName = "IVX_Profile",         ShowOnHome = true, ShowOnFeatureScenes = true },
             new SceneLink { Label = "Friends",     SceneName = "IVX_Friends",         ShowOnHome = true, ShowOnFeatureScenes = true },
+            new SceneLink { Label = "Clan",        SceneName = "IVX_Clan",            ShowOnHome = true, ShowOnFeatureScenes = true },
             new SceneLink { Label = "More Of Us",  SceneName = "IVX_MoreOfUs",        ShowOnHome = true, ShowOnFeatureScenes = true },
             new SceneLink { Label = "Share/Rate",  SceneName = "IVX_Share&RateUs",    ShowOnHome = true, ShowOnFeatureScenes = true }
         };
@@ -82,6 +83,7 @@ namespace IntelliVerseX.Core
             AddLinkIfMissing("Leaderboard", "IVX_LeaderboardTest");
             AddLinkIfMissing("Wallet", "IVX_WalletTest");
             AddLinkIfMissing("Weekly Quiz", "IVX_WeeklyQuizTest");
+            AddLinkIfMissing("Clan", "IVX_Clan");
             AddLinkIfMissing("More Of Us", "IVX_MoreOfUsTest");
             AddLinkIfMissing("Friends", "IVX_FriendsTest");
             AddLinkIfMissing("Full", "IVX_FullTest");

@@ -8,8 +8,6 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 
-using Unity.Services.Core;
-
 namespace IntelliVerseX.Monetization.Ads
 {
     /// <summary>
@@ -348,9 +346,35 @@ namespace IntelliVerseX.Monetization.Ads
 
             try
             {
-                var options = new InitializationOptions()
-                    .SetOption("com.unity.services.core.environment-name", "production");
-                await UnityServices.InitializeAsync(options);
+                var unityServicesType = FindType("Unity.Services.Core.UnityServices");
+                if (unityServicesType == null)
+                {
+                    Debug.Log("[IVXAdsBootstrap] Unity Services Core not available, skipping UGS init.");
+                    _ugsReady = true;
+                    return;
+                }
+
+                var optionsType = FindType("Unity.Services.Core.InitializationOptions");
+                if (optionsType == null)
+                {
+                    _ugsReady = true;
+                    return;
+                }
+
+                var options = Activator.CreateInstance(optionsType);
+                var setOptionMethod = optionsType.GetMethod("SetOption", new[] { typeof(string), typeof(string) });
+                if (setOptionMethod != null)
+                {
+                    options = setOptionMethod.Invoke(options, new object[] { "com.unity.services.core.environment-name", "production" });
+                }
+
+                var initMethod = unityServicesType.GetMethod("InitializeAsync", new[] { optionsType });
+                if (initMethod != null)
+                {
+                    var task = initMethod.Invoke(null, new[] { options }) as System.Threading.Tasks.Task;
+                    if (task != null) await task;
+                }
+
                 await TrySignInAnonymouslyAsync();
                 _ugsReady = true;
             }

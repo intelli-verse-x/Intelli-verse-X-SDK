@@ -53,7 +53,7 @@ namespace IntelliVerseX.Backend.Nakama
 
         private const string PREF_NAKAMA_AUTH_TOKEN = "ivxn.nakama.auth_token";
         private const string PREF_NAKAMA_REFRESH_TOKEN = "ivxn.nakama.refresh_token";
-        private const string PP_REMEMBER = "auth.remember";
+        private const string PP_REMEMBER = "IVX_auth.remember";
 
         public IClient Client => _client;
         public ISession Session => _session;
@@ -1028,8 +1028,10 @@ private void CreateClientIfNeeded()
 
         private async Task<ISession> AuthenticateWithRetryAsync(string customId, string username)
         {
-            // per-attempt timeout (ms) - keeps attempts from hanging indefinitely. Adjustable.
             const int attemptTimeoutMs = 20000;
+
+            var session = await TryAuthenticateAsync(customId, username, create: false, attemptTimeoutMs);
+            if (session != null) return session;
 
             for (int attempt = 1; attempt <= maxRetryAttempts; attempt++)
             {
@@ -1046,11 +1048,10 @@ private void CreateClientIfNeeded()
                     if (completed != authTask)
                     {
                         Log($"Authentication attempt {attempt} timed out after {attemptTimeoutMs}ms", isWarning: true);
-                        // fall through to retry/backoff
                     }
                     else
                     {
-                        var session = await authTask; // will rethrow if faulted
+                        session = await authTask;
                         if (session != null)
                         {
                             Log($"✓ Authentication successful (attempt {attempt})");
@@ -1060,9 +1061,14 @@ private void CreateClientIfNeeded()
                         Log($"Attempt {attempt} returned null session", isWarning: true);
                     }
                 }
+                catch (ApiResponseException apiEx) when (apiEx.StatusCode == 409 || apiEx.GrpcStatusCode == 6)
+                {
+                    Log($"Attempt {attempt} username conflict (409). Retrying without username...", isWarning: true);
+                    var fallback = await TryAuthenticateAsync(customId, null, create: true, attemptTimeoutMs);
+                    if (fallback != null) return fallback;
+                }
                 catch (ApiResponseException apiEx)
                 {
-                    // Nakama-specific HTTP/gRPC error — log status codes for diagnosis
                     Log($"Attempt {attempt} ApiResponseException: Status={apiEx.StatusCode}, Grpc={apiEx.GrpcStatusCode}, Message={apiEx.Message}", isWarning: true);
                     LogVerbose($"ApiResponseException stack: {apiEx}");
                 }
@@ -1074,7 +1080,6 @@ private void CreateClientIfNeeded()
 
                 if (attempt < maxRetryAttempts)
                 {
-                    // exponential backoff with small jitter
                     var baseDelay = retryBaseDelaySeconds * Math.Pow(2, attempt - 1);
                     var jitter = UnityEngine.Random.Range(0f, 0.25f * (float)baseDelay);
                     var delay = (int)((baseDelay + jitter) * 1000);
@@ -1084,6 +1089,34 @@ private void CreateClientIfNeeded()
             }
 
             Log("Authentication failed after all retry attempts.", isError: true);
+            return null;
+        }
+
+        private async Task<ISession> TryAuthenticateAsync(string customId, string username, bool create, int timeoutMs)
+        {
+            try
+            {
+                var authTask = _client.AuthenticateCustomAsync(id: customId, username: username, create: create);
+                var completed = await Task.WhenAny(authTask, Task.Delay(timeoutMs));
+                if (completed == authTask)
+                {
+                    var session = await authTask;
+                    if (session != null)
+                    {
+                        Log($"✓ Auth succeeded (create={create}, usernameProvided={username != null})");
+                        return session;
+                    }
+                }
+            }
+            catch (ApiResponseException apiEx) when (apiEx.StatusCode == 404 || apiEx.GrpcStatusCode == 5)
+            {
+                LogVerbose($"TryAuthenticateAsync: account not found (create={create})");
+            }
+            catch (Exception ex)
+            {
+                LogVerbose($"TryAuthenticateAsync failed: {ex.Message}");
+            }
+
             return null;
         }
 

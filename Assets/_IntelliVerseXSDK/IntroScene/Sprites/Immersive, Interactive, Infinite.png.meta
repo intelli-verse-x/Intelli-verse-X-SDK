@@ -1,0 +1,1040 @@
+fileFormatVersion: 2
+guid: a0dc9ff2acb49c64faebc055b96b14c7
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8969445163341971370
+    second: Immersive, Interactive, Infinite_0
+  - first:
+      213: -4779545671908159771
+    second: Immersive, Interactive, Infinite_1
+  - first:
+      213: 8349573759152814922
+    second: Immersive, Interactive, Infinite_2
+  - first:
+      213: 3884987285063382353
+    second: Immersive, Interactive, Infinite_3
+  - first:
+      213: 3829878619824011803
+    second: Immersive, Interactive, Infinite_4
+  - first:
+      213: 9104667631966777055
+    second: Immersive, Interactive, Infinite_5
+  - first:
+      213: 1909649480888545748
+    second: Immersive, Interactive, Infinite_6
+  - first:
+      213: -7106753290813805705
+    second: Immersive, Interactive, Infinite_7
+  - first:
+      213: -1696647405972776386
+    second: Immersive, Interactive, Infinite_8
+  - first:
+      213: 2548438636938839852
+    second: Immersive, Interactive, Infinite_9
+  - first:
+      213: 6064507397880940500
+    second: Immersive, Interactive, Infinite_10
+  - first:
+      213: -4076194007477597794
+    second: Immersive, Interactive, Infinite_11
+  - first:
+      213: 2902881921455032086
+    second: Immersive, Interactive, Infinite_12
+  - first:
+      213: 350168894758136372
+    second: Immersive, Interactive, Infinite_13
+  - first:
+      213: -987139835317092750
+    second: Immersive, Interactive, Infinite_14
+  - first:
+      213: 3055382704378888144
+    second: Immersive, Interactive, Infinite_15
+  - first:
+      213: -685162765849595929
+    second: Immersive, Interactive, Infinite_16
+  - first:
+      213: 6255011160674702982
+    second: Immersive, Interactive, Infinite_17
+  - first:
+      213: 8840525401410735831
+    second: Immersive, Interactive, Infinite_18
+  - first:
+      213: -8992549732570917037
+    second: Immersive, Interactive, Infinite_19
+  - first:
+      213: 7832103498912872397
+    second: Immersive, Interactive, Infinite_20
+  - first:
+      213: -7702668093354792285
+    second: Immersive, Interactive, Infinite_21
+  - first:
+      213: -901136813297467182
+    second: Immersive, Interactive, Infinite_22
+  - first:
+      213: 2222167325480069766
+    second: Immersive, Interactive, Infinite_23
+  - first:
+      213: -5406987827826617835
+    second: Immersive, Interactive, Infinite_24
+  - first:
+      213: 9154322503044416492
+    second: Immersive, Interactive, Infinite_25
+  - first:
+      213: 2365239678116133929
+    second: Immersive, Interactive, Infinite_26
+  - first:
+      213: 9157425635359724128
+    second: Immersive, Interactive, Infinite_27
+  - first:
+      213: -4458109270463031389
+    second: Immersive, Interactive, Infinite_28
+  - first:
+      213: -6085703057771666137
+    second: Immersive, Interactive, Infinite_29
+  - first:
+      213: 6506688630830087716
+    second: Immersive, Interactive, Infinite_30
+  - first:
+      213: 3514271794494716993
+    second: Immersive, Interactive, Infinite_31
+  - first:
+      213: -2365271958105856266
+    second: Immersive, Interactive, Infinite_32
+  - first:
+      213: 2413785934085007625
+    second: Immersive, Interactive, Infinite_33
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 27
+        width: 10
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65008a66521268380800000000000000
+      internalID: -8969445163341971370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_1
+      rect:
+        serializedVersion: 2
+        x: 724
+        y: 154
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ee8826d884abadb0800000000000000
+      internalID: -4779545671908159771
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_2
+      rect:
+        serializedVersion: 2
+        x: 1086
+        y: 27
+        width: 12
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4bf9349815afd370800000000000000
+      internalID: 8349573759152814922
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_3
+      rect:
+        serializedVersion: 2
+        x: 1241
+        y: 27
+        width: 57
+        height: 133
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 155bc1b2a5f3ae530800000000000000
+      internalID: 3884987285063382353
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_4
+      rect:
+        serializedVersion: 2
+        x: 1757
+        y: 27
+        width: 58
+        height: 133
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1a397b2056762530800000000000000
+      internalID: 3829878619824011803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_5
+      rect:
+        serializedVersion: 2
+        x: 1835
+        y: 154
+        width: 18
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fde606109f64a5e70800000000000000
+      internalID: 9104667631966777055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_6
+      rect:
+        serializedVersion: 2
+        x: 2198
+        y: 27
+        width: 11
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d1fed9c510708a10800000000000000
+      internalID: 1909649480888545748
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_7
+      rect:
+        serializedVersion: 2
+        x: 2352
+        y: 27
+        width: 54
+        height: 145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77b64b2098dbf5d90800000000000000
+      internalID: -7106753290813805705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_8
+      rect:
+        serializedVersion: 2
+        x: 2426
+        y: 154
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3a97e96c2c4478e0800000000000000
+      internalID: -1696647405972776386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_9
+      rect:
+        serializedVersion: 2
+        x: 2592
+        y: 154
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c27ce96207fdd5320800000000000000
+      internalID: 2548438636938839852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_10
+      rect:
+        serializedVersion: 2
+        x: 2627
+        y: 27
+        width: 58
+        height: 133
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d70c64e855792450800000000000000
+      internalID: 6064507397880940500
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_11
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 27
+        width: 165
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e99c8b495237e67c0800000000000000
+      internalID: -4076194007477597794
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_12
+      rect:
+        serializedVersion: 2
+        x: 239
+        y: 27
+        width: 165
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6170b393abb194820800000000000000
+      internalID: 2902881921455032086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_13
+      rect:
+        serializedVersion: 2
+        x: 430
+        y: 26
+        width: 101
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43a237721cc0cd400800000000000000
+      internalID: 350168894758136372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_14
+      rect:
+        serializedVersion: 2
+        x: 558
+        y: 27
+        width: 50
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27e7944cc89fc42f0800000000000000
+      internalID: -987139835317092750
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_15
+      rect:
+        serializedVersion: 2
+        x: 622
+        y: 26
+        width: 78
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0df306ba166e66a20800000000000000
+      internalID: 3055382704378888144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_16
+      rect:
+        serializedVersion: 2
+        x: 727
+        y: 27
+        width: 11
+        height: 107
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7efe5383810dd76f0800000000000000
+      internalID: -685162765849595929
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_17
+      rect:
+        serializedVersion: 2
+        x: 758
+        y: 27
+        width: 97
+        height: 107
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6869e1a92834ec650800000000000000
+      internalID: 6255011160674702982
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_18
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 26
+        width: 101
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7de87e2730bdfaa70800000000000000
+      internalID: 8840525401410735831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_19
+      rect:
+        serializedVersion: 2
+        x: 979
+        y: 0
+        width: 27
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 357931da9ab043380800000000000000
+      internalID: -8992549732570917037
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_20
+      rect:
+        serializedVersion: 2
+        x: 1130
+        y: 27
+        width: 91
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc7bbc0d2a831bc60800000000000000
+      internalID: 7832103498912872397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_21
+      rect:
+        serializedVersion: 2
+        x: 1317
+        y: 26
+        width: 101
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3aa2ad8fd20aa1590800000000000000
+      internalID: -7702668093354792285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_22
+      rect:
+        serializedVersion: 2
+        x: 1445
+        y: 27
+        width: 49
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d0806db7d48e73f0800000000000000
+      internalID: -901136813297467182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_23
+      rect:
+        serializedVersion: 2
+        x: 1510
+        y: 26
+        width: 105
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68a28b2b869b6de10800000000000000
+      internalID: 2222167325480069766
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_24
+      rect:
+        serializedVersion: 2
+        x: 1641
+        y: 26
+        width: 101
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5129881d73586f4b0800000000000000
+      internalID: -5406987827826617835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_25
+      rect:
+        serializedVersion: 2
+        x: 1838
+        y: 27
+        width: 12
+        height: 107
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce3c35990dfaa0f70800000000000000
+      internalID: 9154322503044416492
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_26
+      rect:
+        serializedVersion: 2
+        x: 1870
+        y: 27
+        width: 97
+        height: 107
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92c75c6a4f403d020800000000000000
+      internalID: 2365239678116133929
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_27
+      rect:
+        serializedVersion: 2
+        x: 1981
+        y: 26
+        width: 102
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0621ca4e816b51f70800000000000000
+      internalID: 9157425635359724128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_28
+      rect:
+        serializedVersion: 2
+        x: 2091
+        y: 0
+        width: 27
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a7dc241d3d9122c0800000000000000
+      internalID: -4458109270463031389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_29
+      rect:
+        serializedVersion: 2
+        x: 2242
+        y: 27
+        width: 91
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 725e209ff4d3b8ba0800000000000000
+      internalID: -6085703057771666137
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_30
+      rect:
+        serializedVersion: 2
+        x: 2429
+        y: 27
+        width: 11
+        height: 107
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42e33b8f5d66c4a50800000000000000
+      internalID: 6506688630830087716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_31
+      rect:
+        serializedVersion: 2
+        x: 2473
+        y: 27
+        width: 91
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14c3803e39335c030800000000000000
+      internalID: 3514271794494716993
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_32
+      rect:
+        serializedVersion: 2
+        x: 2595
+        y: 27
+        width: 11
+        height: 107
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f668e39faddc2fd0800000000000000
+      internalID: -2365271958105856266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Immersive, Interactive, Infinite_33
+      rect:
+        serializedVersion: 2
+        x: 2703
+        y: 26
+        width: 100
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 909a8fca48d7f7120800000000000000
+      internalID: 2413785934085007625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Immersive, Interactive, Infinite_0: -8969445163341971370
+      Immersive, Interactive, Infinite_1: -4779545671908159771
+      Immersive, Interactive, Infinite_10: 6064507397880940500
+      Immersive, Interactive, Infinite_11: -4076194007477597794
+      Immersive, Interactive, Infinite_12: 2902881921455032086
+      Immersive, Interactive, Infinite_13: 350168894758136372
+      Immersive, Interactive, Infinite_14: -987139835317092750
+      Immersive, Interactive, Infinite_15: 3055382704378888144
+      Immersive, Interactive, Infinite_16: -685162765849595929
+      Immersive, Interactive, Infinite_17: 6255011160674702982
+      Immersive, Interactive, Infinite_18: 8840525401410735831
+      Immersive, Interactive, Infinite_19: -8992549732570917037
+      Immersive, Interactive, Infinite_2: 8349573759152814922
+      Immersive, Interactive, Infinite_20: 7832103498912872397
+      Immersive, Interactive, Infinite_21: -7702668093354792285
+      Immersive, Interactive, Infinite_22: -901136813297467182
+      Immersive, Interactive, Infinite_23: 2222167325480069766
+      Immersive, Interactive, Infinite_24: -5406987827826617835
+      Immersive, Interactive, Infinite_25: 9154322503044416492
+      Immersive, Interactive, Infinite_26: 2365239678116133929
+      Immersive, Interactive, Infinite_27: 9157425635359724128
+      Immersive, Interactive, Infinite_28: -4458109270463031389
+      Immersive, Interactive, Infinite_29: -6085703057771666137
+      Immersive, Interactive, Infinite_3: 3884987285063382353
+      Immersive, Interactive, Infinite_30: 6506688630830087716
+      Immersive, Interactive, Infinite_31: 3514271794494716993
+      Immersive, Interactive, Infinite_32: -2365271958105856266
+      Immersive, Interactive, Infinite_33: 2413785934085007625
+      Immersive, Interactive, Infinite_4: 3829878619824011803
+      Immersive, Interactive, Infinite_5: 9104667631966777055
+      Immersive, Interactive, Infinite_6: 1909649480888545748
+      Immersive, Interactive, Infinite_7: -7106753290813805705
+      Immersive, Interactive, Infinite_8: -1696647405972776386
+      Immersive, Interactive, Infinite_9: 2548438636938839852
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

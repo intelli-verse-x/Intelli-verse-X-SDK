@@ -7,6 +7,72 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.2.0] - 2026-04-01
+
+### 🏰 New Feature: Clan System
+
+Full-featured clan/group management powered by Nakama Groups.
+
+### Added
+
+#### Clan System (New Module)
+- **IVXClanService** - Low-level static service for Nakama clan API calls (create, join, leave, list, search, get members)
+- **IVXClanManager** - High-level singleton manager with caching, state management, and event-driven updates
+- **IVXClanModels** - Data models (`IVXClanInfo`, `IVXClanMember`, `IVXClanSearchResult`)
+- **IVXClanPanel** - Inspector-driven uGUI view with create clan, browse/search, member list, and detail panels
+- **IVXClanSceneController** - Scene controller with Nakama initialization, session verification, and retry logic
+- **IVX_Clan** test scene - Complete demo scene with scrollable layout, anchored UI, and production-ready placeholders
+- **IVXClanSceneBuilder** - Editor tool for rebuilding/wiring IVX_Clan scene UI hierarchy
+
+#### Geolocation
+- **IVXGeolocationService** - Refactored IP-based geolocation service (renamed from IVXIPGeolocationService)
+- **GeoLocationService** - V2 facade for backward compatibility
+
+#### Editor Tooling
+- **IVXConsumerAssetInstaller** - Asset installer for SDK consumers
+- **IVXSceneImporter** - Scene import utility
+- **IVXTestSceneNavigator** - Test scene navigation helper
+
+### Changed
+
+- **IVXNManager** - Improved Nakama authentication retry logic to handle 409 "Username already in use" errors (try existing login first, then create, then fallback)
+- **IVXPanelLogin** - Non-blocking geolocation fetch during login, location synced to PlayerPrefs
+- **IVXFriendsPanel** / **IVXFriendsAnimations** - UI improvements and animation updates
+- **IVXDefineSymbolManager** - Updated platform define symbol handling
+- **IVXModuleRegistry** - Updated module registration for Clan feature
+- **IVXProjectSetup** / **IVXSDKSetupWizard** - Setup wizard improvements
+- **IVXAdsBootstrap** - Ads initialization improvements
+- **APIManager** - Identity API manager updates
+- **IntelliVerseX.Social.asmdef** - Updated assembly definition to include Clan dependencies
+- All test scenes updated with latest prefab and reference changes
+
+### Removed
+
+- **Hiro subsystem** - Removed entire `Assets/_IntelliVerseXSDK/Hiro/` directory (IVXHiroCoordinator, IVXHiroRpcClient, all Hiro Systems)
+- **Satori subsystem** - Removed `Assets/_IntelliVerseXSDK/Satori/` (IVXSatoriClient, IVXSatoriRpcClient)
+- **V2 IVXNManager** - Removed `Assets/_IntelliVerseXSDK/V2/` duplicate manager
+- **Identity AuthService** - Removed `Assets/_IntelliVerseXSDK/Identity/AuthService.cs`
+- **IVXIPGeolocationService** - Replaced by refactored IVXGeolocationService
+
+### Fixed
+
+- Scene UI anchoring and layout stability for all test scenes
+- Clan panel UI elements always visible with interactability-based state control
+- Layout rebuild calls (`Canvas.ForceUpdateCanvases`, `LayoutRebuilder.ForceRebuildLayoutImmediate`) for runtime stability
+- RectTransform anchoring for vertical layout children in editor-built scenes
+
+### Installation
+
+```json
+{
+  "dependencies": {
+    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-Unity-SDK.git?path=Assets/Intelli-verse-X-SDK#v5.2.0"
+  }
+}
+```
+
+---
+
 ## [5.1.0] - 2026-03-02
 
 ### 🚀 New Feature: IP-Based Geolocation System

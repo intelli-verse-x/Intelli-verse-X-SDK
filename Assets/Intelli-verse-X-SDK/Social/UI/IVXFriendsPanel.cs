@@ -132,12 +132,6 @@ namespace IntelliVerseX.Social.UI
 
         private enum Tab { Friends, Requests, Search }
         private Tab _currentTab = Tab.Friends;
-        private bool _isTabSwitching = false;
-        
-        // Loading flags to prevent concurrent/repeated loads
-        private bool _isLoadingFriends = false;
-        private bool _isLoadingRequests = false;
-        private bool _isSearching = false;
 
         private List<FriendInfo> _friendsList = new List<FriendInfo>();
         private List<FriendRequest> _requestsList = new List<FriendRequest>();
@@ -165,9 +159,6 @@ namespace IntelliVerseX.Social.UI
         {
             _instance = this;
             
-            // Auto-resolve missing references before setup
-            ResolveMissingReferences();
-            
             SetupButtons();
             
             // Initialize all content panels to a known state
@@ -181,207 +172,6 @@ namespace IntelliVerseX.Social.UI
             {
                 Open();
             }
-        }
-
-        /// <summary>
-        /// Attempts to auto-resolve missing inspector references by searching the hierarchy.
-        /// This ensures the panel works even if scene references are not properly wired.
-        /// </summary>
-        private void ResolveMissingReferences()
-        {
-            // Find panel root if missing (look for parent with CanvasGroup)
-            if (panelRoot == null)
-            {
-                panelRoot = gameObject;
-            }
-            
-            if (panelCanvasGroup == null && panelRoot != null)
-            {
-                panelCanvasGroup = panelRoot.GetComponent<CanvasGroup>();
-            }
-
-            if (panelRectTransform == null && panelRoot != null)
-            {
-                panelRectTransform = panelRoot.GetComponent<RectTransform>();
-            }
-
-            // Content panels - search by name in hierarchy if missing
-            Transform root = panelRoot != null ? panelRoot.transform : transform;
-            
-            // Friends Content
-            if (friendsContent == null)
-            {
-                friendsContent = FindChildByName(root, "FriendsContent");
-                if (friendsContent != null)
-                    Debug.Log("[IVXFriendsPanel] Auto-resolved: FriendsContent");
-            }
-            if (friendsContent != null && friendsContentCanvasGroup == null)
-            {
-                friendsContentCanvasGroup = friendsContent.GetComponent<CanvasGroup>();
-                if (friendsContentCanvasGroup == null)
-                {
-                    friendsContentCanvasGroup = friendsContent.AddComponent<CanvasGroup>();
-                    Debug.Log("[IVXFriendsPanel] Added CanvasGroup to FriendsContent");
-                }
-            }
-
-            // Requests Content - CRITICAL for tab switching
-            if (requestsContent == null)
-            {
-                requestsContent = FindChildByName(root, "RequestsContent");
-                if (requestsContent != null)
-                    Debug.Log("[IVXFriendsPanel] Auto-resolved: RequestsContent");
-            }
-            if (requestsContent != null && requestsContentCanvasGroup == null)
-            {
-                requestsContentCanvasGroup = requestsContent.GetComponent<CanvasGroup>();
-                if (requestsContentCanvasGroup == null)
-                {
-                    requestsContentCanvasGroup = requestsContent.AddComponent<CanvasGroup>();
-                    Debug.Log("[IVXFriendsPanel] Added CanvasGroup to RequestsContent");
-                }
-            }
-
-            // Search Content
-            if (searchContent == null)
-            {
-                searchContent = FindChildByName(root, "SearchContent");
-                if (searchContent != null)
-                    Debug.Log("[IVXFriendsPanel] Auto-resolved: SearchContent");
-            }
-            if (searchContent != null && searchContentCanvasGroup == null)
-            {
-                searchContentCanvasGroup = searchContent.GetComponent<CanvasGroup>();
-                if (searchContentCanvasGroup == null)
-                {
-                    searchContentCanvasGroup = searchContent.AddComponent<CanvasGroup>();
-                    Debug.Log("[IVXFriendsPanel] Added CanvasGroup to SearchContent");
-                }
-            }
-
-            // Tab buttons and indicators
-            ResolveTabReferences(root);
-            
-            // List containers
-            ResolveListContainers(root);
-        }
-
-        /// <summary>
-        /// Resolves tab button and indicator references.
-        /// </summary>
-        private void ResolveTabReferences(Transform root)
-        {
-            // Tab buttons
-            if (friendsTabButton == null)
-            {
-                var friendsTabGO = FindChildByName(root, "FriendsTabButton") ?? FindChildByName(root, "FriendsTab");
-                if (friendsTabGO != null)
-                {
-                    friendsTabButton = friendsTabGO.GetComponent<Button>();
-                }
-            }
-            
-            if (requestsTabButton == null)
-            {
-                var requestsTabGO = FindChildByName(root, "RequestsTabButton") ?? FindChildByName(root, "RequestsTab");
-                if (requestsTabGO != null)
-                {
-                    requestsTabButton = requestsTabGO.GetComponent<Button>();
-                }
-            }
-            
-            if (searchTabButton == null)
-            {
-                var searchTabGO = FindChildByName(root, "SearchTabButton") ?? FindChildByName(root, "SearchTab");
-                if (searchTabGO != null)
-                {
-                    searchTabButton = searchTabGO.GetComponent<Button>();
-                }
-            }
-
-            // Tab indicators
-            if (friendsTabIndicator == null)
-            {
-                friendsTabIndicator = FindChildByName(root, "FriendsTabIndicator") ?? FindChildByName(root, "FriendsIndicator");
-            }
-            
-            if (requestsTabIndicator == null)
-            {
-                requestsTabIndicator = FindChildByName(root, "RequestsTabIndicator") ?? FindChildByName(root, "RequestsIndicator");
-            }
-            
-            if (searchTabIndicator == null)
-            {
-                searchTabIndicator = FindChildByName(root, "SearchTabIndicator") ?? FindChildByName(root, "SearchIndicator");
-            }
-        }
-
-        /// <summary>
-        /// Resolves list container references.
-        /// </summary>
-        private void ResolveListContainers(Transform root)
-        {
-            if (friendsListContainer == null && friendsContent != null)
-            {
-                // Try to find a container child in friends content
-                var container = FindChildByName(friendsContent.transform, "Container") 
-                             ?? FindChildByName(friendsContent.transform, "List")
-                             ?? FindChildByName(friendsContent.transform, "FriendsListContainer");
-                if (container != null)
-                {
-                    friendsListContainer = container.transform;
-                }
-            }
-
-            if (requestsListContainer == null && requestsContent != null)
-            {
-                var container = FindChildByName(requestsContent.transform, "Container") 
-                             ?? FindChildByName(requestsContent.transform, "List")
-                             ?? FindChildByName(requestsContent.transform, "RequestsListContainer");
-                if (container != null)
-                {
-                    requestsListContainer = container.transform;
-                }
-            }
-
-            if (searchResultsContainer == null && searchContent != null)
-            {
-                var container = FindChildByName(searchContent.transform, "Container") 
-                             ?? FindChildByName(searchContent.transform, "Results")
-                             ?? FindChildByName(searchContent.transform, "SearchResultsContainer");
-                if (container != null)
-                {
-                    searchResultsContainer = container.transform;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Recursively finds a child GameObject by name (case-insensitive).
-        /// </summary>
-        private static GameObject FindChildByName(Transform parent, string name)
-        {
-            if (parent == null || string.IsNullOrEmpty(name)) return null;
-            
-            string lowerName = name.ToLowerInvariant();
-            
-            foreach (Transform child in parent)
-            {
-                if (child.name.ToLowerInvariant() == lowerName || 
-                    child.name.ToLowerInvariant().Contains(lowerName))
-                {
-                    return child.gameObject;
-                }
-                
-                // Recursive search
-                var found = FindChildByName(child, name);
-                if (found != null)
-                {
-                    return found;
-                }
-            }
-            
-            return null;
         }
 
         /// <summary>
@@ -582,18 +372,9 @@ namespace IntelliVerseX.Social.UI
 
             _cts?.Cancel();
             
-            // Reset all state flags
-            _isTabSwitching = false;
-            _isLoadingFriends = false;
-            _isLoadingRequests = false;
-            _isSearching = false;
-            
             // Hide toast and dialogs immediately
             HideToast();
             if (confirmDialog != null) confirmDialog.SetActive(false);
-            
-            // Kill all content animations
-            KillAllContentAnimations();
             
             // Kill loading animations
             SetLoading(false);
@@ -693,39 +474,19 @@ namespace IntelliVerseX.Social.UI
 
         private void SwitchToTab(Tab tab)
         {
-            // If already switching, force complete the previous switch first
-            if (_isTabSwitching)
-            {
-                ForceCompleteTabSwitch();
-            }
-
-            // Allow re-switching to same tab if not fully open (handles edge cases)
-            if (_currentTab == tab && _isOpen && !_isTabSwitching)
-            {
-                // Still ensure the content is visible (handles edge case where animation failed)
-                EnsureTabContentVisible(tab);
-                return;
-            }
-
-            _isTabSwitching = true;
+            if (_currentTab == tab && _isOpen) return;
 
             var previousTab = _currentTab;
             var outgoingCanvasGroup = GetTabCanvasGroup(previousTab);
             var incomingCanvasGroup = GetTabCanvasGroup(tab);
-            var incomingContent = GetTabContent(tab);
 
             // Kill any existing animations to prevent stacking
             IVXFriendsAnimations.KillAnimations(outgoingCanvasGroup);
             IVXFriendsAnimations.KillAnimations(incomingCanvasGroup);
 
-            // Update current tab immediately
-            _currentTab = tab;
-
             // CRITICAL: Activate incoming content BEFORE animation so DOTween can find it
-            if (incomingContent != null)
-            {
-                incomingContent.SetActive(true);
-            }
+            _currentTab = tab;
+            SetTabContentActive(tab, true);
             
             // Set initial alpha to 0 for fade-in effect (if DOTween is available)
             if (incomingCanvasGroup != null)
@@ -735,102 +496,27 @@ namespace IntelliVerseX.Social.UI
             
             UpdateTabIndicators();
 
-            // Capture for closure
-            var capturedPreviousTab = previousTab;
-            var capturedTab = tab;
-            var capturedIncomingContent = incomingContent;
-            var capturedIncomingCanvasGroup = incomingCanvasGroup;
-
             IVXFriendsAnimations.AnimateTabSwitch(outgoingCanvasGroup, incomingCanvasGroup, () =>
             {
                 // Hide old content after animation starts
-                SetTabContentActive(capturedPreviousTab, false);
+                SetTabContentActive(previousTab, false);
             }, () =>
             {
-                // OnComplete: Ensure content is fully visible (failsafe)
-                if (capturedIncomingContent != null && !capturedIncomingContent.activeSelf)
+                // OnComplete: Load data for new tab
+                switch (tab)
                 {
-                    capturedIncomingContent.SetActive(true);
+                    case Tab.Friends:
+                        if (_friendsList.Count == 0) _ = LoadFriendsAsync();
+                        break;
+                    case Tab.Requests:
+                        _ = LoadRequestsAsync();
+                        break;
+                    case Tab.Search:
+                        if (searchInstructions != null) searchInstructions.SetActive(true);
+                        if (searchEmptyText != null) searchEmptyText.gameObject.SetActive(false);
+                        break;
                 }
-                if (capturedIncomingCanvasGroup != null && capturedIncomingCanvasGroup.alpha < 1f)
-                {
-                    capturedIncomingCanvasGroup.alpha = 1f;
-                }
-
-                // Load data for new tab
-                OnTabSwitchComplete(capturedTab);
             });
-
-            // Failsafe: If animation doesn't complete within reasonable time, force complete
-            CancelInvoke(nameof(ForceCompleteTabSwitch));
-            Invoke(nameof(ForceCompleteTabSwitch), 0.5f);
-        }
-
-        /// <summary>
-        /// Failsafe method to ensure tab switch completes even if animation fails.
-        /// </summary>
-        private void ForceCompleteTabSwitch()
-        {
-            // Kill all content animations to prevent stacking
-            KillAllContentAnimations();
-            
-            EnsureTabContentVisible(_currentTab);
-            _isTabSwitching = false;
-        }
-
-        /// <summary>
-        /// Ensures the specified tab's content is visible (failsafe).
-        /// </summary>
-        private void EnsureTabContentVisible(Tab tab)
-        {
-            var content = GetTabContent(tab);
-            var canvasGroup = GetTabCanvasGroup(tab);
-
-            if (content != null && !content.activeSelf)
-            {
-                content.SetActive(true);
-            }
-            if (canvasGroup != null && canvasGroup.alpha < 1f)
-            {
-                canvasGroup.alpha = 1f;
-            }
-        }
-
-        /// <summary>
-        /// Called when tab switch animation completes.
-        /// </summary>
-        private void OnTabSwitchComplete(Tab tab)
-        {
-            CancelInvoke(nameof(ForceCompleteTabSwitch));
-            _isTabSwitching = false;
-            
-            switch (tab)
-            {
-                case Tab.Friends:
-                    if (_friendsList.Count == 0) _ = LoadFriendsAsync();
-                    break;
-                case Tab.Requests:
-                    _ = LoadRequestsAsync();
-                    break;
-                case Tab.Search:
-                    if (searchInstructions != null) searchInstructions.SetActive(true);
-                    if (searchEmptyText != null) searchEmptyText.gameObject.SetActive(false);
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Gets the content GameObject for a tab.
-        /// </summary>
-        private GameObject GetTabContent(Tab tab)
-        {
-            switch (tab)
-            {
-                case Tab.Friends: return friendsContent;
-                case Tab.Requests: return requestsContent;
-                case Tab.Search: return searchContent;
-                default: return null;
-            }
         }
 
         private void SetTabContentActive(Tab tab, bool active)
@@ -926,14 +612,6 @@ namespace IntelliVerseX.Social.UI
 
         private async Task LoadFriendsAsync()
         {
-            // Prevent concurrent/repeated loads
-            if (_isLoadingFriends)
-            {
-                Debug.Log("[IVXFriendsPanel] LoadFriendsAsync skipped - already loading");
-                return;
-            }
-            
-            _isLoadingFriends = true;
             Debug.Log("[IVXFriendsPanel] LoadFriendsAsync called");
             SetLoading(true, "Loading friends...");
 
@@ -957,21 +635,12 @@ namespace IntelliVerseX.Social.UI
             }
             finally
             {
-                _isLoadingFriends = false;
                 SetLoading(false);
             }
         }
 
         private async Task LoadRequestsAsync()
         {
-            // Prevent concurrent/repeated loads
-            if (_isLoadingRequests)
-            {
-                Debug.Log("[IVXFriendsPanel] LoadRequestsAsync skipped - already loading");
-                return;
-            }
-            
-            _isLoadingRequests = true;
             Debug.Log("[IVXFriendsPanel] LoadRequestsAsync called");
             SetLoading(true, "Loading requests...");
 
@@ -996,7 +665,6 @@ namespace IntelliVerseX.Social.UI
             }
             finally
             {
-                _isLoadingRequests = false;
                 SetLoading(false);
             }
         }
@@ -1128,13 +796,6 @@ namespace IntelliVerseX.Social.UI
             {
                 if (slot != null)
                 {
-#if DOTWEEN
-                    // Kill any running animations on the slot before destroying
-                    var rectTransform = slot.GetComponent<RectTransform>();
-                    var canvasGroup = slot.GetComponent<CanvasGroup>();
-                    if (rectTransform != null) DG.Tweening.DOTween.Kill(rectTransform);
-                    if (canvasGroup != null) DG.Tweening.DOTween.Kill(canvasGroup);
-#endif
                     Destroy(slot.gameObject);
                 }
             }
@@ -1144,15 +805,7 @@ namespace IntelliVerseX.Social.UI
             {
                 for (int i = container.childCount - 1; i >= 0; i--)
                 {
-                    var child = container.GetChild(i);
-#if DOTWEEN
-                    // Kill animations on orphaned children too
-                    var rectTransform = child.GetComponent<RectTransform>();
-                    var canvasGroup = child.GetComponent<CanvasGroup>();
-                    if (rectTransform != null) DG.Tweening.DOTween.Kill(rectTransform);
-                    if (canvasGroup != null) DG.Tweening.DOTween.Kill(canvasGroup);
-#endif
-                    Destroy(child.gameObject);
+                    Destroy(container.GetChild(i).gameObject);
                 }
             }
         }

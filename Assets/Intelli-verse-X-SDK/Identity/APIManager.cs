@@ -3237,7 +3237,7 @@ Do not include any other top-level keys. Do not include code fences.";
     {
         try
         {
-            bool persist = PlayerPrefs.GetInt("auth.remember", 0) == 1;
+            bool persist = PlayerPrefs.GetInt("IVX_auth.remember", 1) == 1;
 
             // Resolve device fields
             DeviceInfoHelper.GetLoginDeviceFields(out string fromDevice, out string macAddress);

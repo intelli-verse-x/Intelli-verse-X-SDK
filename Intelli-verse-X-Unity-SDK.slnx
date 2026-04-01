@@ -1,4 +1,4 @@
-﻿<Solution>
+<Solution>
   <Project Path="Unity.Timeline.csproj" />
   <Project Path="Unity.RenderPipelines.GPUDriven.Runtime.csproj" />
   <Project Path="Unity.2D.Aseprite.Editor.csproj" />
@@ -163,7 +163,6 @@
   <Project Path="AppodealInc.Mediation.PluginSettings.Editor.csproj" />
   <Project Path="IntelliVerseX.IntroScene.csproj" />
   <Project Path="Unity.VisualScripting.DocCodeExamples.csproj" />
-  <Project Path="IntelliVerseX.Bootstrap.Editor.csproj" />
   <Project Path="Unity.Rendering.LightTransport.Editor.csproj" />
   <Project Path="Unity.Services.Core.Environments.csproj" />
   <Project Path="Unity.Collections.Editor.csproj" />

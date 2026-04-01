@@ -29,7 +29,7 @@ namespace IntelliVerseX.Editor
         #region Constants
 
         private const string WINDOW_TITLE = "IntelliVerseX SDK Setup";
-        private const string SDK_VERSION = "5.1.0";
+        private const string SDK_VERSION = "5.0.0";
         private const string PACKAGE_NAME = "com.intelliversex.sdk";
         
         // Version check URLs
@@ -3017,6 +3017,11 @@ namespace IntelliVerseX.Editor
             DrawTestSceneButton("🎯 Daily Quiz Demo Scene",
                 "Test daily quiz feature with Nakama integration",
                 "IVX_DailyQuiz",
+                null);
+
+            DrawTestSceneButton("🛡 Clan Demo Scene",
+                "Test clan creation, browsing, joining, leaving, and member loading",
+                "IVX_Clan",
                 null);
                 
             DrawTestSceneButton("📅 Weekly Quiz Demo Scene",
