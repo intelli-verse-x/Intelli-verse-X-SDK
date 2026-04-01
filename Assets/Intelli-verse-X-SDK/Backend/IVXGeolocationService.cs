@@ -119,7 +119,7 @@ namespace IntelliVerseX.Backend
         private GeolocationResult _cachedResult;
         private float _lastCheckTime = float.MinValue;
         private readonly object _stateLock = new object();
-        private volatile bool _isOperationInProgress;
+        private int _isOperationInProgress;
         private CancellationTokenSource _currentOperationCts;
 
         private static readonly GeolocationResult _errorResultTemplate = new GeolocationResult
@@ -140,7 +140,7 @@ namespace IntelliVerseX.Backend
 
         #region Properties
 
-        public bool IsOperationInProgress => _isOperationInProgress;
+        public bool IsOperationInProgress => Interlocked.CompareExchange(ref _isOperationInProgress, 0, 0) != 0;
         public bool HasCachedResult => _cachedResult != null && _cachedResult.Success;
         public GeolocationResult CachedResult => _cachedResult;
 
@@ -228,7 +228,7 @@ namespace IntelliVerseX.Backend
                 return _cachedResult;
             }
 
-            if (_isOperationInProgress)
+            if (Interlocked.CompareExchange(ref _isOperationInProgress, 0, 0) != 0)
             {
                 LogVerbose("Operation already in progress, waiting...");
                 return await WaitForCurrentOperationAsync(cancellationToken);
@@ -282,7 +282,7 @@ namespace IntelliVerseX.Backend
             }
             finally
             {
-                _isOperationInProgress = false;
+                Interlocked.Exchange(ref _isOperationInProgress, 0);
             }
         }
 
@@ -304,7 +304,10 @@ namespace IntelliVerseX.Backend
 
         private async Task<GeolocationResult> CheckLocationInternalAsync(CancellationToken ct)
         {
-            _isOperationInProgress = true;
+            if (Interlocked.CompareExchange(ref _isOperationInProgress, 1, 0) != 0)
+            {
+                return await WaitForCurrentOperationAsync(ct);
+            }
             _currentOperationCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
 
             try
@@ -361,7 +364,7 @@ namespace IntelliVerseX.Backend
             }
             finally
             {
-                _isOperationInProgress = false;
+                Interlocked.Exchange(ref _isOperationInProgress, 0);
                 _currentOperationCts?.Dispose();
                 _currentOperationCts = null;
             }
@@ -558,7 +561,7 @@ namespace IntelliVerseX.Backend
             int waitAttempts = 0;
             const int maxWaitAttempts = 300;
 
-            while (_isOperationInProgress && waitAttempts < maxWaitAttempts)
+            while (Interlocked.CompareExchange(ref _isOperationInProgress, 0, 0) != 0 && waitAttempts < maxWaitAttempts)
             {
                 ct.ThrowIfCancellationRequested();
                 await Task.Delay(100, ct);
@@ -683,7 +686,7 @@ namespace IntelliVerseX.Backend
         [ContextMenu("Debug: Log Cache Status")]
         private void DebugLogCacheStatus()
         {
-            Debug.Log($"[IVXGeo] Cache Valid: {IsCacheValid}, Has Result: {HasCachedResult}, In Progress: {_isOperationInProgress}");
+            Debug.Log($"[IVXGeo] Cache Valid: {IsCacheValid}, Has Result: {HasCachedResult}, In Progress: {IsOperationInProgress}");
             if (_cachedResult != null)
             {
                 Debug.Log($"[IVXGeo] Cached: {_cachedResult}");

@@ -93,7 +93,7 @@ public static class UserSessionManager
         public bool isAdult;
         public string loginType;
 
-        public bool isGuest { get; set; } = false;
+        public bool isGuest = false;
 
         // Misc (keep as raw strings)
         public string walletAddress;

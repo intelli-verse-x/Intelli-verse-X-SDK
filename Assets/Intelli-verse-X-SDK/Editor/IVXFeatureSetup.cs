@@ -20,7 +20,7 @@ namespace IntelliVerseX.Editor
     {
         #region Constants
 
-        private const string SDK_ROOT = "Assets/_IntelliVerseXSDK";
+        private const string SDK_ROOT = "Assets/Intelli-verse-X-SDK";
         private const string PACKAGE_NAME = "com.intelliversex.sdk";
         private const string SDK_PACKAGE_ROOT = "Packages/" + PACKAGE_NAME;
         private const string PREFABS_ROOT = SDK_ROOT + "/Prefabs";

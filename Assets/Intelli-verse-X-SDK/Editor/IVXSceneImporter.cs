@@ -244,7 +244,7 @@ namespace IntelliVerseX.Editor
                 EditorUtility.DisplayDialog(
                     "Not Available",
                     "Scene import is only available when SDK is installed as a UPM package.\n\n" +
-                    "In development mode, scenes are already in Assets/_IntelliVerseXSDK/",
+                    "In development mode, scenes are already in Assets/Intelli-verse-X-SDK/",
                     "OK"
                 );
                 return;

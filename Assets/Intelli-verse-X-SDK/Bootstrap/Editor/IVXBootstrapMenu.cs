@@ -80,7 +80,7 @@ namespace IntelliVerseX.Bootstrap.Editor
         private static void CreateSDKSettings()
         {
             // Find or create settings asset
-            string settingsPath = "Assets/_IntelliVerseXSDK/Resources/IVXSettings.asset";
+            string settingsPath = "Assets/Intelli-verse-X-SDK/Resources/IVXSettings.asset";
             
             if (File.Exists(settingsPath))
             {
@@ -98,7 +98,7 @@ namespace IntelliVerseX.Bootstrap.Editor
         [MenuItem(MENU_ROOT + "Quick Actions/Locate SDK Folder", false, 201)]
         private static void LocateSDKFolder()
         {
-            string sdkPath = "Assets/_IntelliVerseXSDK";
+            string sdkPath = "Assets/Intelli-verse-X-SDK";
             var folder = AssetDatabase.LoadAssetAtPath<DefaultAsset>(sdkPath);
             
             if (folder != null)

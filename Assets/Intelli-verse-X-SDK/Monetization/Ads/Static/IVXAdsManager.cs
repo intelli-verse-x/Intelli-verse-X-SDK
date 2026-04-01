@@ -173,6 +173,7 @@ namespace IntelliVerseX.Monetization
 #endif
 #if APPODEAL
         private static bool _appodealInitialized = false;
+        private static bool _appodealCallbacksSubscribed = false;
         private static bool _appodealRewardedInFlight = false;
         private static bool _appodealInterstitialInFlight = false;
         private static Action<bool, int> _appodealRewardedCallback;
@@ -644,7 +645,7 @@ namespace IntelliVerseX.Monetization
                 if (success)
                 {
                     _interstitialCount++;
-                    _lastInterstitialTime = Time.time;
+                    _lastInterstitialTime = Time.realtimeSinceStartup;
                 }
 
                 var cb = _levelPlayInterstitialCallback;
@@ -945,15 +946,18 @@ namespace IntelliVerseX.Monetization
                     Appodeal.SetAutoCache(adTypes, true);
                 }
 
-                // Subscribe to rewarded callbacks
-                AppodealCallbacks.RewardedVideo.OnClosed += OnAppodealRewardedClosed;
-                AppodealCallbacks.RewardedVideo.OnShowFailed += OnAppodealRewardedShowFailed;
-                AppodealCallbacks.RewardedVideo.OnExpired += OnAppodealRewardedExpired;
+                if (!_appodealCallbacksSubscribed)
+                {
+                    AppodealCallbacks.RewardedVideo.OnClosed += OnAppodealRewardedClosed;
+                    AppodealCallbacks.RewardedVideo.OnShowFailed += OnAppodealRewardedShowFailed;
+                    AppodealCallbacks.RewardedVideo.OnExpired += OnAppodealRewardedExpired;
 
-                // Subscribe to interstitial callbacks
-                AppodealCallbacks.Interstitial.OnClosed += OnAppodealInterstitialClosed;
-                AppodealCallbacks.Interstitial.OnShowFailed += OnAppodealInterstitialShowFailed;
-                AppodealCallbacks.Interstitial.OnExpired += OnAppodealInterstitialExpired;
+                    AppodealCallbacks.Interstitial.OnClosed += OnAppodealInterstitialClosed;
+                    AppodealCallbacks.Interstitial.OnShowFailed += OnAppodealInterstitialShowFailed;
+                    AppodealCallbacks.Interstitial.OnExpired += OnAppodealInterstitialExpired;
+
+                    _appodealCallbacksSubscribed = true;
+                }
 
                 _appodealInitialized = true;
 
@@ -1036,7 +1040,7 @@ namespace IntelliVerseX.Monetization
         {
             OnAdShown?.Invoke(IVXAdType.Interstitial, true);
             _interstitialCount++;
-            _lastInterstitialTime = Time.time;
+            _lastInterstitialTime = Time.realtimeSinceStartup;
 
             _appodealInterstitialInFlight = false;
 
@@ -1691,7 +1695,7 @@ namespace IntelliVerseX.Monetization
             }
 
             // Check cooldown (only if ad is actually ready)
-            float timeSinceLastAd = Time.time - _lastInterstitialTime;
+            float timeSinceLastAd = Time.realtimeSinceStartup - _lastInterstitialTime;
             float cooldown = IVXAdNetworkConfig.INTERSTITIAL_COOLDOWN_SECONDS;
             if (timeSinceLastAd < cooldown)
             {
@@ -1775,7 +1779,7 @@ namespace IntelliVerseX.Monetization
                         _adMobInterstitialAd.Show();
                         _adMobInterstitialAd = null;
                         _interstitialCount++;
-                        _lastInterstitialTime = Time.time;
+                        _lastInterstitialTime = Time.realtimeSinceStartup;
                         OnAdShown?.Invoke(IVXAdType.Interstitial, true);
                         LoadAdMobInterstitialAd();
                         onComplete?.Invoke(true);
@@ -1901,7 +1905,7 @@ namespace IntelliVerseX.Monetization
         /// </summary>
         public static float GetInterstitialCooldownRemaining()
         {
-            float timeSinceLastAd = Time.time - _lastInterstitialTime;
+            float timeSinceLastAd = Time.realtimeSinceStartup - _lastInterstitialTime;
             float cooldown = IVXAdNetworkConfig.INTERSTITIAL_COOLDOWN_SECONDS;
             float remaining = cooldown - timeSinceLastAd;
             return remaining > 0 ? remaining : 0f;

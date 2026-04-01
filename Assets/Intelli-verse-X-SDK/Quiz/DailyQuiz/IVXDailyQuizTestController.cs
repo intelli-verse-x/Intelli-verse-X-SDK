@@ -356,7 +356,7 @@ namespace IntelliVerseX.Quiz.DailyQuiz
                 progressText.text = $"{_currentQuestionIndex + 1} / {_totalQuestions}";
 
             if (progressFill != null)
-                progressFill.fillAmount = (float)(_currentQuestionIndex + 1) / _totalQuestions;
+                progressFill.fillAmount = _totalQuestions > 0 ? (float)(_currentQuestionIndex + 1) / _totalQuestions : 0f;
         }
 
         private string GetQuizEmoji(IVXDailyQuizType type)

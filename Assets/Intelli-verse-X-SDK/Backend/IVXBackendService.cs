@@ -135,7 +135,11 @@ namespace IntelliVerseX.Backend
                     IntelliVerseXUserIdentity.SetNakamaAuth(_session.UserId, _session.AuthToken);
 
                     _isInitialized = true;
+#if UNITY_EDITOR
                     Debug.Log($"[IVXBackendService] Authentication successful - NakamaUserId: {_session.UserId}, Expires: {_session.ExpireTime}");
+#else
+                    Debug.Log("[IVXBackendService] Authentication successful");
+#endif
                     return true;
                 }
                 else

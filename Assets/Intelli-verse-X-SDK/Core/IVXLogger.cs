@@ -1,4 +1,4 @@
-// File: Assets/_IntelliVerseXSDK/Core/IVXLogger.cs
+// File: Assets/Intelli-verse-X-SDK/Core/IVXLogger.cs
 using UnityEngine;
 
 namespace IntelliVerseX.Core

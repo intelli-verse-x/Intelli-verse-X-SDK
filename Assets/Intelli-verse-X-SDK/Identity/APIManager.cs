@@ -175,13 +175,13 @@ public static class APIManager
                     _clientId = fromJson;
                 else
                 {
-                    var envId = System.Environment.GetEnvironmentVariable("QUIZVERSE_CLIENT_ID");
+                    var envId = System.Environment.GetEnvironmentVariable("IVX_CLIENT_ID");
                     if (!string.IsNullOrEmpty(envId))
                         _clientId = envId.Trim();
                     else
                     {
                         _clientId = string.Empty;
-                        Debug.LogWarning("[APIManager] OAuth Client ID not configured. Set via config/keys.json or QUIZVERSE_CLIENT_ID env var.");
+                        Debug.LogWarning("[IVX] OAuth Client ID not configured. Set via config/keys.json or IVX_CLIENT_ID env var.");
                     }
                 }
             }
@@ -200,13 +200,13 @@ public static class APIManager
                     _clientSecret = fromJson;
                 else
                 {
-                    var envSecret = System.Environment.GetEnvironmentVariable("QUIZVERSE_CLIENT_SECRET");
+                    var envSecret = System.Environment.GetEnvironmentVariable("IVX_CLIENT_SECRET");
                     if (!string.IsNullOrEmpty(envSecret))
                         _clientSecret = envSecret.Trim();
                     else
                     {
                         _clientSecret = string.Empty;
-                        Debug.LogWarning("[APIManager] OAuth Client Secret not configured. Set via config/keys.json or QUIZVERSE_CLIENT_SECRET env var.");
+                        Debug.LogWarning("[IVX] OAuth Client Secret not configured. Set via config/keys.json or IVX_CLIENT_SECRET env var.");
                     }
                 }
             }
@@ -260,7 +260,8 @@ public static class APIManager
     // ===== User Auth wiring =====
     private static readonly object _authLock = new object();
 
-    internal static UserSessionManager.UserSession _liveUserSession; // in-memory session for current run (even if not persisted)
+    private static UserSessionManager.UserSession _liveUserSession;
+    public static UserSessionManager.UserSession LiveUserSession => _liveUserSession;
 
  
 

@@ -49,7 +49,7 @@ namespace IntelliVerseX.Editor
             public bool includeIntroScene = true;
             
             public string exportPath = "";
-            public string version = "1.0.0";
+            public string version = "5.3.0";
         }
 
         private ExportConfig config = new ExportConfig();

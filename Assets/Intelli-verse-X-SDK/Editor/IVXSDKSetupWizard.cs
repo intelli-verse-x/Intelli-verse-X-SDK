@@ -3,7 +3,7 @@
 // Version: 5.0.0
 // Author: IntelliVerseX Team
 // Description: Single unified panel for ALL SDK module setup including Auth, Friends, Monetization, Platform Validation, etc.
-// Note: Supports both development (Assets/_IntelliVerseXSDK) and UPM package (Packages/com.intelliversex.sdk) installations.
+// Note: Supports both development (Assets/Intelli-verse-X-SDK) and UPM package (Packages/com.intelliversex.sdk) installations.
 // Production-ready for WebGL, Android, and iOS.
 
 using System;
@@ -39,7 +39,7 @@ namespace IntelliVerseX.Editor
         private const double VERSION_CHECK_INTERVAL_HOURS = 1.0; // Check every hour
 
         // Paths - These are relative paths within the SDK, resolved at runtime
-        private const string SDK_ASSETS_ROOT = "Assets/_IntelliVerseXSDK";
+        private const string SDK_ASSETS_ROOT = "Assets/Intelli-verse-X-SDK";
         private const string SDK_PACKAGE_ROOT = "Packages/com.intelliversex.sdk";
         private const string QUIZVERSE_ROOT = "Assets/_QuizVerse";
         private const string RESOURCES_PATH = "Assets/Resources/IntelliVerseX";
@@ -70,7 +70,7 @@ namespace IntelliVerseX.Editor
         /// <summary>
         /// Gets a writable path for the given sub-folder.
         /// For UPM installs: Assets/IntelliVerseX/Generated/{subFolder}
-        /// For dev installs: Assets/_IntelliVerseXSDK/{subFolder}
+        /// For dev installs: Assets/Intelli-verse-X-SDK/{subFolder}
         /// </summary>
         private static string GetWritablePath(string subFolder)
         {
@@ -98,7 +98,7 @@ namespace IntelliVerseX.Editor
 
         /// <summary>
         /// Gets the SDK root path, automatically detecting whether this is a development
-        /// project (Assets/_IntelliVerseXSDK) or a UPM package installation (Packages/com.intelliversex.sdk).
+        /// project (Assets/Intelli-verse-X-SDK) or a UPM package installation (Packages/com.intelliversex.sdk).
         /// </summary>
         private static string SDK_ROOT
         {

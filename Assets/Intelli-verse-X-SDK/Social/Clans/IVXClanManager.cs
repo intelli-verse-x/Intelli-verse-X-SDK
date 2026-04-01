@@ -20,6 +20,15 @@ namespace IntelliVerseX.Social
         private static Type _cachedNakamaManagerType;
         private static bool _hasCheckedNakamaManagerType;
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
+        {
+            _isQuitting = false;
+            Instance = null;
+            _cachedNakamaManagerType = null;
+            _hasCheckedNakamaManagerType = false;
+        }
+
         private IClient _client;
         private ISession _session;
         private string _gameId;

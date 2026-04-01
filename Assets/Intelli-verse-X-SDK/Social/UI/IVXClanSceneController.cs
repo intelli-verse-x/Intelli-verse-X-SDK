@@ -289,8 +289,12 @@ namespace IntelliVerseX.Social.UI
                                  $"Will attempt Nakama refresh or re-login.");
             }
 
+#if UNITY_EDITOR
             Debug.Log($"{LOG_TAG} UserSession verified: userId={session.userId}, " +
                        $"tokenFresh={tokenFresh}, email={session.email ?? "n/a"}");
+#else
+            Debug.Log($"{LOG_TAG} UserSession verified: tokenFresh={tokenFresh}");
+#endif
             return true;
         }
 

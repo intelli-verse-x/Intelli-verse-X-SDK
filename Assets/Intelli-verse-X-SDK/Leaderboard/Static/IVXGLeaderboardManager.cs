@@ -151,7 +151,9 @@ namespace IntelliVerseX.Games.Leaderboard
                 var session = GetSession(mgr);
                 
                 var rpcResponse = await client.RpcAsync(session, RPC_SUBMIT_SCORE_AND_SYNC, jsonPayload);
+#if UNITY_EDITOR
                 Log($"SubmitScoreAsync RPC payload raw → {rpcResponse.Payload}");
+#endif
 
                 var result = JsonConvert.DeserializeObject<IVXGScoreSubmissionResponse>(rpcResponse.Payload);
 
@@ -261,13 +263,17 @@ namespace IntelliVerseX.Games.Leaderboard
                 };
 
                 var jsonPayload = JsonConvert.SerializeObject(payload);
+#if UNITY_EDITOR
                 Log($"GetAllLeaderboardsAsync JSON → {jsonPayload}");
+#endif
 
                 var client = GetClient(mgr);
                 var session = GetSession(mgr);
                 
                 var rpcResponse = await client.RpcAsync(session, RPC_GET_ALL_LEADERBOARDS, jsonPayload);
+#if UNITY_EDITOR
                 Log($"GetAllLeaderboardsAsync RPC payload raw → {rpcResponse.Payload}");
+#endif
 
                 var result = JsonConvert.DeserializeObject<IVXGAllLeaderboardsResponse>(rpcResponse.Payload);
 
@@ -735,9 +741,6 @@ namespace IntelliVerseX.Games.Leaderboard
                 if (current != null)
                 {
                     var userIdProp = current.GetType().GetProperty("userId");
-                    if (userIdProp == null)
-                        userIdProp = current.GetType().GetField("userId")?.FieldType != null ? null : null;
-                    
                     var userIdField = current.GetType().GetField("userId");
                     
                     if (userIdProp != null)

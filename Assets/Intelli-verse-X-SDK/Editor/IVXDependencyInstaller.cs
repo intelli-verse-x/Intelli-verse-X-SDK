@@ -19,7 +19,7 @@ namespace IntelliVerseX.Editor
     /// </summary>
     public class IVXDependencyInstaller : EditorWindow
     {
-        private const string MANIFEST_PATH = "Assets/_IntelliVerseXSDK/SDK_DEPENDENCIES_MANIFEST.json";
+        private const string MANIFEST_PATH = "Assets/Intelli-verse-X-SDK/SDK_DEPENDENCIES_MANIFEST.json";
         
         private DependencyManifest manifest;
         private Vector2 scrollPosition;

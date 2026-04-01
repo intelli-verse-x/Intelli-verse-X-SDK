@@ -14,6 +14,14 @@ namespace IntelliVerseX.Editor
         [MenuItem("IntelliVerse-X SDK/Tools/Wipe Local SDK Data %#k", false, 350)]
         public static void WipeLocalSdkData()
         {
+            if (!EditorUtility.DisplayDialog(
+                "Delete All PlayerPrefs",
+                "This will delete ALL PlayerPrefs data. Are you sure?",
+                "Delete", "Cancel"))
+            {
+                return;
+            }
+
             string sessionPath = TryGetSessionPath();
 
             PlayerPrefs.DeleteAll();

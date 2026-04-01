@@ -12,6 +12,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using IntelliVerseX.Storage;
 
 namespace IntelliVerseX.Backend
 {
@@ -872,8 +873,8 @@ namespace IntelliVerseX.Backend
                     CountryCode = PlayerPrefs.GetString(PREF_COUNTRY_CODE, ""),
                     Region = PlayerPrefs.GetString(PREF_REGION, ""),
                     City = PlayerPrefs.GetString(PREF_CITY, ""),
-                    Latitude = PlayerPrefs.GetFloat(PREF_LAT, 0),
-                    Longitude = PlayerPrefs.GetFloat(PREF_LON, 0),
+                    Latitude = float.TryParse(IVXSecureStorage.GetString(PREF_LAT, "0"), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float cachedLat) ? cachedLat : 0f,
+                    Longitude = float.TryParse(IVXSecureStorage.GetString(PREF_LON, "0"), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float cachedLon) ? cachedLon : 0f,
                     Timezone = PlayerPrefs.GetString(PREF_TIMEZONE, ""),
                     ISP = PlayerPrefs.GetString(PREF_ISP, ""),
                     Provider = PlayerPrefs.GetString(PREF_PROVIDER, "cache"),
@@ -905,8 +906,8 @@ namespace IntelliVerseX.Backend
                 PlayerPrefs.SetString(PREF_COUNTRY_CODE, result.CountryCode ?? "");
                 PlayerPrefs.SetString(PREF_REGION, result.Region ?? "");
                 PlayerPrefs.SetString(PREF_CITY, result.City ?? "");
-                PlayerPrefs.SetFloat(PREF_LAT, (float)result.Latitude);
-                PlayerPrefs.SetFloat(PREF_LON, (float)result.Longitude);
+                IVXSecureStorage.SetString(PREF_LAT, ((float)result.Latitude).ToString(System.Globalization.CultureInfo.InvariantCulture));
+                IVXSecureStorage.SetString(PREF_LON, ((float)result.Longitude).ToString(System.Globalization.CultureInfo.InvariantCulture));
                 PlayerPrefs.SetString(PREF_TIMEZONE, result.Timezone ?? "");
                 PlayerPrefs.SetString(PREF_ISP, result.ISP ?? "");
                 PlayerPrefs.SetString(PREF_PROVIDER, result.Provider ?? "");
@@ -928,8 +929,8 @@ namespace IntelliVerseX.Backend
                 PlayerPrefs.DeleteKey(PREF_COUNTRY_CODE);
                 PlayerPrefs.DeleteKey(PREF_REGION);
                 PlayerPrefs.DeleteKey(PREF_CITY);
-                PlayerPrefs.DeleteKey(PREF_LAT);
-                PlayerPrefs.DeleteKey(PREF_LON);
+                IVXSecureStorage.DeleteKey(PREF_LAT);
+                IVXSecureStorage.DeleteKey(PREF_LON);
                 PlayerPrefs.DeleteKey(PREF_TIMEZONE);
                 PlayerPrefs.DeleteKey(PREF_ISP);
                 PlayerPrefs.DeleteKey(PREF_PROVIDER);

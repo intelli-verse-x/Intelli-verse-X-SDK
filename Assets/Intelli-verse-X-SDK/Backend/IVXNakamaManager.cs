@@ -275,11 +275,13 @@ namespace IntelliVerseX.Backend
                 string deviceId = IntelliVerseXIdentity.DeviceId;
                 string username = GetUsername(user);
 
+#if UNITY_EDITOR
                 Debug.Log($"{GetLogPrefix()} Authenticating with Nakama:");
                 Debug.Log($"{GetLogPrefix()}   NakamaUserId: {nakamaUserId}");
                 Debug.Log($"{GetLogPrefix()}   Device ID:    {deviceId}");
                 Debug.Log($"{GetLogPrefix()}   Username:     {username}");
                 Debug.Log($"{GetLogPrefix()}   Game ID:      {_gameId}");
+#endif
 
                 // 3) Use CUSTOM auth with your backend user id
                 var newSession = await _client.AuthenticateCustomAsync(
@@ -288,7 +290,11 @@ namespace IntelliVerseX.Backend
                     create: true
                 );
 
+#if UNITY_EDITOR
                 Debug.Log($"{GetLogPrefix()} ✓ Authenticated (Nakama User ID: {newSession.UserId})");
+#else
+                Debug.Log($"{GetLogPrefix()} ✓ Authenticated");
+#endif
 
                 // 4) Sync user identity with your Nakama RPC
                 await SyncUserIdentity(newSession, username, nakamaUserId, deviceId, _gameId);

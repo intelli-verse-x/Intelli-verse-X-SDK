@@ -88,7 +88,7 @@ namespace IntelliVerseX.Auth.UI
         private const string FIXED_ROLE = "user";
         private const string FIXED_FCM_TOKEN = "";
         private const string FIXED_FROM_DEVICE = "machine";
-        private const string FIXED_MAC = "00:1A:2B:3C:4D:5E";
+        private static string FIXED_MAC => SystemInfo.deviceUniqueIdentifier;
 
         #endregion
 
