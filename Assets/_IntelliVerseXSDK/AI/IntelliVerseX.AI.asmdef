@@ -1,0 +1,20 @@
+{
+    "name": "IntelliVerseX.AI",
+    "rootNamespace": "IntelliVerseX.AI",
+    "references": [
+        "IntelliVerseX.Core",
+        "IntelliVerseX.Backend",
+        "IntelliVerseX.Storage",
+        "IntelliVerseX.Monetization",
+        "Newtonsoft.Json"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

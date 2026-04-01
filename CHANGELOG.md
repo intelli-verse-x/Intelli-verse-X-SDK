@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.4.0] - 2026-04-01
+
+### Added
+
+#### AI Module (`IntelliVerseX.AI`)
+- **IVXAISessionManager** — Singleton orchestrator for AI voice and host sessions with dual transport (WebSocket + HTTP polling fallback)
+- **IVXAIApiClient** — REST client covering both `ai-voice/*` and `ai-host/*` endpoints (session CRUD, text, audio, entitlement, polling)
+- **IVXAIWebSocketClient** — Realtime WebSocket client with auto-reconnect (exponential backoff), heartbeat ping/pong, chunked PCM16 audio streaming, and WebGL JS-interop stubs
+- **IVXAIAudioPlayer** — PCM16 queue-based audio playback with base64 decoding and sequential clip management
+- **IVXAIAudioRecorder** — Microphone capture with chunked PCM16 encoding for voice input
+- **IVXAIEntitlementManager** — AI persona entitlement checks, free session tracking, IAP purchase validation, and subscription status
+- **IVXAIConfig** — ScriptableObject configuration for API endpoints, audio settings, language, polling interval, free trial, and UI hints
+- **IVXAIPlayerContext** — Player context profiling with personality flags, performance stats, and `GetPersonalitySummary()` for AI host personalisation
+- **IVXAIMatchContext** — Match context DTO with `GenerateContextString()` for dynamic host commentary
+- **Models** — Full DTO coverage: personas, voice sessions, host sessions, messages, entitlements, products, social proof, analytics
+
+#### Demo UIs (`IntelliVerseX.Demos`)
+- **IVXAIVoiceChatDemo** — Persona selection grid, chat bubble interface, text input, push-to-talk mic button, live captions bar, session timer
+- **IVXAIHostDemo** — AI Host commentary overlay with player context cards, live message feed, trigger/event controls
+- **IVXSpinWheelDemo** — Segmented spin wheel with ease-out animation, reward reveal, spins-remaining counter, cooldown display
+- **IVXStreakDemo** — 7-day reward calendar, streak counter, streak shield status, session booster indicator, claim button
+- **IVXOfferwallDemo** — Scrollable offer cards with icons, tag badges (HOT/NEW/EASY), reward display, and claim flow
+
+---
+
 ## [5.3.0] - 2026-04-01
 
 ### Added

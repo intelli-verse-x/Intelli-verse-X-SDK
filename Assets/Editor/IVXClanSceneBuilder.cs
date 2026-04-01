@@ -279,9 +279,10 @@ namespace IntelliVerseX.Editor
             var btn = r.gameObject.AddComponent<Button>(); btn.targetGraphic = img;
             var cb = btn.colors;
             cb.normalColor = Color.white;
-            cb.highlightedColor = new Color(0.9f, 0.9f, 0.9f, 1f);
-            cb.pressedColor = new Color(0.7f, 0.7f, 0.7f, 1f);
-            cb.disabledColor = new Color(0.5f, 0.5f, 0.5f, 0.6f);
+            cb.highlightedColor = new Color(1f, 1f, 1f, 0.85f);
+            cb.pressedColor = new Color(0.75f, 0.75f, 0.75f, 1f);
+            cb.disabledColor = new Color(0.6f, 0.6f, 0.6f, 0.5f);
+            cb.fadeDuration = 0.1f;
             btn.colors = cb;
             var tr = MakeRect(r, "Label"); Stretch(tr, 6f);
             var tmp = tr.gameObject.AddComponent<TextMeshProUGUI>();
