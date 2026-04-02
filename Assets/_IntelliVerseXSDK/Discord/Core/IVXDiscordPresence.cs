@@ -4,6 +4,35 @@ using UnityEngine;
 namespace IntelliVerseX.Discord
 {
     /// <summary>
+    /// Selects which activity field Discord uses as the primary status line.
+    /// </summary>
+    public enum IVXStatusDisplayType
+    {
+        /// <summary>Display the activity name.</summary>
+        Name,
+        /// <summary>Display the state line.</summary>
+        State,
+        /// <summary>Display the details line.</summary>
+        Details
+    }
+
+    /// <summary>
+    /// Bitmask of client surfaces where Rich Presence join and related UI may appear.
+    /// </summary>
+    [Flags]
+    public enum IVXActivityPlatforms
+    {
+        /// <summary>Desktop Discord client.</summary>
+        Desktop = 1,
+        /// <summary>Mobile Discord clients.</summary>
+        Mobile = 2,
+        /// <summary>Console Discord surfaces.</summary>
+        Console = 4,
+        /// <summary>All supported platforms.</summary>
+        All = Desktop | Mobile | Console
+    }
+
+    /// <summary>
     /// Manages Discord Rich Presence for the game. Auto-updates presence
     /// from IntelliVerseX game state (game mode, match status, streaks,
     /// leaderboard rank, lobby party info).
@@ -28,6 +57,21 @@ namespace IntelliVerseX.Discord
         private string _joinSecret;
         private long _startTimestamp;
 
+        private string _stateUrl;
+        private string _detailsUrl;
+        private string _largeUrl;
+        private string _smallUrl;
+        private IVXStatusDisplayType _statusDisplayType = IVXStatusDisplayType.Name;
+        private IVXActivityPlatforms _supportedPlatforms = IVXActivityPlatforms.All;
+        private string _button1Label;
+        private string _button1Url;
+        private string _button2Label;
+        private string _button2Url;
+        private string _inviteCoverImage;
+        private string _smallImageAssetKey;
+        private string _smallImageText;
+        private bool _rpcOnlyMode;
+
         #endregion
 
         #region Properties
@@ -38,6 +82,12 @@ namespace IntelliVerseX.Discord
         public string CurrentDetails => _currentDetails;
         /// <summary>Current Rich Presence state line.</summary>
         public string CurrentState => _currentState;
+        /// <summary>Which field is used as the primary status text (name, state, or details).</summary>
+        public IVXStatusDisplayType StatusDisplayType => _statusDisplayType;
+        /// <summary>Platforms on which join-related presence UI is supported.</summary>
+        public IVXActivityPlatforms SupportedPlatforms => _supportedPlatforms;
+        /// <summary>Whether Rich Presence is running in RPC-only mode (no full SDK auth / connect).</summary>
+        public bool IsRPCOnlyMode => _rpcOnlyMode;
 
         #endregion
 
@@ -184,6 +234,137 @@ namespace IntelliVerseX.Discord
             PushPresenceToDiscord();
         }
 
+        #region Advanced Rich Presence
+
+        /// <summary>
+        /// Sets optional clickable URLs for the state and details text in the Discord client.
+        /// Pass null to clear a field.
+        /// </summary>
+        /// <param name="stateUrl">URL opened when the state line is activated.</param>
+        /// <param name="detailsUrl">URL opened when the details line is activated.</param>
+        public void SetFieldUrls(string stateUrl = null, string detailsUrl = null)
+        {
+            _stateUrl = stateUrl;
+            _detailsUrl = detailsUrl;
+            PushPresenceToDiscord();
+        }
+
+        /// <summary>
+        /// Sets optional clickable URLs for the large and small Rich Presence images.
+        /// Pass null to clear a field.
+        /// </summary>
+        /// <param name="largeUrl">URL for the large image asset.</param>
+        /// <param name="smallUrl">URL for the small image asset.</param>
+        public void SetAssetUrls(string largeUrl = null, string smallUrl = null)
+        {
+            _largeUrl = largeUrl;
+            _smallUrl = smallUrl;
+            PushPresenceToDiscord();
+        }
+
+        /// <summary>
+        /// Controls which activity field Discord shows as the primary status text.
+        /// </summary>
+        /// <param name="type">Whether to emphasize name, state, or details.</param>
+        public void SetStatusDisplayType(IVXStatusDisplayType type)
+        {
+            _statusDisplayType = type;
+            PushPresenceToDiscord();
+        }
+
+        /// <summary>
+        /// Controls which platforms expose join and related Rich Presence actions.
+        /// </summary>
+        /// <param name="platforms">Bitmask of desktop, mobile, and/or console.</param>
+        public void SetSupportedPlatforms(IVXActivityPlatforms platforms)
+        {
+            _supportedPlatforms = platforms;
+            PushPresenceToDiscord();
+        }
+
+        /// <summary>
+        /// Adds a Rich Presence button (label + URL). At most two buttons are supported;
+        /// if two already exist, the second slot is replaced.
+        /// </summary>
+        /// <param name="label">Button label shown in Discord.</param>
+        /// <param name="url">HTTPS URL opened when the button is clicked.</param>
+        public void AddButton(string label, string url)
+        {
+            var hasFirst = !string.IsNullOrEmpty(_button1Label) || !string.IsNullOrEmpty(_button1Url);
+            var hasSecond = !string.IsNullOrEmpty(_button2Label) || !string.IsNullOrEmpty(_button2Url);
+
+            if (!hasFirst)
+            {
+                _button1Label = label;
+                _button1Url = url;
+            }
+            else if (!hasSecond)
+            {
+                _button2Label = label;
+                _button2Url = url;
+            }
+            else
+            {
+                _button2Label = label;
+                _button2Url = url;
+            }
+
+            PushPresenceToDiscord();
+        }
+
+        /// <summary>
+        /// Removes all custom Rich Presence buttons.
+        /// </summary>
+        public void ClearButtons()
+        {
+            _button1Label = null;
+            _button1Url = null;
+            _button2Label = null;
+            _button2Url = null;
+            PushPresenceToDiscord();
+        }
+
+        /// <summary>
+        /// Sets the cover image asset key used for game invites in Discord.
+        /// </summary>
+        /// <param name="assetKey">Registered asset key for the invite cover art.</param>
+        public void SetInviteCoverImage(string assetKey)
+        {
+            _inviteCoverImage = assetKey;
+            PushPresenceToDiscord();
+        }
+
+        /// <summary>
+        /// Sets the small image overlay and optional hover text on Rich Presence.
+        /// </summary>
+        /// <param name="assetKey">Registered small image asset key.</param>
+        /// <param name="text">Optional tooltip / small text line.</param>
+        public void SetSmallImage(string assetKey, string text = null)
+        {
+            _smallImageAssetKey = assetKey;
+            _smallImageText = text;
+            PushPresenceToDiscord();
+        }
+
+        /// <summary>
+        /// Initializes Rich Presence in RPC-only mode: sets the Discord application ID and
+        /// enables presence updates without requiring <see cref="IVXDiscordManager"/> authentication
+        /// or <c>Connect()</c>. Intended for desktop clients only.
+        /// </summary>
+        /// <param name="applicationId">Discord application (snowflake) id.</param>
+        public void InitializeRPCOnly(long applicationId)
+        {
+            _rpcOnlyMode = true;
+#if INTELLIVERSEX_HAS_DISCORD
+            InitializeRPCOnlyMode(applicationId);
+#else
+            Debug.Log($"{LOG_TAG} [Stub] InitializeRPCOnly({applicationId}) — RPC-only Rich Presence.");
+#endif
+            OnPresenceUpdated?.Invoke();
+        }
+
+        #endregion
+
         /// <summary>
         /// Clear all Rich Presence data from Discord.
         /// </summary>
@@ -196,6 +377,20 @@ namespace IntelliVerseX.Discord
             _partyMax = 0;
             _joinSecret = null;
             _startTimestamp = 0;
+
+            _stateUrl = null;
+            _detailsUrl = null;
+            _largeUrl = null;
+            _smallUrl = null;
+            _statusDisplayType = IVXStatusDisplayType.Name;
+            _supportedPlatforms = IVXActivityPlatforms.All;
+            _button1Label = null;
+            _button1Url = null;
+            _button2Label = null;
+            _button2Url = null;
+            _inviteCoverImage = null;
+            _smallImageAssetKey = null;
+            _smallImageText = null;
 
 #if INTELLIVERSEX_HAS_DISCORD
             ClearDiscordPresence();
@@ -212,7 +407,11 @@ namespace IntelliVerseX.Discord
         private void PushPresenceToDiscord()
         {
             var mgr = IVXDiscordManager.Instance;
-            if (mgr == null || !mgr.IsInitialized) return;
+            if (mgr == null)
+                return;
+
+            if (!_rpcOnlyMode && !mgr.IsInitialized)
+                return;
 
 #if INTELLIVERSEX_HAS_DISCORD
             UpdateDiscordActivity(mgr.Config);
@@ -230,6 +429,8 @@ namespace IntelliVerseX.Discord
             // activity.SetType(ActivityTypes::Playing)
             // activity.SetDetails(_currentDetails)
             // activity.SetState(_currentState)
+            // activity.SetStateUrl(_stateUrl)
+            // activity.SetDetailsUrl(_detailsUrl)
             //
             // if (_startTimestamp > 0):
             //   timestamps.SetStart(_startTimestamp)
@@ -247,7 +448,24 @@ namespace IntelliVerseX.Discord
             //
             // assets.SetLargeImage(config.LargeImageAssetKey)
             // assets.SetLargeText(config.LargeImageText)
+            // assets.SetLargeUrl(_largeUrl)
+            // assets.SetSmallUrl(_smallUrl)
+            // assets.SetSmallImage(_smallImageAssetKey)
+            // assets.SetSmallText(_smallImageText)
+            // assets.SetInviteCoverImage(_inviteCoverImage)
             // activity.SetAssets(assets)
+            //
+            // activity.SetStatusDisplayType(...) // map _statusDisplayType to SDK enum (Name / State / Details)
+            // activity.SetSupportedPlatforms(...) // map _supportedPlatforms bitmask to SDK flags
+            //
+            // if (!string.IsNullOrEmpty(_button1Label) && !string.IsNullOrEmpty(_button1Url)):
+            //   customButton1.SetLabel(_button1Label)
+            //   customButton1.SetUrl(_button1Url)
+            //   activity.AddButton(customButton1)
+            // if (!string.IsNullOrEmpty(_button2Label) && !string.IsNullOrEmpty(_button2Url)):
+            //   customButton2.SetLabel(_button2Label)
+            //   customButton2.SetUrl(_button2Url)
+            //   activity.AddButton(customButton2)
             //
             // if (!string.IsNullOrEmpty(config.StorePageUrl)):
             //   button1.SetLabel("Play Now")
@@ -260,6 +478,12 @@ namespace IntelliVerseX.Discord
             //   activity.AddButton(button2)
             //
             // client->UpdateRichPresence(activity, callback)
+        }
+
+        private void InitializeRPCOnlyMode(long applicationId)
+        {
+            // Wire to: client->SetApplicationId(applicationId) without Connect(), then UpdateRichPresence
+            // (same activity assembly as UpdateDiscordActivity; RPC-only / desktop path)
         }
 
         private void ClearDiscordPresence()

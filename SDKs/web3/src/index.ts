@@ -51,3 +51,40 @@ export type {
   IVXVoiceParticipant,
   IVXDiscordSocialEventMap,
 } from './IVXDiscordSocial';
+
+// Discord DMs & moderation
+export { IVXDiscordMessages } from './discord-messages';
+export type { IVXDirectMessage, IVXDMSummary } from './discord-messages';
+export { IVXDiscordModeration, IVXModerationAction } from './discord-moderation';
+export type { IVXModerationDecision } from './discord-moderation';
+
+// AI LLM stack
+export { IVXAINPCDialogManager } from './ai-npc';
+export type { IVXAINPCProfile, IVXAINPCDialogSession } from './ai-npc';
+export { IVXAIAssistant } from './ai-assistant';
+export type {
+  IVXAIGameContext,
+  IVXAIAssistantResponse,
+  IVXAIHintResponse,
+  IVXAITutorialStep,
+  IVXAITutorialResponse,
+} from './ai-assistant';
+export {
+  IVXAIModerator,
+  IVXContentCategory,
+  IVXModerationSeverity,
+  IVXModerationActionType,
+} from './ai-moderator';
+export type { IVXModerationResult, IVXModerationRule } from './ai-moderator';
+export { IVXAIContentGenerator } from './ai-content-generator';
+export type {
+  IVXQuestTemplate,
+  IVXGeneratedQuest,
+  IVXGeneratedStory,
+  IVXGeneratedItem,
+  IVXGeneratedDialogue,
+} from './ai-content-generator';
+export { IVXAIProfiler, IVXPlayerCohort } from './ai-profiler';
+export type { IVXPlayerProfile, IVXPersonalizationHint } from './ai-profiler';
+export { IVXAIVoiceServices } from './ai-voice-services';
+export type { IVXAIVoice, IVXTranscriptionResult } from './ai-voice-services';

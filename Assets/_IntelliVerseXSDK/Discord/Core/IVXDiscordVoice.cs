@@ -25,6 +25,16 @@ namespace IntelliVerseX.Discord
     }
 
     /// <summary>
+    /// Invoked for each decoded remote voice frame. Set <paramref name="shouldMuteData"/> to true to drop this frame in your pipeline.
+    /// </summary>
+    public delegate void IVXAudioReceivedCallback(ulong userId, short[] data, int samplesPerChannel, int sampleRate, int channels, ref bool shouldMuteData);
+
+    /// <summary>
+    /// Invoked for each captured local microphone frame (PCM16) for custom routing (e.g. FMOD/Wwise).
+    /// </summary>
+    public delegate void IVXAudioCapturedCallback(short[] data, int samplesPerChannel, int sampleRate, int channels);
+
+    /// <summary>
     /// Manages Discord voice chat within game lobbies.
     /// Provides mute/deafen controls, per-participant volume,
     /// speaking indicators, and integration with external audio pipelines.
@@ -34,6 +44,7 @@ namespace IntelliVerseX.Discord
         #region Constants
 
         private const string LOG_TAG = "[IVXDiscordVoice]";
+        private const float DEFAULT_VAD_THRESHOLD_DB = -30f;
 
         #endregion
 
@@ -46,6 +57,12 @@ namespace IntelliVerseX.Discord
         private float _inputVolume = 100f;
         private float _outputVolume = 100f;
         private readonly List<IVXVoiceParticipant> _participants = new();
+        private bool _isVadCustom;
+        private float _vadThresholdDb = DEFAULT_VAD_THRESHOLD_DB;
+        private bool _globalMuteAll;
+        private bool _globalDeafenAll;
+        private IVXAudioReceivedCallback _audioReceivedCallback;
+        private IVXAudioCapturedCallback _audioCapturedCallback;
 
         #endregion
 
@@ -65,6 +82,10 @@ namespace IntelliVerseX.Discord
         public float OutputVolume => _outputVolume;
         /// <summary>List of voice call participants.</summary>
         public IReadOnlyList<IVXVoiceParticipant> Participants => _participants;
+        /// <summary>Whether a custom voice-activity-detection threshold is active.</summary>
+        public bool IsVADCustom => _isVadCustom;
+        /// <summary>Current VAD threshold in dB (meaningful when <see cref="IsVADCustom"/> is true).</summary>
+        public float VADThreshold => _vadThresholdDb;
 
         #endregion
 
@@ -78,6 +99,10 @@ namespace IntelliVerseX.Discord
         public event Action<string> OnParticipantSpeaking;
         /// <summary>Fired when the participant list changes.</summary>
         public event Action<IReadOnlyList<IVXVoiceParticipant>> OnParticipantsChanged;
+        /// <summary>Fired when a participant's mute state changes. Provides user ID and muted flag.</summary>
+        public event Action<string, bool> OnParticipantMuteChanged;
+        /// <summary>Fired when a participant's deafen state changes. Provides user ID and deafened flag.</summary>
+        public event Action<string, bool> OnParticipantDeafenChanged;
 
         #endregion
 
@@ -127,7 +152,8 @@ namespace IntelliVerseX.Discord
             Debug.Log($"{LOG_TAG} Joining voice call in lobby {lobbyId}...");
 
 #if INTELLIVERSEX_HAS_DISCORD
-            StartDiscordCall(lobbyId);
+            // Wire: register optional default audio route; StartDiscordCall(lobbyId, null, null)
+            StartDiscordCall(lobbyId, null, null);
 #else
             _inCall = true;
             _participants.Clear();
@@ -153,12 +179,14 @@ namespace IntelliVerseX.Discord
             Debug.Log($"{LOG_TAG} Leaving voice call...");
 
 #if INTELLIVERSEX_HAS_DISCORD
-            EndDiscordCall();
+            EndDiscordCallForLeave();
 #endif
 
             _inCall = false;
             _selfMuted = false;
             _selfDeafened = false;
+            _audioReceivedCallback = null;
+            _audioCapturedCallback = null;
             _participants.Clear();
             OnCallLeft?.Invoke();
         }
@@ -251,28 +279,181 @@ namespace IntelliVerseX.Discord
 
         #endregion
 
+        #region Advanced Voice
+
+        /// <summary>
+        /// Set voice-activity-detection threshold for capturing speech.
+        /// </summary>
+        /// <param name="useCustom">When true, applies <paramref name="thresholdDb"/>; when false, restores default SDK VAD.</param>
+        /// <param name="thresholdDb">Sensitivity in dB (typical range roughly -60 to 0).</param>
+        public void SetVADThreshold(bool useCustom, float thresholdDb = -30f)
+        {
+            _isVadCustom = useCustom;
+            _vadThresholdDb = thresholdDb;
+
+#if INTELLIVERSEX_HAS_DISCORD
+            // Wire to: client voice manager — map thresholdDb to native VAD / RNNoise gate
+            // e.g. SetVoiceActivityThreshold(useCustom, thresholdDb)
+#else
+            Debug.Log($"{LOG_TAG} [Stub] VAD custom={useCustom}, threshold={thresholdDb} dB");
+#endif
+        }
+
+        /// <summary>
+        /// Join a voice call with raw PCM callbacks for custom audio engines (FMOD, Wwise, etc.).
+        /// </summary>
+        /// <param name="lobbyId">Discord lobby ID.</param>
+        /// <param name="onReceived">Per-remote-user decoded frames.</param>
+        /// <param name="onCaptured">Local capture frames.</param>
+        public void JoinCallWithAudioCallbacks(ulong lobbyId, IVXAudioReceivedCallback onReceived, IVXAudioCapturedCallback onCaptured)
+        {
+            if (_inCall)
+            {
+                Debug.LogWarning($"{LOG_TAG} Already in a voice call.");
+                return;
+            }
+
+            if (!(IVXDiscordManager.Instance?.Config?.EnableVoiceChat ?? false))
+            {
+                Debug.LogWarning($"{LOG_TAG} Voice chat is disabled in config.");
+                return;
+            }
+
+            _audioReceivedCallback = onReceived;
+            _audioCapturedCallback = onCaptured;
+
+#if INTELLIVERSEX_HAS_DISCORD
+            // Wire: StartDiscordCall(lobbyId, onReceived, onCaptured)
+            // Register IVXAudioReceivedCallback with Discord Social SDK audio sink
+            // Register IVXAudioCapturedCallback with capture pipeline before encode
+            StartDiscordCall(lobbyId, onReceived, onCaptured);
+#else
+            _inCall = true;
+            _participants.Clear();
+            _participants.Add(new IVXVoiceParticipant { UserId = "self", DisplayName = "You", Volume = 100f });
+            Debug.Log($"{LOG_TAG} [Stub] Voice call with audio callbacks joined.");
+            OnCallJoined?.Invoke();
+            OnParticipantsChanged?.Invoke(_participants);
+#endif
+        }
+
+        /// <summary>
+        /// Apply mute across every active Discord voice session (global).
+        /// </summary>
+        public void SetSelfMuteAll(bool muted)
+        {
+            _globalMuteAll = muted;
+            _selfMuted = muted;
+
+#if INTELLIVERSEX_HAS_DISCORD
+            // Wire to: client->SetSelfMuteAll(muted) / apply to all Call handles
+#else
+            Debug.Log($"{LOG_TAG} [Stub] Global self mute all: {muted}");
+#endif
+        }
+
+        /// <summary>
+        /// Apply deafen across every active Discord voice session (global).
+        /// </summary>
+        public void SetSelfDeafenAll(bool deafened)
+        {
+            _globalDeafenAll = deafened;
+            _selfDeafened = deafened;
+            if (deafened) _selfMuted = true;
+
+#if INTELLIVERSEX_HAS_DISCORD
+            // Wire to: client->SetSelfDeafenAll(deafened)
+#else
+            Debug.Log($"{LOG_TAG} [Stub] Global self deafen all: {deafened}");
+#endif
+        }
+
+        /// <summary>
+        /// End every active voice call and clear local state.
+        /// </summary>
+        /// <param name="onComplete">Invoked after teardown (main thread).</param>
+        public void EndAllCalls(Action onComplete = null)
+        {
+#if INTELLIVERSEX_HAS_DISCORD
+            // Wire to: client->EndCalls(callback) then clear callbacks / participants
+            EndDiscordCall(() =>
+            {
+                if (_inCall)
+                {
+                    _inCall = false;
+                    _selfMuted = false;
+                    _selfDeafened = false;
+                    _audioReceivedCallback = null;
+                    _audioCapturedCallback = null;
+                    _participants.Clear();
+                    OnCallLeft?.Invoke();
+                }
+                onComplete?.Invoke();
+            });
+#else
+            Debug.Log($"{LOG_TAG} [Stub] EndAllCalls");
+            if (_inCall)
+            {
+                _inCall = false;
+                _selfMuted = false;
+                _selfDeafened = false;
+                _audioReceivedCallback = null;
+                _audioCapturedCallback = null;
+                _participants.Clear();
+                OnCallLeft?.Invoke();
+            }
+            onComplete?.Invoke();
+#endif
+        }
+
+        /// <summary>
+        /// Read mute/deafen flags for a participant by user ID.
+        /// </summary>
+        public (bool isMuted, bool isDeafened) GetParticipantVoiceState(string userId)
+        {
+            for (int i = 0; i < _participants.Count; i++)
+            {
+                if (_participants[i].UserId == userId)
+                    return (_participants[i].IsMuted, _participants[i].IsDeafened);
+            }
+
+#if INTELLIVERSEX_HAS_DISCORD
+            // Wire: optional cache miss — query Discord participant state by userId
+#endif
+            return (false, false);
+        }
+
+        #endregion
+
         #region Private Methods
 
 #if INTELLIVERSEX_HAS_DISCORD
-        private void StartDiscordCall(ulong lobbyId)
+        private void StartDiscordCall(ulong lobbyId, IVXAudioReceivedCallback onReceived, IVXAudioCapturedCallback onCaptured)
         {
             // Wire to: client->StartCall(lobbyId)
-            // Set up participant tracking callbacks
+            // If onReceived/onCaptured non-null: hook Social SDK audio tap / OnAudioReceived-style callbacks
+            // Set up participant tracking; raise OnParticipantMuteChanged / OnParticipantDeafenChanged from SDK events
         }
 
-        private void EndDiscordCall()
+        private void EndDiscordCallForLeave()
         {
-            // Wire to: client->EndCalls(callback)
+            // Wire to: client->EndCalls(callback) for the active call only (LeaveCall path)
+        }
+
+        private void EndDiscordCall(Action onComplete)
+        {
+            // Wire to: client->EndCalls(callback) — when all calls end, invoke onComplete on main thread
+            onComplete?.Invoke();
         }
 
         private void SetDiscordSelfMute(bool muted)
         {
-            // Wire to: client->SetSelfMuteAll(muted)
+            // Wire to: active call(s) SetSelfMute — respect _globalMuteAll if needed
         }
 
         private void SetDiscordSelfDeafen(bool deafened)
         {
-            // Wire to: client->SetSelfDeafAll(deafened)
+            // Wire to: active call(s) SetSelfDeafen
         }
 
         private void SetDiscordInputVolume(float volume)

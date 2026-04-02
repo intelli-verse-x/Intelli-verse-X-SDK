@@ -20,6 +20,10 @@ namespace IntelliVerseX.Discord
         public bool VoiceActive;
         /// <summary>Arbitrary metadata JSON blob.</summary>
         public string Metadata;
+        /// <summary>Lobby-level metadata JSON (explicit lobby scope).</summary>
+        public string LobbyMetadata;
+        /// <summary>Member user IDs currently in the lobby.</summary>
+        public string[] MemberIds;
     }
 
     /// <summary>
@@ -33,6 +37,8 @@ namespace IntelliVerseX.Discord
         #region Constants
 
         private const string LOG_TAG = "[IVXDiscordLobby]";
+        private const int DEFAULT_LOBBY_IDLE_TIMEOUT_SECONDS = 300;
+        private const int MAX_LOBBY_IDLE_TIMEOUT_SECONDS = 604800;
 
         #endregion
 
@@ -43,6 +49,9 @@ namespace IntelliVerseX.Discord
         private string _currentSecret;
         private bool _inLobby;
         private readonly List<string> _chatHistory = new();
+        private string _currentLobbyMetadata;
+        private string _currentUserMetadata;
+        private int _lobbyIdleTimeoutSeconds = DEFAULT_LOBBY_IDLE_TIMEOUT_SECONDS;
 
         #endregion
 
@@ -56,6 +65,10 @@ namespace IntelliVerseX.Discord
         public bool IsInLobby => _inLobby;
         /// <summary>Chat message history for the current lobby.</summary>
         public IReadOnlyList<string> ChatHistory => _chatHistory;
+        /// <summary>JSON metadata for the current lobby (lobby scope).</summary>
+        public string CurrentLobbyMetadata => _currentLobbyMetadata;
+        /// <summary>JSON metadata for the local user in the current lobby.</summary>
+        public string CurrentUserMetadata => _currentUserMetadata;
 
         #endregion
 
@@ -116,10 +129,12 @@ namespace IntelliVerseX.Discord
             Debug.Log($"{LOG_TAG} Creating/joining lobby with secret: {secret}");
 
 #if INTELLIVERSEX_HAS_DISCORD
+            _currentLobbyMetadata = metadata;
             CreateOrJoinDiscordLobby(secret, metadata);
 #else
             _currentSecret = secret;
             _currentLobbyId = (ulong)secret.GetHashCode();
+            _currentLobbyMetadata = metadata;
             _inLobby = true;
             _chatHistory.Clear();
             Debug.Log($"{LOG_TAG} [Stub] Joined lobby {_currentLobbyId}");
@@ -146,6 +161,8 @@ namespace IntelliVerseX.Discord
 
             _currentLobbyId = 0;
             _currentSecret = null;
+            _currentLobbyMetadata = null;
+            _currentUserMetadata = null;
             _inLobby = false;
             _chatHistory.Clear();
             OnLobbyLeft?.Invoke();
@@ -214,6 +231,121 @@ namespace IntelliVerseX.Discord
 
         #endregion
 
+        #region Lobby Metadata
+
+        /// <summary>
+        /// Create or join a lobby with separate lobby-level and per-user metadata JSON.
+        /// </summary>
+        /// <param name="secret">Unique lobby secret.</param>
+        /// <param name="lobbyMetadata">Lobby-level JSON (searchable / discovery fields).</param>
+        /// <param name="userMetadata">Local member metadata JSON.</param>
+        /// <param name="onComplete">Invoked with the lobby ID when ready.</param>
+        public void CreateOrJoinLobbyWithMetadata(string secret, string lobbyMetadata, string userMetadata, Action<ulong> onComplete = null)
+        {
+            if (string.IsNullOrEmpty(secret))
+            {
+                Debug.LogError($"{LOG_TAG} Lobby secret cannot be null or empty.");
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} Creating/joining lobby with metadata (secret hash={secret.GetHashCode()})");
+
+#if INTELLIVERSEX_HAS_DISCORD
+            // Wire to: client->CreateOrJoinLobbyWithMetadata(secret, lobbyMetadata, userMetadata, callback)
+            _currentLobbyMetadata = lobbyMetadata;
+            _currentUserMetadata = userMetadata;
+            CreateOrJoinDiscordLobbyWithMetadata(secret, lobbyMetadata, userMetadata, lobbyId =>
+            {
+                _currentLobbyId = lobbyId;
+                _currentSecret = secret;
+                _inLobby = true;
+                _chatHistory.Clear();
+                OnLobbyJoined?.Invoke(lobbyId);
+                onComplete?.Invoke(lobbyId);
+            });
+#else
+            _currentSecret = secret;
+            _currentLobbyId = (ulong)secret.GetHashCode();
+            _currentLobbyMetadata = lobbyMetadata;
+            _currentUserMetadata = userMetadata;
+            _inLobby = true;
+            _chatHistory.Clear();
+            Debug.Log($"{LOG_TAG} [Stub] Joined lobby {_currentLobbyId} with metadata.");
+            OnLobbyJoined?.Invoke(_currentLobbyId);
+            onComplete?.Invoke(_currentLobbyId);
+#endif
+        }
+
+        /// <summary>
+        /// Update the local member's metadata JSON for the current lobby.
+        /// </summary>
+        public void UpdateLobbyMemberMetadata(string metadata)
+        {
+            if (!_inLobby)
+            {
+                Debug.LogWarning($"{LOG_TAG} Not in a lobby.");
+                return;
+            }
+
+            _currentUserMetadata = metadata;
+
+#if INTELLIVERSEX_HAS_DISCORD
+            // Wire to: client->UpdateLobbyMemberMetadata(_currentLobbyId, metadata, callback)
+            UpdateDiscordLobbyMemberMetadata(_currentLobbyId, metadata);
+#else
+            Debug.Log($"{LOG_TAG} [Stub] Updated member metadata.");
+#endif
+        }
+
+        /// <summary>
+        /// Fetch full lobby details including members and metadata.
+        /// </summary>
+        public void GetLobbyInfo(Action<IVXDiscordLobbyInfo> onComplete = null)
+        {
+            if (!_inLobby)
+            {
+                onComplete?.Invoke(null);
+                return;
+            }
+
+#if INTELLIVERSEX_HAS_DISCORD
+            // Wire to: client->GetLobby(_currentLobbyId, callback) — populate IVXDiscordLobbyInfo
+            FetchDiscordLobbyInfo(_currentLobbyId, onComplete);
+#else
+            var info = new IVXDiscordLobbyInfo
+            {
+                LobbyId = _currentLobbyId,
+                Secret = _currentSecret,
+                MemberCount = 1,
+                VoiceActive = false,
+                Metadata = _currentLobbyMetadata,
+                LobbyMetadata = _currentLobbyMetadata,
+                MemberIds = new[] { "local_user" }
+            };
+            onComplete?.Invoke(info);
+#endif
+        }
+
+        /// <summary>
+        /// Set how long the lobby may stay idle before the server tears it down (seconds).
+        /// Default 300; maximum 604800 (7 days).
+        /// </summary>
+        public void SetLobbyIdleTimeout(int seconds)
+        {
+            seconds = Mathf.Clamp(seconds, 1, MAX_LOBBY_IDLE_TIMEOUT_SECONDS);
+            _lobbyIdleTimeoutSeconds = seconds;
+
+#if INTELLIVERSEX_HAS_DISCORD
+            // Wire to: client->SetLobbyIdleTimeout(_currentLobbyId, seconds) when in lobby, or store for create
+            if (_inLobby)
+                SetDiscordLobbyIdleTimeout(_currentLobbyId, seconds);
+#else
+            Debug.Log($"{LOG_TAG} [Stub] Lobby idle timeout = {seconds}s");
+#endif
+        }
+
+        #endregion
+
         #region Private Methods
 
 #if INTELLIVERSEX_HAS_DISCORD
@@ -223,6 +355,12 @@ namespace IntelliVerseX.Discord
             // or: client->CreateOrJoinLobbyWithMetadata(secret, metadata, callback)
             // On success: _currentLobbyId = lobbyId, _inLobby = true
             // Set up: client->SetMessageCreatedCallback for chat
+        }
+
+        private void CreateOrJoinDiscordLobbyWithMetadata(string secret, string lobbyMetadata, string userMetadata, Action<ulong> onJoined)
+        {
+            // Wire to: Discord Social SDK — create/join with lobby + member metadata
+            // On success: invoke onJoined(lobbyId)
         }
 
         private void LeaveDiscordLobby(ulong lobbyId)
@@ -239,6 +377,32 @@ namespace IntelliVerseX.Discord
         {
             // Wire to: client->GetLobbyMessagesWithLimit(lobbyId, limit, callback)
             // Parse MessageHandle list into strings
+        }
+
+        private void UpdateDiscordLobbyMemberMetadata(ulong lobbyId, string metadata)
+        {
+            // Wire to: client->UpdateLobbyMember(lobbyId, metadata, callback)
+        }
+
+        private void FetchDiscordLobbyInfo(ulong lobbyId, Action<IVXDiscordLobbyInfo> onComplete)
+        {
+            // Wire to: client->GetLobby(lobbyId) — merge SDK result with fields below
+            var info = new IVXDiscordLobbyInfo
+            {
+                LobbyId = lobbyId,
+                Secret = _currentSecret,
+                MemberCount = 0,
+                VoiceActive = false,
+                Metadata = _currentLobbyMetadata,
+                LobbyMetadata = _currentLobbyMetadata,
+                MemberIds = Array.Empty<string>()
+            };
+            onComplete?.Invoke(info);
+        }
+
+        private void SetDiscordLobbyIdleTimeout(ulong lobbyId, int seconds)
+        {
+            // Wire to: client->SetLobbyType / idle settings per SDK surface
         }
 #endif
 

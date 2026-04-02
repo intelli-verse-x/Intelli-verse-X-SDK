@@ -4,6 +4,7 @@
     "references": [
         "IntelliVerseX.AI",
         "IntelliVerseX.Core",
+        "IntelliVerseX.Discord",
         "IntelliVerseX.Hiro",
         "IntelliVerseX.GameModes",
         "Unity.TextMeshPro",

@@ -35,6 +35,15 @@ namespace IntelliVerseX.Discord
         [Tooltip("Text shown when hovering the large image.")]
         [SerializeField] private string _largeImageText = "";
 
+        [Tooltip("Small image asset key uploaded to Discord Developer Portal.")]
+        [SerializeField] private string _smallImageAssetKey = "";
+
+        [Tooltip("Text shown when hovering the small image.")]
+        [SerializeField] private string _smallImageText = "";
+
+        [Tooltip("Asset key for the invite cover image")]
+        [SerializeField] private string _inviteCoverImageKey = "";
+
         [Header("Lobbies & Voice")]
         [Tooltip("Enable Discord voice chat in multiplayer lobbies.")]
         [SerializeField] private bool _enableVoiceChat = true;
@@ -51,6 +60,34 @@ namespace IntelliVerseX.Discord
 
         [Tooltip("Store page URL for the 'Play Now' Rich Presence button.")]
         [SerializeField] private string _storePageUrl = "";
+
+        [Header("Account Linking")]
+        [Tooltip("Deep link scheme for mobile OAuth2 (e.g. \"mygame://\").")]
+        [SerializeField] private string _mobileRedirectScheme = "";
+
+        [Tooltip("Publisher ID for cross-game shared auth.")]
+        [SerializeField] private string _publisherId = "";
+
+        [Tooltip("Enable Discord client entry-point linking.")]
+        [SerializeField] private bool _enableEntryPointLinking = true;
+
+        [Header("Moderation")]
+        [Tooltip("Enable AI-powered auto-moderation.")]
+        [SerializeField] private bool _enableAutoModeration = false;
+
+        [Tooltip("Webhook URL for server-side moderation.")]
+        [SerializeField] private string _moderationWebhookUrl = "";
+
+        [Header("Direct Messages")]
+        [Tooltip("Enable DM feature.")]
+        [SerializeField] private bool _enableDirectMessages = true;
+
+        [Tooltip("Default DM history fetch limit.")]
+        [SerializeField, Range(1, 200)] private int _dmHistoryLimit = 50;
+
+        [Header("Debug")]
+        [Tooltip("Enable Discord SDK debug logging.")]
+        [SerializeField] private bool _enableDebugLogging = false;
 
         #endregion
 
@@ -70,6 +107,12 @@ namespace IntelliVerseX.Discord
         public string LargeImageAssetKey => _largeImageAssetKey;
         /// <summary>Hover text for the large Rich Presence image.</summary>
         public string LargeImageText => _largeImageText;
+        /// <summary>Small image asset key for Rich Presence.</summary>
+        public string SmallImageAssetKey => _smallImageAssetKey;
+        /// <summary>Hover text for the small Rich Presence image.</summary>
+        public string SmallImageText => _smallImageText;
+        /// <summary>Asset key for the invite cover image.</summary>
+        public string InviteCoverImageKey => _inviteCoverImageKey;
         /// <summary>Whether Discord voice chat is enabled.</summary>
         public bool EnableVoiceChat => _enableVoiceChat;
         /// <summary>Max members in a voice lobby.</summary>
@@ -80,6 +123,22 @@ namespace IntelliVerseX.Discord
         public string CommunityInviteUrl => _communityInviteUrl;
         /// <summary>Game store page URL.</summary>
         public string StorePageUrl => _storePageUrl;
+        /// <summary>Deep link scheme for mobile OAuth2 (e.g. mygame://).</summary>
+        public string MobileRedirectScheme => _mobileRedirectScheme;
+        /// <summary>Publisher ID for cross-game shared auth.</summary>
+        public string PublisherId => _publisherId;
+        /// <summary>Whether Discord client entry-point linking is enabled.</summary>
+        public bool EnableEntryPointLinking => _enableEntryPointLinking;
+        /// <summary>Whether AI-powered auto-moderation is enabled.</summary>
+        public bool EnableAutoModeration => _enableAutoModeration;
+        /// <summary>Webhook URL for server-side moderation.</summary>
+        public string ModerationWebhookUrl => _moderationWebhookUrl;
+        /// <summary>Whether the direct messages feature is enabled.</summary>
+        public bool EnableDirectMessages => _enableDirectMessages;
+        /// <summary>Default DM history fetch limit.</summary>
+        public int DmHistoryLimit => _dmHistoryLimit;
+        /// <summary>Whether Discord SDK debug logging is enabled.</summary>
+        public bool EnableDebugLogging => _enableDebugLogging;
 
         #endregion
     }

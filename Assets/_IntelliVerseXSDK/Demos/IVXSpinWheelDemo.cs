@@ -225,7 +225,7 @@ namespace IntelliVerseX.Demos
         #endregion
     }
 
-    internal static class SpinLayoutExt
+    internal static class IVXLayoutExt
     {
         public static void SetLayout(this LayoutElement le, float minW, float minH, float flexW = -1f, float flexH = -1f)
         {

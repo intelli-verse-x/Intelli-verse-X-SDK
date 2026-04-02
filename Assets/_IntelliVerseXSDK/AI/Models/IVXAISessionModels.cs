@@ -16,6 +16,8 @@ namespace IntelliVerseX.AI
         [JsonProperty("userName")] public string UserName;
         [JsonProperty("topic")] public string Topic;
         [JsonProperty("language")] public string Language;
+        /// <summary>Serialized <see cref="IVXAIPlayerContext"/> JSON for voice personalization when set.</summary>
+        [JsonProperty("playerContext")] public string PlayerContext;
     }
 
     /// <summary>

@@ -1,10 +1,10 @@
 # Discord Social SDK Integration
 
-The Discord module wraps the [Discord Social SDK](https://discord.com/developers/docs/social-sdk/overview) to add social features that drive player retention, organic growth, and community engagement. It bridges IntelliVerseX game systems (multiplayer, live-ops, leaderboards) with Discord's 200M+ monthly active user social graph.
+The Discord module wraps the [Discord Social SDK](https://discord.com/developers/docs/social-sdk/overview) so IntelliVerseX games get social features that support retention, growth, and community engagement. It connects your game systems (multiplayer, live-ops, leaderboards) with Discord’s social graph.
 
 ---
 
-## Overview
+## 1. Overview
 
 | | |
 |---|---|
@@ -16,45 +16,36 @@ The Discord module wraps the [Discord Social SDK](https://discord.com/developers
 ### Components
 
 | Component | Responsibility |
-|-----------|---------------|
-| `IVXDiscordManager` | SDK initialization, OAuth2 account linking, connection lifecycle |
-| `IVXDiscordPresence` | Rich Presence — activity, party, timer, leaderboard rank |
-| `IVXDiscordFriends` | Unified friends list (Discord + Nakama merge) |
-| `IVXDiscordLobby` | Discord lobby text chat, IVX room bridging |
-| `IVXDiscordVoice` | Voice calls — mute, deafen, per-participant volume |
-| `IVXDiscordInvites` | Send/receive game invites, "Ask to Join" flow |
-| `IVXDiscordLinkedChannels` | Bridge in-game chat to Discord server text channels |
-| `IVXDiscordConfig` | ScriptableObject holding all configuration |
+|-----------|----------------|
+| `IVXDiscordManager` | SDK init, OAuth2 and advanced account linking, tokens, social deep links |
+| `IVXDiscordPresence` | Rich Presence (basic + advanced: URLs, buttons, platforms, RPC-only) |
+| `IVXDiscordFriends` | Unified friends list + dual-layer relationship APIs (game + Discord) |
+| `IVXDiscordLobby` | Lobbies, metadata, idle timeout, text chat, history |
+| `IVXDiscordVoice` | Voice: mute/deafen, VAD, audio callbacks (FMOD/Wwise), global controls |
+| `IVXDiscordInvites` | Game invites, Ask to Join, join requests |
+| `IVXDiscordLinkedChannels` | Bridge in-game chat to Discord server channels |
+| `IVXDiscordMessages` | Direct messages: send, edit, history, summaries, chat visibility, deep links |
+| `IVXDiscordModeration` | Message metadata, webhook story, voice capture for moderation, reporting |
+| `IVXDiscordDebug` | Log level, Unity + custom log sinks |
+| `IVXDiscordConfig` | ScriptableObject configuration |
+
+!!! info "Stub mode"
+    If the Discord UPM package is not installed, IVX Discord types run in **stub mode**: safe no-ops or mock data with logs, so game code compiles and runs without the native SDK.
 
 ---
 
-## Why Discord Integration Matters
-
-| Capability | Impact |
-|------------|--------|
-| **Rich Presence** | Every player becomes organic marketing — activity is visible to all Discord friends |
-| **Game Invites** | Viral re-engagement loops; one-click join from Discord |
-| **Voice Chat** | Session length increases ~83% when players communicate in-game |
-| **Linked Channels** | Community stays active 24/7 — players chat in Discord even when not in-game |
-| **Unified Friends** | Single friends list across Discord + Nakama reduces social friction |
-
----
-
-## Setup
+## 2. Setup & Configuration (`IVXDiscordConfig`)
 
 ### Prerequisites
 
-1. A [Discord Developer Portal](https://discord.com/developers/applications) account
-2. An **Application** created with its **Application ID**
-3. Rich Presence art assets uploaded (1024 × 1024 PNG) under **Rich Presence → Art Assets**
-4. OAuth2 redirect URI configured (e.g. `https://localhost` for desktop, custom scheme for mobile)
-5. For **communication features** (voice, lobbies, linked channels): apply for increased rate limits via the Developer Portal
+1. [Discord Developer Portal](https://discord.com/developers/applications) application and **Application ID**
+2. Rich Presence art assets (e.g. 1024×1024 PNG) under **Rich Presence → Art Assets**
+3. OAuth2 redirect URIs (desktop `https://localhost`, mobile custom URL scheme, console flows as applicable)
+4. For **communication** scopes (DMs, lobbies, voice): apply for production access where required
 
-### Unity Installation
+### Install the Discord Social SDK
 
-#### 1. Install the Discord Social SDK package
-
-Add the Discord Social SDK UPM package to your project. The IntelliVerseX assembly definition automatically defines `INTELLIVERSEX_HAS_DISCORD` when `com.discord.social-sdk ≥ 0.1.0` is detected:
+The IntelliVerseX assembly defines `INTELLIVERSEX_HAS_DISCORD` when the package is present:
 
 ```json
 {
@@ -68,775 +59,386 @@ Add the Discord Social SDK UPM package to your project. The IntelliVerseX assemb
 }
 ```
 
-!!! info "Stub Mode"
-    If the Discord package is not installed, all IVX Discord components run in **stub mode** — calls succeed with mock data and log messages. This lets you develop and test game logic without the Discord SDK present.
+### Create the config asset
 
-#### 2. Create the configuration asset
+**Assets → Create → IntelliVerseX → Discord Config** → assign the asset to `IVXDiscordManager`.
 
-**Assets → Create → IntelliVerseX → Discord Config**
+### Recommended GameObject layout
 
-This creates an `IVXDiscordConfig` ScriptableObject. Fill in:
-
-- **Application ID** — from the Developer Portal
-- **Client ID** — usually the same as Application ID
-- **Redirect URI** — must match the Developer Portal entry
-- **Large Image Asset Key** — the key you uploaded for Rich Presence
-- **Community Invite URL** — your Discord server invite link
-- **Store Page URL** — your game's store or download page
-
-#### 3. Add components to a persistent GameObject
-
-Attach all seven components to a single GameObject marked `DontDestroyOnLoad`:
+Attach Discord components to a persistent `DontDestroyOnLoad` object (subset as needed):
 
 ```
 DiscordSocial (GameObject)
-├── IVXDiscordManager      (handles init + auth)
-├── IVXDiscordPresence     (Rich Presence)
-├── IVXDiscordFriends      (unified friends list)
-├── IVXDiscordLobby        (lobbies + text chat)
-├── IVXDiscordVoice        (voice calls)
-├── IVXDiscordInvites      (game invites)
-└── IVXDiscordLinkedChannels (channel bridging)
+├── IVXDiscordManager
+├── IVXDiscordPresence
+├── IVXDiscordFriends
+├── IVXDiscordLobby
+├── IVXDiscordVoice
+├── IVXDiscordInvites
+├── IVXDiscordLinkedChannels
+├── IVXDiscordMessages
+├── IVXDiscordModeration
+└── IVXDiscordDebug
 ```
 
-Assign the `IVXDiscordConfig` asset to `IVXDiscordManager`'s config field in the Inspector.
+### `IVXDiscordConfig` fields
 
-### Other Platforms
-
-| Platform | Import |
-|----------|--------|
-| **JavaScript / TypeScript** | `import { IVXDiscordSocial } from '@intelliversex/sdk'` |
-| **Java / Android** | `com.intelliversex.sdk.discord.IVXDiscordSocial` |
-| **Flutter / Dart** | `import 'package:ivx_discord_social/ivx_discord_social.dart'` |
-| **Unreal Engine 5** | `UIVXDiscordSocial` (Blueprint-callable) |
-| **Godot 4** | `IVXDiscordSocial` autoload |
-| **C++ (native)** | `ivx::DiscordSocial::instance()` |
-| **Cocos2d-x** | `IntelliVerseX::IVXDiscordSocial::getInstance()` |
-| **Defold** | `require("intelliversex.ivx_discord")` |
+| Section | Field | Description |
+|---------|--------|---------------|
+| **Application** | `ApplicationId` | Discord application (snowflake) ID |
+| **OAuth2** | `ClientId`, `RedirectUri` | OAuth client id and registered redirect URI |
+| **Rich Presence** | `AutoPresence`, `PresenceUpdateInterval` | Auto-sync from game state; refresh interval (5–120 s) |
+| | `LargeImageAssetKey`, `LargeImageText` | Large image key and hover text |
+| | `SmallImageAssetKey`, `SmallImageText` | Small overlay image and text |
+| | `InviteCoverImageKey` | Asset key for invite cover art |
+| **Lobbies & Voice** | `EnableVoiceChat`, `MaxVoiceLobbySize`, `BridgeLobbiesToDiscord` | Voice enable, cap (2–25), IVX↔Discord lobby bridging |
+| **Community** | `CommunityInviteUrl`, `StorePageUrl` | Default “Join Community” / “Play Now” targets |
+| **Account Linking** | `MobileRedirectScheme` | Deep link scheme for mobile OAuth (e.g. `mygame://`) |
+| | `PublisherId` | Publisher id for shared / cross-game auth |
+| | `EnableEntryPointLinking` | Allow flows that start from Discord entry points |
+| **Moderation** | `EnableAutoModeration`, `ModerationWebhookUrl` | Toggle + server webhook for moderation pipelines |
+| **Direct Messages** | `EnableDirectMessages`, `DmHistoryLimit` | DM feature toggle; default history batch size (1–200) |
+| **Debug** | `EnableDebugLogging` | Mirrors intent for SDK diagnostics (see `IVXDiscordDebug`) |
 
 ---
 
-## Features
+## 3. Account Linking
 
-### 1. Account Linking
+### States
 
-OAuth2 authentication with Discord. Supports three account states:
+| State | Meaning |
+|-------|---------|
+| **Not linked** | Game runs without Discord OAuth |
+| **Provisional** | Temporary Discord-backed identity for social features without full link |
+| **Fully linked** | OAuth2 completed — full graph and comms scopes as approved |
 
-| State | Description |
-|-------|-------------|
-| **Not linked** | Player uses the game without Discord |
-| **Provisional** | Non-Discord user gets a temporary Discord identity for social features |
-| **Fully linked** | Player authorized via OAuth2 — full Discord social graph available |
+### Basic OAuth2
 
-#### Unity (C#)
+=== "C#"
+
+    ```csharp
+    using IntelliVerseX.Discord;
+
+    IVXDiscordManager.Instance.Initialize(config);
+    IVXDiscordManager.Instance.OnAccountLinked += (id, name) => { /* ... */ };
+    IVXDiscordManager.Instance.LinkAccount();
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    const discord = IVXDiscordSocial.getInstance();
+    await discord.initialize({ applicationId: '...' });
+    const user = await discord.linkAccount();
+    ```
+
+### Entry-point linking from Discord
+
+When the user starts linking from Discord, the client can request authorization:
 
 ```csharp
-using IntelliVerseX.Discord;
-
-public class DiscordAuth : MonoBehaviour
-{
-    void Start()
-    {
-        var mgr = IVXDiscordManager.Instance;
-        mgr.OnAccountLinked += HandleLinked;
-        mgr.OnError += HandleError;
-
-        mgr.Initialize();
-    }
-
-    public void OnLinkButtonPressed()
-    {
-        IVXDiscordManager.Instance.LinkAccount();
-    }
-
-    public void OnPlayWithoutDiscord()
-    {
-        IVXDiscordManager.Instance.CreateProvisionalAccount(success =>
-        {
-            if (success) LoadMainMenu();
-        });
-    }
-
-    private void HandleLinked(string userId, string username)
-    {
-        Debug.Log($"Linked as {username} ({userId})");
-        LoadMainMenu();
-    }
-
-    private void HandleError(string error)
-    {
-        ShowErrorDialog(error);
-    }
-}
+mgr.OnAuthorizeRequested += () => ShowLinkUi();
+mgr.RegisterAuthorizeRequestCallback(() => StartLinkFlowFromDiscord());
+// When inappropriate (match, cutscene):
+mgr.RemoveAuthorizeRequestCallback();
 ```
 
-#### TypeScript
+### Mobile PKCE
 
-```typescript
-import { IVXDiscordSocial } from '@intelliversex/sdk';
-
-const discord = IVXDiscordSocial.getInstance();
-
-await discord.initialize({ applicationId: '123456789012345678' });
-
-// Full OAuth2 link
-const user = await discord.linkAccount();
-console.log(`Linked as ${user.username}`);
-
-// Provisional (no Discord account required)
-await discord.createProvisionalAccount();
-```
-
-#### Java (Android)
-
-```java
-import com.intelliversex.sdk.discord.IVXDiscordSocial;
-
-IVXDiscordSocial discord = IVXDiscordSocial.getInstance();
-discord.initialize(applicationId, this);
-
-discord.setOnAccountLinked((userId, username) -> {
-    Log.d("Discord", "Linked as " + username);
-});
-
-discord.linkAccount();
-```
-
----
-
-### 2. Rich Presence
-
-Auto-updates the player's Discord profile with game activity. Every Discord friend sees what your player is doing — free organic marketing.
-
-#### What gets displayed
-
-| Rich Presence Field | Source |
-|----|-----|
-| **Details** (line 1) | Game mode & match status (from `IVXGameModeManager`) |
-| **State** (line 2) | Score, queue status, or live-ops event |
-| **Party** | Lobby size & "Join" button (from `IVXLobbyManager`) |
-| **Timestamps** | Elapsed play time |
-| **Large image** | Game logo (configured in `IVXDiscordConfig`) |
-| **Button 1** | "Play Now" → store page URL |
-| **Button 2** | "Join Community" → Discord server invite |
-
-#### Unity (C#)
+Use the mobile OAuth2 + PKCE path with your app’s URL scheme (must align with `MobileRedirectScheme` / portal config):
 
 ```csharp
-var presence = IVXDiscordPresence.Instance;
-
-// Basic activity
-presence.SetActivity("Ranked Match on Arena", "Score: 1,500");
-
-// Party info (enables "Ask to Join" on Discord)
-presence.SetParty(
-    partyId: "lobby_abc123",
-    currentSize: 2,
-    maxSize: 4,
-    joinSecret: "secret_abc123"
-);
-
-// Leaderboard rank
-presence.SetLeaderboardRank("Global", rank: 42, score: 98_500);
-
-// Live-ops events (Hiro integration)
-presence.SetLiveOpsEvent("Day 15 Streak", "Won Legendary Chest!");
-
-// Start elapsed timer
-presence.StartTimer();
-
-// Auto-sync from all IVX systems at once
-presence.SyncFromGameState();
-
-// Clear everything
-presence.ClearPresence();
+mgr.StartMobileOAuth2Flow("mygame://", success => { /* ... */ });
 ```
 
-#### TypeScript
+### Console device code
 
-```typescript
-const discord = IVXDiscordSocial.getInstance();
-
-discord.setActivity({
-    details: 'Ranked Match on Arena',
-    state: 'Score: 1,500',
-    party: { id: 'lobby_abc123', size: 2, max: 4 },
-    timestamps: { start: Date.now() },
-    buttons: [
-        { label: 'Play Now', url: 'https://store.example.com/mygame' },
-        { label: 'Join Community', url: 'https://discord.gg/mygame' },
-    ],
-});
-```
-
-!!! tip "Auto-Presence"
-    When `IVXDiscordConfig.AutoPresence` is enabled (default), `IVXDiscordPresence` polls game state every `PresenceUpdateInterval` seconds (default 15) and pushes updates to Discord automatically. You only need to call `SetActivity` for manual overrides.
-
----
-
-### 3. Unified Friends List
-
-Merges Discord relationships with Nakama in-game friends into a single view.
-
-#### `IVXUnifiedFriend` Data Model
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `Source` | `IVXFriendSource` | `Discord`, `Game`, or `Both` |
-| `DisplayName` | `string` | Preferred display name |
-| `DiscordUserId` | `string` | Discord ID (null if game-only) |
-| `GameUserId` | `string` | Nakama ID (null if Discord-only) |
-| `AvatarUrl` | `string` | Avatar URL (prefers Discord avatar) |
-| `IsOnline` | `bool` | Online on any game or Discord |
-| `IsInGame` | `bool` | Currently playing this game |
-| `ActivityText` | `string` | Rich Presence activity text |
-| `CanInvite` | `bool` | Whether this friend can be invited |
-
-#### Unity (C#)
+Display the code returned to the user on TV/console:
 
 ```csharp
-var friends = IVXDiscordFriends.Instance;
-
-friends.OnFriendsUpdated += list =>
-{
-    foreach (var f in list)
-    {
-        Debug.Log($"{f.DisplayName} [{f.Source}] " +
-                  $"Online={f.IsOnline} InGame={f.IsInGame}");
-    }
-};
-
-friends.OnFriendJoinedGame += friend =>
-{
-    ShowNotification($"{friend.DisplayName} is now playing!");
-};
-
-// Fetch and merge Discord + Nakama friends
-friends.Refresh();
-
-// Filter helpers
-var inGame = friends.GetInGameFriends();
-var discordOnly = friends.GetBySource(IVXFriendSource.Discord);
-
-// Quick counts
-Debug.Log($"Online: {friends.OnlineCount}, In-game: {friends.InGameCount}");
+mgr.StartConsoleOAuth2Flow(
+    code => ShowDeviceCodeUi(code),
+    success => { /* ... */ });
 ```
 
-#### TypeScript
-
-```typescript
-const discord = IVXDiscordSocial.getInstance();
-const friends = await discord.getUnifiedFriends();
-
-const inGame = friends.filter(f => f.isInGame);
-console.log(`${inGame.length} friends currently playing`);
-```
-
----
-
-### 4. Discord Lobbies
-
-Bridges IVX rooms to Discord lobbies, providing text chat and serving as the foundation for voice and invites.
-
-#### Unity (C#)
+### Provisional accounts
 
 ```csharp
-var lobby = IVXDiscordLobby.Instance;
-
-lobby.OnLobbyJoined += lobbyId =>
-{
-    Debug.Log($"Joined Discord lobby {lobbyId}");
-};
-
-lobby.OnMessageReceived += (sender, message) =>
-{
-    AppendToChatUI($"{sender}: {message}");
-};
-
-// Auto-bridge from an IVX room
-lobby.BridgeIVXRoom("room_abc123", "{\"gameMode\":\"ranked\"}");
-
-// Manual create/join
-lobby.CreateOrJoinLobby("my_lobby_secret");
-
-// Send text chat
-lobby.SendMessage("Good game!");
-
-// Fetch history
-lobby.FetchChatHistory(limit: 100, messages =>
-{
-    foreach (var msg in messages)
-        AppendToChatUI(msg);
-});
-
-// Leave
-lobby.LeaveLobby();
+mgr.CreateProvisionalAccount(ok => { if (ok) ContinueAsGuestSocial(); });
 ```
 
-!!! note "Auto-Bridging"
-    When `IVXDiscordConfig.BridgeLobbiesToDiscord` is `true` (default), call `BridgeIVXRoom()` from your `IVXLobbyManager.OnRoomCreated` handler. The lobby secret is automatically prefixed with `ivx_` to avoid collisions.
-
----
-
-### 5. Voice Chat
-
-Discord-powered voice communication within game lobbies. No need to build your own voice infrastructure.
-
-#### Unity (C#)
+Merge later when you have a backend or OAuth token:
 
 ```csharp
-var voice = IVXDiscordVoice.Instance;
-
-voice.OnCallJoined += () => ShowVoiceUI();
-voice.OnCallLeft += () => HideVoiceUI();
-
-voice.OnParticipantSpeaking += userId =>
-{
-    HighlightSpeaker(userId);
-};
-
-voice.OnParticipantsChanged += participants =>
-{
-    RefreshVoiceParticipantList(participants);
-};
-
-// Join voice when entering a lobby
-voice.AutoJoinFromLobby();
-
-// Manual join
-voice.JoinCall(lobbyId);
-
-// Mute / deafen
-voice.SetSelfMute(true);
-voice.SetSelfDeafen(true);
-
-// Volume controls (0–200, 100 = normal)
-voice.SetInputVolume(120f);   // mic boost
-voice.SetOutputVolume(80f);   // lower speakers
-voice.SetParticipantVolume("user_123", 50f);  // quiet one person
-
-// Leave
-voice.LeaveCall();
+mgr.MergeProvisionalAccount(externalAuthToken, ok => { /* ... */ });
 ```
 
-#### `IVXVoiceParticipant` Data Model
+### Publisher-level linking
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `UserId` | `string` | Discord user ID |
-| `DisplayName` | `string` | Display name |
-| `IsMuted` | `bool` | Self-muted |
-| `IsDeafened` | `bool` | Self-deafened |
-| `IsSpeaking` | `bool` | Currently transmitting audio |
-| `Volume` | `float` | Per-participant volume (0–200) |
+- Set `PublisherId` on the config and/or call `SetPublisherId(string)` at runtime for cross-game shared authentication with Discord.
 
----
-
-### 6. Game Invites
-
-Send and receive game invites through Discord. Supports both direct invites and "Ask to Join" from Discord profiles.
-
-#### Invite Flow
-
-```
-┌─────────────┐     SendInvite()     ┌──────────────┐
-│  Player A    │ ──────────────────▶  │  Player B    │
-│  (in-game)   │                      │  (on Discord)│
-└─────────────┘                      └──────┬───────┘
-                                            │
-                                     Clicks "Accept"
-                                            │
-                                            ▼
-                                  OnInviteAccepted(joinSecret)
-                                            │
-                                    Auto-join lobby
-                                    + voice chat
-```
-
-#### Unity (C#)
+### Token refresh / external browser
 
 ```csharp
-var invites = IVXDiscordInvites.Instance;
-
-// Handle incoming invites
-invites.OnInviteReceived += invite =>
-{
-    ShowInviteDialog(
-        $"{invite.InviterName} invited you!",
-        $"{invite.ActivityDetails} ({invite.PartyCurrentSize}/{invite.PartyMaxSize})",
-        onAccept: () => invites.AcceptInvite(invite),
-        onDecline: () => invites.DeclineInvite(invite)
-    );
-};
-
-// Handle "Ask to Join" requests
-invites.OnJoinRequested += (requesterId, requesterName) =>
-{
-    ShowJoinRequestDialog(
-        $"{requesterName} wants to join your game",
-        onApprove: () => invites.ApproveJoinRequest(requesterId),
-        onDeny: () => invites.DenyJoinRequest(requesterId)
-    );
-};
-
-// Handle accepted invite (transition to session)
-invites.OnInviteAccepted += joinSecret =>
-{
-    IVXDiscordLobby.Instance.CreateOrJoinLobby(joinSecret);
-    IVXDiscordVoice.Instance.AutoJoinFromLobby();
-};
-
-// Send an invite to a friend
-invites.SendInvite("discord_user_id_456", "Come play ranked!");
-
-// Register callbacks (called automatically, but can be re-registered)
-invites.RegisterCallbacks();
+mgr.UpdateToken(newBearerToken);
 ```
-
-#### `IVXGameInvite` Data Model
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `InviterUserId` | `string` | Discord user ID of the inviter |
-| `InviterName` | `string` | Display name |
-| `InviterAvatarUrl` | `string` | Avatar image URL |
-| `JoinSecret` | `string` | Secret token to join the session |
-| `ActivityDetails` | `string` | What the inviter is doing |
-| `PartyCurrentSize` | `int` | Current party member count |
-| `PartyMaxSize` | `int` | Maximum party capacity |
 
 ---
 
-### 7. Linked Channels
+## 4. Rich Presence
 
-Bridge in-game chat (clan chat, world chat, etc.) to a Discord server text channel. Messages flow bidirectionally — players can participate in game chat from Discord even when not in-game.
-
-#### Unity (C#)
+### Basic activity
 
 ```csharp
-var channels = IVXDiscordLinkedChannels.Instance;
-
-channels.OnChannelLinked += (lobbyId, channelId) =>
-{
-    Debug.Log($"Lobby {lobbyId} linked to Discord channel {channelId}");
-};
-
-channels.OnLinkedMessageReceived += (sender, message) =>
-{
-    AppendToWorldChat($"[Discord] {sender}: {message}");
-};
-
-// Link a lobby to a Discord channel
-// Requires the player to have Manage Channel permission in the server
-channels.LinkChannel(
-    lobbyId: IVXDiscordLobby.Instance.CurrentLobbyId,
-    guildId: 123456789012345678,
-    channelId: 987654321098765432
-);
-
-// Send a message from in-game to the linked Discord channel
-channels.SendToLinkedChannel("GG everyone!");
-
-// Unlink
-channels.UnlinkChannel();
+var p = IVXDiscordPresence.Instance;
+p.SetActivity("Ranked Match", "Score: 1,500");
+p.SetParty("lobby_abc", 2, 4, joinSecret: "secret_abc");
+p.StartTimer();
+p.SyncFromGameState(); // reads IVX game systems when implemented
+p.ClearPresence();
 ```
 
-!!! warning "Permission Required"
-    Linking a channel requires the player to have **Manage Channel** permission in the target Discord server. This is typically used by clan leaders or server admins.
+### Field URLs & asset URLs
 
----
-
-## Integration with IntelliVerseX Systems
-
-The Discord module listens to events across the IVX ecosystem and translates them into Discord actions automatically:
-
-| IVX Event | Discord Action | Component |
-|-----------|---------------|-----------|
-| `IVXGameModeManager.OnModeChanged` | Presence: "Playing Ranked 2v2" | `IVXDiscordPresence` |
-| `IVXMatchmakingManager.OnSearching` | Presence: "Searching for match…" | `IVXDiscordPresence` |
-| `IVXLobbyManager.OnRoomCreated` | Auto-create Discord lobby + set party | `IVXDiscordLobby` + `IVXDiscordPresence` |
-| `IVXLobbyManager.OnRoomJoined` | Auto-join Discord lobby + voice | `IVXDiscordLobby` + `IVXDiscordVoice` |
-| `IVXLobbyManager.OnRoomLeft` | Leave Discord lobby + voice | `IVXDiscordLobby` + `IVXDiscordVoice` |
-| `IVXHiro.Streaks.OnUpdate` | Presence: "🔥 Day 15 Streak" | `IVXDiscordPresence` |
-| `IVXHiro.SpinWheel.OnSpin` | Presence: "Won Legendary Chest!" | `IVXDiscordPresence` |
-| `IVXLeaderboard.OnScoreSubmitted` | Presence: "Rank #42 on Global" | `IVXDiscordPresence` |
-| `IVXAISession.OnVoiceStarted` | Presence: "Chatting with AI Host" | `IVXDiscordPresence` |
-| `IVXFriendsManager.OnFriendAdded` | Merged into unified friends list | `IVXDiscordFriends` |
-
-### Wiring Example
+Clickable links on state/details lines and large/small images:
 
 ```csharp
-public class DiscordIntegrationWiring : MonoBehaviour
-{
-    void Start()
-    {
-        // Auto-bridge lobbies
-        IVXLobbyManager.Instance.OnRoomCreated += roomId =>
-        {
-            IVXDiscordLobby.Instance.BridgeIVXRoom(roomId);
-            IVXDiscordPresence.Instance.SetParty(
-                roomId,
-                currentSize: 1,
-                maxSize: IVXLobbyManager.Instance.MaxPlayers,
-                joinSecret: roomId
-            );
-        };
-
-        // Auto-join voice on lobby entry
-        IVXDiscordLobby.Instance.OnLobbyJoined += _ =>
-        {
-            IVXDiscordVoice.Instance.AutoJoinFromLobby();
-        };
-
-        // Clean up on lobby exit
-        IVXLobbyManager.Instance.OnRoomLeft += () =>
-        {
-            IVXDiscordPresence.Instance.ClearParty();
-        };
-
-        // Leaderboard rank updates
-        IVXLeaderboard.Instance.OnScoreSubmitted += (board, rank, score) =>
-        {
-            IVXDiscordPresence.Instance.SetLeaderboardRank(board, rank, score);
-        };
-    }
-}
+p.SetFieldUrls(stateUrl: "https://...", detailsUrl: "https://...");
+p.SetAssetUrls(largeUrl: "https://...", smallUrl: "https://...");
 ```
 
----
-
-## Configuration Reference
-
-All fields on the `IVXDiscordConfig` ScriptableObject:
-
-### Application
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `ApplicationId` | `long` | — | Discord Application ID from the Developer Portal |
-
-### OAuth2
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `ClientId` | `string` | — | OAuth2 Client ID (same as Application ID for most games) |
-| `RedirectUri` | `string` | `https://localhost` | OAuth2 redirect URI registered in the Developer Portal |
-
-### Rich Presence
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `AutoPresence` | `bool` | `true` | Auto-update Rich Presence from IVX game state |
-| `PresenceUpdateInterval` | `float` | `15` | Seconds between Rich Presence refreshes (5–120) |
-| `LargeImageAssetKey` | `string` | `game_logo` | Asset key uploaded to the Developer Portal |
-| `LargeImageText` | `string` | `""` | Tooltip text on hover over the large image |
-
-### Lobbies & Voice
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `EnableVoiceChat` | `bool` | `true` | Enable Discord voice chat in multiplayer lobbies |
-| `MaxVoiceLobbySize` | `int` | `8` | Max voice participants per lobby (2–25) |
-| `BridgeLobbiesToDiscord` | `bool` | `true` | Auto-bridge IVX rooms to Discord lobbies |
-
-### Community
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `CommunityInviteUrl` | `string` | `""` | Discord server invite URL for the "Join Community" button |
-| `StorePageUrl` | `string` | `""` | Store/download URL for the "Play Now" button |
-
----
-
-## Events Reference
-
-### IVXDiscordManager
-
-| Event | Signature | Description |
-|-------|-----------|-------------|
-| `OnConnected` | `Action` | Discord client connected |
-| `OnDisconnected` | `Action` | Discord client disconnected |
-| `OnAccountLinked` | `Action<string, string>` | Account linked — `(userId, username)` |
-| `OnAccountUnlinked` | `Action` | Account unlinked |
-| `OnError` | `Action<string>` | SDK error — `(errorMessage)` |
-
-### IVXDiscordPresence
-
-| Event | Signature | Description |
-|-------|-----------|-------------|
-| `OnPresenceUpdated` | `Action` | Rich Presence was pushed to Discord |
-
-### IVXDiscordFriends
-
-| Event | Signature | Description |
-|-------|-----------|-------------|
-| `OnFriendsUpdated` | `Action<IReadOnlyList<IVXUnifiedFriend>>` | Friends list refreshed |
-| `OnFriendOnline` | `Action<IVXUnifiedFriend>` | A friend came online |
-| `OnFriendOffline` | `Action<IVXUnifiedFriend>` | A friend went offline |
-| `OnFriendJoinedGame` | `Action<IVXUnifiedFriend>` | A friend started playing this game |
-
-### IVXDiscordLobby
-
-| Event | Signature | Description |
-|-------|-----------|-------------|
-| `OnLobbyJoined` | `Action<ulong>` | Joined a lobby — `(lobbyId)` |
-| `OnLobbyLeft` | `Action` | Left the current lobby |
-| `OnMessageReceived` | `Action<string, string>` | Chat message — `(senderName, message)` |
-| `OnMemberJoined` | `Action<string>` | Member joined lobby — `(userId)` |
-| `OnMemberLeft` | `Action<string>` | Member left lobby — `(userId)` |
-
-### IVXDiscordVoice
-
-| Event | Signature | Description |
-|-------|-----------|-------------|
-| `OnCallJoined` | `Action` | Joined a voice call |
-| `OnCallLeft` | `Action` | Left a voice call |
-| `OnParticipantSpeaking` | `Action<string>` | Participant is speaking — `(userId)` |
-| `OnParticipantsChanged` | `Action<IReadOnlyList<IVXVoiceParticipant>>` | Participant list changed |
-
-### IVXDiscordInvites
-
-| Event | Signature | Description |
-|-------|-----------|-------------|
-| `OnInviteReceived` | `Action<IVXGameInvite>` | Incoming game invite |
-| `OnJoinRequested` | `Action<string, string>` | "Ask to Join" request — `(requesterId, requesterName)` |
-| `OnInviteAccepted` | `Action<string>` | Invite accepted — `(joinSecret)` |
-| `OnInviteSent` | `Action<string>` | Invite sent — `(targetUserId)` |
-
-### IVXDiscordLinkedChannels
-
-| Event | Signature | Description |
-|-------|-----------|-------------|
-| `OnChannelLinked` | `Action<ulong, ulong>` | Channel linked — `(lobbyId, channelId)` |
-| `OnChannelUnlinked` | `Action` | Channel unlinked |
-| `OnLinkedMessageReceived` | `Action<string, string>` | Message from Discord — `(senderName, message)` |
-
----
-
-## Platform Compatibility
-
-Platform support follows the Discord Social SDK's native availability:
-
-| Platform | C++ | Unity | Unreal |
-|----------|-----|-------|--------|
-| Windows | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| macOS | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Linux | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Android | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| iOS | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Xbox | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| PlayStation | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-
-!!! info "Console Platforms"
-    Xbox and PlayStation support requires additional agreements with Discord and the respective platform holders. Contact your Discord developer relations representative.
-
-### Feature Availability by Platform
-
-| Feature | Desktop | Mobile | Console | WebGL |
-|---------|---------|--------|---------|-------|
-| Rich Presence | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x: |
-| Account Linking | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x: |
-| Friends List | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x: |
-| Lobbies + Text Chat | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x: |
-| Voice Chat | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x: |
-| Game Invites | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x: |
-| Linked Channels | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x: |
-
-!!! warning "WebGL"
-    The Discord Social SDK is a native library and does not support WebGL builds. Discord features are unavailable on WebGL — the IVX module gracefully degrades to stub mode.
-
----
-
-## Rate Limits
-
-The Discord Social SDK separates features into two scope tiers:
-
-### Presence Scopes (default — no application required)
-
-| Scope | Features | Rate Limit |
-|-------|----------|-----------|
-| `rp.read` | Read Rich Presence of relationships | — |
-| `rp.write` | Update own Rich Presence | 5 updates / 20 seconds |
-
-### Communication Scopes (requires application)
-
-| Scope | Features | Rate Limit |
-|-------|----------|-----------|
-| `dm.read` | Read lobby / DM messages | Standard API limits |
-| `dm.write` | Send lobby / DM messages | 5 messages / 5 seconds per channel |
-| `voice.read` | Receive voice audio | — |
-| `voice.write` | Transmit voice audio | — |
-| `lobby.read` | Read lobby state | — |
-| `lobby.write` | Create/modify lobbies | — |
-
-!!! note "Production Access"
-    Communication scopes (`dm.*`, `voice.*`, `lobby.*`) require applying for production access in the **Discord Developer Portal → Social SDK → Communication Features**. During development, these work in test mode with up to 25 users.
-
----
-
-## Best Practices
-
-### 1. Always set Rich Presence
-
-Rich Presence is free organic marketing. Every player's Discord profile advertises your game to their entire friend list. Set it on every scene transition.
-
-### 2. Include both action buttons
-
-Configure `StorePageUrl` and `CommunityInviteUrl` in `IVXDiscordConfig`. These appear as "Play Now" and "Join Community" buttons under the player's presence — direct conversion from impressions.
-
-### 3. Use provisional accounts
-
-Not every player has Discord. `CreateProvisionalAccount()` gives non-Discord users access to social features without requiring a Discord account, then gently prompts them to link later for the full experience.
-
-### 4. Auto-bridge lobbies
-
-Wire `IVXLobbyManager.OnRoomCreated` to `IVXDiscordLobby.BridgeIVXRoom()`. This gives every multiplayer session free text + voice chat with zero additional infrastructure.
-
-### 5. Sync party info for "Ask to Join"
-
-Always call `SetParty()` with a `joinSecret` when the player is in a lobby. This enables the "Ask to Join" button on their Discord profile — a powerful organic re-engagement vector.
-
-### 6. Handle offline invite acceptance (deep links)
-
-When a player accepts a Discord invite while the game is not running, the game launches with the `joinSecret` as a deep link parameter. Handle this in your startup flow:
+### Status display type & platforms
 
 ```csharp
-void Start()
-{
-    string joinSecret = GetDeepLinkJoinSecret();
-    if (!string.IsNullOrEmpty(joinSecret))
-    {
-        IVXDiscordManager.Instance.Initialize();
-        IVXDiscordLobby.Instance.CreateOrJoinLobby(joinSecret);
-    }
-}
+p.SetStatusDisplayType(IVXStatusDisplayType.Details); // Name | State | Details
+p.SetSupportedPlatforms(IVXActivityPlatforms.Desktop | IVXActivityPlatforms.Mobile);
 ```
 
-### 7. Never store Discord friend data locally
+### Buttons & invite cover
 
-Discord friend data is ephemeral and must be fetched fresh. Do not persist `IVXUnifiedFriend` objects to disk — this violates the Discord Developer Terms of Service and the data goes stale immediately.
+```csharp
+p.AddButton("Watch Trailer", "https://...");
+p.ClearButtons();
+p.SetInviteCoverImage("invite_cover_key"); // also config default via `InviteCoverImageKey`
+p.SetSmallImage("badge_key", "Season 2");
+```
+
+### RPC-only mode
+
+Desktop-only path: presence updates **without** full `Connect()` / manager auth:
+
+```csharp
+p.InitializeRPCOnly(applicationIdLong);
+```
+
+`IsRPCOnlyMode` reflects this state.
+
+!!! tip "Auto Presence"
+    With `AutoPresence` enabled, `IVXDiscordPresence` periodically calls into your push path using `PresenceUpdateInterval`.
 
 ---
 
-## Troubleshooting
+## 5. Unified Friends List & Relationship Management
 
-| Symptom | Cause | Fix |
-|---------|-------|-----|
-| "Discord Social SDK package not detected" log | `com.discord.social-sdk` not installed | Install the UPM package; the compile define is set automatically |
-| `OnError("No IVXDiscordConfig provided")` | Config asset not assigned | Assign `IVXDiscordConfig` to `IVXDiscordManager` in the Inspector |
-| Rich Presence not visible | Presence update interval too high, or Discord desktop app not running | Lower `PresenceUpdateInterval`; ensure Discord is running |
-| Voice chat disabled | `EnableVoiceChat` is `false` in config | Enable in `IVXDiscordConfig` |
-| Lobby bridging not working | `BridgeLobbiesToDiscord` is `false` | Enable in `IVXDiscordConfig` |
-| Communication features fail in production | Missing production access approval | Apply in Developer Portal → Social SDK → Communication Features |
-| "Already initialized" warning | `Initialize()` called more than once | Guard with `IVXDiscordManager.Instance.IsInitialized` check |
+`IVXUnifiedFriend` includes `DiscordRelationshipType` and `GameRelationshipType` (`IVXRelationshipType`: None, Friend, PendingIncoming, PendingOutgoing, Blocked) — **dual relationship model** for Discord vs Nakama layers.
+
+### Refresh & filters
+
+```csharp
+var f = IVXDiscordFriends.Instance;
+f.OnFriendsUpdated += list => { /* bind UI */ };
+f.Refresh();
+var ingame = f.GetInGameFriends();
+var discordOnly = f.GetBySource(IVXFriendSource.Discord);
+```
+
+### Game (Nakama) friend requests
+
+`SendGameFriendRequest`, `SendGameFriendRequestById`, `AcceptGameFriendRequest`, `RejectGameFriendRequest`, `CancelGameFriendRequest`, `RemoveGameFriend`.
+
+### Discord friend requests
+
+`SendDiscordFriendRequest`, `SendDiscordFriendRequestById`, `AcceptDiscordFriendRequest`, `RejectDiscordFriendRequest`, `CancelDiscordFriendRequest`, `RemoveDiscordAndGameFriend`.
+
+### Block / unblock
+
+`BlockUser`, `UnblockUser` — plus `GetBlockedUsers()` and `GetPendingRequests()` for UI lists.
+
+### Events
+
+`OnFriendRequestReceived`, `OnFriendRequestAccepted`, `OnFriendRemoved`, `OnUserBlocked`, `OnUserUnblocked`, plus online/in-game presence events.
 
 ---
 
-## Related Documentation
+## 6. Direct Messages (`IVXDiscordMessages`)
 
-- [Social Module](social.md) — Nakama-native friends, sharing, referrals
-- [Backend Module](backend.md) — Nakama integration
-- [Leaderboards Module](leaderboards.md) — Leaderboard integration with Rich Presence
-- [Platform Guides](../platforms/index.md) — Per-platform SDK documentation
-- [Discord Developer Portal](https://discord.com/developers/applications) — Application management
-- [Discord Social SDK Docs](https://discord.com/developers/docs/social-sdk/overview) — Official SDK reference
+Requires `EnableDirectMessages` where applicable.
+
+| Capability | API |
+|------------|-----|
+| Send | `SendDM(recipientId, message, onSuccess, onError)` |
+| Edit | `EditDM(recipientId, messageId, newContent, ...)` |
+| History | `GetDMHistory(recipientId, limit, onComplete)` |
+| Summaries | `GetDMSummaries(onComplete)` |
+| Chat visibility / notifications | `SetShowingChat(bool)` — suppress desktop notifications while in-game chat is focused |
+| Open in Discord | `OpenMessageInDiscord(messageId)` |
+| DM-related settings | `OpenDMSettingsInDiscord()` |
+
+Models: `IVXDirectMessage` (incl. `ModerationMetadata`), `IVXDMSummary`. Events: `OnDMReceived`, `OnDMUpdated`, `OnDMDeleted`.
+
+Default history limit is aligned with `IVXDiscordConfig.DmHistoryLimit`.
+
+---
+
+## 7. Lobbies (`IVXDiscordLobby`)
+
+| Capability | API |
+|------------|-----|
+| Create / join | `CreateOrJoinLobby(secret, metadata)`, `BridgeIVXRoom(ivxRoomId, roomMetadata)` |
+| Metadata | `CreateOrJoinLobbyWithMetadata(secret, lobbyMetadata, userMetadata, onComplete)`, `UpdateLobbyMemberMetadata(json)`, `GetLobbyInfo` → `IVXDiscordLobbyInfo` |
+| Idle timeout | `SetLobbyIdleTimeout(seconds)` — default 300, max 604800 |
+| Chat | `SendMessage`, `OnMessageReceived`, `FetchChatHistory(limit, callback)` |
+| Leave | `LeaveLobby` |
+
+`IVXDiscordLobbyInfo` exposes `LobbyId`, `Secret`, `MemberCount`, `VoiceActive`, `Metadata`, `LobbyMetadata`, `MemberIds`.
+
+---
+
+## 8. Voice Chat (`IVXDiscordVoice`)
+
+### Core
+
+`JoinCall(lobbyId)`, `LeaveCall`, `AutoJoinFromLobby()`, `SetSelfMute`, `SetSelfDeafen`, `SetInputVolume` / `SetOutputVolume` / `SetParticipantVolume`.
+
+### VAD
+
+```csharp
+v.SetVADThreshold(useCustom: true, thresholdDb: -35f);
+```
+
+### Audio callbacks (FMOD / Wwise / custom)
+
+```csharp
+v.JoinCallWithAudioCallbacks(
+    lobbyId,
+    onReceived: (userId, data, samplesPerChannel, sampleRate, channels, ref muteFrame) => { },
+    onCaptured: (data, samplesPerChannel, sampleRate, channels) => { });
+```
+
+Delegates: `IVXAudioReceivedCallback`, `IVXAudioCapturedCallback`.
+
+### Global controls & state
+
+`SetSelfMuteAll`, `SetSelfDeafenAll`, `EndAllCalls`, `GetParticipantVoiceState(userId)`.
+
+Events include `OnParticipantMuteChanged`, `OnParticipantDeafenChanged`, speaking and participant list updates.
+
+---
+
+## 9. Game Invites (`IVXDiscordInvites`)
+
+```csharp
+var inv = IVXDiscordInvites.Instance;
+inv.OnInviteReceived += invite => { /* show UI */ };
+inv.OnJoinRequested += (requesterId, name) => { /* Ask to Join */ };
+inv.OnInviteAccepted += joinSecret => { IVXDiscordLobby.Instance.CreateOrJoinLobby(joinSecret); };
+inv.SendInvite(discordUserId, "Join my lobby!");
+inv.AcceptInvite(invite);
+inv.DeclineInvite(invite);
+inv.ApproveJoinRequest(requesterId);
+inv.DenyJoinRequest(requesterId);
+inv.RegisterCallbacks();
+```
+
+Rich Presence `joinSecret` + lobby bridging ties invites to sessions.
+
+---
+
+## 10. Linked Channels (`IVXDiscordLinkedChannels`)
+
+Bridge IVX/world chat to a Discord text channel (bidirectional where supported):
+
+```csharp
+var ch = IVXDiscordLinkedChannels.Instance;
+ch.LinkChannel(lobbyId, guildId, channelId);
+ch.SendToLinkedChannel("GG!");
+ch.UnlinkChannel();
+```
+
+!!! warning "Permissions"
+    Linking typically requires appropriate **Manage Channel** (or equivalent) permissions in the target server.
+
+---
+
+## 11. Moderation (`IVXDiscordModeration`)
+
+| Area | Behavior |
+|------|----------|
+| **Message metadata** | `ProcessModerationMetadata(messageId, metadata)` parses keys like `action`, `reason`, `replacement`, `severity`, `message_id`, `flagged`, `content_flagged` into `IVXModerationDecision` (`IVXModerationAction`: Show, Hide, Blur, Replace). |
+| **Server-side webhook** | Configure `ModerationWebhookUrl` + your backend to fan out alerts / ML scoring. |
+| **Voice capture** | `StartVoiceModerationCapture(lobbyId)` / `StopVoiceModerationCapture()` with `OnVoiceDataCaptured(lobbyId, pcm, sampleRate, channels)`. |
+| **Reporting** | `ReportUser(userId, reason, onComplete)`. |
+
+`EnableAutoModeration` on config aligns with `IVXDiscordModeration.AutoModerateEnabled` / `EnableAutoModeration(bool)`.
+
+---
+
+## 12. Debug & Logging (`IVXDiscordDebug`)
+
+- Enum `IVXDiscordLogLevel`: Verbose, Debug, Info, Warning, Error
+- `SetLogLevel`, `SetLogCallback` for file or analytics sinks
+- `OnLogMessage` for each filtered line
+- `IVXDiscordConfig.EnableDebugLogging` complements native SDK verbosity
+
+---
+
+## 13. Social Settings (`IVXDiscordManager`)
+
+- `OpenConnectedGamesSettingsInDiscord()` — Connected Games / DM-related settings
+- `OpenUserProfileInDiscord(userId)` — jump to a user profile in the Discord client
+
+DM-specific entry: `IVXDiscordMessages.OpenDMSettingsInDiscord()`.
+
+---
+
+## 14. API Reference — Key Classes
+
+| Class | Role |
+|-------|------|
+| `IVXDiscordConfig` | All Discord integration settings |
+| `IVXDiscordManager` | Init, link/unlink, provisional, PKCE, device code, publisher id, merge, token, settings |
+| `IVXDiscordPresence` | Rich Presence + advanced presence + RPC-only |
+| `IVXDiscordFriends` | Unified list + relationship + block APIs |
+| `IVXDiscordLobby` | Lobbies, metadata, timeout, chat, history |
+| `IVXDiscordVoice` | Voice, VAD, callbacks, global controls |
+| `IVXDiscordInvites` | Invites and join requests |
+| `IVXDiscordLinkedChannels` | Server channel bridge |
+| `IVXDiscordMessages` | DMs |
+| `IVXDiscordModeration` | Metadata, voice capture, reports |
+| `IVXDiscordDebug` | Logging |
+| `IVXUnifiedFriend`, `IVXGameInvite`, `IVXDiscordLobbyInfo`, `IVXDirectMessage`, `IVXDMSummary` | Data models |
+
+---
+
+## Integration with IntelliVerseX
+
+| IVX source | Typical Discord action |
+|------------|-------------------------|
+| `IVXGameModeManager` / matchmaking | Presence lines, state |
+| `IVXLobbyManager` | `BridgeIVXRoom`, party, lobby + voice |
+| Leaderboards / Hiro | Presence for rank and live-ops |
+| `IVXAISessionManager` | Optional presence: “Chatting with AI host” |
+
+---
+
+## Platform notes
+
+Native Discord Social SDK does not target **WebGL**; IVX falls back to stub mode. Console/desktop/mobile follow Discord’s platform matrix and your program agreements.
+
+---
+
+## Related links
+
+- [Social module](social.md) — Nakama friends
+- [Backend module](backend.md)
+- [Discord Social SDK overview](https://discord.com/developers/docs/social-sdk/overview)

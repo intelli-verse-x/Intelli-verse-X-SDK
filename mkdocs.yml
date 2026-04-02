@@ -92,6 +92,7 @@ nav:
     - UI Components: modules/ui.md
     - More Of Us: modules/more-of-us.md
     - AI Voice & Host: modules/ai.md
+    - AI LLM Stack: modules/ai-llm-stack.md
     - Hiro Systems: modules/hiro.md
     - Platform Utilities: modules/platform.md
     - Demo UIs: modules/demos.md

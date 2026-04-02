@@ -29,6 +29,10 @@ namespace IntelliVerseX.Discord
         public string ActivityText;
         /// <summary>Whether this friend can be invited to join.</summary>
         public bool CanInvite;
+        /// <summary>Discord friendship status for this user.</summary>
+        public IVXRelationshipType DiscordRelationshipType;
+        /// <summary>In-game (Nakama) friendship status for this user.</summary>
+        public IVXRelationshipType GameRelationshipType;
     }
 
     /// <summary>
@@ -42,6 +46,23 @@ namespace IntelliVerseX.Discord
         Game,
         /// <summary>Friend exists on both Discord and in-game.</summary>
         Both
+    }
+
+    /// <summary>
+    /// Normalized friendship / block state for Discord and game layers.
+    /// </summary>
+    public enum IVXRelationshipType
+    {
+        /// <summary>No relationship or unknown.</summary>
+        None,
+        /// <summary>Established friend.</summary>
+        Friend,
+        /// <summary>Incoming friend request (awaiting local action).</summary>
+        PendingIncoming,
+        /// <summary>Outgoing friend request (awaiting remote action).</summary>
+        PendingOutgoing,
+        /// <summary>User is blocked.</summary>
+        Blocked
     }
 
     /// <summary>
@@ -60,7 +81,6 @@ namespace IntelliVerseX.Discord
 
         private static IVXDiscordFriends _instance;
         private readonly List<IVXUnifiedFriend> _friends = new();
-        private bool _loaded;
 
         #endregion
 
@@ -105,6 +125,16 @@ namespace IntelliVerseX.Discord
         public event Action<IVXUnifiedFriend> OnFriendOffline;
         /// <summary>Fired when a friend starts playing this game.</summary>
         public event Action<IVXUnifiedFriend> OnFriendJoinedGame;
+        /// <summary>Fired when an incoming friend request is received. Arguments: userId, displayName.</summary>
+        public event Action<string, string> OnFriendRequestReceived;
+        /// <summary>Fired when a friend request is accepted. Argument: userId.</summary>
+        public event Action<string> OnFriendRequestAccepted;
+        /// <summary>Fired when a friend was removed. Argument: userId.</summary>
+        public event Action<string> OnFriendRemoved;
+        /// <summary>Fired when a user was blocked. Argument: userId.</summary>
+        public event Action<string> OnUserBlocked;
+        /// <summary>Fired when a user was unblocked. Argument: userId.</summary>
+        public event Action<string> OnUserUnblocked;
 
         #endregion
 
@@ -150,7 +180,9 @@ namespace IntelliVerseX.Discord
                 IsOnline = true,
                 IsInGame = true,
                 ActivityText = "Playing Ranked Match",
-                CanInvite = true
+                CanInvite = true,
+                DiscordRelationshipType = IVXRelationshipType.Friend,
+                GameRelationshipType = IVXRelationshipType.Friend
             });
             _friends.Add(new IVXUnifiedFriend
             {
@@ -160,7 +192,9 @@ namespace IntelliVerseX.Discord
                 IsOnline = true,
                 IsInGame = false,
                 ActivityText = "Online on Discord",
-                CanInvite = false
+                CanInvite = false,
+                DiscordRelationshipType = IVXRelationshipType.Friend,
+                GameRelationshipType = IVXRelationshipType.None
             });
             _friends.Add(new IVXUnifiedFriend
             {
@@ -169,9 +203,10 @@ namespace IntelliVerseX.Discord
                 GameUserId = "nakama_333",
                 IsOnline = false,
                 IsInGame = false,
-                CanInvite = false
+                CanInvite = false,
+                DiscordRelationshipType = IVXRelationshipType.None,
+                GameRelationshipType = IVXRelationshipType.Friend
             });
-            _loaded = true;
             Debug.Log($"{LOG_TAG} [Stub] Loaded {_friends.Count} friends.");
             OnFriendsUpdated?.Invoke(_friends);
 #endif
@@ -208,19 +243,543 @@ namespace IntelliVerseX.Discord
             return result;
         }
 
+        /// <summary>
+        /// Sends an in-game (Nakama) friend request by username.
+        /// </summary>
+        /// <param name="username">Target username.</param>
+        /// <param name="onComplete">Optional callback; true on success.</param>
+        public void SendGameFriendRequest(string username, Action<bool> onComplete = null)
+        {
+            if (!EnsureInstanceReady(onComplete))
+                return;
+            if (string.IsNullOrEmpty(username))
+            {
+                Debug.LogWarning($"{LOG_TAG} SendGameFriendRequest: username is null or empty.");
+                onComplete?.Invoke(false);
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} SendGameFriendRequest username={username}");
+
+#if INTELLIVERSEX_HAS_DISCORD
+            SendGameFriendRequestInternal(username, onComplete);
+#else
+            Debug.Log($"{LOG_TAG} [Stub] SendGameFriendRequest success.");
+            onComplete?.Invoke(true);
+#endif
+        }
+
+        /// <summary>
+        /// Sends an in-game (Nakama) friend request by user id.
+        /// </summary>
+        /// <param name="userId">Target user id.</param>
+        /// <param name="onComplete">Optional callback; true on success.</param>
+        public void SendGameFriendRequestById(ulong userId, Action<bool> onComplete = null)
+        {
+            if (!EnsureInstanceReady(onComplete))
+                return;
+            if (userId == 0)
+            {
+                Debug.LogWarning($"{LOG_TAG} SendGameFriendRequestById: invalid userId.");
+                onComplete?.Invoke(false);
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} SendGameFriendRequestById userId={userId}");
+
+#if INTELLIVERSEX_HAS_DISCORD
+            SendGameFriendRequestByIdInternal(userId, onComplete);
+#else
+            Debug.Log($"{LOG_TAG} [Stub] SendGameFriendRequestById success.");
+            onComplete?.Invoke(true);
+#endif
+        }
+
+        /// <summary>
+        /// Accepts an incoming in-game friend request.
+        /// </summary>
+        /// <param name="userId">Requester user id.</param>
+        /// <param name="onComplete">Optional callback; true on success.</param>
+        public void AcceptGameFriendRequest(ulong userId, Action<bool> onComplete = null)
+        {
+            if (!EnsureInstanceReady(onComplete))
+                return;
+            if (userId == 0)
+            {
+                Debug.LogWarning($"{LOG_TAG} AcceptGameFriendRequest: invalid userId.");
+                onComplete?.Invoke(false);
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} AcceptGameFriendRequest userId={userId}");
+
+#if INTELLIVERSEX_HAS_DISCORD
+            AcceptGameFriendRequestInternal(userId, onComplete);
+#else
+            Debug.Log($"{LOG_TAG} [Stub] AcceptGameFriendRequest success.");
+            onComplete?.Invoke(true);
+#endif
+        }
+
+        /// <summary>
+        /// Rejects an incoming in-game friend request.
+        /// </summary>
+        /// <param name="userId">Requester user id.</param>
+        /// <param name="onComplete">Optional callback; true on success.</param>
+        public void RejectGameFriendRequest(ulong userId, Action<bool> onComplete = null)
+        {
+            if (!EnsureInstanceReady(onComplete))
+                return;
+            if (userId == 0)
+            {
+                Debug.LogWarning($"{LOG_TAG} RejectGameFriendRequest: invalid userId.");
+                onComplete?.Invoke(false);
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} RejectGameFriendRequest userId={userId}");
+
+#if INTELLIVERSEX_HAS_DISCORD
+            RejectGameFriendRequestInternal(userId, onComplete);
+#else
+            Debug.Log($"{LOG_TAG} [Stub] RejectGameFriendRequest success.");
+            onComplete?.Invoke(true);
+#endif
+        }
+
+        /// <summary>
+        /// Cancels an outgoing in-game friend request.
+        /// </summary>
+        /// <param name="userId">Target user id.</param>
+        /// <param name="onComplete">Optional callback; true on success.</param>
+        public void CancelGameFriendRequest(ulong userId, Action<bool> onComplete = null)
+        {
+            if (!EnsureInstanceReady(onComplete))
+                return;
+            if (userId == 0)
+            {
+                Debug.LogWarning($"{LOG_TAG} CancelGameFriendRequest: invalid userId.");
+                onComplete?.Invoke(false);
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} CancelGameFriendRequest userId={userId}");
+
+#if INTELLIVERSEX_HAS_DISCORD
+            CancelGameFriendRequestInternal(userId, onComplete);
+#else
+            Debug.Log($"{LOG_TAG} [Stub] CancelGameFriendRequest success.");
+            onComplete?.Invoke(true);
+#endif
+        }
+
+        /// <summary>
+        /// Removes an in-game friend.
+        /// </summary>
+        /// <param name="userId">Friend user id.</param>
+        /// <param name="onComplete">Optional callback; true on success.</param>
+        public void RemoveGameFriend(ulong userId, Action<bool> onComplete = null)
+        {
+            if (!EnsureInstanceReady(onComplete))
+                return;
+            if (userId == 0)
+            {
+                Debug.LogWarning($"{LOG_TAG} RemoveGameFriend: invalid userId.");
+                onComplete?.Invoke(false);
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} RemoveGameFriend userId={userId}");
+
+#if INTELLIVERSEX_HAS_DISCORD
+            RemoveGameFriendInternal(userId, onComplete);
+#else
+            Debug.Log($"{LOG_TAG} [Stub] RemoveGameFriend success.");
+            onComplete?.Invoke(true);
+#endif
+        }
+
+        /// <summary>
+        /// Sends a Discord friend request by username (discriminator or handle per SDK).
+        /// </summary>
+        /// <param name="username">Target username.</param>
+        /// <param name="onComplete">Optional callback; true on success.</param>
+        public void SendDiscordFriendRequest(string username, Action<bool> onComplete = null)
+        {
+            if (!EnsureInstanceReady(onComplete))
+                return;
+            if (string.IsNullOrEmpty(username))
+            {
+                Debug.LogWarning($"{LOG_TAG} SendDiscordFriendRequest: username is null or empty.");
+                onComplete?.Invoke(false);
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} SendDiscordFriendRequest username={username}");
+
+#if INTELLIVERSEX_HAS_DISCORD
+            SendDiscordFriendRequestInternal(username, onComplete);
+#else
+            Debug.Log($"{LOG_TAG} [Stub] SendDiscordFriendRequest success.");
+            onComplete?.Invoke(true);
+#endif
+        }
+
+        /// <summary>
+        /// Sends a Discord friend request by Snowflake user id.
+        /// </summary>
+        /// <param name="userId">Discord user id.</param>
+        /// <param name="onComplete">Optional callback; true on success.</param>
+        public void SendDiscordFriendRequestById(ulong userId, Action<bool> onComplete = null)
+        {
+            if (!EnsureInstanceReady(onComplete))
+                return;
+            if (userId == 0)
+            {
+                Debug.LogWarning($"{LOG_TAG} SendDiscordFriendRequestById: invalid userId.");
+                onComplete?.Invoke(false);
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} SendDiscordFriendRequestById userId={userId}");
+
+#if INTELLIVERSEX_HAS_DISCORD
+            SendDiscordFriendRequestByIdInternal(userId, onComplete);
+#else
+            Debug.Log($"{LOG_TAG} [Stub] SendDiscordFriendRequestById success.");
+            onComplete?.Invoke(true);
+#endif
+        }
+
+        /// <summary>
+        /// Accepts an incoming Discord friend request.
+        /// </summary>
+        /// <param name="userId">Discord user id.</param>
+        /// <param name="onComplete">Optional callback; true on success.</param>
+        public void AcceptDiscordFriendRequest(ulong userId, Action<bool> onComplete = null)
+        {
+            if (!EnsureInstanceReady(onComplete))
+                return;
+            if (userId == 0)
+            {
+                Debug.LogWarning($"{LOG_TAG} AcceptDiscordFriendRequest: invalid userId.");
+                onComplete?.Invoke(false);
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} AcceptDiscordFriendRequest userId={userId}");
+
+#if INTELLIVERSEX_HAS_DISCORD
+            AcceptDiscordFriendRequestInternal(userId, onComplete);
+#else
+            Debug.Log($"{LOG_TAG} [Stub] AcceptDiscordFriendRequest success.");
+            onComplete?.Invoke(true);
+#endif
+        }
+
+        /// <summary>
+        /// Rejects an incoming Discord friend request.
+        /// </summary>
+        /// <param name="userId">Discord user id.</param>
+        /// <param name="onComplete">Optional callback; true on success.</param>
+        public void RejectDiscordFriendRequest(ulong userId, Action<bool> onComplete = null)
+        {
+            if (!EnsureInstanceReady(onComplete))
+                return;
+            if (userId == 0)
+            {
+                Debug.LogWarning($"{LOG_TAG} RejectDiscordFriendRequest: invalid userId.");
+                onComplete?.Invoke(false);
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} RejectDiscordFriendRequest userId={userId}");
+
+#if INTELLIVERSEX_HAS_DISCORD
+            RejectDiscordFriendRequestInternal(userId, onComplete);
+#else
+            Debug.Log($"{LOG_TAG} [Stub] RejectDiscordFriendRequest success.");
+            onComplete?.Invoke(true);
+#endif
+        }
+
+        /// <summary>
+        /// Cancels an outgoing Discord friend request.
+        /// </summary>
+        /// <param name="userId">Discord user id.</param>
+        /// <param name="onComplete">Optional callback; true on success.</param>
+        public void CancelDiscordFriendRequest(ulong userId, Action<bool> onComplete = null)
+        {
+            if (!EnsureInstanceReady(onComplete))
+                return;
+            if (userId == 0)
+            {
+                Debug.LogWarning($"{LOG_TAG} CancelDiscordFriendRequest: invalid userId.");
+                onComplete?.Invoke(false);
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} CancelDiscordFriendRequest userId={userId}");
+
+#if INTELLIVERSEX_HAS_DISCORD
+            CancelDiscordFriendRequestInternal(userId, onComplete);
+#else
+            Debug.Log($"{LOG_TAG} [Stub] CancelDiscordFriendRequest success.");
+            onComplete?.Invoke(true);
+#endif
+        }
+
+        /// <summary>
+        /// Removes the Discord friendship and the in-game friend link for this user.
+        /// </summary>
+        /// <param name="userId">Discord user id.</param>
+        /// <param name="onComplete">Optional callback; true on success.</param>
+        public void RemoveDiscordAndGameFriend(ulong userId, Action<bool> onComplete = null)
+        {
+            if (!EnsureInstanceReady(onComplete))
+                return;
+            if (userId == 0)
+            {
+                Debug.LogWarning($"{LOG_TAG} RemoveDiscordAndGameFriend: invalid userId.");
+                onComplete?.Invoke(false);
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} RemoveDiscordAndGameFriend userId={userId}");
+
+#if INTELLIVERSEX_HAS_DISCORD
+            RemoveDiscordAndGameFriendInternal(userId, onComplete);
+#else
+            Debug.Log($"{LOG_TAG} [Stub] RemoveDiscordAndGameFriend success.");
+            onComplete?.Invoke(true);
+#endif
+        }
+
+        /// <summary>
+        /// Blocks a user on Discord (and should update game-side block list as needed).
+        /// </summary>
+        /// <param name="userId">Discord user id.</param>
+        /// <param name="onComplete">Optional callback; true on success.</param>
+        public void BlockUser(ulong userId, Action<bool> onComplete = null)
+        {
+            if (!EnsureInstanceReady(onComplete))
+                return;
+            if (userId == 0)
+            {
+                Debug.LogWarning($"{LOG_TAG} BlockUser: invalid userId.");
+                onComplete?.Invoke(false);
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} BlockUser userId={userId}");
+
+#if INTELLIVERSEX_HAS_DISCORD
+            BlockUserInternal(userId, onComplete);
+#else
+            Debug.Log($"{LOG_TAG} [Stub] BlockUser success.");
+            onComplete?.Invoke(true);
+#endif
+        }
+
+        /// <summary>
+        /// Unblocks a user on Discord (and should update game-side block list as needed).
+        /// </summary>
+        /// <param name="userId">Discord user id.</param>
+        /// <param name="onComplete">Optional callback; true on success.</param>
+        public void UnblockUser(ulong userId, Action<bool> onComplete = null)
+        {
+            if (!EnsureInstanceReady(onComplete))
+                return;
+            if (userId == 0)
+            {
+                Debug.LogWarning($"{LOG_TAG} UnblockUser: invalid userId.");
+                onComplete?.Invoke(false);
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} UnblockUser userId={userId}");
+
+#if INTELLIVERSEX_HAS_DISCORD
+            UnblockUserInternal(userId, onComplete);
+#else
+            Debug.Log($"{LOG_TAG} [Stub] UnblockUser success.");
+            onComplete?.Invoke(true);
+#endif
+        }
+
+        /// <summary>
+        /// Returns unified entries that have an incoming pending friend request (game and/or Discord).
+        /// </summary>
+        /// <returns>Incoming pending requests.</returns>
+        public List<IVXUnifiedFriend> GetPendingRequests()
+        {
+            if (_instance == null)
+            {
+                Debug.LogWarning($"{LOG_TAG} GetPendingRequests: IVXDiscordFriends instance is missing.");
+                return new List<IVXUnifiedFriend>();
+            }
+
+            Debug.Log($"{LOG_TAG} GetPendingRequests");
+
+            var result = new List<IVXUnifiedFriend>();
+            for (int i = 0; i < _friends.Count; i++)
+            {
+                var f = _friends[i];
+                if (f.GameRelationshipType == IVXRelationshipType.PendingIncoming ||
+                    f.DiscordRelationshipType == IVXRelationshipType.PendingIncoming)
+                    result.Add(f);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns unified entries marked blocked on Discord and/or in-game.
+        /// </summary>
+        /// <returns>Blocked users.</returns>
+        public List<IVXUnifiedFriend> GetBlockedUsers()
+        {
+            if (_instance == null)
+            {
+                Debug.LogWarning($"{LOG_TAG} GetBlockedUsers: IVXDiscordFriends instance is missing.");
+                return new List<IVXUnifiedFriend>();
+            }
+
+            Debug.Log($"{LOG_TAG} GetBlockedUsers");
+
+            var result = new List<IVXUnifiedFriend>();
+            for (int i = 0; i < _friends.Count; i++)
+            {
+                var f = _friends[i];
+                if (f.GameRelationshipType == IVXRelationshipType.Blocked ||
+                    f.DiscordRelationshipType == IVXRelationshipType.Blocked)
+                    result.Add(f);
+            }
+
+            return result;
+        }
+
         #endregion
 
         #region Private Methods
 
+        private static bool EnsureInstanceReady(Action<bool> onComplete)
+        {
+            if (_instance == null)
+            {
+                Debug.LogError($"{LOG_TAG} IVXDiscordFriends is not initialized (no active instance).");
+                onComplete?.Invoke(false);
+                return false;
+            }
+
+            return true;
+        }
+
 #if INTELLIVERSEX_HAS_DISCORD
         private void FetchAndMerge()
         {
+            RegisterRelationshipCallbacks();
+
             // 1. Fetch Discord relationships via client->GetRelationships()
             // 2. Fetch Nakama friends via IVXNakamaManager
             // 3. Merge by matching Discord userId ↔ Nakama custom metadata
             // 4. Set Source = Both for matched, Discord for Discord-only, Game for Nakama-only
             // 5. Populate IsOnline, IsInGame, ActivityText from Discord presence
             // 6. Fire OnFriendsUpdated
+        }
+
+        /// <summary>
+        /// Subscribes to Discord relationship create/delete events for live updates.
+        /// </summary>
+        private void RegisterRelationshipCallbacks()
+        {
+            // Wire to: client->SetRelationshipCreatedCallback, SetRelationshipDeletedCallback
+            // On create: map relationship type; raise OnFriendRequestReceived / OnFriendRequestAccepted / refresh list.
+            // On delete: raise OnFriendRemoved / OnFriendRequestAccepted as appropriate; refresh list.
+        }
+
+        private void SendGameFriendRequestInternal(string username, Action<bool> onComplete)
+        {
+            // Wire to: IVXNakamaManager / Nakama client friend add by username (e.g. AddFriendsAsync(username))
+            onComplete?.Invoke(false);
+        }
+
+        private void SendGameFriendRequestByIdInternal(ulong userId, Action<bool> onComplete)
+        {
+            // Wire to: IVXNakamaManager friend add by id (e.g. AddFriendsAsync(userId.ToString()))
+            onComplete?.Invoke(false);
+        }
+
+        private void AcceptGameFriendRequestInternal(ulong userId, Action<bool> onComplete)
+        {
+            // Wire to: Nakama accept friend (e.g. AcceptFriendsAsync)
+            onComplete?.Invoke(false);
+        }
+
+        private void RejectGameFriendRequestInternal(ulong userId, Action<bool> onComplete)
+        {
+            // Wire to: Nakama decline/delete incoming friend request
+            onComplete?.Invoke(false);
+        }
+
+        private void CancelGameFriendRequestInternal(ulong userId, Action<bool> onComplete)
+        {
+            // Wire to: Nakama cancel outgoing friend request
+            onComplete?.Invoke(false);
+        }
+
+        private void RemoveGameFriendInternal(ulong userId, Action<bool> onComplete)
+        {
+            // Wire to: Nakama remove friend (e.g. DeleteFriendsAsync)
+            onComplete?.Invoke(false);
+        }
+
+        private void SendDiscordFriendRequestInternal(string username, Action<bool> onComplete)
+        {
+            // Wire to: client->SendFriendRequest(username, callback) or SendFriendRequestByUsername per Discord Game SDK
+            onComplete?.Invoke(false);
+        }
+
+        private void SendDiscordFriendRequestByIdInternal(ulong userId, Action<bool> onComplete)
+        {
+            // Wire to: client->SendFriendRequest(userId, callback)
+            onComplete?.Invoke(false);
+        }
+
+        private void AcceptDiscordFriendRequestInternal(ulong userId, Action<bool> onComplete)
+        {
+            // Wire to: client->AcceptFriendRequest(userId, callback)
+            onComplete?.Invoke(false);
+        }
+
+        private void RejectDiscordFriendRequestInternal(ulong userId, Action<bool> onComplete)
+        {
+            // Wire to: client->RejectFriendRequest(userId, callback) or equivalent
+            onComplete?.Invoke(false);
+        }
+
+        private void CancelDiscordFriendRequestInternal(ulong userId, Action<bool> onComplete)
+        {
+            // Wire to: client->CancelFriendRequest(userId, callback)
+            onComplete?.Invoke(false);
+        }
+
+        private void RemoveDiscordAndGameFriendInternal(ulong userId, Action<bool> onComplete)
+        {
+            // Wire to: client->RemoveFriend(userId) then Nakama DeleteFriendsAsync for linked game id
+            onComplete?.Invoke(false);
+        }
+
+        private void BlockUserInternal(ulong userId, Action<bool> onComplete)
+        {
+            // Wire to: client->UpdateRelationship(userId, RelationshipType::Blocked, callback)
+            onComplete?.Invoke(false);
+        }
+
+        private void UnblockUserInternal(ulong userId, Action<bool> onComplete)
+        {
+            // Wire to: client->UpdateRelationship(userId, RelationshipType::None, callback) or RemoveRelationship
+            onComplete?.Invoke(false);
         }
 #endif
 

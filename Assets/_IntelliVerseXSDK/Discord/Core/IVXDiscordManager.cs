@@ -31,6 +31,8 @@ namespace IntelliVerseX.Discord
         private string _discordUserId;
         private string _discordUsername;
         private string _discordAvatarUrl;
+        private string _publisherId;
+        private Action _authorizeRequestCallback;
 
         #endregion
 
@@ -52,6 +54,8 @@ namespace IntelliVerseX.Discord
         public string DiscordAvatarUrl => _discordAvatarUrl;
         /// <summary>Active configuration.</summary>
         public IVXDiscordConfig Config => _config;
+        /// <summary>Publisher ID for cross-game shared authentication (Discord Social SDK).</summary>
+        public string PublisherId => _publisherId;
 
         #endregion
 
@@ -67,6 +71,8 @@ namespace IntelliVerseX.Discord
         public event Action OnAccountUnlinked;
         /// <summary>Fired on any Discord SDK error. Provides error message.</summary>
         public event Action<string> OnError;
+        /// <summary>Fired when the Discord client requests account linking (user used an entry point in Discord).</summary>
+        public event Action OnAuthorizeRequested;
 
         #endregion
 
@@ -235,6 +241,11 @@ namespace IntelliVerseX.Discord
 
             Debug.Log($"{LOG_TAG} Shutting down...");
 
+            _authorizeRequestCallback = null;
+#if INTELLIVERSEX_HAS_DISCORD
+            RemoveDiscordAuthorizeCallback();
+#endif
+
 #if INTELLIVERSEX_HAS_DISCORD
             DestroyDiscordClient();
 #endif
@@ -250,7 +261,259 @@ namespace IntelliVerseX.Discord
 
         #endregion
 
+        #region Account Linking — Advanced
+
+        /// <summary>
+        /// Registers a callback for when the Discord client wants to start account linking (e.g. user tapped an entry point in Discord).
+        /// Call when the game is ready to handle linking, such as from the main menu.
+        /// </summary>
+        /// <param name="onAuthorizeRequested">Invoked when the user initiates linking from Discord.</param>
+        public void RegisterAuthorizeRequestCallback(Action onAuthorizeRequested)
+        {
+            if (!_initialized)
+            {
+                Debug.LogError($"{LOG_TAG} Not initialized. Call Initialize() first.");
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} Registering authorize request callback.");
+
+            _authorizeRequestCallback = onAuthorizeRequested;
+
+#if INTELLIVERSEX_HAS_DISCORD
+            // Wire to: client->RegisterAuthorizeRequestCallback
+            RegisterDiscordAuthorizeCallback(HandleAuthorizeRequestedFromDiscord);
+#else
+            Debug.Log($"{LOG_TAG} Discord Social SDK not available; authorize request callback not registered.");
+#endif
+        }
+
+        /// <summary>
+        /// Removes the authorize request callback. Call when the game enters a state where linking cannot happen (e.g. match, cutscene).
+        /// </summary>
+        public void RemoveAuthorizeRequestCallback()
+        {
+            if (!_initialized)
+            {
+                Debug.LogWarning($"{LOG_TAG} Not initialized; authorize request callback not removed.");
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} Removing authorize request callback.");
+
+            _authorizeRequestCallback = null;
+
+#if INTELLIVERSEX_HAS_DISCORD
+            RemoveDiscordAuthorizeCallback();
+#else
+            Debug.Log($"{LOG_TAG} Discord Social SDK not available.");
+#endif
+        }
+
+        /// <summary>
+        /// Starts the mobile OAuth2 flow with PKCE and deep linking using the given URL scheme for the redirect URI.
+        /// </summary>
+        /// <param name="redirectScheme">Custom URL scheme for the app (mobile deep link).</param>
+        /// <param name="onComplete">Called with true when linking succeeds.</param>
+        public void StartMobileOAuth2Flow(string redirectScheme, Action<bool> onComplete = null)
+        {
+            if (!_initialized)
+            {
+                Debug.LogError($"{LOG_TAG} Not initialized. Call Initialize() first.");
+                onComplete?.Invoke(false);
+                return;
+            }
+
+            if (string.IsNullOrEmpty(redirectScheme))
+            {
+                Debug.LogError($"{LOG_TAG} redirectScheme is required for mobile OAuth2.");
+                onComplete?.Invoke(false);
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} Starting mobile OAuth2 (PKCE) flow with redirect scheme: {redirectScheme}");
+
+#if INTELLIVERSEX_HAS_DISCORD
+            // Wire to: mobile OAuth2 + PKCE
+            StartMobilePKCEFlow(redirectScheme, onComplete);
+#else
+            Debug.Log($"{LOG_TAG} Discord Social SDK not available; mobile OAuth2 flow stubbed.");
+            onComplete?.Invoke(false);
+#endif
+        }
+
+        /// <summary>
+        /// Starts the console device-code OAuth2 flow. Display the device code from <paramref name="onDeviceCode"/> to the user.
+        /// </summary>
+        /// <param name="onDeviceCode">Receives the user-visible device code string.</param>
+        /// <param name="onComplete">Called with true when the flow completes successfully.</param>
+        public void StartConsoleOAuth2Flow(Action<string> onDeviceCode, Action<bool> onComplete = null)
+        {
+            if (!_initialized)
+            {
+                Debug.LogError($"{LOG_TAG} Not initialized. Call Initialize() first.");
+                onComplete?.Invoke(false);
+                return;
+            }
+
+            if (onDeviceCode == null)
+            {
+                Debug.LogError($"{LOG_TAG} onDeviceCode is required for console OAuth2.");
+                onComplete?.Invoke(false);
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} Starting console OAuth2 (device code) flow.");
+
+#if INTELLIVERSEX_HAS_DISCORD
+            // Wire to: device code flow
+            StartDeviceCodeFlow(onDeviceCode, onComplete);
+#else
+            Debug.Log($"{LOG_TAG} Discord Social SDK not available; console OAuth2 flow stubbed.");
+            onComplete?.Invoke(false);
+#endif
+        }
+
+        /// <summary>
+        /// Sets the publisher ID used for publisher-level account linking across multiple games.
+        /// </summary>
+        /// <param name="publisherId">Publisher identifier from Discord.</param>
+        public void SetPublisherId(string publisherId)
+        {
+            if (!_initialized)
+            {
+                Debug.LogError($"{LOG_TAG} Not initialized. Call Initialize() first.");
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} Setting publisher ID.");
+
+            _publisherId = publisherId;
+
+#if INTELLIVERSEX_HAS_DISCORD
+            // Wire to: client / publisher shared auth configuration
+#else
+            Debug.Log($"{LOG_TAG} Discord Social SDK not available; publisher ID stored locally only.");
+#endif
+        }
+
+        /// <summary>
+        /// Merges a provisional account with a full Discord account using an external auth token from your backend or OAuth completion.
+        /// </summary>
+        /// <param name="externalAuthToken">Token used to complete the merge with Discord.</param>
+        /// <param name="onComplete">Called with true if the merge succeeds.</param>
+        public void MergeProvisionalAccount(string externalAuthToken, Action<bool> onComplete = null)
+        {
+            if (!_initialized)
+            {
+                Debug.LogError($"{LOG_TAG} Not initialized. Call Initialize() first.");
+                onComplete?.Invoke(false);
+                return;
+            }
+
+            if (string.IsNullOrEmpty(externalAuthToken))
+            {
+                Debug.LogError($"{LOG_TAG} externalAuthToken is required to merge provisional account.");
+                onComplete?.Invoke(false);
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} Merging provisional account with Discord account.");
+
+#if INTELLIVERSEX_HAS_DISCORD
+            // Wire to: client provisional account merge
+            MergeDiscordProvisionalAccount(externalAuthToken, onComplete);
+#else
+            Debug.Log($"{LOG_TAG} Discord Social SDK not available; merge provisional account stubbed.");
+            onComplete?.Invoke(false);
+#endif
+        }
+
+        /// <summary>
+        /// Updates the stored OAuth2 access token without running a full sign-in (e.g. after browser-based linking on web).
+        /// </summary>
+        /// <param name="newToken">New bearer token from OAuth2.</param>
+        public void UpdateToken(string newToken)
+        {
+            if (!_initialized)
+            {
+                Debug.LogError($"{LOG_TAG} Not initialized. Call Initialize() first.");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(newToken))
+            {
+                Debug.LogError($"{LOG_TAG} newToken is required.");
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} Updating OAuth2 token.");
+
+#if INTELLIVERSEX_HAS_DISCORD
+            // Wire to: client->UpdateToken
+            UpdateDiscordToken(newToken);
+#else
+            Debug.Log($"{LOG_TAG} Discord Social SDK not available; token not applied.");
+#endif
+        }
+
+        #endregion
+
+        #region Social Settings
+
+        /// <summary>
+        /// Opens Discord&apos;s Connected Games settings where users manage DM and related options for linked games.
+        /// </summary>
+        public void OpenConnectedGamesSettingsInDiscord()
+        {
+            if (!_initialized)
+            {
+                Debug.LogError($"{LOG_TAG} Not initialized. Call Initialize() first.");
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} Opening Connected Games settings in Discord.");
+
+#if INTELLIVERSEX_HAS_DISCORD
+            // Wire to: client->OpenConnectedGamesSettingsInDiscord()
+            OpenDiscordSettings();
+#else
+            Debug.Log($"{LOG_TAG} Discord Social SDK not available; cannot open Connected Games settings.");
+#endif
+        }
+
+        /// <summary>
+        /// Opens the Discord profile for the given user in the Discord client.
+        /// </summary>
+        /// <param name="userId">Discord snowflake user ID.</param>
+        public void OpenUserProfileInDiscord(ulong userId)
+        {
+            if (!_initialized)
+            {
+                Debug.LogError($"{LOG_TAG} Not initialized. Call Initialize() first.");
+                return;
+            }
+
+            Debug.Log($"{LOG_TAG} Opening Discord profile for user {userId}.");
+
+#if INTELLIVERSEX_HAS_DISCORD
+            // Wire to: open profile
+            OpenDiscordProfile(userId);
+#else
+            Debug.Log($"{LOG_TAG} Discord Social SDK not available; cannot open profile.");
+#endif
+        }
+
+        #endregion
+
         #region Private Methods — Discord SDK Wiring
+
+        private void HandleAuthorizeRequestedFromDiscord()
+        {
+            Debug.Log($"{LOG_TAG} Authorize requested by Discord client.");
+            OnAuthorizeRequested?.Invoke();
+            _authorizeRequestCallback?.Invoke();
+        }
 
 #if INTELLIVERSEX_HAS_DISCORD
         private void InitializeDiscordClient(long applicationId)
@@ -288,6 +551,46 @@ namespace IntelliVerseX.Discord
         private void DestroyDiscordClient()
         {
             // Wire to: client disposal
+        }
+
+        private void RegisterDiscordAuthorizeCallback(Action callback)
+        {
+            // Wire to: client->RegisterAuthorizeRequestCallback
+        }
+
+        private void RemoveDiscordAuthorizeCallback()
+        {
+            // Wire to: client->RemoveAuthorizeRequestCallback
+        }
+
+        private void StartMobilePKCEFlow(string redirectScheme, Action<bool> onComplete)
+        {
+            // Wire to: mobile OAuth2 + PKCE
+        }
+
+        private void StartDeviceCodeFlow(Action<string> onDeviceCode, Action<bool> onComplete)
+        {
+            // Wire to: device code flow
+        }
+
+        private void MergeDiscordProvisionalAccount(string externalAuthToken, Action<bool> onComplete)
+        {
+            // Wire to: client provisional account merge
+        }
+
+        private void UpdateDiscordToken(string token)
+        {
+            // Wire to: client->UpdateToken
+        }
+
+        private void OpenDiscordSettings()
+        {
+            // Wire to: client->OpenConnectedGamesSettingsInDiscord()
+        }
+
+        private void OpenDiscordProfile(ulong userId)
+        {
+            // Wire to: open profile
         }
 #endif
 

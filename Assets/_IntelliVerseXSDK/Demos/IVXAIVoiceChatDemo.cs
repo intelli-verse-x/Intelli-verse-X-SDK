@@ -420,13 +420,4 @@ namespace IntelliVerseX.Demos
 
         #endregion
     }
-
-    internal static class LayoutElementExt
-    {
-        public static void SetLayout(this LayoutElement le, float minW, float minH)
-        {
-            le.minWidth = minW; le.preferredWidth = minW;
-            le.minHeight = minH; le.preferredHeight = minH;
-        }
-    }
 }

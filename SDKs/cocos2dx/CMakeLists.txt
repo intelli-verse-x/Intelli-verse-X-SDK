@@ -11,6 +11,14 @@ find_package(nakama-sdk REQUIRED)
 set(IVX_SOURCES
     Classes/IntelliVerseX/IVXManager.cpp
     Classes/IntelliVerseX/IVXConfig.cpp
+    Classes/IntelliVerseX/IVXDiscordMessages.cpp
+    Classes/IntelliVerseX/IVXDiscordModeration.cpp
+    Classes/IntelliVerseX/IVXAINPCDialogManager.cpp
+    Classes/IntelliVerseX/IVXAIAssistant.cpp
+    Classes/IntelliVerseX/IVXAIModerator.cpp
+    Classes/IntelliVerseX/IVXAIContentGenerator.cpp
+    Classes/IntelliVerseX/IVXAIProfiler.cpp
+    Classes/IntelliVerseX/IVXAIVoiceServices.cpp
 )
 
 set(IVX_HEADERS
