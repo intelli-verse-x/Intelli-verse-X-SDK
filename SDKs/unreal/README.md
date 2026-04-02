@@ -1,6 +1,63 @@
 # IntelliVerseX Unreal Engine SDK
 
-> Complete modular game development SDK for Unreal Engine — Auth, Backend (Nakama), Analytics, Social, Monetization, and more.
+> Complete modular game development SDK for Unreal Engine — Auth, Backend (Nakama), Analytics, Social, Monetization, AI, Multiplayer, Hiro Live-Ops, and more.
+
+## What's New in v5.5.0
+
+### AI Voice & Host (`UIVXAIClient`)
+
+- Voice persona sessions with text & audio
+- AI host game commentary
+- Entitlement & persona management
+
+```cpp
+#include "IVXAIClient.h"
+
+UIVXAIClient* AI = GetGameInstance()->GetSubsystem<UIVXAIClient>();
+AI->Initialize(TEXT("https://ai.intelli-verse-x.ai"), TEXT("your-key"));
+
+FIVXHostProfile Host;
+Host.PersonaId = TEXT("persona-1");
+Host.DisplayName = TEXT("QuizBot");
+AI->StartHostSession(TEXT("match-123"), Host);
+AI->OnMessageReceived.AddDynamic(this, &AMyMode::OnAIMessage);
+```
+
+### Multiplayer & Game Modes (`UIVXGameModes`)
+
+- Solo, Local Multiplayer, Online Versus/Co-op, Ranked, Turn-Based
+- Room/lobby management
+- Quick-match & ranked matchmaking
+
+```cpp
+#include "IVXGameModes.h"
+
+UIVXGameModes* GM = GetGameInstance()->GetSubsystem<UIVXGameModes>();
+FIVXMatchConfig Config;
+Config.Mode = EIVXGameMode::OnlineVersus;
+Config.MaxPlayers = 4;
+GM->SelectMode(Config);
+GM->AddPlayer(TEXT("Alice"), true);
+GM->SetPlayerReady(0, true);
+if (GM->CanStartMatch()) GM->StartMatch();
+```
+
+### Hiro Live-Ops Systems (`UIVXHiroSystems`)
+
+- Spin Wheel, Daily Streaks, Offerwall
+- Friend Quests & Battles
+- IAP Triggers, Smart Ad Timers
+
+```cpp
+#include "IVXHiroSystems.h"
+
+UIVXHiroSystems* Hiro = GetGameInstance()->GetSubsystem<UIVXHiroSystems>();
+Hiro->Initialize(NakamaClient, NakamaSession);
+Hiro->SpinWheel(TEXT("daily_wheel"));
+Hiro->OnSpinResult.AddDynamic(this, &AMyMode::OnSpinResult);
+Hiro->GetStreakState();
+Hiro->ClaimStreak();
+```
 
 ## Requirements
 
@@ -76,19 +133,35 @@ void AMyGameMode::OnIVXReady()
 
 | Feature | Status |
 |---------|--------|
-| Device Auth | Supported |
-| Email Auth | Supported |
-| Google Auth | Supported |
-| Apple Auth | Supported |
-| Profile Management | Supported |
-| Wallet / Economy | Supported |
-| Leaderboards | Supported |
-| Cloud Storage | Supported |
-| RPC Calls | Supported |
-| Hiro Systems | Via RPC |
-| Real-time Multiplayer | Planned |
-| Analytics | Planned |
-| Monetization | Planned |
+| Device Auth | ✅ Supported |
+| Email Auth | ✅ Supported |
+| Google Auth | ✅ Supported |
+| Apple Auth | ✅ Supported |
+| Profile Management | ✅ Supported |
+| Wallet / Economy | ✅ Supported |
+| Leaderboards | ✅ Supported |
+| Cloud Storage | ✅ Supported |
+| RPC Calls | ✅ Supported |
+| AI Voice & Host | ✅ New in v5.5.0 |
+| Real-time Multiplayer & Game Modes | ✅ New in v5.5.0 |
+| Hiro Live-Ops Systems | ✅ New in v5.5.0 |
+| Analytics | ✅ Supported |
+| Monetization | ✅ Supported |
+
+## Project Structure
+
+```
+Source/IntelliVerseX/
+├── Public/
+│   ├── IVXManager.h            # Core manager subsystem
+│   ├── IVXAIClient.h           # AI voice & host client
+│   ├── IVXGameModes.h          # Multiplayer & game mode management
+│   └── IVXHiroSystems.h        # Hiro live-ops typed wrappers
+└── Private/
+    ├── IVXAIClient.cpp
+    ├── IVXGameModes.cpp
+    └── IVXHiroSystems.cpp
+```
 
 ## API Reference
 

@@ -1,6 +1,65 @@
 # IntelliVerseX JavaScript SDK
 
-> Complete modular game development SDK for JavaScript/TypeScript — Auth, Backend (Nakama), Analytics, Social, Monetization, and more.
+> Complete modular game development SDK for JavaScript/TypeScript — Auth, Backend (Nakama), Analytics, Social, Monetization, AI, Multiplayer, Hiro Live-Ops, and more.
+
+## What's New in v5.5.0
+
+### AI Voice & Host (`IVXAIClient`)
+
+- Voice persona sessions with text & audio
+- AI host game commentary
+- Entitlement & persona management
+
+```typescript
+import { IVXAIClient } from '@intelliversex/sdk';
+
+const ai = new IVXAIClient({
+  apiBaseUrl: 'https://ai.intelli-verse-x.ai',
+  apiKey: 'your-key',
+});
+
+const session = await ai.startVoiceSession('persona-1', userId);
+await ai.sendText(session.sessionId, 'Hello!');
+const personas = await ai.getPersonas();
+const entitlement = await ai.checkEntitlement(userId);
+```
+
+### Multiplayer & Game Modes (`IVXGameModes`)
+
+- Solo, Local Multiplayer, Online Versus/Co-op, Ranked, Turn-Based
+- Room/lobby management
+- Quick-match & ranked matchmaking
+
+```typescript
+import { IVXGameModes, IVXGameMode } from '@intelliversex/sdk';
+
+const gm = new IVXGameModes();
+gm.selectMode(IVXGameMode.ONLINE_VERSUS, 4);
+gm.addPlayer('Alice', true);
+gm.setPlayerReady(0, true);
+
+const room = await gm.createRoom({ maxPlayers: 4 });
+const rooms = await gm.listRooms();
+await gm.quickMatch(IVXGameMode.RANKED);
+```
+
+### Hiro Live-Ops Systems (`IVXHiroSystems`)
+
+- Spin Wheel, Daily Streaks, Offerwall
+- Friend Quests & Battles
+- IAP Triggers, Smart Ad Timers
+
+```typescript
+import { IVXHiroSystems } from '@intelliversex/sdk';
+
+const hiro = new IVXHiroSystems(nakamaClient, session);
+
+const spin = await hiro.spinWheel('daily_wheel');
+const streak = await hiro.getStreakState();
+await hiro.claimStreak();
+const offers = await hiro.getOfferwallState();
+await hiro.startFriendBattle(friendId, 'quiz_duel');
+```
 
 ## Requirements
 
@@ -85,21 +144,35 @@ ivx.initialize({ nakamaHost: 'nakama-rest.intelli-verse-x.ai' });
 
 | Feature | Status |
 |---------|--------|
-| Device Auth | Supported |
-| Email Auth | Supported |
-| Google Auth | Supported |
-| Apple Auth | Supported |
-| Custom Auth | Supported |
-| Profile Management | Supported |
-| Wallet / Economy | Supported |
-| Leaderboards | Supported |
-| Cloud Storage | Supported |
-| RPC Calls | Supported |
-| Real-time Socket | Supported |
-| Hiro Systems | Via RPC |
-| TypeScript Types | Full Support |
-| Node.js | Supported |
-| Browser | Supported |
+| Device Auth | ✅ Supported |
+| Email Auth | ✅ Supported |
+| Google Auth | ✅ Supported |
+| Apple Auth | ✅ Supported |
+| Custom Auth | ✅ Supported |
+| Profile Management | ✅ Supported |
+| Wallet / Economy | ✅ Supported |
+| Leaderboards | ✅ Supported |
+| Cloud Storage | ✅ Supported |
+| RPC Calls | ✅ Supported |
+| Real-time Socket | ✅ Supported |
+| AI Voice & Host | ✅ New in v5.5.0 |
+| Multiplayer & Game Modes | ✅ New in v5.5.0 |
+| Hiro Live-Ops Systems | ✅ New in v5.5.0 |
+| Analytics | ✅ Supported |
+| TypeScript Types | ✅ Full Support |
+| Node.js | ✅ Supported |
+| Browser | ✅ Supported |
+
+## Project Structure
+
+```
+src/
+├── index.ts              # Core IVXManager
+├── types.ts              # Shared types
+├── IVXAIClient.ts        # AI voice & host client
+├── IVXGameModes.ts       # Multiplayer & game mode management
+└── IVXHiroSystems.ts     # Hiro live-ops typed wrappers
+```
 
 ## API Reference
 

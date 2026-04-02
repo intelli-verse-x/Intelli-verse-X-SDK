@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Intelli-verse-X
 // MIT License — see LICENSE in the project root.
 
-export const SDK_VERSION = '5.2.0';
+export const SDK_VERSION = '5.5.0';
 
 export interface IVXProfile {
   userId: string;

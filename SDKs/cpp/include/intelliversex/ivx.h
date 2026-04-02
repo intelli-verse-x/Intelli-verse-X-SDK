@@ -8,4 +8,8 @@
 
 #include "ivx_config.h"
 #include "ivx_types.h"
+#include "ivx_ai_types.h"
 #include "ivx_manager.h"
+#include "ivx_ai_client.h"
+#include "ivx_game_modes.h"
+#include "ivx_hiro_systems.h"

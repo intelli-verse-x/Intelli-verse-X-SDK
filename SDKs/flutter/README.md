@@ -1,6 +1,51 @@
 # IntelliVerseX Flutter / Dart SDK
 
-> Complete modular game development SDK for Flutter/Dart — Auth, Backend (Nakama), Analytics, Economy, Leaderboards, Storage, RPC, and more.
+> Complete modular game development SDK for Flutter/Dart — Auth, Backend (Nakama), Analytics, Economy, Leaderboards, Storage, RPC, AI, Multiplayer, Hiro Live-Ops, and more.
+
+## What's New in v5.5.0
+
+### AI Voice & Host (`IVXAIClient`)
+
+- Voice persona sessions with text & audio
+- AI host game commentary
+- Entitlement & persona management
+
+```dart
+import 'package:intelliversex_sdk/intelliversex_sdk.dart';
+
+final ai = IVXAIClient(apiBaseUrl: 'https://ai.intelli-verse-x.ai', apiKey: 'your-key');
+final session = await ai.startVoiceSession(personaId: 'persona-1', userId: userId);
+await ai.sendText(sessionId: session.sessionId, text: 'Hello!');
+final personas = await ai.getPersonas();
+```
+
+### Multiplayer & Game Modes (`IVXGameModeManager`)
+
+- Solo, Local Multiplayer, Online Versus/Co-op, Ranked, Turn-Based
+- Room/lobby management
+- Quick-match & ranked matchmaking
+
+```dart
+final gm = IVXGameModeManager();
+gm.selectMode(IVXGameMode.onlineMultiplayer, maxPlayers: 4);
+gm.addPlayer('Alice', isLocal: true);
+gm.setPlayerReady(0, true);
+if (gm.canStartMatch) gm.startMatch();
+```
+
+### Hiro Live-Ops Systems (`IVXHiroSystems`)
+
+- Spin Wheel, Daily Streaks, Offerwall
+- Friend Quests & Battles
+- IAP Triggers, Smart Ad Timers
+
+```dart
+final hiro = IVXHiroSystems(nakamaClient: client, session: session);
+final spin = await hiro.spinWheel('daily_wheel');
+final streak = await hiro.getStreakState();
+await hiro.claimStreak();
+final offers = await hiro.getOfferwallState();
+```
 
 ## Requirements
 
@@ -24,7 +69,7 @@ Or, once published to pub.dev:
 
 ```yaml
 dependencies:
-  intelliversex_sdk: ^5.1.0
+  intelliversex_sdk: ^5.5.0
 ```
 
 ## Quick Start
@@ -64,20 +109,23 @@ Future<void> main() async {
 
 | Feature | Status |
 |---------|--------|
-| Device Auth | Supported |
-| Email Auth | Supported |
-| Google Auth | Supported |
-| Apple Auth | Supported |
-| Custom Auth | Supported |
-| Profile Management | Supported |
-| Wallet / Economy | Supported |
-| Leaderboards | Supported |
-| Cloud Storage | Supported |
-| RPC Calls | Supported |
-| Hiro Systems | Via RPC |
-| Dart Types | Full Support |
-| Flutter (iOS/Android) | Supported |
-| Dart CLI / Server | Supported |
+| Device Auth | ✅ Supported |
+| Email Auth | ✅ Supported |
+| Google Auth | ✅ Supported |
+| Apple Auth | ✅ Supported |
+| Custom Auth | ✅ Supported |
+| Profile Management | ✅ Supported |
+| Wallet / Economy | ✅ Supported |
+| Leaderboards | ✅ Supported |
+| Cloud Storage | ✅ Supported |
+| RPC Calls | ✅ Supported |
+| AI Voice & Host | ✅ New in v5.5.0 |
+| Multiplayer & Game Modes | ✅ New in v5.5.0 |
+| Hiro Live-Ops Systems | ✅ New in v5.5.0 |
+| Analytics | ✅ Supported |
+| Dart Types | ✅ Full Support |
+| Flutter (iOS/Android) | ✅ Supported |
+| Dart CLI / Server | ✅ Supported |
 
 ## API Overview
 
@@ -114,6 +162,18 @@ ivx.on(IVXEvent.leaderboardFetched, (records) { ... });
 ivx.on(IVXEvent.storageRead, (data) { ... });
 ivx.on(IVXEvent.rpcResponse, (result) { ... });
 ivx.on(IVXEvent.error, (error) { ... });
+```
+
+## Project Structure
+
+```
+lib/
+├── intelliversex_sdk.dart       # Package barrel export
+└── src/
+    ├── types.dart               # Shared types
+    ├── ivx_ai_client.dart       # AI voice & host client
+    ├── ivx_game_modes.dart      # Multiplayer & game mode management
+    └── ivx_hiro_systems.dart    # Hiro live-ops typed wrappers
 ```
 
 ## Running Tests

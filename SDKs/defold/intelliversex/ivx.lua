@@ -11,7 +11,7 @@ local log = require "nakama.util.log"
 
 local M = {}
 
-M.SDK_VERSION = "5.1.0"
+M.SDK_VERSION = "5.5.0"
 
 local config = {}
 local client = nil

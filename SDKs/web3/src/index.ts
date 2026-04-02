@@ -10,3 +10,34 @@ export type {
   IVXLeaderboardRecord,
   IVXWeb3EventMap,
 } from './types';
+
+export { IVXAIClient } from './IVXAIClient';
+export type {
+  IVXAIConfig,
+  IVXAIPersona,
+  IVXAIMessage,
+  IVXAISessionResponse,
+  IVXAIEntitlement,
+  IVXAIHostProfile,
+  IVXAIEventMap,
+} from './IVXAIClient';
+
+export { IVXGameModes, IVXGameMode } from './IVXGameModes';
+export type {
+  IVXPlayerSlot,
+  IVXMatchConfig,
+  IVXRoomConfig,
+  IVXRoomInfo,
+  IVXMatchResult,
+  IVXRoomFilter,
+  IVXGameModesEventMap,
+} from './IVXGameModes';
+
+export { IVXHiroSystems } from './IVXHiroSystems';
+export type {
+  IVXSpinWheelReward,
+  IVXStreakInfo,
+  IVXOfferwallItem,
+  IVXFriendInfo,
+  IVXHiroEventMap,
+} from './IVXHiroSystems';

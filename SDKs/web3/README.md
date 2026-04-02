@@ -1,6 +1,61 @@
 # IntelliVerseX Web3 SDK
 
-> Web3 game development SDK — Wallet auth (MetaMask/WalletConnect), NFT rewards, token gating, on-chain leaderboards, backed by Nakama + Hiro.
+> Web3 game development SDK — Wallet auth (MetaMask/WalletConnect), NFT rewards, token gating, on-chain leaderboards, AI, Multiplayer, Hiro Live-Ops, backed by Nakama + Hiro.
+
+## What's New in v5.5.0
+
+### AI Voice & Host (`IVXAIClient`)
+
+- Voice persona sessions with text & audio
+- AI host game commentary
+- Entitlement & persona management
+
+```typescript
+import { IVXAIClient } from '@intelliversex/sdk-web3';
+
+const ai = new IVXAIClient({
+  apiBaseUrl: 'https://ai.intelli-verse-x.ai',
+  apiKey: 'your-key',
+});
+
+const session = await ai.startVoiceSession('persona-1', userId);
+await ai.sendText(session.sessionId, 'Hello!');
+const personas = await ai.getPersonas();
+```
+
+### Multiplayer & Game Modes (`IVXGameModes`)
+
+- Solo, Local Multiplayer, Online Versus/Co-op, Ranked, Turn-Based
+- Room/lobby management
+- Quick-match & ranked matchmaking
+
+```typescript
+import { IVXGameModes, IVXGameMode } from '@intelliversex/sdk-web3';
+
+const gm = new IVXGameModes();
+gm.selectMode(IVXGameMode.ONLINE_VERSUS, 4);
+gm.addPlayer('Alice', true);
+
+const room = await gm.createRoom({ maxPlayers: 4 });
+await gm.quickMatch(IVXGameMode.RANKED);
+```
+
+### Hiro Live-Ops Systems (`IVXHiroSystems`)
+
+- Spin Wheel, Daily Streaks, Offerwall
+- Friend Quests & Battles
+- IAP Triggers, Smart Ad Timers
+
+```typescript
+import { IVXHiroSystems } from '@intelliversex/sdk-web3';
+
+const hiro = new IVXHiroSystems(nakamaClient, session);
+
+const spin = await hiro.spinWheel('daily_wheel');
+const streak = await hiro.getStreakState();
+await hiro.claimStreak();
+const offers = await hiro.getOfferwallState();
+```
 
 ## Configuration and secrets
 
@@ -63,18 +118,22 @@ const records = await ivx.fetchLeaderboard('weekly_leaderboard');
 
 | Feature | Status |
 |---------|--------|
-| Wallet Connection (MetaMask / EIP-1193) | Supported |
-| Wallet Signature Auth | Supported |
-| Device Auth (fallback) | Supported |
-| NFT Ownership Queries | Supported |
-| ERC-20 Token Balances | Supported |
-| Token Gating | Supported |
-| Profile Management | Supported |
-| Wallet / Economy (Hiro) | Supported |
-| Leaderboards | Supported |
-| Cloud Storage | Supported |
-| RPC Calls | Supported |
-| TypeScript Types | Full Support |
+| Wallet Connection (MetaMask / EIP-1193) | ✅ Supported |
+| Wallet Signature Auth | ✅ Supported |
+| Device Auth (fallback) | ✅ Supported |
+| NFT Ownership Queries | ✅ Supported |
+| ERC-20 Token Balances | ✅ Supported |
+| Token Gating | ✅ Supported |
+| Profile Management | ✅ Supported |
+| Wallet / Economy (Hiro) | ✅ Supported |
+| Leaderboards | ✅ Supported |
+| Cloud Storage | ✅ Supported |
+| RPC Calls | ✅ Supported |
+| AI Voice & Host | ✅ New in v5.5.0 |
+| Multiplayer & Game Modes | ✅ New in v5.5.0 |
+| Hiro Live-Ops Systems | ✅ New in v5.5.0 |
+| Analytics | ✅ Supported |
+| TypeScript Types | ✅ Full Support |
 | Thirdweb Integration | Config Ready |
 | Moralis Integration | Config Ready |
 
@@ -153,6 +212,17 @@ Any EVM-compatible chain works. Common chain IDs:
 
 ```bash
 npm test
+```
+
+## Project Structure
+
+```
+src/
+├── index.ts              # Core IVXWeb3Manager
+├── types.ts              # Shared types
+├── IVXAIClient.ts        # AI voice & host client
+├── IVXGameModes.ts       # Multiplayer & game mode management
+└── IVXHiroSystems.ts     # Hiro live-ops typed wrappers
 ```
 
 ## Architecture

@@ -1,4 +1,4 @@
-export const SDK_VERSION = '5.1.0';
+export const SDK_VERSION = '5.5.0';
 
 export interface IVXWeb3Config {
   nakamaHost?: string;

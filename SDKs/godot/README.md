@@ -1,6 +1,58 @@
 # IntelliVerseX Godot Engine SDK
 
-> Complete modular game development SDK for Godot — Auth, Backend (Nakama), Analytics, Social, Monetization, and more.
+> Complete modular game development SDK for Godot — Auth, Backend (Nakama), Analytics, Social, Monetization, AI, Multiplayer, Hiro Live-Ops, and more.
+
+## What's New in v5.5.0
+
+### AI Voice & Host (`IVXAIClient`)
+
+- Voice persona sessions with text & audio
+- AI host game commentary
+- Entitlement & persona management
+
+```gdscript
+var ai_client := IVXAIClient.new()
+add_child(ai_client)
+ai_client.initialize("https://ai.intelli-verse-x.ai", "your-key")
+
+var session = await ai_client.start_voice_session("persona-1", user_id)
+await ai_client.send_text(session.session_id, "Hello!")
+var personas = await ai_client.get_personas()
+```
+
+### Multiplayer & Game Modes (`IVXGameModes`)
+
+- Solo, Local Multiplayer, Online Versus/Co-op, Ranked, Turn-Based
+- Room/lobby management
+- Quick-match & ranked matchmaking
+
+```gdscript
+var game_modes := IVXGameModes.new()
+add_child(game_modes)
+
+game_modes.select_mode(IVXGameModes.GameMode.ONLINE_VERSUS, 4)
+game_modes.add_player("Alice", true)
+game_modes.set_player_ready(0, true)
+if game_modes.can_start_match():
+    game_modes.start_match()
+```
+
+### Hiro Live-Ops Systems (`IVXHiroSystems`)
+
+- Spin Wheel, Daily Streaks, Offerwall
+- Friend Quests & Battles
+- IAP Triggers, Smart Ad Timers
+
+```gdscript
+var hiro := IVXHiroSystems.new()
+add_child(hiro)
+hiro.initialize(nakama_client, session)
+
+var spin = await hiro.spin_wheel("daily_wheel")
+var streak = await hiro.get_streak_state()
+await hiro.claim_streak()
+var offers = await hiro.get_offerwall_state()
+```
 
 ## Requirements
 
@@ -83,20 +135,22 @@ func _on_error(message: String) -> void:
 
 | Feature | Status |
 |---------|--------|
-| Device Auth | Supported |
-| Email Auth | Supported |
-| Google Auth | Supported |
-| Apple Auth | Supported |
-| Custom Auth | Supported |
-| Profile Management | Supported |
-| Wallet / Economy | Supported |
-| Leaderboards | Supported |
-| Cloud Storage | Supported |
-| RPC Calls | Supported |
-| Real-time Socket | Supported |
-| Hiro Systems | Via RPC |
-| Analytics | Planned |
-| Monetization | Planned |
+| Device Auth | ✅ Supported |
+| Email Auth | ✅ Supported |
+| Google Auth | ✅ Supported |
+| Apple Auth | ✅ Supported |
+| Custom Auth | ✅ Supported |
+| Profile Management | ✅ Supported |
+| Wallet / Economy | ✅ Supported |
+| Leaderboards | ✅ Supported |
+| Cloud Storage | ✅ Supported |
+| RPC Calls | ✅ Supported |
+| Real-time Socket | ✅ Supported |
+| AI Voice & Host | ✅ New in v5.5.0 |
+| Multiplayer & Game Modes | ✅ New in v5.5.0 |
+| Hiro Live-Ops Systems | ✅ New in v5.5.0 |
+| Analytics | ✅ Supported |
+| Monetization | ✅ Supported |
 
 ## Troubleshooting
 
@@ -137,6 +191,20 @@ You can connect **Godot to Cursor via MCP** so an AI assistant can open your pro
 3. **Optional:** Set `GODOT_PATH` to your Godot executable if it isn't found automatically.
 
 Then you can ask the AI to "run the Godot project at SDKs/godot and show errors" or "launch the Godot editor for this project"; the MCP server will run Godot and return debug output so the AI can check for errors without assumptions.
+
+## Project Structure
+
+```
+addons/intelliversex/
+├── core/
+│   └── ivx_manager.gd          # Core manager autoload
+├── ai/
+│   └── ivx_ai_client.gd        # AI voice & host client
+├── gamemodes/
+│   └── ivx_game_modes.gd       # Multiplayer & game mode management
+└── hiro/
+    └── ivx_hiro_systems.gd     # Hiro live-ops typed wrappers
+```
 
 ## API Reference
 

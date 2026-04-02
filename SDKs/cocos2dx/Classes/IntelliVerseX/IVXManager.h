@@ -13,7 +13,7 @@ namespace IntelliVerseX {
 
 class IVXManager {
 public:
-    static constexpr const char* SDK_VERSION = "5.2.0";
+    static constexpr const char* SDK_VERSION = "5.5.0";
 
     static IVXManager& getInstance();
 

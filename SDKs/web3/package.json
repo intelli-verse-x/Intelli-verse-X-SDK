@@ -1,6 +1,6 @@
 {
   "name": "@intelliversex/sdk-web3",
-  "version": "5.2.0",
+  "version": "5.5.0",
   "description": "IntelliVerseX Web3 SDK — Wallet auth (MetaMask/WalletConnect), NFT rewards, token gating, and on-chain leaderboards, backed by Nakama + Hiro.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
