@@ -873,8 +873,8 @@ namespace IntelliVerseX.Backend
                     CountryCode = PlayerPrefs.GetString(PREF_COUNTRY_CODE, ""),
                     Region = PlayerPrefs.GetString(PREF_REGION, ""),
                     City = PlayerPrefs.GetString(PREF_CITY, ""),
-                    Latitude = float.TryParse(IVXSecureStorage.GetString(PREF_LAT, "0"), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float cachedLat) ? cachedLat : 0f,
-                    Longitude = float.TryParse(IVXSecureStorage.GetString(PREF_LON, "0"), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float cachedLon) ? cachedLon : 0f,
+                    Latitude = ParseCachedFloat(PREF_LAT),
+                    Longitude = ParseCachedFloat(PREF_LON),
                     Timezone = PlayerPrefs.GetString(PREF_TIMEZONE, ""),
                     ISP = PlayerPrefs.GetString(PREF_ISP, ""),
                     Provider = PlayerPrefs.GetString(PREF_PROVIDER, "cache"),
@@ -941,6 +941,34 @@ namespace IntelliVerseX.Backend
             {
                 Debug.LogWarning($"[IVXIPGeo] Failed to clear cache: {ex.Message}");
             }
+        }
+
+        /// <summary>
+        /// Reads a float from IVXSecureStorage, falling back to legacy PlayerPrefs
+        /// for data cached before the secure-storage migration. If found in PlayerPrefs,
+        /// migrates the value to IVXSecureStorage and removes the legacy key.
+        /// </summary>
+        private static float ParseCachedFloat(string key)
+        {
+            var secure = IVXSecureStorage.GetString(key, "");
+            if (!string.IsNullOrEmpty(secure) &&
+                float.TryParse(secure, System.Globalization.NumberStyles.Float,
+                    System.Globalization.CultureInfo.InvariantCulture, out float secVal))
+                return secVal;
+
+            if (PlayerPrefs.HasKey(key))
+            {
+                var legacy = PlayerPrefs.GetString(key, "0");
+                if (float.TryParse(legacy, System.Globalization.NumberStyles.Float,
+                        System.Globalization.CultureInfo.InvariantCulture, out float legVal))
+                {
+                    IVXSecureStorage.SetString(key, legacy);
+                    PlayerPrefs.DeleteKey(key);
+                    return legVal;
+                }
+            }
+
+            return 0f;
         }
 
         #endregion
