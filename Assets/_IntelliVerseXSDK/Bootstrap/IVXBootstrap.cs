@@ -56,6 +56,8 @@ namespace IntelliVerseX.Bootstrap
         public string UserName => _userName;
         /// <summary>The authenticated auth token (after init).</summary>
         public string AuthToken => _authToken;
+        /// <summary>The Game ID from the config (set during init).</summary>
+        public string GameId => _config != null ? _config.GameId : "";
 
         #endregion
 
@@ -125,6 +127,17 @@ namespace IntelliVerseX.Bootstrap
                 _isInitializing = false;
                 OnBootstrapComplete?.Invoke(false);
                 return false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(_config.GameId))
+            {
+                IntelliVerseX.Identity.IVXURLs.GameId = _config.GameId;
+                Log($"Game ID set: {_config.GameId}");
+            }
+            else
+            {
+                Debug.LogWarning("[IVXBootstrap] Game ID is empty in config. Backend calls will use the fallback default. " +
+                                 "Get your Game ID from https://intelli-verse-x.ai/developers");
             }
 
             Log("Starting SDK bootstrap...");

@@ -1,4 +1,9 @@
 class IVXConfig {
+  /// Game ID (UUID) for your title on the IntelliVerseX platform.
+  ///
+  /// Copy it from the developer dashboard, or obtain it by calling
+  /// `POST https://msapi.intelli-verse-x.io/api/games/game/info` with your game credentials.
+  final String gameId;
   final String nakamaHost;
   final int nakamaPort;
   final String nakamaServerKey;
@@ -8,6 +13,7 @@ class IVXConfig {
   final bool verboseLogging;
 
   const IVXConfig({
+    this.gameId = '',
     this.nakamaHost = '127.0.0.1',
     this.nakamaPort = 7350,
     this.nakamaServerKey = 'defaultkey',

@@ -9,6 +9,10 @@
 namespace ivx {
 
 struct Config {
+    /// Game ID (UUID) for this title on the IntelliVerseX platform.
+    /// Obtain from https://intelli-verse-x.ai/developers or POST https://msapi.intelli-verse-x.io/api/games/game/info
+    std::string game_id;
+
     std::string host = "nakama-rest.intelli-verse-x.ai";
     int port = 443;
     std::string serverKey = "defaultkey";

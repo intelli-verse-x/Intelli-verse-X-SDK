@@ -13,7 +13,11 @@ local M = {}
 
 M.SDK_VERSION = "5.5.0"
 
-local config = {}
+-- game_id: IntelliVerseX platform Game ID (UUID); default "". Set via configure({ game_id = "..." }).
+-- Obtain from https://intelli-verse-x.ai/developers or POST https://msapi.intelli-verse-x.io/api/games/game/info
+local config = {
+    game_id = "",
+}
 local client = nil
 local session = nil
 local socket = nil
@@ -23,8 +27,9 @@ local callbacks = {}
 local SESSION_FILE = sys.get_save_file("intelliversex", "session")
 
 --- Configure the SDK.
---- @param opts table Configuration: host, port, server_key, use_ssl, debug
+--- @param opts table Configuration: game_id, host, port, server_key, use_ssl, debug
 function M.configure(opts)
+    config.game_id = (opts and opts.game_id) or ""
     config.host = opts.host or "nakama-rest.intelli-verse-x.ai"
     config.port = opts.port or 443
     config.server_key = opts.server_key or "defaultkey"

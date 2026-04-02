@@ -13,6 +13,14 @@ namespace IntelliVerseX.Bootstrap
     {
         #region Serialized Fields
 
+        [Header("Game Identity")]
+        [Tooltip("Your Game ID (UUID) from the IntelliVerseX dashboard or API. " +
+                 "Obtain via POST https://msapi.intelli-verse-x.io/api/games/game/info")]
+        [SerializeField] private string _gameId = "";
+
+        [Tooltip("Display name for your game (used in analytics and backend metadata)")]
+        [SerializeField] private string _gameName = "";
+
         [Header("Backend (Nakama)")]
         [Tooltip("Nakama server hostname or IP address. Change from 127.0.0.1 before shipping.")]
         [SerializeField] private string _serverHost = "127.0.0.1";
@@ -66,6 +74,10 @@ namespace IntelliVerseX.Bootstrap
 
         #region Properties
 
+        /// <summary>Game ID (UUID) registered on the IntelliVerseX platform.</summary>
+        public string GameId => _gameId;
+        /// <summary>Display name for the game.</summary>
+        public string GameName => _gameName;
         /// <summary>Nakama server host.</summary>
         public string ServerHost => _serverHost;
         /// <summary>Nakama server port.</summary>
@@ -102,6 +114,8 @@ namespace IntelliVerseX.Bootstrap
         #if UNITY_EDITOR
         private void OnValidate()
         {
+            if (string.IsNullOrWhiteSpace(_gameId))
+                Debug.LogWarning("[IVXBootstrapConfig] Game ID is empty. Get yours from https://intelli-verse-x.ai/developers or POST to msapi.intelli-verse-x.io/api/games/game/info");
             if (_serverHost == "127.0.0.1" || _serverHost == "localhost")
                 Debug.LogWarning($"[IVXBootstrapConfig] Server host is '{_serverHost}'. Change this before shipping to production.");
             if (_serverKey == "defaultkey")
