@@ -4,13 +4,16 @@
 class_name IVXHiroSystems
 extends Node
 
-## IntelliVerseX Hiro Systems — spin wheel, streaks, offerwall, friend quests & battles.
-## Wraps Nakama RPC calls for Hiro server-side systems.
+## IntelliVerseX Hiro Systems — spin wheel, streaks, offerwall, retention, IAP triggers,
+## smart ad timer, friend quests & battles. Wraps Nakama RPC calls for Hiro server-side systems.
 
 signal spin_wheel_result(reward: Dictionary)
 signal streak_updated(streak: Dictionary)
 signal streak_claimed(streak_id: String, milestone: String, reward: Dictionary)
 signal offerwall_updated(offers: Array)
+signal retention_updated(state: Dictionary)
+signal iap_trigger_result(result: Dictionary)
+signal smart_ad_timer_result(result: Dictionary)
 signal friend_quest_updated(quest: Dictionary)
 signal friend_battle_result(result: Dictionary)
 
@@ -119,6 +122,46 @@ func friend_battles_challenge(friend_id: String, score: int = 0) -> Dictionary:
 ## Get pending and active friend battles.
 func friend_battles_get() -> Dictionary:
 	return await _rpc("hiro/friend_battles/get", "")
+
+
+# ── Retention ────────────────────────────────────────────────────────────────
+
+## Get retention / daily-login state (RPC ids align with SDKs/javascript IVXHiroSystems).
+func retention_get() -> Dictionary:
+	var result := await _rpc("hiro_retention_get", "")
+	if result.size() > 0:
+		retention_updated.emit(result)
+	return result
+
+
+## Record today's login for retention tracking.
+func retention_update() -> Dictionary:
+	var result := await _rpc("hiro_retention_update", "")
+	if result.size() > 0:
+		retention_updated.emit(result)
+	return result
+
+
+# ── IAP Trigger ────────────────────────────────────────────────────────────
+
+## Check whether an IAP offer should be shown for the given event type.
+func iap_trigger_check(event_type: String) -> Dictionary:
+	var payload := JSON.stringify({"event_type": event_type})
+	var result := await _rpc("hiro_iap_trigger_check", payload)
+	if result.size() > 0:
+		iap_trigger_result.emit(result)
+	return result
+
+
+# ── Smart Ad Timer ───────────────────────────────────────────────────────────
+
+## Returns whether an ad can be shown for the given placement (see hiro_smart_ad_can_show).
+func smart_ad_timer_can_show(placement: String) -> Dictionary:
+	var payload := JSON.stringify({"placement": placement})
+	var result := await _rpc("hiro_smart_ad_can_show", payload)
+	if result.size() > 0:
+		smart_ad_timer_result.emit(result)
+	return result
 
 
 # ── Private helpers ──────────────────────────────────────────────────────────

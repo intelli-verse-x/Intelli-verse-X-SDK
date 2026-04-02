@@ -254,6 +254,84 @@ void HiroSystems::getActiveFriendBattles(FriendBattleListCb cb, ErrorCb err) {
     _client->rpc(_session, "hiro/friend_battles_get", "{}", successCb, errorCb);
 }
 
+// --- Retention / IAP / Smart ads ---
+
+void HiroSystems::getRetention(RetentionStateCb cb, ErrorCb err) {
+    if (!hasClient()) {
+        if (err) err({-1, "Nakama client not set"});
+        return;
+    }
+
+    auto successCb = [cb](const Nakama::NRpc&) {
+        RetentionState state;
+        if (cb) cb(state);
+    };
+
+    auto errorCb = [err](const Nakama::NError& e) {
+        if (err) err({e.code, e.message});
+    };
+
+    _client->rpc(_session, "hiro/retention_get", "{}", successCb, errorCb);
+}
+
+void HiroSystems::updateRetention(RetentionStateCb cb, ErrorCb err) {
+    if (!hasClient()) {
+        if (err) err({-1, "Nakama client not set"});
+        return;
+    }
+
+    auto successCb = [cb](const Nakama::NRpc&) {
+        RetentionState state;
+        if (cb) cb(state);
+    };
+
+    auto errorCb = [err](const Nakama::NError& e) {
+        if (err) err({e.code, e.message});
+    };
+
+    _client->rpc(_session, "hiro/retention_update", "{}", successCb, errorCb);
+}
+
+void HiroSystems::checkIapTrigger(const std::string& eventType, IapTriggerResultCb cb, ErrorCb err) {
+    if (!hasClient()) {
+        if (err) err({-1, "Nakama client not set"});
+        return;
+    }
+
+    std::string payload = "{\"event_type\":\"" + eventType + "\"}";
+
+    auto successCb = [cb](const Nakama::NRpc&) {
+        IapTriggerResult result;
+        if (cb) cb(result);
+    };
+
+    auto errorCb = [err](const Nakama::NError& e) {
+        if (err) err({e.code, e.message});
+    };
+
+    _client->rpc(_session, "hiro/iap_trigger_check", payload, successCb, errorCb);
+}
+
+void HiroSystems::canShowSmartAd(const std::string& placement, SmartAdResultCb cb, ErrorCb err) {
+    if (!hasClient()) {
+        if (err) err({-1, "Nakama client not set"});
+        return;
+    }
+
+    std::string payload = "{\"placement\":\"" + placement + "\"}";
+
+    auto successCb = [cb](const Nakama::NRpc&) {
+        SmartAdResult result;
+        if (cb) cb(result);
+    };
+
+    auto errorCb = [err](const Nakama::NError& e) {
+        if (err) err({e.code, e.message});
+    };
+
+    _client->rpc(_session, "hiro/smart_ad_can_show", payload, successCb, errorCb);
+}
+
 // --- Logging ---
 
 void HiroSystems::log(const std::string& msg) {

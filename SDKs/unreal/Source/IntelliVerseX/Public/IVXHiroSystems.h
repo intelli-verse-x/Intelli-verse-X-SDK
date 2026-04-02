@@ -151,6 +151,84 @@ struct INTELLIVERSEX_API FIVXFriendBattle
     FString RewardJson;
 };
 
+// --- Retention ---
+
+USTRUCT(BlueprintType)
+struct INTELLIVERSEX_API FIVXRetentionState
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "IntelliVerseX|Hiro|Retention")
+    FString UserId;
+
+    UPROPERTY(BlueprintReadOnly, Category = "IntelliVerseX|Hiro|Retention")
+    int64 FirstSessionAt = 0;
+
+    UPROPERTY(BlueprintReadOnly, Category = "IntelliVerseX|Hiro|Retention")
+    int64 LastSessionAt = 0;
+
+    UPROPERTY(BlueprintReadOnly, Category = "IntelliVerseX|Hiro|Retention")
+    int32 TotalSessions = 0;
+
+    UPROPERTY(BlueprintReadOnly, Category = "IntelliVerseX|Hiro|Retention")
+    int32 CurrentSessionDepth = 0;
+
+    UPROPERTY(BlueprintReadOnly, Category = "IntelliVerseX|Hiro|Retention")
+    int32 DaysSinceLastSession = 0;
+
+    UPROPERTY(BlueprintReadOnly, Category = "IntelliVerseX|Hiro|Retention")
+    FString ChurnRisk;
+
+    UPROPERTY(BlueprintReadOnly, Category = "IntelliVerseX|Hiro|Retention")
+    bool bOnboardingComplete = false;
+
+    UPROPERTY(BlueprintReadOnly, Category = "IntelliVerseX|Hiro|Retention")
+    int32 OnboardingStep = 0;
+
+    UPROPERTY(BlueprintReadOnly, Category = "IntelliVerseX|Hiro|Retention")
+    bool bComebackBonusAvailable = false;
+
+    UPROPERTY(BlueprintReadOnly, Category = "IntelliVerseX|Hiro|Retention")
+    FString ComebackBonusRewardJson;
+};
+
+// --- IAP trigger (monetization opt) ---
+
+USTRUCT(BlueprintType)
+struct INTELLIVERSEX_API FIVXIapTriggerResult
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "IntelliVerseX|Hiro|IapTrigger")
+    bool bShouldShow = false;
+
+    UPROPERTY(BlueprintReadOnly, Category = "IntelliVerseX|Hiro|IapTrigger")
+    FString OfferId;
+
+    UPROPERTY(BlueprintReadOnly, Category = "IntelliVerseX|Hiro|IapTrigger")
+    float Discount = 0.f;
+
+    UPROPERTY(BlueprintReadOnly, Category = "IntelliVerseX|Hiro|IapTrigger")
+    int64 ExpiresAt = 0;
+};
+
+// --- Smart ad timer ---
+
+USTRUCT(BlueprintType)
+struct INTELLIVERSEX_API FIVXSmartAdResult
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "IntelliVerseX|Hiro|SmartAd")
+    bool bCanShow = false;
+
+    UPROPERTY(BlueprintReadOnly, Category = "IntelliVerseX|Hiro|SmartAd")
+    int64 NextAvailableAt = 0;
+
+    UPROPERTY(BlueprintReadOnly, Category = "IntelliVerseX|Hiro|SmartAd")
+    FString Reason;
+};
+
 // --- Delegates ---
 
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FIVXSpinWheelDelegate, bool, bSuccess, const FIVXSpinWheelState&, State);
@@ -160,9 +238,13 @@ DECLARE_DYNAMIC_DELEGATE_TwoParams(FIVXOfferListDelegate, bool, bSuccess, const 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FIVXHiroSuccessDelegate, bool, bSuccess);
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FIVXFriendQuestDelegate, bool, bSuccess, const TArray<FIVXFriendQuest>&, Quests);
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FIVXFriendBattleDelegate, bool, bSuccess, const TArray<FIVXFriendBattle>&, Battles);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FIVXRetentionDelegate, bool, bSuccess, const FIVXRetentionState&, State);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FIVXIapTriggerResultDelegate, bool, bSuccess, const FIVXIapTriggerResult&, Result);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FIVXSmartAdResultDelegate, bool, bSuccess, const FIVXSmartAdResult&, Result);
 
 /**
- * Wraps Hiro (Nakama) systems: Spin Wheel, Streaks, Offerwall, Friend Quests, Friend Battles.
+ * Wraps Hiro (Nakama) systems: Spin Wheel, Streaks, Offerwall, Friend Quests, Friend Battles,
+ * Retention, IAP triggers, Smart ad timer.
  * Calls Nakama RPCs and parses responses into Blueprint-friendly structs.
  */
 UCLASS(BlueprintType)
@@ -222,6 +304,24 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "IntelliVerseX|Hiro|FriendBattles")
     void GetActiveFriendBattles(const FIVXFriendBattleDelegate& OnComplete);
+
+    // --- Retention ---
+
+    UFUNCTION(BlueprintCallable, Category = "IntelliVerseX|Hiro|Retention")
+    void GetRetention(const FIVXRetentionDelegate& OnComplete);
+
+    UFUNCTION(BlueprintCallable, Category = "IntelliVerseX|Hiro|Retention")
+    void UpdateRetention(const FIVXRetentionDelegate& OnComplete);
+
+    // --- IAP trigger ---
+
+    UFUNCTION(BlueprintCallable, Category = "IntelliVerseX|Hiro|IapTrigger")
+    void CheckIapTrigger(const FString& EventType, const FIVXIapTriggerResultDelegate& OnComplete);
+
+    // --- Smart ad timer ---
+
+    UFUNCTION(BlueprintCallable, Category = "IntelliVerseX|Hiro|SmartAd")
+    void CanShowSmartAd(const FString& Placement, const FIVXSmartAdResultDelegate& OnComplete);
 
 private:
     static TWeakObjectPtr<UIVXHiroSystems> Singleton;

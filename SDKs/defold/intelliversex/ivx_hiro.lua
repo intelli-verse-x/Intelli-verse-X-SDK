@@ -16,7 +16,8 @@ local callbacks = {}
 
 
 --- Register a callback: "spin_wheel_result", "streak_updated", "streak_claimed",
---- "offerwall_updated", "friend_quest_updated", "friend_battle_result"
+--- "offerwall_updated", "friend_quest_updated", "friend_battle_result".
+--- Also exposes M.retention, M.iap_trigger, M.smart_ad_timer (see below).
 --- @param event string
 --- @param fn function
 function M.on(event, fn)
@@ -159,6 +160,45 @@ end
 function M.friend_battles_get(callback)
     _rpc("hiro/friend_battles/get", "{}", callback)
 end
+
+
+-- ── Retention (daily-login / comeback) ─────────────────────────────────────
+
+--- Server RPC IDs align with JS IVXHiroSystems: `hiro_retention_get`, `hiro_retention_update`.
+M.retention = {
+    --- @param callback function(result, error)
+    get = function(callback)
+        _rpc("hiro_retention_get", "{}", callback)
+    end,
+    --- @param callback function(result, error)
+    update = function(callback)
+        _rpc("hiro_retention_update", "{}", callback)
+    end,
+}
+
+
+-- ── IAP trigger (context-sensitive offers) ─────────────────────────────────
+
+M.iap_trigger = {
+    --- @param event_type string
+    --- @param callback function(result, error)
+    check = function(event_type, callback)
+        local payload = json.encode({ event_type = event_type })
+        _rpc("hiro_iap_trigger_check", payload, callback)
+    end,
+}
+
+
+-- ── Smart ad timer (placement frequency) ───────────────────────────────────
+
+M.smart_ad_timer = {
+    --- @param placement string
+    --- @param callback function(result, error)
+    can_show_ad = function(placement, callback)
+        local payload = json.encode({ placement = placement })
+        _rpc("hiro_smart_ad_can_show", payload, callback)
+    end,
+}
 
 
 -- ── Private helpers ─────────────────────────────────────────────────────────

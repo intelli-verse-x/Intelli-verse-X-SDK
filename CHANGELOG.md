@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.8.0] — 2026-04-01
+
+### Added
+
+- **Discord LinkedChannels** module — Bridge in-game chat to Discord text channels; added to all 9 cross-platform SDKs (JS, Web3, Java, Flutter, Unreal, Godot, Defold, C++, Cocos2d-x)
+- **Discord Debug/Logging** module — Route Discord SDK logs to custom sinks with log levels and history; added to all 9 cross-platform SDKs
+- **IVXSatori Analytics** wrapper — Event tracking, feature flags, A/B experiments, live events; added to all 9 cross-platform SDKs (was previously Unity-only)
+- **Hiro Retention** system — Daily login retention tracking; added to Unreal, Godot, Defold, C++, Cocos2d-x (was only in JS/Flutter)
+- **Hiro IAP Trigger** system — Context-sensitive IAP offer checks; added to Unreal, Godot, Defold, C++, Cocos2d-x (was only in JS/Flutter)
+- **Hiro Smart Ad Timer** system — Ad frequency management; added to Unreal, Godot, Defold, C++, Cocos2d-x (was only in JS/Flutter)
+- Updated `FEATURE_COVERAGE_MATRIX.md` to v5.8.0 with 68 tracked features across all 10 platforms
+
+### Changed
+
+- Cross-platform API surface coverage now at 76–91% across all platforms (up from 39–67%)
+- C++ umbrella header (`ivx.h`) includes new Discord and Satori modules
+- CMakeLists.txt for C++ and Cocos2d-x updated with new source files
+- All barrel exports (JS `index.ts`, Web3 `index.ts`, Flutter `intelliversex_sdk.dart`) include new modules
+
+---
+
 ## [5.7.0] — 2026-04-02
 
 ### Added

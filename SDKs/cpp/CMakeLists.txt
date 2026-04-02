@@ -13,6 +13,9 @@ find_package(nakama-sdk REQUIRED)
 set(IVX_SOURCES
     src/ivx_manager.cpp
     src/ivx_storage.cpp
+    src/IVXDiscordLinkedChannels.cpp
+    src/IVXDiscordDebug.cpp
+    src/IVXSatori.cpp
 )
 
 set(IVX_HEADERS

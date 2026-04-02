@@ -101,3 +101,19 @@ export { IVXAIProfiler, IVXPlayerCohort } from './ai-profiler';
 export type { IVXPlayerProfile, IVXPersonalizationHint } from './ai-profiler';
 export { IVXAIVoiceServices } from './ai-voice-services';
 export type { IVXAIVoice, IVXTranscriptionResult } from './ai-voice-services';
+
+// Discord Linked Channels & Debug
+export { IVXDiscordLinkedChannels } from './discord-linked-channels';
+export type { IVXLinkedChannel } from './discord-linked-channels';
+export { IVXDiscordDebug, IVXDiscordLogLevel } from './discord-debug';
+export type { IVXDiscordLogEntry, IVXDiscordLogCallback } from './discord-debug';
+
+// Satori Analytics
+export { IVXSatori } from './ivx-satori';
+export type {
+  IVXSatoriConfig,
+  IVXSatoriEvent,
+  IVXSatoriFlag,
+  IVXSatoriExperiment,
+  IVXSatoriLiveEvent,
+} from './ivx-satori';

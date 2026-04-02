@@ -17,6 +17,9 @@
 // Discord DMs & moderation / AI LLM stack (stub surfaces; optional includes)
 #include "IVXDiscordMessages.h"
 #include "IVXDiscordModeration.h"
+#include "IVXDiscordLinkedChannels.h"
+#include "IVXDiscordDebug.h"
+#include "IVXSatori.h"
 #include "IVXAINPCDialogManager.h"
 #include "IVXAIAssistant.h"
 #include "IVXAIModerator.h"

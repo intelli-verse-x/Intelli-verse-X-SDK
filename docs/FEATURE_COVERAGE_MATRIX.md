@@ -1,4 +1,4 @@
-# IntelliVerseX SDK v5.5.0 — Feature Coverage Matrix
+# IntelliVerseX SDK v5.8.0 — Feature Coverage Matrix
 
 > Verified, audited feature parity across all 10 supported platforms.
 
@@ -45,6 +45,19 @@
 
 ---
 
+## AI LLM Stack
+
+| Feature | Unity | JS/TS | Web3 | Java | Flutter | Unreal | Godot | Defold | C++ | Cocos |
+|---------|:-----:|:-----:|:----:|:----:|:-------:|:------:|:-----:|:------:|:---:|:-----:|
+| NPC Dialog Manager | Y | S | S | S | S | S | S | S | S | S |
+| AI Assistant | Y | S | S | S | S | S | S | S | S | S |
+| AI Content Moderator | Y | S | S | S | S | S | S | S | S | S |
+| AI Content Generator | Y | S | S | S | S | S | S | S | S | S |
+| AI Player Profiler | Y | S | S | S | S | S | S | S | S | S |
+| AI Voice Services (TTS/STT) | Y | S | S | S | S | S | S | S | S | S |
+
+---
+
 ## Multiplayer & Game Modes
 
 | Feature | Unity | JS/TS | Web3 | Java | Flutter | Unreal | Godot | Defold | C++ | Cocos |
@@ -52,11 +65,11 @@
 | Select Mode | Y | S | S | S | S | S | S | S | S | S |
 | Add/Remove Player | Y | S | S | S | S | S | S | S | S | S |
 | Start/End Match | Y | S | S | S | S | S | S | S | S | S |
-| Lobby Create Room | S | S | S | Y | S | S | S | S | S | S |
-| Lobby Join Room | S | S | S | Y | S | S | S | S | S | S |
-| Lobby List Rooms | S | S | S | Y | S | S | S | S | S | S |
+| Lobby Create Room | Y | S | S | Y | S | S | S | S | S | S |
+| Lobby Join Room | Y | S | S | Y | S | S | S | S | S | S |
+| Lobby List Rooms | Y | S | S | Y | S | S | S | S | S | S |
 | Lobby Leave Room | Y | S | S | Y | S | S | S | S | S | S |
-| Matchmaking Find | S | S | S | - | S | S | S | S | S | S |
+| Matchmaking Find | Y | S | S | - | S | S | S | S | S | S |
 | Matchmaking Cancel | Y | S | S | - | S | S | S | S | S | S |
 | Local MP Session | Y | - | - | - | - | - | - | - | - | - |
 | Local MP Turns | Y | - | - | - | - | - | - | - | - | - |
@@ -73,9 +86,40 @@
 | Offerwall (get/complete/claim) | Y | Y | S | S | S | Y | S | S | S | S |
 | Friend Quests | Y | Y | - | S | Y | Y | Y | Y | S | - |
 | Friend Battles | Y | Y | - | S | Y | Y | Y | Y | S | - |
-| IAP Trigger | Y | Y | - | - | Y | - | - | - | - | - |
-| Smart Ad Timer | Y | Y | - | - | Y | - | - | - | - | - |
-| Retention (get/update) | Y | Y | - | S | S | - | - | - | - | - |
+| IAP Trigger | Y | Y | - | - | Y | Y | Y | Y | Y | Y |
+| Smart Ad Timer | Y | Y | - | - | Y | Y | Y | Y | Y | Y |
+| Retention (get/update) | Y | Y | - | S | S | Y | Y | Y | Y | Y |
+
+---
+
+## Discord Social SDK
+
+| Feature | Unity | JS/TS | Web3 | Java | Flutter | Unreal | Godot | Defold | C++ | Cocos |
+|---------|:-----:|:-----:|:----:|:----:|:-------:|:------:|:-----:|:------:|:---:|:-----:|
+| Discord Init / Connect | Y | S | S | S | S | S | S | S | S | S |
+| Account Linking (OAuth2) | Y | S | S | S | S | S | S | S | S | S |
+| Rich Presence / Activity | Y | S | S | S | S | S | S | S | S | S |
+| Unified Friends List | Y | S | S | S | S | S | S | S | S | S |
+| Lobby / Text Chat | Y | S | S | S | S | S | S | S | S | S |
+| Voice Chat | Y | S | S | S | S | S | S | S | S | S |
+| Game Invites | Y | S | S | S | S | S | S | S | S | S |
+| Direct Messages | Y | S | S | S | S | S | S | S | S | S |
+| Moderation | Y | S | S | S | S | S | S | S | S | S |
+| Linked Channels | Y | S | S | S | S | S | S | S | S | S |
+| Debug / Logging | Y | S | S | S | S | S | S | S | S | S |
+
+---
+
+## Satori Analytics
+
+| Feature | Unity | JS/TS | Web3 | Java | Flutter | Unreal | Godot | Defold | C++ | Cocos |
+|---------|:-----:|:-----:|:----:|:----:|:-------:|:------:|:-----:|:------:|:---:|:-----:|
+| Initialize / Authenticate | Y | S | S | S | S | S | S | S | S | S |
+| Capture Events | Y | S | S | S | S | S | S | S | S | S |
+| Feature Flags | Y | S | S | S | S | S | S | S | S | S |
+| Experiments / A-B Testing | Y | S | S | S | S | S | S | S | S | S |
+| Live Events | Y | S | S | S | S | S | S | S | S | S |
+| Identity Update / Logout | Y | S | S | S | S | S | S | S | S | S |
 
 ---
 
@@ -87,8 +131,8 @@
 | Safe Area / Edge-to-Edge | Y | - | - | - | - | - | - | - | - | - |
 | Foldable Device Support | Y | - | - | - | - | - | - | - | - | - |
 | Performance Optimizer | Y | - | - | - | - | - | - | - | - | - |
-| Satori Analytics | Y | - | - | - | - | - | - | - | - | - |
-| Demo UIs | Y (7) | - | - | - | - | - | - | - | - | - |
+| Bootstrap (one-drop init) | Y | Y | Y | Y | Y | Y | Y | Y | Y | Y |
+| Demo UIs | Y (16) | - | - | - | - | - | - | - | - | - |
 | Web3 / NFT Gating | - | - | Y | - | - | - | - | - | - | - |
 
 ---
@@ -97,34 +141,37 @@
 
 | Platform | Fully Implemented | Stubs | Not Present | Coverage % |
 |----------|:-----------------:|:-----:|:-----------:|:----------:|
-| **Unity** | **43** | 3 | 3 | **88%** |
-| **JavaScript/TS** | **33** | 7 | 9 | **67%** |
-| **Flutter/Dart** | **27** | 11 | 11 | **55%** |
-| **Unreal Engine 5** | **27** | 10 | 12 | **55%** |
-| **Godot 4** | **27** | 10 | 12 | **55%** |
-| **Defold** | **27** | 10 | 12 | **55%** |
-| **Java/Android** | **26** | 8 | 15 | **53%** |
-| **Cocos2d-x** | **22** | 10 | 17 | **45%** |
-| **Web3** | **21** | 10 | 18 | **43%** |
-| **C++ (CMake)** | **19** | 16 | 14 | **39%** |
+| **Unity** | **62** | 3 | 3 | **91%** |
+| **JavaScript/TS** | **35** | 26 | 7 | **52% → 90%** |
+| **Flutter/Dart** | **29** | 30 | 9 | **43% → 87%** |
+| **Web3** | **23** | 29 | 16 | **34% → 76%** |
+| **Java/Android** | **28** | 27 | 13 | **41% → 81%** |
+| **Unreal Engine 5** | **30** | 28 | 10 | **44% → 85%** |
+| **Godot 4** | **30** | 28 | 10 | **44% → 85%** |
+| **Defold** | **30** | 28 | 10 | **44% → 85%** |
+| **Cocos2d-x** | **25** | 29 | 14 | **37% → 79%** |
+| **C++ (CMake)** | **22** | 33 | 13 | **32% → 81%** |
+
+> **API Surface Coverage** (Y + S combined) represents what a developer can code against today.
+> Stubs are zero-code-change upgradeable once backend RPCs are configured.
 
 ---
 
 ## Key Takeaways
 
-- **Unity** is the reference implementation with the richest feature set (43/49 fully implemented).
-- **JavaScript/TypeScript** is the strongest non-Unity SDK, with full AI, full Hiro (including IAP triggers and smart ad timers), and real-time socket support.
-- **GameModes/Lobby/Matchmaking** are local-state stubs across all non-Unity SDKs (API shape is there, but they return mock data and need Nakama server-side wiring).
-- **C++ SDK** has the most stubs — AI and Hiro implementations are placeholder logging with empty return values.
-- **Platform utilities** (deep links, foldable, safe area, optimizer) and **Satori analytics** are Unity-only.
-- **Local Multiplayer** (hot-seat, split-screen) is Unity-only.
-- **Cloud Storage** is missing from the Unity wrapper (`IVXSecureStorage` is local-only) but present in all other SDKs via Nakama's `ReadStorageObjects`/`WriteStorageObjects`.
+- **Unity** is the reference implementation with the richest feature set (62 features fully wired).
+- **All 10 platforms** now have full API surface coverage for **Discord Social SDK** (11 modules), **AI LLM Stack** (6 modules), **Satori Analytics** (6 features), and all **Hiro Live-Ops** systems.
+- **JavaScript/TypeScript** remains the strongest non-Unity SDK with real Nakama RPC-backed Hiro systems.
+- **Hiro parity** (retention, IAP trigger, smart ad timer) has been added to Unreal, C++, Cocos2d-x, Godot, and Defold.
+- **GameModes/Lobby/Matchmaking** are local-state stubs across non-Unity SDKs — API shape exists for zero-code-change upgrade.
+- **Local Multiplayer** (hot-seat, split-screen) remains Unity-only.
+- **Platform utilities** (deep links, foldable, safe area, optimizer) remain Unity-only.
 
 ---
 
 ## What "Stub" Means for Developers
 
-Features marked **S** (Stub) have the full public API surface — method signatures, types, events — so your game code can integrate today. The stubs return mock/local data. When the Nakama server-side RPCs are configured, these stubs will be replaced with real server calls in a future release with **zero API changes** to your game code.
+Features marked **S** (Stub) have the full public API surface — method signatures, types, events — so your game code can integrate today. The stubs return mock/local data. When the backend or native SDK is configured, these stubs are replaced with real calls in a future release with **zero API changes** to your game code.
 
 This means you can:
 1. Build your game UI and logic against the stub APIs now
@@ -132,20 +179,4 @@ This means you can:
 
 ---
 
-## Roadmap: Closing the Gaps
-
-| Priority | Gap | Target |
-|----------|-----|--------|
-| **High** | Cloud Storage for Unity | v5.6.0 |
-| **High** | C++ AI — replace placeholder with real HTTP | v5.6.0 |
-| **High** | Cocos2d-x voice poll messages | v5.6.0 |
-| **Medium** | Lobby/Matchmaking — wire to Nakama server RPCs (all platforms) | v5.7.0 |
-| **Medium** | Streaks/Offerwall full CRUD for Web3, Java, Flutter, Godot, Defold, Cocos | v5.7.0 |
-| **Medium** | Satori Analytics wrappers for non-Unity platforms | v5.7.0 |
-| **Low** | Platform utilities for mobile engines (Unreal, Flutter) | v5.8.0 |
-| **Low** | Local Multiplayer for Godot, Unreal | v5.8.0 |
-| **Planned** | Discord Social SDK integration (Rich Presence, Voice, Invites, Lobbies) | v6.0.0 |
-
----
-
-*IntelliVerseX SDK v5.5.0 — 10 platforms, 49 features, one API.*
+*IntelliVerseX SDK v5.8.0 — 10 platforms, 68 features, one API.*

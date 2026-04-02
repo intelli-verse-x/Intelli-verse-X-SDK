@@ -13,6 +13,9 @@ set(IVX_SOURCES
     Classes/IntelliVerseX/IVXConfig.cpp
     Classes/IntelliVerseX/IVXDiscordMessages.cpp
     Classes/IntelliVerseX/IVXDiscordModeration.cpp
+    Classes/IntelliVerseX/IVXDiscordLinkedChannels.cpp
+    Classes/IntelliVerseX/IVXDiscordDebug.cpp
+    Classes/IntelliVerseX/IVXSatori.cpp
     Classes/IntelliVerseX/IVXAINPCDialogManager.cpp
     Classes/IntelliVerseX/IVXAIAssistant.cpp
     Classes/IntelliVerseX/IVXAIModerator.cpp

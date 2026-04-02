@@ -193,6 +193,95 @@ void IVXHiroSystems::blockUser(const std::string& userId,
 }
 
 // ---------------------------------------------------------------------------
+// Retention / IAP / Smart ads
+// ---------------------------------------------------------------------------
+
+void IVXHiroSystems::getRetention(RetentionCallback onSuccess, ErrorCallback onError) {
+    callHiroRpc("hiro_retention_get", "{}",
+        [onSuccess](const std::string& response) {
+            rapidjson::Document doc;
+            doc.Parse(response.c_str());
+            IVXRetentionState state;
+            if (!doc.HasParseError() && doc.IsObject()) {
+                state.day = doc.HasMember("day") ? doc["day"].GetInt() : 0;
+                state.lastLoginAt = doc.HasMember("last_login_at") ? doc["last_login_at"].GetInt64() : 0;
+                if (doc.HasMember("rewards") && doc["rewards"].IsArray()) {
+                    const auto& arr = doc["rewards"];
+                    for (rapidjson::SizeType i = 0; i < arr.Size(); ++i) {
+                        const auto& obj = arr[i];
+                        if (!obj.IsObject()) continue;
+                        IVXRetentionRewardDay r;
+                        r.day = obj.HasMember("day") ? obj["day"].GetInt() : 0;
+                        r.claimed = obj.HasMember("claimed") ? obj["claimed"].GetBool() : false;
+                        state.rewards.push_back(r);
+                    }
+                }
+            }
+            if (onSuccess) onSuccess(state);
+        }, onError);
+}
+
+void IVXHiroSystems::updateRetention(RetentionCallback onSuccess, ErrorCallback onError) {
+    callHiroRpc("hiro_retention_update", "{}",
+        [onSuccess](const std::string& response) {
+            rapidjson::Document doc;
+            doc.Parse(response.c_str());
+            IVXRetentionState state;
+            if (!doc.HasParseError() && doc.IsObject()) {
+                state.day = doc.HasMember("day") ? doc["day"].GetInt() : 0;
+                state.lastLoginAt = doc.HasMember("last_login_at") ? doc["last_login_at"].GetInt64() : 0;
+                if (doc.HasMember("rewards") && doc["rewards"].IsArray()) {
+                    const auto& arr = doc["rewards"];
+                    for (rapidjson::SizeType i = 0; i < arr.Size(); ++i) {
+                        const auto& obj = arr[i];
+                        if (!obj.IsObject()) continue;
+                        IVXRetentionRewardDay r;
+                        r.day = obj.HasMember("day") ? obj["day"].GetInt() : 0;
+                        r.claimed = obj.HasMember("claimed") ? obj["claimed"].GetBool() : false;
+                        state.rewards.push_back(r);
+                    }
+                }
+            }
+            if (onSuccess) onSuccess(state);
+        }, onError);
+}
+
+void IVXHiroSystems::checkIapTrigger(const std::string& eventType, IapTriggerCallback onSuccess,
+                                    ErrorCallback onError) {
+    std::string payload = "{\"event_type\":\"" + eventType + "\"}";
+    callHiroRpc("hiro_iap_trigger_check", payload,
+        [onSuccess](const std::string& response) {
+            rapidjson::Document doc;
+            doc.Parse(response.c_str());
+            IVXIapTriggerResult r;
+            if (!doc.HasParseError() && doc.IsObject()) {
+                r.shouldShow = doc.HasMember("should_show") ? doc["should_show"].GetBool() : false;
+                r.offerId = doc.HasMember("offer_id") ? doc["offer_id"].GetString() : "";
+                r.discount = doc.HasMember("discount") ? doc["discount"].GetDouble() : 0.0;
+                r.expiresAt = doc.HasMember("expires_at") ? doc["expires_at"].GetInt64() : 0;
+            }
+            if (onSuccess) onSuccess(r);
+        }, onError);
+}
+
+void IVXHiroSystems::canShowSmartAd(const std::string& placement, SmartAdCallback onSuccess,
+                                    ErrorCallback onError) {
+    std::string payload = "{\"placement\":\"" + placement + "\"}";
+    callHiroRpc("hiro_smart_ad_can_show", payload,
+        [onSuccess](const std::string& response) {
+            rapidjson::Document doc;
+            doc.Parse(response.c_str());
+            IVXSmartAdResult r;
+            if (!doc.HasParseError() && doc.IsObject()) {
+                r.canShow = doc.HasMember("can_show") ? doc["can_show"].GetBool() : false;
+                r.nextAvailableAt = doc.HasMember("next_available_at") ? doc["next_available_at"].GetInt64() : 0;
+                r.reason = doc.HasMember("reason") ? doc["reason"].GetString() : "";
+            }
+            if (onSuccess) onSuccess(r);
+        }, onError);
+}
+
+// ---------------------------------------------------------------------------
 // Internal
 // ---------------------------------------------------------------------------
 

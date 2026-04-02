@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 #include "IntelliVerseX/IVXTypes.h"
 #include "IntelliVerseX/IVXManager.h"
 #include <functional>
@@ -44,10 +46,37 @@ struct FriendInfo {
     int state = 0;
 };
 
+struct IVXRetentionRewardDay {
+    int day = 0;
+    bool claimed = false;
+};
+
+struct IVXRetentionState {
+    int day = 0;
+    int64_t lastLoginAt = 0;
+    std::vector<IVXRetentionRewardDay> rewards;
+};
+
+struct IVXIapTriggerResult {
+    bool shouldShow = false;
+    std::string offerId;
+    double discount = 0;
+    int64_t expiresAt = 0;
+};
+
+struct IVXSmartAdResult {
+    bool canShow = false;
+    int64_t nextAvailableAt = 0;
+    std::string reason;
+};
+
 using SpinWheelCallback = std::function<void(const SpinWheelReward&)>;
 using StreakCallback = std::function<void(const StreakInfo&)>;
 using OfferwallCallback = std::function<void(const std::vector<OfferwallItem>&)>;
 using FriendListCallback = std::function<void(const std::vector<FriendInfo>&)>;
+using RetentionCallback = std::function<void(const IVXRetentionState&)>;
+using IapTriggerCallback = std::function<void(const IVXIapTriggerResult&)>;
+using SmartAdCallback = std::function<void(const IVXSmartAdResult&)>;
 
 class IVXHiroSystems {
 public:
@@ -87,6 +116,13 @@ public:
     void blockUser(const std::string& userId,
                    SuccessCallback onSuccess = nullptr,
                    ErrorCallback onError = nullptr);
+
+    void getRetention(RetentionCallback onSuccess = nullptr, ErrorCallback onError = nullptr);
+    void updateRetention(RetentionCallback onSuccess = nullptr, ErrorCallback onError = nullptr);
+    void checkIapTrigger(const std::string& eventType, IapTriggerCallback onSuccess = nullptr,
+                         ErrorCallback onError = nullptr);
+    void canShowSmartAd(const std::string& placement, SmartAdCallback onSuccess = nullptr,
+                        ErrorCallback onError = nullptr);
 
 private:
     IVXHiroSystems() = default;

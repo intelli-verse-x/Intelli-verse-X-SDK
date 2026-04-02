@@ -73,6 +73,32 @@ struct FriendBattle {
     std::string rewardJson;
 };
 
+// --- Retention / IAP trigger / Smart ad ---
+
+struct RetentionRewardDay {
+    int32_t day = 0;
+    bool claimed = false;
+};
+
+struct RetentionState {
+    int32_t day = 0;
+    int64_t lastLoginAt = 0;
+    std::vector<RetentionRewardDay> rewards;
+};
+
+struct IapTriggerResult {
+    bool shouldShow = false;
+    std::string offerId;
+    double discount = 0;
+    int64_t expiresAt = 0;
+};
+
+struct SmartAdResult {
+    bool canShow = false;
+    int64_t nextAvailableAt = 0;
+    std::string reason;
+};
+
 // Callback typedefs
 using SpinWheelStateCb  = std::function<void(const SpinWheelState&)>;
 using SpinRewardCb      = std::function<void(const SpinWheelReward&)>;
@@ -80,6 +106,9 @@ using StreakStateCb      = std::function<void(const StreakState&)>;
 using OfferListCb        = std::function<void(const std::vector<Offer>&)>;
 using FriendQuestListCb  = std::function<void(const std::vector<FriendQuest>&)>;
 using FriendBattleListCb = std::function<void(const std::vector<FriendBattle>&)>;
+using RetentionStateCb   = std::function<void(const RetentionState&)>;
+using IapTriggerResultCb = std::function<void(const IapTriggerResult&)>;
+using SmartAdResultCb    = std::function<void(const SmartAdResult&)>;
 
 /// Wraps Hiro/Nakama RPC systems: Spin Wheel, Streaks, Offerwall,
 /// Friend Quests, and Friend Battles.
@@ -113,6 +142,12 @@ public:
     // Friend Battles
     void challengeFriend(const std::string& opponentId, SuccessCb cb = nullptr, ErrorCb err = nullptr);
     void getActiveFriendBattles(FriendBattleListCb cb, ErrorCb err = nullptr);
+
+    // Retention / monetization helpers
+    void getRetention(RetentionStateCb cb, ErrorCb err = nullptr);
+    void updateRetention(RetentionStateCb cb, ErrorCb err = nullptr);
+    void checkIapTrigger(const std::string& eventType, IapTriggerResultCb cb, ErrorCb err = nullptr);
+    void canShowSmartAd(const std::string& placement, SmartAdResultCb cb, ErrorCb err = nullptr);
 
 private:
     HiroSystems() = default;

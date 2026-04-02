@@ -8,6 +8,80 @@
 #include "Serialization/JsonSerializer.h"
 #include "Serialization/JsonWriter.h"
 
+namespace
+{
+void ParseRetentionJson(const TSharedPtr<FJsonObject>& Json, FIVXRetentionState& Out)
+{
+    if (!Json.IsValid())
+    {
+        return;
+    }
+    FString S;
+    double N = 0.0;
+    bool B = false;
+
+    if (Json->TryGetStringField(TEXT("userId"), S) || Json->TryGetStringField(TEXT("user_id"), S))
+    {
+        Out.UserId = MoveTemp(S);
+    }
+    if (Json->TryGetNumberField(TEXT("firstSessionAt"), N) || Json->TryGetNumberField(TEXT("first_session_at"), N))
+    {
+        Out.FirstSessionAt = static_cast<int64>(N);
+    }
+    N = 0.0;
+    if (Json->TryGetNumberField(TEXT("lastSessionAt"), N) || Json->TryGetNumberField(TEXT("last_session_at"), N))
+    {
+        Out.LastSessionAt = static_cast<int64>(N);
+    }
+    N = 0.0;
+    if (Json->TryGetNumberField(TEXT("totalSessions"), N) || Json->TryGetNumberField(TEXT("total_sessions"), N))
+    {
+        Out.TotalSessions = static_cast<int32>(N);
+    }
+    N = 0.0;
+    if (Json->TryGetNumberField(TEXT("currentSessionDepth"), N) || Json->TryGetNumberField(TEXT("current_session_depth"), N))
+    {
+        Out.CurrentSessionDepth = static_cast<int32>(N);
+    }
+    N = 0.0;
+    if (Json->TryGetNumberField(TEXT("daysSinceLastSession"), N) || Json->TryGetNumberField(TEXT("days_since_last_session"), N))
+    {
+        Out.DaysSinceLastSession = static_cast<int32>(N);
+    }
+    if (Json->TryGetStringField(TEXT("churnRisk"), S) || Json->TryGetStringField(TEXT("churn_risk"), S))
+    {
+        Out.ChurnRisk = MoveTemp(S);
+    }
+    if (Json->TryGetBoolField(TEXT("onboardingComplete"), B) || Json->TryGetBoolField(TEXT("onboarding_complete"), B))
+    {
+        Out.bOnboardingComplete = B;
+    }
+    N = 0.0;
+    if (Json->TryGetNumberField(TEXT("onboardingStep"), N) || Json->TryGetNumberField(TEXT("onboarding_step"), N))
+    {
+        Out.OnboardingStep = static_cast<int32>(N);
+    }
+    B = false;
+    if (Json->TryGetBoolField(TEXT("comebackBonusAvailable"), B) || Json->TryGetBoolField(TEXT("comeback_bonus_available"), B))
+    {
+        Out.bComebackBonusAvailable = B;
+    }
+    TSharedPtr<FJsonObject> RewardObj;
+    if (Json->TryGetObjectField(TEXT("comebackBonusReward"), RewardObj) && RewardObj.IsValid())
+    {
+        FString RewardStr;
+        TSharedRef<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>> Writer =
+            TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&RewardStr);
+        FJsonSerializer::Serialize(RewardObj.ToSharedRef(), Writer);
+        Out.ComebackBonusRewardJson = RewardStr;
+    }
+    else if (Json->TryGetStringField(TEXT("comeback_bonus_reward_json"), S))
+    {
+        Out.ComebackBonusRewardJson = MoveTemp(S);
+    }
+}
+} // namespace
+
 TWeakObjectPtr<UIVXHiroSystems> UIVXHiroSystems::Singleton = nullptr;
 
 UIVXHiroSystems* UIVXHiroSystems::GetInstance(UObject* WorldContextObject)
@@ -488,6 +562,182 @@ void UIVXHiroSystems::GetActiveFriendBattles(const FIVXFriendBattleDelegate& OnC
     });
 
     NakamaClient->RPC(NakamaSession, TEXT("hiro/friend_battles_get"), TEXT("{}"), SuccessDelegate, ErrorDelegate);
+}
+
+// --- Retention ---
+
+void UIVXHiroSystems::GetRetention(const FIVXRetentionDelegate& OnComplete)
+{
+    if (!HasValidClient())
+    {
+        LogError(TEXT("GetRetention: Nakama client not set"));
+        FIVXRetentionState Empty;
+        OnComplete.ExecuteIfBound(false, Empty);
+        return;
+    }
+
+    auto SuccessDelegate = FOnRPC::CreateLambda([OnComplete](const FNakamaRPC& Rpc)
+    {
+        FIVXRetentionState State;
+        TSharedPtr<FJsonObject> Json;
+        TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Rpc.Payload);
+        if (FJsonSerializer::Deserialize(Reader, Json) && Json.IsValid())
+        {
+            ParseRetentionJson(Json, State);
+        }
+        OnComplete.ExecuteIfBound(true, State);
+    });
+
+    auto ErrorDelegate = FOnError::CreateLambda([this, OnComplete](const FNakamaError& Err)
+    {
+        LogError(FString::Printf(TEXT("GetRetention RPC failed: %s"), *Err.Message));
+        FIVXRetentionState Empty;
+        OnComplete.ExecuteIfBound(false, Empty);
+    });
+
+    NakamaClient->RPC(NakamaSession, TEXT("hiro_retention_get"), TEXT("{}"), SuccessDelegate, ErrorDelegate);
+}
+
+void UIVXHiroSystems::UpdateRetention(const FIVXRetentionDelegate& OnComplete)
+{
+    if (!HasValidClient())
+    {
+        LogError(TEXT("UpdateRetention: Nakama client not set"));
+        FIVXRetentionState Empty;
+        OnComplete.ExecuteIfBound(false, Empty);
+        return;
+    }
+
+    auto SuccessDelegate = FOnRPC::CreateLambda([OnComplete](const FNakamaRPC& Rpc)
+    {
+        FIVXRetentionState State;
+        TSharedPtr<FJsonObject> Json;
+        TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Rpc.Payload);
+        if (FJsonSerializer::Deserialize(Reader, Json) && Json.IsValid())
+        {
+            ParseRetentionJson(Json, State);
+        }
+        OnComplete.ExecuteIfBound(true, State);
+    });
+
+    auto ErrorDelegate = FOnError::CreateLambda([this, OnComplete](const FNakamaError& Err)
+    {
+        LogError(FString::Printf(TEXT("UpdateRetention RPC failed: %s"), *Err.Message));
+        FIVXRetentionState Empty;
+        OnComplete.ExecuteIfBound(false, Empty);
+    });
+
+    NakamaClient->RPC(NakamaSession, TEXT("hiro_retention_update"), TEXT("{}"), SuccessDelegate, ErrorDelegate);
+}
+
+// --- IAP trigger ---
+
+void UIVXHiroSystems::CheckIapTrigger(const FString& EventType, const FIVXIapTriggerResultDelegate& OnComplete)
+{
+    if (!HasValidClient())
+    {
+        LogError(TEXT("CheckIapTrigger: Nakama client not set"));
+        FIVXIapTriggerResult Empty;
+        OnComplete.ExecuteIfBound(false, Empty);
+        return;
+    }
+
+    FString Escaped = EventType;
+    Escaped.ReplaceInline(TEXT("\\"), TEXT("\\\\"));
+    Escaped.ReplaceInline(TEXT("\""), TEXT("\\\""));
+    const FString Payload = FString::Printf(TEXT("{\"event_type\":\"%s\"}"), *Escaped);
+
+    auto SuccessDelegate = FOnRPC::CreateLambda([OnComplete](const FNakamaRPC& Rpc)
+    {
+        FIVXIapTriggerResult Result;
+        TSharedPtr<FJsonObject> Json;
+        TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Rpc.Payload);
+        if (FJsonSerializer::Deserialize(Reader, Json) && Json.IsValid())
+        {
+            bool B = false;
+            if (Json->TryGetBoolField(TEXT("should_show"), B) || Json->TryGetBoolField(TEXT("shouldShow"), B))
+            {
+                Result.bShouldShow = B;
+            }
+            FString S;
+            if (Json->TryGetStringField(TEXT("offer_id"), S) || Json->TryGetStringField(TEXT("offerId"), S))
+            {
+                Result.OfferId = S;
+            }
+            double D = 0.0;
+            if (Json->TryGetNumberField(TEXT("discount"), D))
+            {
+                Result.Discount = static_cast<float>(D);
+            }
+            if (Json->TryGetNumberField(TEXT("expires_at"), D) || Json->TryGetNumberField(TEXT("expiresAt"), D))
+            {
+                Result.ExpiresAt = static_cast<int64>(D);
+            }
+        }
+        OnComplete.ExecuteIfBound(true, Result);
+    });
+
+    auto ErrorDelegate = FOnError::CreateLambda([this, OnComplete](const FNakamaError& Err)
+    {
+        LogError(FString::Printf(TEXT("CheckIapTrigger RPC failed: %s"), *Err.Message));
+        FIVXIapTriggerResult Empty;
+        OnComplete.ExecuteIfBound(false, Empty);
+    });
+
+    NakamaClient->RPC(NakamaSession, TEXT("hiro_iap_trigger_check"), Payload, SuccessDelegate, ErrorDelegate);
+}
+
+// --- Smart ad timer ---
+
+void UIVXHiroSystems::CanShowSmartAd(const FString& Placement, const FIVXSmartAdResultDelegate& OnComplete)
+{
+    if (!HasValidClient())
+    {
+        LogError(TEXT("CanShowSmartAd: Nakama client not set"));
+        FIVXSmartAdResult Empty;
+        OnComplete.ExecuteIfBound(false, Empty);
+        return;
+    }
+
+    FString Escaped = Placement;
+    Escaped.ReplaceInline(TEXT("\\"), TEXT("\\\\"));
+    Escaped.ReplaceInline(TEXT("\""), TEXT("\\\""));
+    const FString Payload = FString::Printf(TEXT("{\"placement\":\"%s\"}"), *Escaped);
+
+    auto SuccessDelegate = FOnRPC::CreateLambda([OnComplete](const FNakamaRPC& Rpc)
+    {
+        FIVXSmartAdResult Result;
+        TSharedPtr<FJsonObject> Json;
+        TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Rpc.Payload);
+        if (FJsonSerializer::Deserialize(Reader, Json) && Json.IsValid())
+        {
+            bool B = false;
+            if (Json->TryGetBoolField(TEXT("can_show"), B) || Json->TryGetBoolField(TEXT("canShow"), B))
+            {
+                Result.bCanShow = B;
+            }
+            double D = 0.0;
+            if (Json->TryGetNumberField(TEXT("next_available_at"), D) || Json->TryGetNumberField(TEXT("nextAvailableAt"), D))
+            {
+                Result.NextAvailableAt = static_cast<int64>(D);
+            }
+            FString S;
+            if (Json->TryGetStringField(TEXT("reason"), S))
+            {
+                Result.Reason = S;
+            }
+        }
+        OnComplete.ExecuteIfBound(true, Result);
+    });
+
+    auto ErrorDelegate = FOnError::CreateLambda([this, OnComplete](const FNakamaError& Err)
+    {
+        LogError(FString::Printf(TEXT("CanShowSmartAd RPC failed: %s"), *Err.Message));
+        FIVXSmartAdResult Empty;
+        OnComplete.ExecuteIfBound(false, Empty);
+    });
+
+    NakamaClient->RPC(NakamaSession, TEXT("hiro_smart_ad_can_show"), Payload, SuccessDelegate, ErrorDelegate);
 }
 
 // --- Logging ---
