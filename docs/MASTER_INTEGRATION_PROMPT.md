@@ -327,6 +327,50 @@ var satoriMessages = await satori.GetMessagesAsync();
 
 ### Step 6 — AI Conversational & LLM Stack
 
+> **Full guide**: [AI Getting Started](guides/ai-getting-started.md)
+
+#### 6.0 AI Backend Setup
+
+Create an `IVXAIConfig` asset (**Assets → Create → IntelliVerseX → AI → Configuration**):
+
+| Field | Example | Notes |
+|-------|---------|-------|
+| **Provider** | `IntelliVerseX` / `OpenAI` / `AzureOpenAI` / `Anthropic` / `Custom` | `Custom` = any OpenAI-compatible endpoint (Ollama, vLLM, LiteLLM) |
+| **API Base URL** | `https://api.intelli-verse-x.ai/api/ai` | Or `http://localhost:11434/v1` for local Ollama |
+| **API Key** | `sk-...` | Leave empty for bearer-token auth; for production, inject at runtime via `config.SetApiKey(key)` |
+| **Model Name** | `gpt-4o`, `llama3:8b`, empty | Empty = server default |
+| **Mock Mode** | ✅ during dev | Returns canned responses, zero API calls, zero cost |
+| **Max Retries** | `2` | Retries on 5xx with exponential backoff |
+
+Initialize all managers after bootstrap completes, passing the auth token:
+
+```csharp
+IVXBootstrap.Instance.OnBootstrapComplete += () =>
+{
+    string token = IVXBootstrap.Instance.AuthToken;
+    string userId = IVXBootstrap.Instance.UserId;
+
+    IVXAINPCDialogManager.Instance.Initialize(aiConfig);
+    IVXAINPCDialogManager.Instance.SetAuthToken(token);
+
+    IVXAIAssistant.Instance.Initialize(aiConfig);
+    IVXAIAssistant.Instance.SetAuthToken(token);
+
+    IVXAIModerator.Instance.Initialize(aiConfig);
+    IVXAIModerator.Instance.SetAuthToken(token);
+
+    IVXAIContentGenerator.Instance.Initialize(aiConfig);
+    IVXAIContentGenerator.Instance.SetAuthToken(token);
+
+    IVXAIProfiler.Instance.Initialize(aiConfig, userId);
+    IVXAIProfiler.Instance.SetAuthToken(token);
+    IVXAIProfiler.Instance.StartAutoTracking();
+
+    IVXAIVoiceServices.Instance.Initialize(aiConfig);
+    IVXAIVoiceServices.Instance.SetAuthToken(token);
+};
+```
+
 #### 6a. NPC Dialog System
 
 ```csharp

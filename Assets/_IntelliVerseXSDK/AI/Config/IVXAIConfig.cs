@@ -4,6 +4,24 @@ using UnityEngine;
 namespace IntelliVerseX.AI
 {
     /// <summary>
+    /// AI provider preset.  Use <see cref="IVXAIProvider.Custom"/> when self-hosting an
+    /// OpenAI-compatible endpoint (Ollama, Azure OpenAI, vLLM, LiteLLM, etc.).
+    /// </summary>
+    public enum IVXAIProvider
+    {
+        /// <summary>IntelliVerseX managed AI API (default).</summary>
+        IntelliVerseX,
+        /// <summary>Direct OpenAI endpoint.</summary>
+        OpenAI,
+        /// <summary>Azure OpenAI Service.</summary>
+        AzureOpenAI,
+        /// <summary>Anthropic Claude API.</summary>
+        Anthropic,
+        /// <summary>Any OpenAI-compatible endpoint (Ollama, vLLM, LiteLLM, etc.).</summary>
+        Custom
+    }
+
+    /// <summary>
     /// Configuration for the IntelliVerseX AI system.
     /// Create via Assets > Create > IntelliVerseX > AI > Configuration.
     /// </summary>
@@ -14,11 +32,36 @@ namespace IntelliVerseX.AI
         #region Serialized Fields
 
         [Header("API Configuration")]
-        [Tooltip("Base URL for the IVX AI API")]
+        [Tooltip("Base URL for the IVX AI API (or any OpenAI-compatible endpoint when using Custom provider)")]
         [SerializeField] private string _apiBaseUrl = "https://api.intelli-verse-x.ai/api/ai";
 
-        [Tooltip("API key for authentication (optional when using OAuth/Bearer token)")]
+        [Tooltip("API key for authentication (optional when using OAuth/Bearer token). " +
+                 "WARNING: Keys stored here ship inside builds. For production, inject at runtime via SetApiKey().")]
         [SerializeField] private string _apiKey = "";
+
+        [Tooltip("AI provider to use. Set to Custom for self-hosted LLMs (Ollama, vLLM, etc.)")]
+        [SerializeField] private IVXAIProvider _provider = IVXAIProvider.IntelliVerseX;
+
+        [Tooltip("Model name passed to the backend (e.g. gpt-4o, claude-3-opus, llama3). Leave empty for server default.")]
+        [SerializeField] private string _modelName = "";
+
+        [Header("Developer Mode")]
+        [Tooltip("When enabled, all AI managers return canned mock responses without making HTTP calls. " +
+                 "Use during development to avoid burning API credits.")]
+        [SerializeField] private bool _mockMode;
+
+        [Header("Resilience")]
+        [Tooltip("Maximum number of retry attempts for failed HTTP requests (5xx errors only)")]
+        [Range(0, 5)]
+        [SerializeField] private int _maxRetries = 2;
+
+        [Tooltip("Base delay in seconds between retries (doubles each attempt)")]
+        [Range(0.1f, 5f)]
+        [SerializeField] private float _retryBaseDelay = 0.5f;
+
+        [Tooltip("Maximum requests per second across all AI managers (0 = unlimited)")]
+        [Range(0, 100)]
+        [SerializeField] private int _rateLimitPerSecond;
 
         [Header("Session Settings")]
         [Tooltip("Interval in seconds for polling messages when WebSocket is unavailable")]
@@ -56,6 +99,19 @@ namespace IntelliVerseX.AI
             "zh", "ar", "hi", "ru", "nl", "pl", "tr", "vi", "th", "id"
         };
 
+        [Header("Collection Limits")]
+        [Tooltip("Max conversation history lines kept by IVXAIAssistant (older entries trimmed)")]
+        [Range(10, 1000)]
+        [SerializeField] private int _maxConversationHistory = 200;
+
+        [Tooltip("Max queued profiling events before oldest are dropped")]
+        [Range(50, 10000)]
+        [SerializeField] private int _maxEventQueueSize = 2000;
+
+        [Tooltip("Max queued audio clips in IVXAIAudioPlayer")]
+        [Range(5, 100)]
+        [SerializeField] private int _maxAudioQueueSize = 30;
+
         [Header("Free Trial")]
         [Tooltip("Free sessions allowed per day before requiring a purchase")]
         [SerializeField] private int _freeSessionsPerDay = 1;
@@ -86,6 +142,24 @@ namespace IntelliVerseX.AI
         /// <summary>Optional API key used when bearer-token auth is not available.</summary>
         public string ApiKey => _apiKey;
 
+        /// <summary>Selected AI provider.</summary>
+        public IVXAIProvider Provider => _provider;
+
+        /// <summary>Model name sent to the backend (empty = server default).</summary>
+        public string ModelName => _modelName;
+
+        /// <summary>When true, managers return mock data without HTTP calls.</summary>
+        public bool MockMode => _mockMode;
+
+        /// <summary>Max HTTP retry attempts for 5xx errors.</summary>
+        public int MaxRetries => _maxRetries;
+
+        /// <summary>Base delay between retries in seconds.</summary>
+        public float RetryBaseDelay => _retryBaseDelay;
+
+        /// <summary>Max requests per second (0 = unlimited).</summary>
+        public int RateLimitPerSecond => _rateLimitPerSecond;
+
         /// <summary>Interval in seconds between HTTP polling requests.</summary>
         public float PollingInterval => _pollingInterval;
 
@@ -113,6 +187,15 @@ namespace IntelliVerseX.AI
         /// <summary>Array of ISO 639-1 language codes the backend supports.</summary>
         public string[] SupportedLanguages => _supportedLanguages;
 
+        /// <summary>Max conversation lines kept by IVXAIAssistant.</summary>
+        public int MaxConversationHistory => _maxConversationHistory;
+
+        /// <summary>Max queued profiling events before oldest are dropped.</summary>
+        public int MaxEventQueueSize => _maxEventQueueSize;
+
+        /// <summary>Max queued audio clips in the audio player.</summary>
+        public int MaxAudioQueueSize => _maxAudioQueueSize;
+
         /// <summary>Number of free voice sessions allowed per user per day.</summary>
         public int FreeSessionsPerDay => _freeSessionsPerDay;
 
@@ -130,6 +213,27 @@ namespace IntelliVerseX.AI
 
         /// <summary>Whether to show the remaining-time countdown in the voice UI.</summary>
         public bool ShowSessionTimer => _showSessionTimer;
+
+        #endregion
+
+        #region Runtime API-Key Injection
+
+        /// <summary>
+        /// Sets the API key at runtime so it is never baked into the build.
+        /// Call this from your server-side auth flow before initializing AI managers.
+        /// </summary>
+        public void SetApiKey(string key)
+        {
+            _apiKey = key;
+        }
+
+        /// <summary>
+        /// Overrides the API base URL at runtime (e.g. staging vs production).
+        /// </summary>
+        public void SetApiBaseUrl(string url)
+        {
+            _apiBaseUrl = url;
+        }
 
         #endregion
 

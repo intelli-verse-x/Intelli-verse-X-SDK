@@ -265,6 +265,8 @@ namespace IntelliVerseX.AI
         private IVXAIConfig _config;
         private MonoBehaviour _coroutineHost;
         private string _playerId;
+        private string _authToken;
+        private int _maxQueueSize = 2000;
         private bool _flushInProgress;
         private bool _isInitialized;
 
@@ -329,10 +331,17 @@ namespace IntelliVerseX.AI
             _playerId = string.IsNullOrEmpty(playerId) ? throw new ArgumentException("Player id required.", nameof(playerId)) : playerId;
             _coroutineHost = this;
             _lastFlushTime = Time.realtimeSinceStartup;
+            _maxQueueSize = _config.MaxEventQueueSize;
             _isInitialized = true;
 
             if (_config.DebugLogging)
                 Debug.Log($"[{nameof(IVXAIProfiler)}] Initialized for player {_playerId}");
+        }
+
+        /// <summary>Sets the bearer token applied to profiling HTTP requests.</summary>
+        public void SetAuthToken(string token)
+        {
+            _authToken = token;
         }
 
         /// <summary>
@@ -346,6 +355,13 @@ namespace IntelliVerseX.AI
             {
                 Debug.LogWarning($"[{nameof(IVXAIProfiler)}] TrackEvent called before Initialize.");
                 return;
+            }
+
+            if (_eventQueue.Count >= _maxQueueSize)
+            {
+                if (_config.DebugLogging)
+                    Debug.LogWarning($"[{nameof(IVXAIProfiler)}] Event queue full ({_maxQueueSize}). Dropping oldest.");
+                _eventQueue.RemoveAt(0);
             }
 
             _eventQueue.Add(new IVXTrackEventRequest
@@ -548,6 +564,8 @@ namespace IntelliVerseX.AI
 
         private void ApplyAuthHeaders(UnityWebRequest request)
         {
+            if (!string.IsNullOrEmpty(_authToken))
+                request.SetRequestHeader("Authorization", $"Bearer {_authToken}");
             if (!string.IsNullOrEmpty(_config.ApiKey))
                 request.SetRequestHeader("X-API-Key", _config.ApiKey);
         }

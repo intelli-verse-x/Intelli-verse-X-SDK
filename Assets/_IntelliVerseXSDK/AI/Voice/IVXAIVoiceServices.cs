@@ -249,6 +249,7 @@ namespace IntelliVerseX.AI
         private IVXAIWebSocketClient _webSocketClient;
         private readonly List<IVXAIVoice> _cachedVoices = new List<IVXAIVoice>();
         private IReadOnlyList<IVXAIVoice> _voicesReadOnly = Array.Empty<IVXAIVoice>();
+        private string _authToken;
         private bool _isInitialized;
         private GameObject _wsHost;
         private bool _streamSessionRequested;
@@ -277,6 +278,9 @@ namespace IntelliVerseX.AI
                 _instance = null;
 
             StopStreamingTranscriptionInternal();
+
+            if (_wsHost != null)
+                Destroy(_wsHost);
         }
 
         #endregion
@@ -301,6 +305,12 @@ namespace IntelliVerseX.AI
 
             if (_config.DebugLogging)
                 Debug.Log($"[{nameof(IVXAIVoiceServices)}] Initialized");
+        }
+
+        /// <summary>Sets the bearer token applied to voice HTTP requests.</summary>
+        public void SetAuthToken(string token)
+        {
+            _authToken = token;
         }
 
         /// <summary>
@@ -727,6 +737,8 @@ namespace IntelliVerseX.AI
 
         private void ApplyAuthHeaders(UnityWebRequest request)
         {
+            if (!string.IsNullOrEmpty(_authToken))
+                request.SetRequestHeader("Authorization", $"Bearer {_authToken}");
             if (!string.IsNullOrEmpty(_config.ApiKey))
                 request.SetRequestHeader("X-API-Key", _config.ApiKey);
         }

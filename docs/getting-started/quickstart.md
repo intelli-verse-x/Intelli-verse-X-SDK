@@ -16,7 +16,8 @@ Get IntelliVerseX SDK running in your project in under 5 minutes — zero to all
 - Discord Social SDK (`com.discord.social-sdk`) — Discord presence, friends, voice, DMs
 
 !!! tip "No backend yet? No problem."
-    The SDK works in **offline mode** out of the box. All modules gracefully degrade to mock/local data, so you can explore demos and build your game UI immediately. Add the backend when you're ready.
+    **Core SDK** works offline — `IVXBootstrap` initializes gracefully without a server and demo UIs remain functional.
+    **AI features** require a backend by default, but you can enable **Mock Mode** in `IVXAIConfig` to get canned placeholder responses with zero API calls during development. See [AI Getting Started](../guides/ai-getting-started.md) for details.
 
 ---
 
@@ -375,7 +376,12 @@ Install the Discord Social SDK (`com.discord.social-sdk`) and add the scripting 
 
 ### AI services return null
 
-Ensure your `IVXAIConfig` has a valid `API Base URL` and `API Key`, and that the AI backend is running.
+1. **During development**: Enable **Mock Mode** in `IVXAIConfig` to get placeholder responses without an API.
+2. **With a live backend**: Ensure `IVXAIConfig` has a valid `API Base URL` and `API Key` (or call `SetAuthToken()`).
+3. Subscribe to `OnError` events on each AI manager to see the actual HTTP error.
+4. Enable `Debug Logging` in `IVXAIConfig` to see full request/response details in Console.
+
+See the full [AI Getting Started Guide](../guides/ai-getting-started.md) for backend setup options.
 
 ### Demo Hub doesn't appear
 
@@ -388,7 +394,8 @@ Make sure TextMeshPro is installed. On first use, Unity may prompt you to import
 | Want to... | Go to... |
 |-----------|---------|
 | Integrate all features at once | [Master Integration Prompt](../MASTER_INTEGRATION_PROMPT.md) |
-| Learn about AI features | [AI LLM Stack](../modules/ai-llm-stack.md) |
+| Add AI to your game (NPC, Moderation, etc.) | [AI Getting Started](../guides/ai-getting-started.md) |
+| AI architecture reference | [AI LLM Stack](../modules/ai-llm-stack.md) |
 | Set up Discord | [Discord Social SDK](../modules/discord.md) |
 | Explore Hiro live-ops | [Hiro Systems](../modules/hiro.md) |
 | See the feature matrix | [Feature Coverage](../FEATURE_COVERAGE_MATRIX.md) |

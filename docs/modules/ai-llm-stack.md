@@ -7,7 +7,7 @@
 Namespace: **`IntelliVerseX.AI`**.
 
 !!! note "Backend contract"
-    Endpoints, payloads, and model behavior are provided by the IntelliVerseX AI API. Point `IVXAIConfig.ApiBaseUrl` at your deployed environment and supply auth via bearer token where required.
+    The SDK works with any OpenAI-compatible REST endpoint. Set `IVXAIConfig.Provider` to `IntelliVerseX`, `OpenAI`, `AzureOpenAI`, `Anthropic`, or `Custom` (Ollama, vLLM, LiteLLM, etc.). Point `ApiBaseUrl` at your deployed environment and supply auth via `SetAuthToken()` or `ApiKey`. See [AI Getting Started](../guides/ai-getting-started.md) for backend setup options.
 
 ---
 
@@ -215,5 +215,6 @@ Helpers: `VoiceEndpoint`, `HostEndpoint`, `WebSocketUrl`, per-session URL builde
 
 ## Related
 
-- [AI Voice & Host (legacy doc page)](ai.md)
-- [Discord Social SDK](discord.md) — moderation metadata bridge from `IVXAIModerator`
+- [AI Getting Started Guide](../guides/ai-getting-started.md) — Quickstart for AI features
+- [AI Voice & Host — Full Reference](ai.md) — Complete voice session and host API
+- [Discord Social SDK](discord.md) — Moderation metadata bridge from `IVXAIModerator`

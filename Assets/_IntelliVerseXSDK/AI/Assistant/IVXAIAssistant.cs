@@ -167,6 +167,7 @@ namespace IntelliVerseX.AI
         private IVXAIConfig _config;
         private string _authToken;
         private readonly List<string> _conversationLines = new List<string>();
+        private int _maxHistory = 200;
         private bool _isProcessing;
 
         #endregion
@@ -240,6 +241,7 @@ namespace IntelliVerseX.AI
             }
 
             _config = config;
+            _maxHistory = config.MaxConversationHistory;
         }
 
         /// <summary>Sets the bearer token applied to assistant HTTP requests (<c>Authorization</c> header).</summary>
@@ -297,6 +299,8 @@ namespace IntelliVerseX.AI
                         OnStreamingChunk?.Invoke(res.Response);
                     _conversationLines.Add($"user: {question}");
                     _conversationLines.Add($"assistant: {res.Response}");
+                    while (_conversationLines.Count > _maxHistory)
+                        _conversationLines.RemoveAt(0);
                     OnResponseReceived?.Invoke(res.Response);
                 }
 

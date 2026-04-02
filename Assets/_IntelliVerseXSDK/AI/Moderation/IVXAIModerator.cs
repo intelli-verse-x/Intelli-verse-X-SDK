@@ -237,6 +237,7 @@ namespace IntelliVerseX.AI
 
         private readonly List<IVXModerationRule> _customRules = new List<IVXModerationRule>();
         private readonly List<CompiledModerationRule> _compiledRules = new List<CompiledModerationRule>();
+        private string _authToken;
         private bool _initialized;
 
         #endregion
@@ -303,6 +304,12 @@ namespace IntelliVerseX.AI
             }
 
             _initialized = true;
+        }
+
+        /// <summary>Sets the bearer token applied to moderation HTTP requests.</summary>
+        public void SetAuthToken(string token)
+        {
+            _authToken = token;
         }
 
         #endregion
@@ -626,6 +633,8 @@ namespace IntelliVerseX.AI
 
         private void ApplyHeaders(UnityWebRequest request)
         {
+            if (!string.IsNullOrEmpty(_authToken))
+                request.SetRequestHeader("Authorization", $"Bearer {_authToken}");
             if (!string.IsNullOrEmpty(_config.ApiKey))
                 request.SetRequestHeader("X-API-Key", _config.ApiKey);
         }

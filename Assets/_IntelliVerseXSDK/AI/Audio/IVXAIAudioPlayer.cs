@@ -66,10 +66,22 @@ namespace IntelliVerseX.AI
 
         #region Public Methods
 
+        /// <summary>Maximum clips allowed in the queue. Configurable via <see cref="SetMaxQueueSize"/>.</summary>
+        private int _maxQueueSize = 30;
+
+        /// <summary>Sets the max audio queue size (from IVXAIConfig.MaxAudioQueueSize).</summary>
+        public void SetMaxQueueSize(int max) => _maxQueueSize = Mathf.Max(1, max);
+
         /// <summary>Enqueue raw PCM16 byte data for playback.</summary>
         public void EnqueuePcm(byte[] pcm16Data)
         {
             if (pcm16Data == null || pcm16Data.Length < 2) return;
+
+            while (_clipQueue.Count >= _maxQueueSize)
+            {
+                var overflow = _clipQueue.Dequeue();
+                Destroy(overflow);
+            }
 
             float[] samples = Pcm16ToFloat(pcm16Data);
             var clip = AudioClip.Create($"IVX_AI_{_clipCounter++}", samples.Length, _channels, _sampleRate, false);
@@ -97,11 +109,22 @@ namespace IntelliVerseX.AI
             }
         }
 
-        /// <summary>Stop playback and clear the queue.</summary>
+        /// <summary>Stop playback and clear the queue, destroying all buffered clips.</summary>
         public void StopAll()
         {
-            _clipQueue.Clear();
-            if (_source != null) _source.Stop();
+            while (_clipQueue.Count > 0)
+                Destroy(_clipQueue.Dequeue());
+
+            if (_source != null)
+            {
+                _source.Stop();
+                if (_source.clip != null)
+                {
+                    Destroy(_source.clip);
+                    _source.clip = null;
+                }
+            }
+
             _isPlaying = false;
         }
 
@@ -131,6 +154,9 @@ namespace IntelliVerseX.AI
                 OnPlaybackFinished?.Invoke();
                 return;
             }
+
+            if (_source.clip != null)
+                Destroy(_source.clip);
 
             var clip = _clipQueue.Dequeue();
             _source.clip = clip;

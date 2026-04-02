@@ -50,6 +50,7 @@ namespace IntelliVerseX.AI
         #region Private Fields
 
         private bool _initialized;
+        private string _authToken;
         private Coroutine _generationRoutine;
         private UnityWebRequest _activeRequest;
 
@@ -366,6 +367,8 @@ namespace IntelliVerseX.AI
                 downloadHandler = new DownloadHandlerBuffer()
             };
             web.SetRequestHeader("Content-Type", "application/json");
+            if (!string.IsNullOrEmpty(_authToken))
+                web.SetRequestHeader("Authorization", $"Bearer {_authToken}");
             if (!string.IsNullOrEmpty(_config.ApiKey))
                 web.SetRequestHeader("X-API-Key", _config.ApiKey);
             web.timeout = (int)_config.RequestTimeout;
