@@ -290,7 +290,7 @@ namespace IntelliVerseX.Demos
             inputRow.gameObject.AddComponent<LayoutElement>().minHeight = 48f;
             var inH = inputRow.gameObject.AddComponent<HorizontalLayoutGroup>();
             inH.spacing = 10f;
-            inH.childAlignment = TextAnchor.MiddleStretch;
+            inH.childAlignment = TextAnchor.MiddleCenter;
             inH.childForceExpandWidth = true;
             inH.childControlHeight = true;
 
@@ -481,7 +481,7 @@ namespace IntelliVerseX.Demos
             tmp.text = string.Empty;
             tmp.fontSize = 16f;
             tmp.color = ColText;
-            tmp.enableWordWrapping = false;
+            tmp.textWrappingMode = TextWrappingModes.NoWrap;
 
             var phRt = Rect(rt, "Placeholder");
             phRt.anchorMin = Vector2.zero;

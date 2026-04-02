@@ -16,6 +16,18 @@ using IntelliVerseX.Storage;
 namespace IntelliVerseX.Backend
 {
     /// <summary>
+    /// Contract for Nakama REST + realtime (socket). Implemented by <see cref="IVXNakamaManager"/>
+    /// and <see cref="IntelliVerseX.Backend.Nakama.IVXNManager"/> (V2). Prefer injecting references on consumers instead of static singletons.
+    /// </summary>
+    public interface IIVXNakamaRealtimeProvider
+    {
+        IClient Client { get; }
+        ISession Session { get; }
+        ISocket Socket { get; }
+        bool IsInitialized { get; }
+    }
+
+    /// <summary>
     /// Base Nakama manager that all games can extend
     /// Provides: Authentication, Identity Sync, Score Submission, Leaderboards, Wallets, Adaptive Rewards
     /// 
@@ -31,7 +43,7 @@ namespace IntelliVerseX.Backend
     ///       protected override string GetLogPrefix() => "[MYGAME]";
     ///   }
     /// </summary>
-    public abstract class IVXNakamaManager : MonoBehaviour
+    public abstract class IVXNakamaManager : MonoBehaviour, IIVXNakamaRealtimeProvider
     {
         [Header("SDK Configuration")]
         [Tooltip("Leave empty to auto-load from Resources/IntelliVerseX/<GameName>Config")]
@@ -75,6 +87,8 @@ namespace IntelliVerseX.Backend
         // Public accessors
         public IClient Client => _client;
         public ISession Session => _session;
+        /// <summary>Realtime socket; null if connect failed or not yet initialized.</summary>
+        public ISocket Socket => _socket;
         public bool IsInitialized => _isInitialized;
         public virtual int CurrentWinStreak => _currentWinStreak;
 
@@ -211,6 +225,8 @@ namespace IntelliVerseX.Backend
                     OnInitialized?.Invoke(false);
                     return false;
                 }
+
+                await TryConnectRealtimeSocketAsync();
 
                 _isInitialized = true;
                 Debug.Log($"{GetLogPrefix()} ✓ Initialized successfully");
@@ -690,12 +706,77 @@ namespace IntelliVerseX.Backend
             Debug.Log($"{GetLogPrefix()} Streak reset");
         }
 
+        /// <summary>
+        /// Creates a Nakama socket and connects it to the current session.
+        /// Failures are logged; <see cref="Socket"/> may remain null (REST still works).
+        /// </summary>
+        protected virtual async Task TryConnectRealtimeSocketAsync()
+        {
+            if (_client == null || _session == null)
+            {
+                return;
+            }
+
+            await DisconnectRealtimeSocketAsync();
+
+            try
+            {
+                _socket = _client.NewSocket();
+                await _socket.ConnectAsync(_session, true);
+                Debug.Log($"{GetLogPrefix()} Realtime socket connected.");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"{GetLogPrefix()} Realtime socket connect failed: {ex.Message}");
+                _socket = null;
+            }
+        }
+
+        /// <summary>Closes and clears the realtime socket.</summary>
+        protected virtual async Task DisconnectRealtimeSocketAsync()
+        {
+            if (_socket == null)
+            {
+                return;
+            }
+
+            try
+            {
+                if (_socket.IsConnected)
+                {
+                    await _socket.CloseAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"{GetLogPrefix()} Socket close: {ex.Message}");
+            }
+            finally
+            {
+                _socket = null;
+            }
+        }
+
         protected virtual void OnDestroy()
         {
-            if (_socket != null && _socket.IsConnected)
+            if (_socket == null)
             {
-                _socket.CloseAsync();
+                return;
             }
+
+            try
+            {
+                if (_socket.IsConnected)
+                {
+                    _ = _socket.CloseAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"{GetLogPrefix()} OnDestroy socket: {ex.Message}");
+            }
+
+            _socket = null;
         }
     }
 }

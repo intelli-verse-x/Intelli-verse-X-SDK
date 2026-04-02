@@ -101,8 +101,6 @@ namespace IntelliVerseX.Auth.UI
         private const string PP_USER_ID = "IVX_auth.user_id";
         private const string PP_LOGIN_TYPE = "IVX_auth.login_type";
 
-        private const string DEFAULT_FROM_DEVICE = "machine";
-
         #endregion
 
         #region Unity Lifecycle
@@ -370,12 +368,13 @@ namespace IntelliVerseX.Auth.UI
 
             try
             {
+                DeviceInfoHelper.GetLoginDeviceFields(out string fromDevice, out string macForLogin);
                 var req = new APIManager.LoginRequest
                 {
                     email = email,
                     password = password,
-                    fromDevice = DEFAULT_FROM_DEVICE,
-                    macAddress = SystemInfo.deviceUniqueIdentifier
+                    fromDevice = fromDevice,
+                    macAddress = macForLogin
                 };
 
                 using (var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(15)))
@@ -471,6 +470,14 @@ namespace IntelliVerseX.Auth.UI
                     DontDestroyOnLoad(managerObject);
                     manager = managerObject.AddComponent<IntelliVerseX.Backend.Nakama.IVXNManager>();
                     await Task.Yield();
+                }
+
+                if (global::UserSessionManager.Current == null)
+                {
+                    Debug.LogError(
+                        $"[{nameof(IVXPanelLogin)}] User session is not populated after login. Cannot initialize Nakama. " +
+                        "Ensure APIManager.LoginAsync completed session setup (SaveFromLoginResponse / SetTemporaryFromLoginResponse).");
+                    return false;
                 }
 
                 Debug.Log($"[{nameof(IVXPanelLogin)}] Starting Nakama initialization...");

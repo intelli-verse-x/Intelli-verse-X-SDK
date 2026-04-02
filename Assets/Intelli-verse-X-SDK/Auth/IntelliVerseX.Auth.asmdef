@@ -6,7 +6,8 @@
         "IntelliVerseX.Core",
         "IntelliVerseX.Identity",
         "IntelliVerseX.Backend",
-        "IntelliVerseX.V2"
+        "IntelliVerseX.V2",
+        "DOTween.Modules"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

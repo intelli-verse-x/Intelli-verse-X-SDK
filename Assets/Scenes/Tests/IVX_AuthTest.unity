@@ -4708,7 +4708,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 915fdfd16d6425e429a9ed19cf2f8183, type: 3}
   m_Name: 
   m_EditorClassIdentifier: IntelliVerseX.Core::IntelliVerseX.Core.IVXTestSceneNavigator
-  _homeSceneName: IVX_Homescreen
+  _homeSceneName: IVX_HomeScreen
   _toggleOverlayKey: 289
   _overlayVisible: 1
   _sortingOrder: 500

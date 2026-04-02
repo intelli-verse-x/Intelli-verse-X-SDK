@@ -14,12 +14,8 @@ namespace IntelliVerseX.Core
         private static T _instance;
         private static bool _isQuitting = false;
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics()
-        {
-            _instance = null;
-            _isQuitting = false;
-        }
+        // Note: [RuntimeInitializeOnLoadMethod] must not be declared inside a generic type (Unity limitation).
+        // Statics clear on domain reload; OnDestroy clears _instance when the singleton GameObject is destroyed.
 
         /// <summary>
         /// Thread-safe singleton instance

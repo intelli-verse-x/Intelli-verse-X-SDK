@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using IntelliVerseX.Backend;
 using UnityEngine;
 
 namespace IntelliVerseX.GameModes
@@ -76,6 +78,11 @@ namespace IntelliVerseX.GameModes
         #endregion
 
         #region Private Fields
+
+        [Header("Nakama")]
+        [SerializeField]
+        [Tooltip("Assign IVXNManager or a concrete IVXNakamaManager subclass (IIVXNakamaRealtimeProvider).")]
+        private MonoBehaviour _nakamaBackend;
 
         private readonly List<IVXRoomInfo> _rooms = new List<IVXRoomInfo>();
         private Coroutine _autoRefresh;
@@ -207,6 +214,12 @@ namespace IntelliVerseX.GameModes
 
         #region Private Methods — Network Integration
 
+        /// <summary>Resolves injected Nakama backend (no static singleton).</summary>
+        private IIVXNakamaRealtimeProvider ResolveNakamaRealtime()
+        {
+            return _nakamaBackend as IIVXNakamaRealtimeProvider;
+        }
+
         private IEnumerator RefreshRoomListRoutine(IVXRoomFilter filter)
         {
             IsRefreshing = true;
@@ -235,7 +248,7 @@ namespace IntelliVerseX.GameModes
 #if INTELLIVERSEX_HAS_NAKAMA
         private async Task RefreshRoomListNakamaAsync(IVXRoomFilter filter)
         {
-            var backend = IntelliVerseX.Backend.IVXNakamaManager.Instance;
+            var backend = ResolveNakamaRealtime();
             if (backend == null || backend.Client == null || backend.Session == null)
             {
                 Debug.LogWarning($"[{nameof(IVXLobbyManager)}] Nakama not connected; falling back to mock rooms.");
@@ -250,7 +263,8 @@ namespace IntelliVerseX.GameModes
                 max: filter.Limit,
                 limit: filter.Limit,
                 authoritative: true,
-                label: null);
+                label: null,
+                query: "*");
 
             _rooms.Clear();
             foreach (var m in matchList.Matches)
@@ -326,7 +340,7 @@ namespace IntelliVerseX.GameModes
 #if INTELLIVERSEX_HAS_NAKAMA
         private async Task CreateRoomNakamaAsync(IVXCreateRoomRequest request)
         {
-            var backend = IntelliVerseX.Backend.IVXNakamaManager.Instance;
+            var backend = ResolveNakamaRealtime();
             if (backend?.Socket == null)
             {
                 OnError?.Invoke("Nakama socket not connected.");
@@ -420,7 +434,7 @@ namespace IntelliVerseX.GameModes
 #if INTELLIVERSEX_HAS_NAKAMA
         private async Task JoinRoomNakamaAsync(IVXJoinRoomRequest request)
         {
-            var backend = IntelliVerseX.Backend.IVXNakamaManager.Instance;
+            var backend = ResolveNakamaRealtime();
             if (backend?.Socket == null)
             {
                 OnError?.Invoke("Nakama socket not connected.");

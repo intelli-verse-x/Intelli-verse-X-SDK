@@ -1,3 +1,4 @@
+using IntelliVerseX.Backend;
 using IntelliVerseX.Core;
 using Nakama;
 using Newtonsoft.Json;
@@ -13,7 +14,7 @@ using UnityEngine;
 
 namespace IntelliVerseX.Backend.Nakama
 {
-    public sealed class IVXNManager : MonoBehaviour
+    public sealed class IVXNManager : MonoBehaviour, IIVXNakamaRealtimeProvider
     {
         #region Configuration
         public static IVXNManager Instance { get; private set; }
@@ -48,6 +49,7 @@ namespace IntelliVerseX.Backend.Nakama
 
         private IClient _client;
         private ISession _session;
+        private ISocket _socket;
         private bool _isInitialized;
         private bool _isInitializing;
 
@@ -57,6 +59,8 @@ namespace IntelliVerseX.Backend.Nakama
 
         public IClient Client => _client;
         public ISession Session => _session;
+        /// <summary>Realtime socket; null if connect failed or not connected yet.</summary>
+        public ISocket Socket => _socket;
         public bool IsInitialized => _isInitialized;
         public bool IsInitializing => _isInitializing;
         public string GameId => _gameId;
@@ -145,6 +149,8 @@ namespace IntelliVerseX.Backend.Nakama
 
         private void OnDestroy()
         {
+            DisconnectRealtimeSocketSync();
+
             IVXNProfileManager.OnProfileLoaded -= HandleProfileLoaded;
             IVXNProfileManager.OnProfileUpdated -= HandleProfileUpdated;
             IVXNProfileManager.OnProfileError -= HandleProfileError;
@@ -239,6 +245,78 @@ private void CreateClientIfNeeded()
 
         #endregion
 
+        #region Realtime socket
+
+        private async Task TryConnectRealtimeSocketAsync()
+        {
+            if (_client == null || _session == null)
+            {
+                return;
+            }
+
+            await DisconnectRealtimeSocketAsync();
+
+            try
+            {
+                _socket = _client.NewSocket();
+                await _socket.ConnectAsync(_session, true);
+                Log("Realtime socket connected.");
+            }
+            catch (Exception ex)
+            {
+                Log($"Realtime socket connect failed: {ex.Message}", isWarning: true);
+                _socket = null;
+            }
+        }
+
+        private async Task DisconnectRealtimeSocketAsync()
+        {
+            if (_socket == null)
+            {
+                return;
+            }
+
+            try
+            {
+                if (_socket.IsConnected)
+                {
+                    await _socket.CloseAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Realtime socket close: {ex.Message}", isWarning: true);
+            }
+            finally
+            {
+                _socket = null;
+            }
+        }
+
+        private void DisconnectRealtimeSocketSync()
+        {
+            if (_socket == null)
+            {
+                return;
+            }
+
+            try
+            {
+                if (_socket.IsConnected)
+                {
+                    _ = _socket.CloseAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Realtime socket close (sync): {ex.Message}", isWarning: true);
+            }
+
+            _socket = null;
+        }
+
+        #endregion
+
         #region Public API
 
         /// <summary>
@@ -249,6 +327,7 @@ private void CreateClientIfNeeded()
             if (_isInitialized && !forceReauth && _session != null && !_session.IsExpired)
             {
                 Log("Already initialized and session is valid.");
+                await TryConnectRealtimeSocketAsync();
                 SafeInvokeOnInitialized(true);
                 return true;
             }
@@ -298,6 +377,8 @@ private void CreateClientIfNeeded()
                     // Background sync (non-blocking)
                     SyncPlayerMetadataInBackground();
 
+                    await TryConnectRealtimeSocketAsync();
+
                     return true;
                 }
 
@@ -343,6 +424,8 @@ private void CreateClientIfNeeded()
                 // Step 6: Sync player metadata + geolocation
                 await SyncPlayerMetadataAndGeolocationAsync(userSession);
 
+                await TryConnectRealtimeSocketAsync();
+
                 return true;
             }
             catch (Exception ex)
@@ -377,6 +460,8 @@ private void CreateClientIfNeeded()
 
         public void ClearNakamaSession()
         {
+            DisconnectRealtimeSocketSync();
+
             _session = null;
             _isInitialized = false;
             _geoLocationCaptured = false;

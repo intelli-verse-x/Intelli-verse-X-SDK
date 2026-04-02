@@ -254,6 +254,9 @@ namespace IntelliVerseX.AI
         /// <summary>True while automatic session/event tracking is enabled.</summary>
         public bool IsTracking { get; private set; }
 
+        /// <summary>True after <see cref="Initialize(IVXAIConfig, string)"/> completes successfully.</summary>
+        public bool IsInitialized => _isInitialized;
+
         #endregion
 
         #region Private Fields

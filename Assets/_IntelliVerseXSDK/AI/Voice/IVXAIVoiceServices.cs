@@ -237,6 +237,9 @@ namespace IntelliVerseX.AI
         /// <summary>True while streaming STT is active and the socket is connected.</summary>
         public bool IsTranscribing { get; private set; }
 
+        /// <summary>True after <see cref="Initialize(IVXAIConfig)"/> completes successfully.</summary>
+        public bool IsInitialized => _isInitialized;
+
         /// <summary>Voices returned by the last <see cref="ListVoices"/> call.</summary>
         public IReadOnlyList<IVXAIVoice> AvailableVoices => _voicesReadOnly;
 

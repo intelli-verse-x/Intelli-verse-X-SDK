@@ -86,7 +86,7 @@ namespace IntelliVerseX.Demos
             scroll.content = cRt;
             _outputText = contentGo.AddComponent<TextMeshProUGUI>();
             _outputText.fontSize = 14f; _outputText.color = new Color(0.78f, 0.82f, 0.88f);
-            _outputText.enableWordWrapping = true;
+            _outputText.textWrappingMode = TextWrappingModes.Normal;
             _outputText.text = "Ready. Use the controls above.";
 
             _statusText = MakeLabel(root, "Status: Idle", 14, FontStyles.Italic, new Color(0.5f, 0.55f, 0.6f));
@@ -164,7 +164,7 @@ namespace IntelliVerseX.Demos
             go.transform.SetParent(parent, false);
             var tmp = go.AddComponent<TextMeshProUGUI>();
             tmp.text = text; tmp.fontSize = size; tmp.fontStyle = style; tmp.color = color;
-            tmp.enableWordWrapping = true;
+            tmp.textWrappingMode = TextWrappingModes.Normal;
             return tmp;
         }
         private static RectTransform MakeHorizontal(RectTransform parent, float height)

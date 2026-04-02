@@ -3678,7 +3678,7 @@ namespace IntelliVerseX.Editor
 
             var mgrType = GetTypeByName("IntelliVerseX.Discord.IVXDiscordManager");
             discordModule.stepCompleted[2] = mgrType != null &&
-                Object.FindFirstObjectByType(mgrType) != null;
+                UnityEngine.Object.FindFirstObjectByType(mgrType) != null;
 
             discordModule.isSetupComplete = discordModule.stepCompleted.TrueForAll(x => x);
             discordModule.statusMessage = discordModule.isSetupComplete
@@ -3721,7 +3721,7 @@ namespace IntelliVerseX.Editor
             if (GUILayout.Button("Add Discord Manager", GUILayout.Height(25)))
             {
                 var discordType = GetTypeByName("IntelliVerseX.Discord.IVXDiscordManager");
-                if (discordType != null && Object.FindFirstObjectByType(discordType) == null)
+                if (discordType != null && UnityEngine.Object.FindFirstObjectByType(discordType) == null)
                 {
                     var go = new GameObject("[IVXDiscordManager]");
                     go.AddComponent(discordType);

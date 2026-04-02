@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Threading.Tasks;
+using IntelliVerseX.Backend;
 using UnityEngine;
 
 namespace IntelliVerseX.GameModes
@@ -73,6 +74,11 @@ namespace IntelliVerseX.GameModes
 
         #region Private Fields
 
+        [Header("Nakama")]
+        [SerializeField]
+        [Tooltip("Assign IVXNManager or a concrete IVXNakamaManager subclass (IIVXNakamaRealtimeProvider).")]
+        private MonoBehaviour _nakamaBackend;
+
         private Coroutine _searchCoroutine;
         private IVXMatchConfig _searchConfig;
 
@@ -133,7 +139,7 @@ namespace IntelliVerseX.GameModes
 #if INTELLIVERSEX_HAS_NAKAMA
             if (!string.IsNullOrEmpty(TicketId))
             {
-                var backend = IntelliVerseX.Backend.IVXNakamaManager.Instance;
+                var backend = ResolveNakamaRealtime();
                 if (backend?.Socket != null)
                 {
                     _ = backend.Socket.RemoveMatchmakerAsync(TicketId);
@@ -170,6 +176,12 @@ namespace IntelliVerseX.GameModes
 
         #region Private Methods
 
+        /// <summary>Resolves injected Nakama backend (no static singleton).</summary>
+        private IIVXNakamaRealtimeProvider ResolveNakamaRealtime()
+        {
+            return _nakamaBackend as IIVXNakamaRealtimeProvider;
+        }
+
         private IEnumerator SearchRoutine()
         {
             IsSearching = true;
@@ -181,7 +193,7 @@ namespace IntelliVerseX.GameModes
 
 #if INTELLIVERSEX_HAS_NAKAMA
             bool nakamaStarted = false;
-            var backend = IntelliVerseX.Backend.IVXNakamaManager.Instance;
+            var backend = ResolveNakamaRealtime();
             if (backend?.Socket != null)
             {
                 var addTask = StartNakamaMatchmaking(backend);
@@ -248,7 +260,7 @@ namespace IntelliVerseX.GameModes
         }
 
 #if INTELLIVERSEX_HAS_NAKAMA
-        private async Task StartNakamaMatchmaking(IntelliVerseX.Backend.IVXNakamaManager backend)
+        private async Task StartNakamaMatchmaking(IIVXNakamaRealtimeProvider backend)
         {
             var minCount = _searchConfig?.MinPlayers ?? 2;
             var maxCount = _searchConfig?.MaxPlayers ?? 2;
