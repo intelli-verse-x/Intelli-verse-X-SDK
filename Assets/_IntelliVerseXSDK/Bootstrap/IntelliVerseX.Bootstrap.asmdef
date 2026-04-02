@@ -1,16 +1,16 @@
 {
-    "name": "IntelliVerseX.Demos",
-    "rootNamespace": "IntelliVerseX.Demos",
+    "name": "IntelliVerseX.Bootstrap",
+    "rootNamespace": "IntelliVerseX.Bootstrap",
     "references": [
         "IntelliVerseX.AI",
-        "IntelliVerseX.Bootstrap",
-        "IntelliVerseX.Core",
         "IntelliVerseX.Discord",
         "IntelliVerseX.Hiro",
+        "IntelliVerseX.Satori",
         "IntelliVerseX.GameModes",
         "IntelliVerseX.Platform",
-        "IntelliVerseX.Satori",
-        "Unity.TextMeshPro",
+        "IntelliVerseX.Core",
+        "IntelliVerseX.Backend",
+        "NakamaRuntime",
         "Newtonsoft.Json"
     ],
     "includePlatforms": [],

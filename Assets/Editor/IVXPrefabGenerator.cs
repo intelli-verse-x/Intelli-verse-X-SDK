@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System.IO;
 using IntelliVerseX.AI;
+using IntelliVerseX.Bootstrap;
 using IntelliVerseX.Demos;
 using IntelliVerseX.Discord;
 using UnityEditor;
@@ -49,6 +50,8 @@ namespace IntelliVerseX.Editor
             count += SavePrefab("IVX_DemoHub.prefab", go => go.AddComponent<IVXDemoHub>());
             count += SavePrefab("IVX_DiscordSocialDemo.prefab", go => go.AddComponent<IVXDiscordSocialDemo>());
 
+            count += SavePrefab("IVX_Bootstrap.prefab", go => go.AddComponent<IVXBootstrap>());
+
             count += SavePrefab("IVX_AllManagers.prefab", go =>
             {
                 go.AddComponent<IVXDiscordManager>();
@@ -69,6 +72,7 @@ namespace IntelliVerseX.Editor
                 go.AddComponent<IVXAIContentGenerator>();
                 go.AddComponent<IVXAIProfiler>();
                 go.AddComponent<IVXAIVoiceServices>();
+                go.AddComponent<IVXBootstrap>();
             });
 
             Debug.Log($"Created {count} prefabs in Assets/_IntelliVerseXSDK/Prefabs/");

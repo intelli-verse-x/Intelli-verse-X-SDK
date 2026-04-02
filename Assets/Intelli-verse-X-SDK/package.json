@@ -1,8 +1,8 @@
 {
   "name": "com.intelliversex.sdk",
-  "version": "5.6.0",
+  "version": "5.7.0",
   "displayName": "IntelliVerseX SDK",
-  "description": "Complete modular game development SDK with 20+ packages: Core, Identity, Auth, Backend, Networking, Localization, Storage, Quiz, QuizUI, UI, Leaderboard, Social, Monetization (IAP, Ads), Analytics, full AI/LLM stack (voice personas, AI host, NPC dialog, in-game assistant, moderation, content generation, profiling, STT/TTS), Multiplayer (Solo/Local/Online/Ranked), Discord Social SDK parity (DMs, relationships, advanced presence & voice, lobbies, moderation), Hiro Live Ops, and more. Battle-tested in production. Includes support for Nakama, Photon PUN2, DOTween, LevelPlay, Appodeal, AdMob, and more.",
+  "description": "Complete game SDK: Bootstrap (one-drop init), 33 Hiro live-ops systems, 7 AI/LLM subsystems (NPC dialog, assistant, moderation, content gen, profiling, voice services, personas), 11 Discord Social subsystems, multiplayer, analytics, 16 demo UIs. 10-platform support. Battle-tested in production.",
   "unity": "2023.3",
   "unityRelease": "0f1",
   "documentationUrl": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK#readme",

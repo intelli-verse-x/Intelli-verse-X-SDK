@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.7.0] — 2026-04-02
+
+### Added
+
+- **IVXBootstrap** — One-drop MonoBehaviour that auto-initializes all SDK modules in correct dependency order (Platform → Backend → Hiro → Satori → Discord → AI → Multiplayer)
+- **IVXBootstrapConfig** — Master ScriptableObject with server settings, module config references, feature toggles
+- **Bootstrap assembly** (`IntelliVerseX.Bootstrap.asmdef`) referencing all module assemblies
+- **IVXIdentityDemo** — Demo for device/guest authentication and session management
+- **IVXLeaderboardDemo** — Demo for score submission and leaderboard display (mock + Hiro)
+- **IVXAIProfilerDemo** — Demo for event tracking, cohort classification, churn prediction, personalization
+- **IVXAIVoiceServicesDemo** — Demo for standalone STT, TTS, voice listing, language detection
+- **IVX_Bootstrap.prefab** — Generated prefab for the bootstrap system
+- Updated `IVXDemoHub` to 16 demos (was 12) with grid layout improvements
+- Updated `IVXPrefabGenerator` to include Bootstrap prefab in both individual and AllManagers
+- Complete rewrite of `MASTER_INTEGRATION_PROMPT.md` with executable code samples for all features
+
+### Fixed
+
+- Profiler demo API calls aligned to actual `IVXAIProfiler` method signatures (`ClassifyPlayer`, `PredictChurn(float, string[])`, `GetPersonalizationHints`)
+- Voice Services demo API calls aligned to actual `IVXAIVoiceServices` signatures (`DetectLanguage(byte[], int, Action<string, float>)`)
+
+### Changed
+
+- Package version bumped to 5.7.0
+- `IntelliVerseX.Demos.asmdef` now references Bootstrap, Satori, and Platform assemblies
+
+---
+
 ## [5.6.0] — 2026-04-02
 
 ### Added

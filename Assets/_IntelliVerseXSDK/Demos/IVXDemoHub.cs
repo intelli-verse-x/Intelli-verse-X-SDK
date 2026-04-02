@@ -13,7 +13,7 @@ namespace IntelliVerseX.Demos
     {
         #region Constants
 
-        private const string VERSION_LABEL = "v5.6.0";
+        private const string VERSION_LABEL = "v5.7.0";
 
         private static readonly Color HubBackground = new Color32(0x1A, 0x1A, 0x2E, 0xFF);
 
@@ -79,6 +79,26 @@ namespace IntelliVerseX.Demos
                 "Online lobby and matchmaking",
                 new Color32(0xA7, 0x8B, 0xFA, 0xFF),
                 typeof(IVXLobbyDemo)),
+            new DemoCardSpec(
+                "Identity & Auth",
+                "Authentication, session management, user profiles",
+                new Color32(0x22, 0xC5, 0x5E, 0xFF),
+                typeof(IVXIdentityDemo)),
+            new DemoCardSpec(
+                "Leaderboard",
+                "Score submission, rankings, player ranks",
+                new Color32(0xFF, 0xD7, 0x00, 0xFF),
+                typeof(IVXLeaderboardDemo)),
+            new DemoCardSpec(
+                "AI Profiler",
+                "Player behavior tracking, cohorts, churn prediction",
+                new Color32(0xE0, 0x4F, 0x5F, 0xFF),
+                typeof(IVXAIProfilerDemo)),
+            new DemoCardSpec(
+                "AI Voice Services",
+                "Standalone STT, TTS, language detection",
+                new Color32(0x00, 0xBF, 0xA5, 0xFF),
+                typeof(IVXAIVoiceServicesDemo)),
         };
 
         #endregion
@@ -210,7 +230,7 @@ namespace IntelliVerseX.Demos
             content.sizeDelta = new Vector2(0f, 0f);
 
             var grid = content.gameObject.AddComponent<GridLayoutGroup>();
-            grid.cellSize = new Vector2(440f, 200f);
+            grid.cellSize = new Vector2(420f, 170f);
             grid.spacing = new Vector2(16f, 16f);
             grid.padding = new RectOffset(8, 8, 8, 8);
             grid.startCorner = GridLayoutGroup.Corner.UpperLeft;
