@@ -180,7 +180,10 @@ namespace IntelliVerseX.Games.Leaderboard
                         }
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning($"[IVXGLeaderboard] Operation failed: {ex.Message}");
+                }
                 return false;
             }
         }
@@ -353,7 +356,10 @@ namespace IntelliVerseX.Games.Leaderboard
                 IVXGLeaderboardManager.OnLeaderboardsFetched -= HandleLeaderboardsFetched;
                 IVXGLeaderboardManager.OnError -= HandleLeaderboardError;
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[IVXGLeaderboard] Operation failed: {ex.Message}");
+            }
 
             OnLeaderboardsUpdated = null;
             OnPlayerRankChanged = null;
@@ -1115,7 +1121,10 @@ namespace IntelliVerseX.Games.Leaderboard
                 Log($"Leaderboards: Daily={lastDailyCount}, Weekly={lastWeeklyCount}, " +
                     $"Monthly={lastMonthlyCount}, Alltime={lastAlltimeCount}, Global={lastGlobalAlltimeCount}");
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[IVXGLeaderboard] Operation failed: {ex.Message}");
+            }
         }
 
         private static Type FindType(string typeName)

@@ -2,7 +2,7 @@
 
 > **Authority:** Explicit assumptions that govern development decisions
 > **Version:** 1.0.0
-> **Last Updated:** 2026-01-20
+> **Last Updated:** 2026-04-01
 > **Rule:** Update this file instead of silently changing assumptions
 
 ---
@@ -22,11 +22,12 @@ This document captures **explicit assumptions** made during SDK development. Whe
 
 | Assumption | Value | Confidence | Last Verified |
 |------------|-------|------------|---------------|
-| Minimum Unity version | 2021.3 LTS | High | 2026-01-13 |
-| Target Unity version | 6000.2.x (Unity 6) | High | 2026-01-13 |
-| Maximum tested version | 6000.2.8f1 | High | 2026-01-13 |
+| Minimum Unity version | 2023.3 LTS | High | 2026-04-01 |
+| Target Unity version | 6000.2.x (Unity 6) | High | 2026-04-01 |
+| Maximum tested version | 6000.2.8f1 | High | 2026-04-01 |
+| CI tested versions | 2023.3.0f1, 6000.2.8f1 | High | 2026-04-01 |
 
-**Rationale:** Unity 6 is the current major version. We support 2021.3 LTS as minimum for broad compatibility.
+**Rationale:** Unity 6 is the current major version. package.json `"unity": "2023.3"` sets the minimum. CI tests on 2023.3.0f1 and 6000.2.8f1.
 
 ### Editor GPU Backend (Stability)
 
@@ -270,6 +271,14 @@ This document captures **explicit assumptions** made during SDK development. Whe
 ```
 
 ### Change History
+
+#### 2026-04-01 - Unity Version Alignment
+
+**Previous:** Minimum Unity version 2021.3 LTS; CI using 6000.0.0f1
+**New:** Minimum 2023.3 LTS (matches package.json); CI now uses 6000.2.8f1
+**Reason:** Align assumptions with actual CI and package.json constraints
+**Impact:** Developers on Unity < 2023.3 are not supported
+**Updated by:** Cursor AI
 
 #### 2026-01-13 - Initial Assumptions Document
 

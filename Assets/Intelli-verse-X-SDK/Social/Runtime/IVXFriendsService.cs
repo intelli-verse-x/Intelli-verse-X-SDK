@@ -34,8 +34,24 @@ namespace IntelliVerseX.Social
 
         #endregion
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
+        {
+            OnFriendsListUpdated = null;
+            OnRequestsListUpdated = null;
+            OnNewRequestReceived = null;
+            OnFriendAdded = null;
+            OnFriendRemoved = null;
+            OnError = null;
+            _nakamaInitialized = false;
+            _cachedNakamaManagerType = null;
+            _hasCheckedNakamaManagerType = false;
+        }
+
         private const string LOG_TAG = "[IVXFriends]";
         private static bool _nakamaInitialized = false;
+        private static Type _cachedNakamaManagerType;
+        private static bool _hasCheckedNakamaManagerType;
 
         /// <summary>
         /// Ensures Nakama is initialized before using friend operations.
@@ -48,8 +64,12 @@ namespace IntelliVerseX.Social
 
             try
             {
-                // Find IVXNManager via reflection
-                var mgrType = Type.GetType("IntelliVerseX.Backend.Nakama.IVXNManager, IntelliVerseX.V2");
+                if (!_hasCheckedNakamaManagerType)
+                {
+                    _cachedNakamaManagerType = Type.GetType("IntelliVerseX.Backend.Nakama.IVXNManager, IntelliVerseX.V2");
+                    _hasCheckedNakamaManagerType = true;
+                }
+                var mgrType = _cachedNakamaManagerType;
                 if (mgrType == null)
                 {
                     LogError("IVXNManager type not found. Ensure IntelliVerseX.Backend assembly is referenced.");

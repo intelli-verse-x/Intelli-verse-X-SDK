@@ -46,7 +46,7 @@ namespace IntelliVerseX.Identity
                 }
             }
             _isInitialized = true;
-            Debug.Log($"[QUIZVERSE][IDENTITY] Device initialized: {DeviceId}");
+            Debug.Log($"[IntelliVerseX][IDENTITY] Device initialized: {DeviceId}");
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace IntelliVerseX.Identity
             var session = UserSessionManager.Current;
             if (session == null)
             {
-                Debug.LogWarning("[QUIZVERSE][IDENTITY] UserSessionManager.Current is null - cannot sync identity");
+                Debug.LogWarning("[IntelliVerseX][IDENTITY] UserSessionManager.Current is null - cannot sync identity");
                 return;
             }
 
@@ -100,14 +100,14 @@ namespace IntelliVerseX.Identity
             // Validate critical fields
             if (string.IsNullOrEmpty(UserId))
             {
-                Debug.LogWarning("[QUIZVERSE][IDENTITY] UserSessionManager.UserId is null or empty");
+                Debug.LogWarning("[IntelliVerseX][IDENTITY] UserSessionManager.UserId is null or empty");
             }
             if (string.IsNullOrEmpty(UserName) && string.IsNullOrEmpty(DisplayName))
             {
-                Debug.LogWarning("[QUIZVERSE][IDENTITY] No username or display name available");
+                Debug.LogWarning("[IntelliVerseX][IDENTITY] No username or display name available");
             }
 
-            Debug.Log($"[QUIZVERSE][IDENTITY] Synced from UserSessionManager - UserId: {UserId}, DisplayName: {DisplayName}");
+            Debug.Log($"[IntelliVerseX][IDENTITY] Synced from UserSessionManager - UserId: {UserId}, DisplayName: {DisplayName}");
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace IntelliVerseX.Identity
         {
             NakamaUserId = nakamaUserId;
             NakamaSessionToken = sessionToken;
-            Debug.Log($"[QUIZVERSE][IDENTITY] Nakama auth set - UserId: {nakamaUserId}");
+            Debug.Log($"[IntelliVerseX][IDENTITY] Nakama auth set - UserId: {nakamaUserId}");
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace IntelliVerseX.Identity
             NakamaUserId = null;
             NakamaSessionToken = null;
 
-            Debug.Log("[QUIZVERSE][IDENTITY] Identity cleared (GameId and DeviceId preserved)");
+            Debug.Log("[IntelliVerseX][IDENTITY] Identity cleared (GameId and DeviceId preserved)");
         }
 
         /// <summary>

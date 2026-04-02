@@ -20,7 +20,7 @@ namespace IntelliVerseX.Editor
     {
         #region Constants
 
-        private const string SDK_ROOT = "Assets/_IntelliVerseXSDK";
+        private const string SDK_ROOT = "Assets/Intelli-verse-X-SDK";
         private const string PACKAGE_NAME = "com.intelliversex.sdk";
         private const string SDK_PACKAGE_ROOT = "Packages/" + PACKAGE_NAME;
         private const string PREFABS_ROOT = SDK_ROOT + "/Prefabs";
@@ -47,8 +47,8 @@ namespace IntelliVerseX.Editor
         #region Menu Items
 
         // REMOVED: Menu items consolidated into SDK Setup Wizard
-        // [MenuItem("IntelliVerse-X SDK/Feature Setup/Leaderboard Setup", false, 200)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Features tab
+        // [MenuItem("IntelliVerseX/Feature Setup/Leaderboard Setup", false, 200)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Features tab
         
         public static void OpenLeaderboardSetup()
         {
@@ -57,8 +57,8 @@ namespace IntelliVerseX.Editor
             window.Show();
         }
 
-        // [MenuItem("IntelliVerse-X SDK/Feature Setup/Friends Setup", false, 201)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Features tab
+        // [MenuItem("IntelliVerseX/Feature Setup/Friends Setup", false, 201)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Features tab
         public static void OpenFriendsSetup()
         {
             var window = GetWindow<IVXFeatureSetup>("Feature Setup");
@@ -66,8 +66,8 @@ namespace IntelliVerseX.Editor
             window.Show();
         }
 
-        // [MenuItem("IntelliVerse-X SDK/Feature Setup/Wallet Setup", false, 202)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Features tab
+        // [MenuItem("IntelliVerseX/Feature Setup/Wallet Setup", false, 202)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Features tab
         public static void OpenWalletSetup()
         {
             var window = GetWindow<IVXFeatureSetup>("Feature Setup");
@@ -75,8 +75,8 @@ namespace IntelliVerseX.Editor
             window.Show();
         }
 
-        // [MenuItem("IntelliVerse-X SDK/Feature Setup/One-Click Leaderboard", false, 250)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Features tab
+        // [MenuItem("IntelliVerseX/Feature Setup/One-Click Leaderboard", false, 250)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Features tab
         public static void QuickSetupLeaderboard()
         {
             SetupLeaderboard(null);
@@ -88,8 +88,8 @@ namespace IntelliVerseX.Editor
                 "OK");
         }
 
-        // [MenuItem("IntelliVerse-X SDK/Feature Setup/One-Click Friends", false, 251)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Features tab
+        // [MenuItem("IntelliVerseX/Feature Setup/One-Click Friends", false, 251)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Features tab
         public static void QuickSetupFriends()
         {
             SetupFriendsSystem(null);
@@ -233,7 +233,7 @@ int rank = await IVXGLeaderboardManager.GetPlayerRankAsync();");
             var managerType = FindType("IntelliVerseX.Backend.IVXNManager");
             if (managerType != null)
             {
-                var existing = UnityEngine.Object.FindObjectOfType(managerType);
+                var existing = UnityEngine.Object.FindAnyObjectByType(managerType);
                 if (existing == null)
                 {
                     var go = new GameObject("NakamaManager");
@@ -688,19 +688,30 @@ IVXAdsManager.HideBanner();");
             EditorGUILayout.Space(5);
         }
 
+        private static readonly Dictionary<string, Type> _typeCache = new Dictionary<string, Type>();
+
         private static Type FindType(string fullName)
         {
+            if (_typeCache.TryGetValue(fullName, out var cached))
+                return cached;
+
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 var type = assembly.GetType(fullName);
-                if (type != null) return type;
+                if (type != null)
+                {
+                    _typeCache[fullName] = type;
+                    return type;
+                }
             }
+
+            _typeCache[fullName] = null;
             return null;
         }
 
         private Canvas FindOrCreateCanvas()
         {
-            var canvas = UnityEngine.Object.FindObjectOfType<Canvas>();
+            var canvas = UnityEngine.Object.FindAnyObjectByType<Canvas>();
             if (canvas != null) return canvas;
 
             var go = new GameObject("Canvas");

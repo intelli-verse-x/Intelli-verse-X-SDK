@@ -13,17 +13,110 @@ namespace IntelliVerseX.Identity
     /// </summary>
     public class AuthService : MonoBehaviour
     {
+        private static string _overrideBaseUrl;
+        private static string _cachedBaseUrl;
+        private static bool _cacheInitialized;
+
         /// <summary>
-        /// Base URL for authentication endpoints.
-        /// Ensure your backend is running and has these endpoints:
-        /// - POST /auth/register
-        /// - POST /auth/verify-otp
-        /// - POST /auth/login
-        /// - POST /auth/google
-        /// - POST /auth/apple
-        /// - POST /auth/guest
+        /// Programmatically set the authentication base URL.
+        /// Call this before any auth operations (e.g., during app initialization).
         /// </summary>
-        private const string BASE_URL = "http://localhost:3000/auth";
+        public static void SetBaseUrl(string url)
+        {
+            _overrideBaseUrl = url?.TrimEnd('/');
+            _cachedBaseUrl = null;
+            _cacheInitialized = false;
+        }
+
+        private static string BASE_URL => ResolveAuthBaseUrl();
+
+        private static string ResolveAuthBaseUrl()
+        {
+            if (!string.IsNullOrEmpty(_overrideBaseUrl))
+                return _overrideBaseUrl;
+
+            if (_cacheInitialized)
+                return _cachedBaseUrl ?? string.Empty;
+
+            _cacheInitialized = true;
+
+            string resolved = TryLoadFromKeysJson()
+                           ?? TryLoadFromResources()
+                           ?? TryLoadFromEnvironment();
+
+            if (!string.IsNullOrEmpty(resolved))
+            {
+                _cachedBaseUrl = resolved;
+                return _cachedBaseUrl;
+            }
+
+            Debug.LogWarning(
+                "[AuthService] Auth base URL not configured. Authentication will fail. " +
+                "Configure via: AuthService.SetBaseUrl(), config/keys.json {\"authBaseUrl\":\"...\"}, " +
+                "Resources/IVXAuthConfig.json, or IVX_AUTH_BASE_URL environment variable.");
+            return string.Empty;
+        }
+
+        private static string TryLoadFromKeysJson()
+        {
+            try
+            {
+                string projectRoot = System.IO.Path.GetDirectoryName(Application.dataPath);
+                if (string.IsNullOrEmpty(projectRoot))
+                    return null;
+                string path = System.IO.Path.Combine(projectRoot, "config", "keys.json");
+                if (!System.IO.File.Exists(path))
+                    return null;
+                string json = System.IO.File.ReadAllText(path);
+                var config = JsonUtility.FromJson<AuthSecretsConfig>(json);
+                if (config != null && !string.IsNullOrEmpty(config.authBaseUrl))
+                    return config.authBaseUrl.Trim();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[AuthService] Failed to load auth URL from keys.json: {ex.Message}");
+            }
+            return null;
+        }
+
+        private static string TryLoadFromResources()
+        {
+            try
+            {
+                var textAsset = Resources.Load<TextAsset>("IVXAuthConfig");
+                if (textAsset == null)
+                    return null;
+                var config = JsonUtility.FromJson<AuthSecretsConfig>(textAsset.text);
+                if (config != null && !string.IsNullOrEmpty(config.authBaseUrl))
+                    return config.authBaseUrl.Trim();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[AuthService] Failed to load auth URL from Resources: {ex.Message}");
+            }
+            return null;
+        }
+
+        private static string TryLoadFromEnvironment()
+        {
+            try
+            {
+                string envUrl = Environment.GetEnvironmentVariable("IVX_AUTH_BASE_URL");
+                if (!string.IsNullOrEmpty(envUrl))
+                    return envUrl.Trim();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[AuthService] Failed to read IVX_AUTH_BASE_URL env var: {ex.Message}");
+            }
+            return null;
+        }
+
+        [Serializable]
+        private class AuthSecretsConfig
+        {
+            public string authBaseUrl;
+        }
 
         /// <summary>
         /// Calls POST /auth/register. On success invokes onSuccess; on error invokes onError with message.

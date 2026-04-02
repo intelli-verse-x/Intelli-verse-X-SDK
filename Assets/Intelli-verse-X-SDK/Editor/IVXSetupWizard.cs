@@ -35,8 +35,8 @@ namespace IntelliVerseX.Editor
         private Vector2 scrollPosition;
         
         // REMOVED: Duplicate menu item - use "SDK Setup Wizard" instead
-        // [MenuItem("IntelliVerse-X SDK/Setup Wizard", priority = 0)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard
+        // [MenuItem("IntelliVerseX/Setup Wizard", priority = 0)]
+        // Use: IntelliVerseX > SDK Setup Wizard
         public static void ShowWizard()
         {
             var window = GetWindow<IVXSetupWizard>("SDK Setup Wizard");
@@ -122,7 +122,7 @@ namespace IntelliVerseX.Editor
             EditorGUILayout.LabelField("What you'll need:", EditorStyles.boldLabel);
             GUILayout.Space(5);
             EditorGUILayout.LabelField("• Internet connection for package installation");
-            EditorGUILayout.LabelField("• Unity 2021.3 or later");
+            EditorGUILayout.LabelField("• Unity 2023.3 LTS or Unity 6 (6000.x) or later");
             EditorGUILayout.LabelField("• ~5 minutes of your time");
             
             GUILayout.Space(20);

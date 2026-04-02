@@ -44,7 +44,7 @@ Choose your installation method:
     ```json
     {
       "dependencies": {
-        "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK"
+        "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/Intelli-verse-X-SDK"
       }
     }
     ```
@@ -81,40 +81,69 @@ Click **Apply All Required Settings** to configure your project.
 
 ### Step 2: Initialize the SDK
 
+Add an `IVXBootstrap` component to a GameObject in your first scene and assign an **IVXBootstrapConfig** (see the [Quick Start](quickstart.md) for creating config assets and optional AI/Discord configs). With **Auto Initialize** enabled, the SDK starts on Play.
+
 ```csharp
 using UnityEngine;
+using IntelliVerseX.Bootstrap;
 using IntelliVerseX.Core;
-using IntelliVerseX.Identity;
 
 public class GameInit : MonoBehaviour
 {
     void Start()
     {
-        IntelliVerseXUserIdentity.InitializeDevice();
-        IVXLogger.Log("IntelliVerseX SDK Ready!");
+        var bootstrap = IVXBootstrap.Instance;
+        if (bootstrap == null)
+        {
+            IVXLogger.LogWarning("Add IVXBootstrap to the scene with a Bootstrap Config assigned.");
+            return;
+        }
+
+        if (bootstrap.IsInitialized)
+        {
+            IVXLogger.Log("IntelliVerseX SDK Ready!");
+            return;
+        }
+
+        bootstrap.OnBootstrapComplete += success =>
+        {
+            if (success)
+                IVXLogger.Log("IntelliVerseX SDK Ready!");
+        };
     }
 }
 ```
 
 ### Step 3: (Optional) Connect to Backend
 
+`IVXBootstrap` connects to Nakama when the Nakama package is installed and your **Bootstrap Config** has a valid server host/port/key. After bootstrap completes you can run game-specific setup (for example your own services layered on the same session):
+
 ```csharp
-using IntelliVerseX.Backend;
+using UnityEngine;
+using IntelliVerseX.Bootstrap;
+using IntelliVerseX.Core;
 
 public class GameInit : MonoBehaviour
 {
-    async void Start()
+    void Start()
     {
-        IntelliVerseXUserIdentity.InitializeDevice();
-        
-        // Connect to Nakama backend
-        var nakamaManager = GetComponent<MyNakamaManager>();
-        bool success = await nakamaManager.InitializeAsync();
-        
-        if (success)
+        var bootstrap = IVXBootstrap.Instance;
+        if (bootstrap == null)
+            return;
+
+        if (bootstrap.IsInitialized)
         {
-            IVXLogger.Log("Connected to backend!");
+            OnBackendReady(bootstrap.IsInitialized);
+            return;
         }
+
+        bootstrap.OnBootstrapComplete += OnBackendReady;
+    }
+
+    void OnBackendReady(bool success)
+    {
+        if (success)
+            IVXLogger.Log("Connected to backend!");
     }
 }
 ```

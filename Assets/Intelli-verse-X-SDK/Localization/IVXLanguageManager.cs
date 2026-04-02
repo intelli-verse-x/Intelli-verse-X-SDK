@@ -20,6 +20,8 @@ namespace IntelliVerseX.Localization
         
         private static Core.IntelliVerseXConfig _config;
         private static string _currentLanguage = "en";
+        private static readonly string[] DefaultSupportedLanguages = new[] { "en" };
+        private static string[] _cachedSupportedLanguages;
         
         // Events
         public static event Action<string> OnLanguageChanged; // new language code
@@ -36,16 +38,24 @@ namespace IntelliVerseX.Localization
         {
             get
             {
-                if (_config == null || _config.supportedLanguages == null)
-                    return new[] { "en" };
+                if (_cachedSupportedLanguages != null)
+                    return _cachedSupportedLanguages;
 
-                var codes = new string[_config.supportedLanguages.Length];
-                for (int i = 0; i < _config.supportedLanguages.Length; i++)
-                {
-                    codes[i] = LanguageToCode(_config.supportedLanguages[i]);
-                }
-                return codes;
+                return BuildSupportedLanguagesArray();
             }
+        }
+
+        private static string[] BuildSupportedLanguagesArray()
+        {
+            if (_config == null || _config.supportedLanguages == null)
+                return DefaultSupportedLanguages;
+
+            var codes = new string[_config.supportedLanguages.Length];
+            for (int i = 0; i < _config.supportedLanguages.Length; i++)
+            {
+                codes[i] = LanguageToCode(_config.supportedLanguages[i]);
+            }
+            return codes;
         }
 
         /// <summary>
@@ -54,6 +64,7 @@ namespace IntelliVerseX.Localization
         public static void Initialize(Core.IntelliVerseXConfig config)
         {
             _config = config;
+            _cachedSupportedLanguages = BuildSupportedLanguagesArray();
 
             // Try to load saved language
             if (PlayerPrefs.HasKey(PREF_LANGUAGE))

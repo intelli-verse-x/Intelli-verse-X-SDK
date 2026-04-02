@@ -21,6 +21,13 @@ package com.intelliversex.sdk.core;
  * }</pre>
  */
 public class IVXConfig {
+    /**
+     * Game ID (UUID) for your title on the IntelliVerseX platform.
+     * Copy it from the developer dashboard, or obtain it by calling
+     * {@code POST https://msapi.intelli-verse-x.io/api/games/game/info} with your game credentials.
+     */
+    private String gameId = "";
+
     private String nakamaHost = "nakama-rest.intelli-verse-x.ai";
     private int nakamaPort = 443;
     private String nakamaServerKey = "defaultkey";
@@ -40,6 +47,9 @@ public class IVXConfig {
         return new Builder();
     }
 
+    public String getGameId() { return gameId; }
+    public void setGameId(String gameId) { this.gameId = gameId != null ? gameId : ""; }
+
     public String getNakamaHost() { return nakamaHost; }
     public int getNakamaPort() { return nakamaPort; }
     public String getNakamaServerKey() { return nakamaServerKey; }
@@ -57,7 +67,8 @@ public class IVXConfig {
     @Override
     public String toString() {
         return "IVXConfig{"
-                + "host='" + nakamaHost + '\''
+                + "gameId='" + gameId + '\''
+                + ", host='" + nakamaHost + '\''
                 + ", port=" + nakamaPort
                 + ", serverKey='" + nakamaServerKey + '\''
                 + ", ssl=" + useSSL
@@ -71,6 +82,7 @@ public class IVXConfig {
     public static class Builder {
         private final IVXConfig config = new IVXConfig();
 
+        public Builder gameId(String id) { config.gameId = id != null ? id : ""; return this; }
         public Builder nakamaHost(String host) { config.nakamaHost = host; return this; }
         public Builder nakamaPort(int port) { config.nakamaPort = port; return this; }
         public Builder nakamaServerKey(String key) { config.nakamaServerKey = key; return this; }

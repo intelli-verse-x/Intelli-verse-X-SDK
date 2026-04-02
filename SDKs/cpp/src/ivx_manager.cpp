@@ -57,6 +57,10 @@ std::string Manager::escapeJsonString(const std::string& input) {
 void Manager::init(const Config& cfg) {
     cfg.validate();
 
+    if (cfg.game_id.empty()) {
+        std::fprintf(stderr, "[IntelliVerseX] WARNING: gameId is empty. Get yours from https://intelli-verse-x.ai/developers\n");
+    }
+
     _cfg = cfg;
     Nakama::NClientParameters p;
     p.serverKey = cfg.serverKey;

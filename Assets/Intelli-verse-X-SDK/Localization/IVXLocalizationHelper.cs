@@ -100,7 +100,7 @@ namespace IntelliVerseX.Localization
                 return false;
 
             // Check base language code (e.g., "ar" from "ar-SA")
-            string baseLang = langCode.Split('-')[0].ToLower();
+            string baseLang = langCode.Split('-')[0]?.ToLower();
             return RTL_LANGUAGES.Contains(baseLang);
         }
 

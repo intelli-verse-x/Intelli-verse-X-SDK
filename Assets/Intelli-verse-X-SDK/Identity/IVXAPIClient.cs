@@ -435,8 +435,6 @@ namespace IntelliVerseX.Identity
                 throw new InvalidOperationException("User must be logged in with a wallet address to get wallet balance");
             }
             
-            // TODO: Implement when wallet API is available in APIManager
-            // For now, return a placeholder response
             Debug.LogWarning("[IVXAPIClient] GetWalletBalanceAsync: Wallet API not yet implemented in APIManager. Returning empty response.");
             return await Task.FromResult(new IVXModels.WalletBalanceResponse
             {

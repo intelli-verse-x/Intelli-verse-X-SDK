@@ -1,0 +1,21 @@
+{
+    "name": "IntelliVerseX.Notifications",
+    "rootNamespace": "IntelliVerseX.Notifications",
+    "references": [
+        "IntelliVerseX.Core",
+        "IntelliVerseX.Backend",
+        "NakamaRuntime",
+        "Newtonsoft.Json"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "INTELLIVERSEX_HAS_NAKAMA"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

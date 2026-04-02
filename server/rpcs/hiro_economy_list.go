@@ -14,15 +14,15 @@ import (
 // EconomyList returns the authenticated user's wallet currencies.
 // Called by all 8 SDKs to display the player's balance.
 func EconomyList(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, payload string) (string, error) {
-	userID, ok := ctx.Value(runtime.RUNTIME_CTX_USER_ID).(string)
-	if !ok || userID == "" {
-		return `{"currencies":{}}`, nil
+	userID, err := requireAuthUser(ctx)
+	if err != nil {
+		return "", err
 	}
 
 	account, err := nk.AccountGetId(ctx, userID)
 	if err != nil {
 		logger.Error("hiro_economy_list: account lookup failed for %s: %v", userID, err)
-		return `{"currencies":{}}`, nil
+		return "", runtime.NewError("account lookup failed", 13)
 	}
 
 	wallet := make(map[string]int64)

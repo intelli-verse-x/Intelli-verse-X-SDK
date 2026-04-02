@@ -20,7 +20,7 @@ namespace IntelliVerseX.Editor
     {
         #region Constants
         
-        private const string SDK_VERSION = "5.1.0";
+        private const string SDK_VERSION = "5.8.0";
         private const string PREFS_SETUP_COMPLETE = "IVX_ProjectSetupComplete";
         private const string PREFS_SETUP_VERSION = "IVX_ProjectSetupVersion";
         
@@ -79,10 +79,10 @@ namespace IntelliVerseX.Editor
         #region Menu Items
         
         // REMOVED: Menu items consolidated into SDK Setup Wizard
-        // [MenuItem("IntelliVerse-X SDK/Project Setup && Validation", priority = 10)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Platform Validation tab
+        // [MenuItem("IntelliVerseX/Project Setup && Validation", priority = 10)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Platform Validation tab
         
-        // [MenuItem("IntelliVerse-X SDK/Quick Validate", priority = 11)]
+        // [MenuItem("IntelliVerseX/Quick Validate", priority = 11)]
         public static void QuickValidate()
         {
             var results = RunValidation();
@@ -696,7 +696,7 @@ namespace IntelliVerseX.Editor
                     }
                     else if (setupVersion != SDK_VERSION)
                     {
-                        Debug.Log($"[IVX] SDK updated to {SDK_VERSION}. Run IntelliVerse-X SDK > SDK Setup Wizard to apply new settings.");
+                        Debug.Log($"[IVX] SDK updated to {SDK_VERSION}. Run IntelliVerseX > SDK Setup Wizard to apply new settings.");
                     }
                 };
             }

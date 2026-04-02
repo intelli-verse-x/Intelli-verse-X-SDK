@@ -7,6 +7,10 @@ using UnityEngine;
 
 namespace IntelliVerseX.Hiro
 {
+    /// <summary>
+    /// Generic response envelope returned by all Hiro RPC calls.
+    /// </summary>
+    /// <typeparam name="T">The type of the deserialized payload data.</typeparam>
     [Serializable]
     public class HiroRpcResponse<T>
     {
@@ -27,8 +31,14 @@ namespace IntelliVerseX.Hiro
         private ISession _session;
         private readonly JsonSerializerSettings _jsonSettings;
 
+        /// <summary>When true, RPC request/response details are logged to the Unity console.</summary>
         public static bool EnableDebugLogs { get; set; } = true;
 
+        /// <summary>
+        /// Creates a new Hiro RPC client bound to the given Nakama client and session.
+        /// </summary>
+        /// <param name="client">The Nakama client instance.</param>
+        /// <param name="session">An authenticated Nakama session.</param>
         public IVXHiroRpcClient(IClient client, ISession session)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));

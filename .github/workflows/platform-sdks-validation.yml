@@ -22,11 +22,12 @@ jobs:
           test -f SDKs/unreal/README.md
           echo "Unreal SDK structure OK"
 
-      # Godot validation disabled: using own Nakama server, no Docker/localhost needed
-      # - name: Validate Godot SDK structure
-      #   run: |
-      #     test -f SDKs/godot/addons/intelliversex/plugin.cfg
-      #     ...
+      - name: Validate Godot SDK structure
+        run: |
+          test -f SDKs/godot/addons/intelliversex/plugin.cfg
+          test -f SDKs/godot/addons/intelliversex/core/ivx_manager.gd
+          test -f SDKs/godot/README.md
+          echo "Godot SDK structure OK"
 
       - name: Validate Defold SDK structure
         run: |
@@ -95,12 +96,21 @@ jobs:
 
       - name: Check version consistency across SDKs
         run: |
-          VERSION="5.2.0"
+          VERSION="5.8.0"
           echo "Checking all SDKs declare version $VERSION"
+          FAIL=0
 
-          grep -q "$VERSION" SDKs/unreal/IntelliVerseX.uplugin || echo "WARN: Unreal version mismatch"
-          grep -q "$VERSION" SDKs/godot/addons/intelliversex/plugin.cfg || echo "WARN: Godot version mismatch"
-          grep -q "$VERSION" SDKs/javascript/package.json || echo "WARN: JavaScript version mismatch"
-          grep -q "$VERSION" SDKs/java/build.gradle || echo "WARN: Java version mismatch"
-          grep -q "$VERSION" SDKs/flutter/pubspec.yaml || echo "WARN: Flutter version mismatch"
-          echo "Version check complete"
+          grep -q "$VERSION" SDKs/unreal/IntelliVerseX.uplugin || { echo "FAIL: Unreal version mismatch"; FAIL=1; }
+          grep -q "$VERSION" SDKs/godot/addons/intelliversex/plugin.cfg || { echo "FAIL: Godot version mismatch"; FAIL=1; }
+          grep -q "$VERSION" SDKs/javascript/package.json || { echo "FAIL: JavaScript version mismatch"; FAIL=1; }
+          grep -q "$VERSION" SDKs/java/build.gradle || { echo "FAIL: Java version mismatch"; FAIL=1; }
+          grep -q "$VERSION" SDKs/flutter/pubspec.yaml || { echo "FAIL: Flutter version mismatch"; FAIL=1; }
+          grep -q "$VERSION" SDKs/cpp/CMakeLists.txt || { echo "FAIL: C++ version mismatch"; FAIL=1; }
+          grep -q "$VERSION" SDKs/cocos2dx/CMakeLists.txt || { echo "FAIL: Cocos2d-x version mismatch"; FAIL=1; }
+          grep -q "$VERSION" SDKs/defold/game.project || { echo "FAIL: Defold version mismatch"; FAIL=1; }
+
+          if [ $FAIL -ne 0 ]; then
+            echo "Version consistency check FAILED"
+            exit 1
+          fi
+          echo "Version check passed — all SDKs at $VERSION"

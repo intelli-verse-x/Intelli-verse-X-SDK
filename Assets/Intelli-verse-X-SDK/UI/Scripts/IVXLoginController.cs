@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -292,8 +293,7 @@ namespace IntelliVerseX.UI
             
             try
             {
-                // TODO: Implement Apple Sign In
-                ShowStatus("Apple Sign In coming soon!", Color.yellow);
+                throw new NotSupportedException("Apple Sign In is not yet implemented. See CONTRIBUTING.md to help.");
                 ShowLoadingPanel(false);
             }
             catch (System.Exception ex)
@@ -322,8 +322,7 @@ namespace IntelliVerseX.UI
             
             try
             {
-                // TODO: Implement Google Sign In
-                ShowStatus("Google Sign In coming soon!", Color.yellow);
+                throw new NotSupportedException("Google Sign In is not yet implemented. See CONTRIBUTING.md to help.");
                 ShowLoadingPanel(false);
             }
             catch (System.Exception ex)
@@ -379,7 +378,7 @@ namespace IntelliVerseX.UI
 
         async Task<bool> AuthenticateWithEmail(string email, string password)
         {
-            // TODO: Implement Cognito email/password authentication
+            Debug.LogWarning("[IVXLoginController] Cognito email/password authentication is not yet available.");
             // For now, fallback to device ID authentication
             string deviceId = SystemInfo.deviceUniqueIdentifier;
             return await AuthenticateWithDeviceId(deviceId);

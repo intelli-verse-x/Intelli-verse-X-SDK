@@ -43,8 +43,8 @@ namespace IntelliVerseX.Editor
         }
         
         // REMOVED: Menu item consolidated into SDK Setup Wizard
-        // [MenuItem("IntelliVerse-X SDK/Validate Dependencies", priority = 4)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Dependencies tab
+        // [MenuItem("IntelliVerseX/Validate Dependencies", priority = 4)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Dependencies tab
         public static void ShowValidator()
         {
             var window = GetWindow<IVXDependencyValidator>("Dependency Validator");
@@ -139,7 +139,7 @@ namespace IntelliVerseX.Editor
         private void CheckExternalDependencies()
         {
             // Check Nakama
-            bool nakamaFolder = Directory.Exists(Path.Combine(Application.dataPath, "Packages/Nakama"));
+            bool nakamaFolder = Directory.Exists(Path.Combine(Application.dataPath, "Nakama"));
             bool nakamaAssembly = System.Type.GetType("Nakama.IClient, Nakama") != null;
             report.results.Add(new ValidationResult
             {
@@ -352,11 +352,11 @@ namespace IntelliVerseX.Editor
             // Check SDK assembly definitions
             string[] sdkAsmdefs = new string[]
             {
-                "Assets/_IntelliVerseXSDK/Core/IntelliVerseX.Core.asmdef",
-                "Assets/_IntelliVerseXSDK/Backend/IntelliVerseX.Backend.asmdef",
-                "Assets/_IntelliVerseXSDK/Analytics/IntelliVerseX.Analytics.asmdef",
-                "Assets/_IntelliVerseXSDK/Quiz/IntelliVerseX.Quiz.asmdef",
-                "Assets/_IntelliVerseXSDK/Networking/IntelliVerseX.Networking.asmdef"
+                "Assets/Intelli-verse-X-SDK/Core/IntelliVerseX.Core.asmdef",
+                "Assets/Intelli-verse-X-SDK/Backend/IntelliVerseX.Backend.asmdef",
+                "Assets/Intelli-verse-X-SDK/Analytics/IntelliVerseX.Analytics.asmdef",
+                "Assets/Intelli-verse-X-SDK/Quiz/IntelliVerseX.Quiz.asmdef",
+                "Assets/Intelli-verse-X-SDK/Networking/IntelliVerseX.Networking.asmdef"
             };
             
             foreach (var asmdef in sdkAsmdefs)
@@ -377,7 +377,7 @@ namespace IntelliVerseX.Editor
             }
             
             // Check for duplicate references
-            string backendAsmdef = Path.Combine(Application.dataPath, "_IntelliVerseXSDK/Backend/IntelliVerseX.Backend.asmdef");
+            string backendAsmdef = Path.Combine(Application.dataPath, "Intelli-verse-X-SDK/Backend/IntelliVerseX.Backend.asmdef");
             if (File.Exists(backendAsmdef))
             {
                 string content = File.ReadAllText(backendAsmdef);
@@ -399,12 +399,12 @@ namespace IntelliVerseX.Editor
         {
             string[] requiredFolders = new string[]
             {
-                "Assets/_IntelliVerseXSDK",
-                "Assets/_IntelliVerseXSDK/Core",
-                "Assets/_IntelliVerseXSDK/Backend",
-                "Assets/_IntelliVerseXSDK/Analytics",
-                "Assets/_IntelliVerseXSDK/Quiz",
-                "Assets/_IntelliVerseXSDK/Editor"
+                "Assets/Intelli-verse-X-SDK",
+                "Assets/Intelli-verse-X-SDK/Core",
+                "Assets/Intelli-verse-X-SDK/Backend",
+                "Assets/Intelli-verse-X-SDK/Analytics",
+                "Assets/Intelli-verse-X-SDK/Quiz",
+                "Assets/Intelli-verse-X-SDK/Editor"
             };
             
             foreach (var folder in requiredFolders)
@@ -427,10 +427,10 @@ namespace IntelliVerseX.Editor
             // Check for documentation
             string[] docs = new string[]
             {
-                "Assets/_IntelliVerseXSDK/DEPENDENCIES.md",
-                "Assets/_IntelliVerseXSDK/QUICK_START.md",
-                "Assets/_IntelliVerseXSDK/SDK_OVERVIEW.md",
-                "Assets/_IntelliVerseXSDK/SDK_DEPENDENCIES_MANIFEST.json"
+                "Assets/Intelli-verse-X-SDK/DEPENDENCIES.md",
+                "Assets/Intelli-verse-X-SDK/QUICK_START.md",
+                "Assets/Intelli-verse-X-SDK/SDK_OVERVIEW.md",
+                "Assets/Intelli-verse-X-SDK/SDK_DEPENDENCIES_MANIFEST.json"
             };
             
             foreach (var doc in docs)
@@ -620,7 +620,7 @@ namespace IntelliVerseX.Editor
                 }
             }
             
-            string reportPath = Path.Combine(Application.dataPath, "_IntelliVerseXSDK/dependency_validation_report.txt");
+            string reportPath = Path.Combine(Application.dataPath, "Intelli-verse-X-SDK/dependency_validation_report.txt");
             File.WriteAllText(reportPath, sb.ToString());
             
             Debug.Log($"Report exported to: {reportPath}");

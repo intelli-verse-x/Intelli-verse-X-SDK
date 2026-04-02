@@ -32,6 +32,7 @@ namespace IntelliVerseX.Editor
             "IVX_AuthTest.unity",      // Authentication testing
             "IVX_AdsTest.unity",       // Ads integration testing
             "IVX_DailyQuiz.unity",     // Daily quiz feature
+            "IVX_Clan.unity",          // Clan system testing
             "IVX_Friends.unity",       // Friends system testing
             "IVX_LeaderboardTest.unity", // Leaderboard testing
             "IVX_MoreOfUs.unity",      // More Of Us feature
@@ -231,8 +232,8 @@ namespace IntelliVerseX.Editor
         /// Force re-import of scenes (for testing or manual re-import).
         /// </summary>
         // REMOVED: Menu items consolidated into SDK Setup Wizard
-        // [MenuItem("IntelliVerse-X SDK/Re-import Test Scenes", false, 300)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Test Scenes tab
+        // [MenuItem("IntelliVerseX/Re-import Test Scenes", false, 300)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Test Scenes tab
         
         public static void ForceReimportScenes()
         {
@@ -243,7 +244,7 @@ namespace IntelliVerseX.Editor
                 EditorUtility.DisplayDialog(
                     "Not Available",
                     "Scene import is only available when SDK is installed as a UPM package.\n\n" +
-                    "In development mode, scenes are already in Assets/_IntelliVerseXSDK/",
+                    "In development mode, scenes are already in Assets/Intelli-verse-X-SDK/",
                     "OK"
                 );
                 return;
@@ -266,8 +267,8 @@ namespace IntelliVerseX.Editor
         /// <summary>
         /// Opens the IntelliVerseX Scenes folder in the Project window.
         /// </summary>
-        // [MenuItem("IntelliVerse-X SDK/Open Test Scenes Folder", false, 301)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Test Scenes tab
+        // [MenuItem("IntelliVerseX/Open Test Scenes Folder", false, 301)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Test Scenes tab
         public static void OpenScenesFolder()
         {
             string folderPath = CONSUMER_SCENES_FOLDER;

@@ -11,9 +11,22 @@ using Nakama;
 using Newtonsoft.Json;
 using IntelliVerseX.Core;
 using IntelliVerseX.Identity;
+using IntelliVerseX.Storage;
 
 namespace IntelliVerseX.Backend
 {
+    /// <summary>
+    /// Contract for Nakama REST + realtime (socket). Implemented by <see cref="IVXNakamaManager"/>
+    /// and <see cref="IntelliVerseX.Backend.Nakama.IVXNManager"/> (V2). Prefer injecting references on consumers instead of static singletons.
+    /// </summary>
+    public interface IIVXNakamaRealtimeProvider
+    {
+        IClient Client { get; }
+        ISession Session { get; }
+        ISocket Socket { get; }
+        bool IsInitialized { get; }
+    }
+
     /// <summary>
     /// Base Nakama manager that all games can extend
     /// Provides: Authentication, Identity Sync, Score Submission, Leaderboards, Wallets, Adaptive Rewards
@@ -30,7 +43,7 @@ namespace IntelliVerseX.Backend
     ///       protected override string GetLogPrefix() => "[MYGAME]";
     ///   }
     /// </summary>
-    public abstract class IVXNakamaManager : MonoBehaviour
+    public abstract class IVXNakamaManager : MonoBehaviour, IIVXNakamaRealtimeProvider
     {
         [Header("SDK Configuration")]
         [Tooltip("Leave empty to auto-load from Resources/IntelliVerseX/<GameName>Config")]
@@ -69,11 +82,13 @@ namespace IntelliVerseX.Backend
         protected int _currentWinStreak = 0;
 
         [Header("Initialization")]
-        [SerializeField] public bool _initializeOnStart = false;
+        [SerializeField] private bool _initializeOnStart = false;
 
         // Public accessors
         public IClient Client => _client;
         public ISession Session => _session;
+        /// <summary>Realtime socket; null if connect failed or not yet initialized.</summary>
+        public ISocket Socket => _socket;
         public bool IsInitialized => _isInitialized;
         public virtual int CurrentWinStreak => _currentWinStreak;
 
@@ -211,6 +226,8 @@ namespace IntelliVerseX.Backend
                     return false;
                 }
 
+                await TryConnectRealtimeSocketAsync();
+
                 _isInitialized = true;
                 Debug.Log($"{GetLogPrefix()} ✓ Initialized successfully");
 
@@ -237,8 +254,10 @@ namespace IntelliVerseX.Backend
         {
             try
             {
-                // 1) Try to restore previous Nakama session
-                var authToken = PlayerPrefs.GetString(PREF_AUTH_TOKEN, "");
+                // 1) Try to restore previous Nakama session (migrate legacy plaintext PlayerPrefs if needed)
+                IVXSecureStorage.MigrateFromPlayerPrefs(PREF_AUTH_TOKEN);
+                IVXSecureStorage.MigrateFromPlayerPrefs(PREF_REFRESH_TOKEN);
+                var authToken = IVXSecureStorage.GetString(PREF_AUTH_TOKEN, "");
                 if (!string.IsNullOrEmpty(authToken))
                 {
                     var restoredSession = global::Nakama.Session.Restore(authToken);
@@ -272,11 +291,13 @@ namespace IntelliVerseX.Backend
                 string deviceId = IntelliVerseXIdentity.DeviceId;
                 string username = GetUsername(user);
 
+#if UNITY_EDITOR
                 Debug.Log($"{GetLogPrefix()} Authenticating with Nakama:");
                 Debug.Log($"{GetLogPrefix()}   NakamaUserId: {nakamaUserId}");
                 Debug.Log($"{GetLogPrefix()}   Device ID:    {deviceId}");
                 Debug.Log($"{GetLogPrefix()}   Username:     {username}");
                 Debug.Log($"{GetLogPrefix()}   Game ID:      {_gameId}");
+#endif
 
                 // 3) Use CUSTOM auth with your backend user id
                 var newSession = await _client.AuthenticateCustomAsync(
@@ -285,7 +306,11 @@ namespace IntelliVerseX.Backend
                     create: true
                 );
 
+#if UNITY_EDITOR
                 Debug.Log($"{GetLogPrefix()} ✓ Authenticated (Nakama User ID: {newSession.UserId})");
+#else
+                Debug.Log($"{GetLogPrefix()} ✓ Authenticated");
+#endif
 
                 // 4) Sync user identity with your Nakama RPC
                 await SyncUserIdentity(newSession, username, nakamaUserId, deviceId, _gameId);
@@ -384,9 +409,8 @@ namespace IntelliVerseX.Backend
 
         protected virtual void SaveSession(ISession session)
         {
-            PlayerPrefs.SetString(PREF_AUTH_TOKEN, session.AuthToken);
-            PlayerPrefs.SetString(PREF_REFRESH_TOKEN, session.RefreshToken);
-            PlayerPrefs.Save();
+            IVXSecureStorage.SetString(PREF_AUTH_TOKEN, session.AuthToken);
+            IVXSecureStorage.SetString(PREF_REFRESH_TOKEN, session.RefreshToken);
             Debug.Log($"{GetLogPrefix()} Session saved");
         }
 
@@ -682,12 +706,77 @@ namespace IntelliVerseX.Backend
             Debug.Log($"{GetLogPrefix()} Streak reset");
         }
 
+        /// <summary>
+        /// Creates a Nakama socket and connects it to the current session.
+        /// Failures are logged; <see cref="Socket"/> may remain null (REST still works).
+        /// </summary>
+        protected virtual async Task TryConnectRealtimeSocketAsync()
+        {
+            if (_client == null || _session == null)
+            {
+                return;
+            }
+
+            await DisconnectRealtimeSocketAsync();
+
+            try
+            {
+                _socket = _client.NewSocket();
+                await _socket.ConnectAsync(_session, true);
+                Debug.Log($"{GetLogPrefix()} Realtime socket connected.");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"{GetLogPrefix()} Realtime socket connect failed: {ex.Message}");
+                _socket = null;
+            }
+        }
+
+        /// <summary>Closes and clears the realtime socket.</summary>
+        protected virtual async Task DisconnectRealtimeSocketAsync()
+        {
+            if (_socket == null)
+            {
+                return;
+            }
+
+            try
+            {
+                if (_socket.IsConnected)
+                {
+                    await _socket.CloseAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"{GetLogPrefix()} Socket close: {ex.Message}");
+            }
+            finally
+            {
+                _socket = null;
+            }
+        }
+
         protected virtual void OnDestroy()
         {
-            if (_socket != null && _socket.IsConnected)
+            if (_socket == null)
             {
-                _socket.CloseAsync();
+                return;
             }
+
+            try
+            {
+                if (_socket.IsConnected)
+                {
+                    _ = _socket.CloseAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"{GetLogPrefix()} OnDestroy socket: {ex.Message}");
+            }
+
+            _socket = null;
         }
     }
 }

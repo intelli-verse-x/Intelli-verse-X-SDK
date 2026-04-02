@@ -71,6 +71,9 @@ nav:
     - Java / Android: platforms/java.md
     - Flutter / Dart: platforms/flutter.md
     - Web3: platforms/web3.md
+    - WebGL / Web: platforms/webgl.md
+    - XR / VR / AR: platforms/xr-vr-ar.md
+    - Consoles (PS5/Xbox/Switch): platforms/console.md
   - Configuration:
     - configuration/index.md
     - Game Configuration: configuration/game-config.md
@@ -82,7 +85,11 @@ nav:
     - Core: modules/core.md
     - Identity & Authentication: modules/identity.md
     - Backend (Nakama): modules/backend.md
+    - Discord Social SDK: modules/discord.md
     - Social & Friends: modules/social.md
+    - Satori Analytics: modules/satori.md
+    - Multiplayer & Game Modes: modules/multiplayer.md
+    - Wallet & Economy: modules/wallet.md
     - Monetization: modules/monetization.md
     - Analytics: modules/analytics.md
     - Localization: modules/localization.md
@@ -91,12 +98,26 @@ nav:
     - Quiz System: modules/quiz.md
     - UI Components: modules/ui.md
     - More Of Us: modules/more-of-us.md
+    - AI Voice & Host: modules/ai.md
+    - AI LLM Stack: modules/ai-llm-stack.md
+    - Hiro Systems: modules/hiro.md
+    - Platform Utilities: modules/platform.md
+    - Demo UIs: modules/demos.md
+  - Integration:
+    - Master Integration Prompt: MASTER_INTEGRATION_PROMPT.md
+    - Feature Coverage Matrix: FEATURE_COVERAGE_MATRIX.md
   - API Reference:
     - api/index.md
     - Core API: api/core.md
     - Identity API: api/identity.md
     - Backend API: api/backend.md
     - Social API: api/social.md
+    - Discord API: api/discord.md
+    - AI API: api/ai.md
+    - Hiro API: api/hiro.md
+    - Multiplayer API: api/multiplayer.md
+    - Satori API: api/satori.md
+    - Platform API: api/platform.md
     - Monetization API: api/monetization.md
     - Localization API: api/localization.md
     - Analytics API: api/analytics.md
@@ -119,19 +140,46 @@ nav:
     - More Of Us Demo: samples/more-of-us-demo.md
     - Daily Quiz Demo: samples/daily-quiz-demo.md
     - Analytics Demo: samples/analytics-demo.md
+    - Discord Demo: samples/discord-demo.md
+    - AI Voice Demo: samples/ai-voice-demo.md
+    - AI NPC Demo: samples/ai-npc-demo.md
+    - AI Content Demo: samples/ai-content-demo.md
+    - Hiro Demo: samples/hiro-demo.md
+    - Multiplayer Demo: samples/multiplayer-demo.md
+    - Satori Demo: samples/satori-demo.md
   - Guides:
     - guides/index.md
     - Authentication Flow: guides/auth-flow.md
     - Nakama Integration: guides/nakama-integration.md
-    - Ad Integration: guides/ad-integration.md
-    - Localization Setup: guides/localization-setup.md
-    - Migration Guide: guides/migration.md
+    - AI Getting Started: guides/ai-getting-started.md
+    - Satori Analytics & Live-Ops: guides/satori-integration.md
+    - Discord Integration: guides/discord-integration.md
+    - Hiro Live-Ops Integration: guides/hiro-integration.md
+    - Multiplayer Integration: guides/multiplayer-integration.md
+    - Wallet & Economy Integration: guides/wallet-integration.md
     - Leaderboard Integration: guides/leaderboard-integration.md
     - Friends Integration: guides/friends-integration.md
+    - Ad Integration: guides/ad-integration.md
+    - Localization Setup: guides/localization-setup.md
+    - Quiz Content Pipeline: guides/quiz-content-pipeline.md
     - Theming: guides/theming.md
     - Testing: guides/testing.md
     - Privacy: guides/privacy.md
+    - Migration Guide: guides/migration.md
     - Custom Modules: guides/custom-modules.md
+    - Monetization Strategy: guides/monetization-strategy.md
+    - Offerwall Integration: guides/offerwall-integration.md
+    - IAP Integration: guides/iap-integration.md
+    - AI Agent Skills: guides/ai-agent-skills.md
+    - Skills:
+      - guides/skills/index.md
+      - SDK Setup: guides/skills/sdk-setup.md
+      - Monetization: guides/skills/monetization.md
+      - Multiplayer: guides/skills/multiplayer.md
+      - AI Integration: guides/skills/ai-integration.md
+      - Live Operations: guides/skills/live-ops.md
+      - Quiz Content: guides/skills/quiz-content.md
+      - Cross-Platform: guides/skills/cross-platform.md
   - Troubleshooting:
     - troubleshooting/index.md
     - Build Errors: troubleshooting/build-errors.md

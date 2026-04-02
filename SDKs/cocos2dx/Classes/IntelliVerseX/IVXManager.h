@@ -13,9 +13,12 @@ namespace IntelliVerseX {
 
 class IVXManager {
 public:
-    static constexpr const char* SDK_VERSION = "5.2.0";
+    static constexpr const char* SDK_VERSION = "5.8.0";
 
     static IVXManager& getInstance();
+
+    /// Validates host, port (1–65535), and server key. Throws std::invalid_argument on failure.
+    static void validateConfig(const IVXConfig& config);
 
     void initialize(const IVXConfig& config);
     bool isInitialized() const { return _initialized; }

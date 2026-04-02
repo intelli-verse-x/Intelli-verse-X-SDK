@@ -1,3 +1,4 @@
+using IntelliVerseX.Backend;
 using IntelliVerseX.Core;
 using Nakama;
 using Newtonsoft.Json;
@@ -13,7 +14,7 @@ using UnityEngine;
 
 namespace IntelliVerseX.Backend.Nakama
 {
-    public sealed class IVXNManager : MonoBehaviour
+    public sealed class IVXNManager : MonoBehaviour, IIVXNakamaRealtimeProvider
     {
         #region Configuration
         public static IVXNManager Instance { get; private set; }
@@ -48,15 +49,18 @@ namespace IntelliVerseX.Backend.Nakama
 
         private IClient _client;
         private ISession _session;
+        private ISocket _socket;
         private bool _isInitialized;
         private bool _isInitializing;
 
         private const string PREF_NAKAMA_AUTH_TOKEN = "ivxn.nakama.auth_token";
         private const string PREF_NAKAMA_REFRESH_TOKEN = "ivxn.nakama.refresh_token";
-        private const string PP_REMEMBER = "auth.remember";
+        private const string PP_REMEMBER = "IVX_auth.remember";
 
         public IClient Client => _client;
         public ISession Session => _session;
+        /// <summary>Realtime socket; null if connect failed or not connected yet.</summary>
+        public ISocket Socket => _socket;
         public bool IsInitialized => _isInitialized;
         public bool IsInitializing => _isInitializing;
         public string GameId => _gameId;
@@ -145,6 +149,8 @@ namespace IntelliVerseX.Backend.Nakama
 
         private void OnDestroy()
         {
+            DisconnectRealtimeSocketSync();
+
             IVXNProfileManager.OnProfileLoaded -= HandleProfileLoaded;
             IVXNProfileManager.OnProfileUpdated -= HandleProfileUpdated;
             IVXNProfileManager.OnProfileError -= HandleProfileError;
@@ -239,6 +245,78 @@ private void CreateClientIfNeeded()
 
         #endregion
 
+        #region Realtime socket
+
+        private async Task TryConnectRealtimeSocketAsync()
+        {
+            if (_client == null || _session == null)
+            {
+                return;
+            }
+
+            await DisconnectRealtimeSocketAsync();
+
+            try
+            {
+                _socket = _client.NewSocket();
+                await _socket.ConnectAsync(_session, true);
+                Log("Realtime socket connected.");
+            }
+            catch (Exception ex)
+            {
+                Log($"Realtime socket connect failed: {ex.Message}", isWarning: true);
+                _socket = null;
+            }
+        }
+
+        private async Task DisconnectRealtimeSocketAsync()
+        {
+            if (_socket == null)
+            {
+                return;
+            }
+
+            try
+            {
+                if (_socket.IsConnected)
+                {
+                    await _socket.CloseAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Realtime socket close: {ex.Message}", isWarning: true);
+            }
+            finally
+            {
+                _socket = null;
+            }
+        }
+
+        private void DisconnectRealtimeSocketSync()
+        {
+            if (_socket == null)
+            {
+                return;
+            }
+
+            try
+            {
+                if (_socket.IsConnected)
+                {
+                    _ = _socket.CloseAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Realtime socket close (sync): {ex.Message}", isWarning: true);
+            }
+
+            _socket = null;
+        }
+
+        #endregion
+
         #region Public API
 
         /// <summary>
@@ -249,6 +327,7 @@ private void CreateClientIfNeeded()
             if (_isInitialized && !forceReauth && _session != null && !_session.IsExpired)
             {
                 Log("Already initialized and session is valid.");
+                await TryConnectRealtimeSocketAsync();
                 SafeInvokeOnInitialized(true);
                 return true;
             }
@@ -298,6 +377,8 @@ private void CreateClientIfNeeded()
                     // Background sync (non-blocking)
                     SyncPlayerMetadataInBackground();
 
+                    await TryConnectRealtimeSocketAsync();
+
                     return true;
                 }
 
@@ -343,6 +424,8 @@ private void CreateClientIfNeeded()
                 // Step 6: Sync player metadata + geolocation
                 await SyncPlayerMetadataAndGeolocationAsync(userSession);
 
+                await TryConnectRealtimeSocketAsync();
+
                 return true;
             }
             catch (Exception ex)
@@ -377,6 +460,8 @@ private void CreateClientIfNeeded()
 
         public void ClearNakamaSession()
         {
+            DisconnectRealtimeSocketSync();
+
             _session = null;
             _isInitialized = false;
             _geoLocationCaptured = false;
@@ -1028,8 +1113,10 @@ private void CreateClientIfNeeded()
 
         private async Task<ISession> AuthenticateWithRetryAsync(string customId, string username)
         {
-            // per-attempt timeout (ms) - keeps attempts from hanging indefinitely. Adjustable.
             const int attemptTimeoutMs = 20000;
+
+            var session = await TryAuthenticateAsync(customId, username, create: false, attemptTimeoutMs);
+            if (session != null) return session;
 
             for (int attempt = 1; attempt <= maxRetryAttempts; attempt++)
             {
@@ -1046,11 +1133,10 @@ private void CreateClientIfNeeded()
                     if (completed != authTask)
                     {
                         Log($"Authentication attempt {attempt} timed out after {attemptTimeoutMs}ms", isWarning: true);
-                        // fall through to retry/backoff
                     }
                     else
                     {
-                        var session = await authTask; // will rethrow if faulted
+                        session = await authTask;
                         if (session != null)
                         {
                             Log($"✓ Authentication successful (attempt {attempt})");
@@ -1060,9 +1146,14 @@ private void CreateClientIfNeeded()
                         Log($"Attempt {attempt} returned null session", isWarning: true);
                     }
                 }
+                catch (ApiResponseException apiEx) when (apiEx.StatusCode == 409 || apiEx.GrpcStatusCode == 6)
+                {
+                    Log($"Attempt {attempt} username conflict (409). Retrying without username...", isWarning: true);
+                    var fallback = await TryAuthenticateAsync(customId, null, create: true, attemptTimeoutMs);
+                    if (fallback != null) return fallback;
+                }
                 catch (ApiResponseException apiEx)
                 {
-                    // Nakama-specific HTTP/gRPC error — log status codes for diagnosis
                     Log($"Attempt {attempt} ApiResponseException: Status={apiEx.StatusCode}, Grpc={apiEx.GrpcStatusCode}, Message={apiEx.Message}", isWarning: true);
                     LogVerbose($"ApiResponseException stack: {apiEx}");
                 }
@@ -1074,7 +1165,6 @@ private void CreateClientIfNeeded()
 
                 if (attempt < maxRetryAttempts)
                 {
-                    // exponential backoff with small jitter
                     var baseDelay = retryBaseDelaySeconds * Math.Pow(2, attempt - 1);
                     var jitter = UnityEngine.Random.Range(0f, 0.25f * (float)baseDelay);
                     var delay = (int)((baseDelay + jitter) * 1000);
@@ -1084,6 +1174,34 @@ private void CreateClientIfNeeded()
             }
 
             Log("Authentication failed after all retry attempts.", isError: true);
+            return null;
+        }
+
+        private async Task<ISession> TryAuthenticateAsync(string customId, string username, bool create, int timeoutMs)
+        {
+            try
+            {
+                var authTask = _client.AuthenticateCustomAsync(id: customId, username: username, create: create);
+                var completed = await Task.WhenAny(authTask, Task.Delay(timeoutMs));
+                if (completed == authTask)
+                {
+                    var session = await authTask;
+                    if (session != null)
+                    {
+                        Log($"✓ Auth succeeded (create={create}, usernameProvided={username != null})");
+                        return session;
+                    }
+                }
+            }
+            catch (ApiResponseException apiEx) when (apiEx.StatusCode == 404 || apiEx.GrpcStatusCode == 5)
+            {
+                LogVerbose($"TryAuthenticateAsync: account not found (create={create})");
+            }
+            catch (Exception ex)
+            {
+                LogVerbose($"TryAuthenticateAsync failed: {ex.Message}");
+            }
+
             return null;
         }
 
@@ -1636,6 +1754,11 @@ private void CreateClientIfNeeded()
 
         private void SafeInvokeOnInitialized(bool success)
         {
+            if (success)
+            {
+                InitializeHiroAndSatori();
+            }
+
             try
             {
                 OnInitialized?.Invoke(success);
@@ -1643,6 +1766,47 @@ private void CreateClientIfNeeded()
             catch (Exception ex)
             {
                 Log($"Error in OnInitialized: {ex.Message}", isWarning: true);
+            }
+        }
+
+        private void InitializeHiroAndSatori()
+        {
+            if (_client == null || _session == null) return;
+
+            try
+            {
+                var hiro = IntelliVerseX.Hiro.IVXHiroCoordinator.Instance;
+                if (hiro != null && !hiro.IsInitialized)
+                {
+                    hiro.InitializeSystems(_client, _session);
+                    Log("Hiro systems auto-initialized.");
+                }
+                else if (hiro != null)
+                {
+                    hiro.RefreshSession(_session);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Hiro auto-init failed: {ex.Message}", isWarning: true);
+            }
+
+            try
+            {
+                var satori = IntelliVerseX.Satori.IVXSatoriClient.Instance;
+                if (satori != null && !satori.IsInitialized)
+                {
+                    satori.Initialize(_client, _session);
+                    Log("Satori client auto-initialized.");
+                }
+                else if (satori != null)
+                {
+                    satori.RefreshSession(_session);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Satori auto-init failed: {ex.Message}", isWarning: true);
             }
         }
 
@@ -2104,13 +2268,17 @@ private void CreateClientIfNeeded()
                         return culture.Name; // e.g., "en-US", "ja-JP"
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning($"[IVXNManager] Operation failed: {ex.Message}");
+                }
 
                 // Fallback to Unity's system language
                 return lang.ToString();
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.LogWarning($"[IVXNManager] Operation failed: {ex.Message}");
                 return "en-US";
             }
         }
@@ -2134,7 +2302,10 @@ private void CreateClientIfNeeded()
                         return tz.StandardName;
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[IVXNManager] Operation failed: {ex.Message}");
+            }
 
             try
             {
@@ -2143,8 +2314,9 @@ private void CreateClientIfNeeded()
                 var sign = offset >= TimeSpan.Zero ? "+" : "-";
                 return $"UTC{sign}{Math.Abs(offset.Hours):D2}:{Math.Abs(offset.Minutes):D2}";
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.LogWarning($"[IVXNManager] Operation failed: {ex.Message}");
                 return "UTC";
             }
         }

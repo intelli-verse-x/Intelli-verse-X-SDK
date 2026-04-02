@@ -11,12 +11,6 @@ import (
 	"github.com/heroiclabs/nakama-common/runtime"
 )
 
-type getWalletRequest struct {
-	DeviceID   string `json:"device_id"`
-	GameID     string `json:"game_id"`
-	WalletType string `json:"wallet_type"`
-}
-
 type updateWalletRequest struct {
 	DeviceID   string `json:"device_id"`
 	GameID     string `json:"game_id"`
@@ -28,14 +22,15 @@ type updateWalletRequest struct {
 // GetWalletBalance returns the total coin balance for the authenticated user.
 // Unity SDK calls this to display the player's wallet.
 func GetWalletBalance(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, payload string) (string, error) {
-	userID, ok := ctx.Value(runtime.RUNTIME_CTX_USER_ID).(string)
-	if !ok || userID == "" {
-		return `{"balance":0}`, nil
+	userID, err := requireAuthUser(ctx)
+	if err != nil {
+		return "", err
 	}
 
 	account, err := nk.AccountGetId(ctx, userID)
 	if err != nil {
-		return `{"balance":0}`, nil
+		logger.Error("get_wallet_balance: account lookup failed for %s: %v", userID, err)
+		return "", runtime.NewError("account lookup failed", 13) // INTERNAL
 	}
 
 	wallet := make(map[string]int64)
@@ -52,14 +47,18 @@ func GetWalletBalance(ctx context.Context, logger runtime.Logger, db *sql.DB, nk
 // UpdateWalletBalance increments or sets the wallet balance.
 // Unity SDK calls this for reward payouts and purchase deductions.
 func UpdateWalletBalance(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, payload string) (string, error) {
-	userID, ok := ctx.Value(runtime.RUNTIME_CTX_USER_ID).(string)
-	if !ok || userID == "" {
-		return `{"success":false}`, nil
+	userID, err := requireAuthUser(ctx)
+	if err != nil {
+		return "", err
 	}
 
 	var req updateWalletRequest
 	if err := json.Unmarshal([]byte(payload), &req); err != nil {
-		return `{"success":false}`, nil
+		return "", runtime.NewError("invalid payload", 3)
+	}
+
+	if req.Amount < 0 {
+		return "", runtime.NewError("amount must be non-negative", 3)
 	}
 
 	changeset := map[string]int64{"coins": req.Amount}
@@ -72,10 +71,10 @@ func UpdateWalletBalance(ctx context.Context, logger runtime.Logger, db *sql.DB,
 		}
 	}
 
-	_, _, err := nk.WalletUpdate(ctx, userID, changeset, nil, true)
+	_, _, err = nk.WalletUpdate(ctx, userID, changeset, nil, true)
 	if err != nil {
 		logger.Error("update_wallet_balance: failed for %s: %v", userID, err)
-		return `{"success":false}`, nil
+		return "", runtime.NewError("wallet update failed", 13)
 	}
 
 	return `{"success":true}`, nil

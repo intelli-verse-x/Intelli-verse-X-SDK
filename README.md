@@ -3,7 +3,7 @@
 > **Complete modular game development SDK** — Integrate Auth, Identity, Analytics, Backend (Nakama), Social/Referrals, Monetization, and more into your games across **10 platforms**.
 
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-5.1.0-orange.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-5.8.0-orange.svg)](CHANGELOG.md)
 [![Documentation](https://img.shields.io/badge/Docs-Online-blue.svg)](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/)
 [![openupm](https://img.shields.io/npm/v/com.intelliversex.sdk?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.intelliversex.sdk)
 
@@ -52,63 +52,88 @@ Each SDK wraps the official [Nakama client library](https://heroiclabs.com/docs/
 | Hiro Systems | Yes | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC |
 | NFT / Token Queries | -- | -- | -- | -- | -- | -- | -- | -- | -- | Yes |
 | Token Gating | -- | -- | -- | -- | -- | -- | -- | -- | -- | Yes |
-| Satori Analytics | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| Discord Social SDK | Yes | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub |
+| Satori Analytics | Yes | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub |
+| AI Voice / Host | Yes | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub |
+| AI LLM Stack (6 modules) | Yes | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub |
 | Monetization (Ads/IAP) | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| XR Platform Detection | Yes | Yes | Yes | -- | -- | WebXR | Yes | -- | -- | -- |
+| Console Adapters (PS5/Xbox/Switch) | Yes | Yes | -- | -- | -- | -- | -- | -- | -- | -- |
 | Localization | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 | Social / Friends | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 | Quiz System | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| Retention / Streaks | Yes | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC |
+| Spin Wheel / Engagement | Yes | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC |
+| Platform Optimizer | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 
 **Yes** = Full native support | **RPC** = Available via server RPC calls | **--** = Planned
+
+### Deployment Targets
+
+Beyond the 10 engine SDKs, the following device/platform targets are supported:
+
+| Target | Engines | Key Features |
+|--------|---------|-------------|
+| **Meta Quest (VR)** | Unity, Unreal, Godot, C++ | Hand/eye tracking, passthrough, XR input adapter |
+| **SteamVR / OpenXR** | Unity, Unreal, Godot, C++ | Generic OpenXR, controller + hand input |
+| **Apple Vision Pro** | Unity | PolySpatial, gaze input, spatial UI |
+| **PSVR2** | Unity, Unreal | Eye tracking, adaptive triggers, passthrough |
+| **PS5 / Xbox Series / Switch** | Unity, Unreal | Console adapter pattern (NDA SDKs), platform auth, achievements, presence |
+| **WebGL / Browser** | Unity, JS/TS | WebXR, browser ads (AdSense), IndexedDB cache |
+| **AR (ARKit / ARCore)** | Unity, Unreal | Plane detection, image tracking, light estimation |
+
+📖 [XR/VR/AR Guide](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/platforms/xr-vr-ar/) | [Console Guide](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/platforms/console/) | [WebGL Guide](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/platforms/webgl/)
 
 ---
 
 ## Quick Start (Unity)
 
-### Option A: OpenUPM (recommended)
+### 1. Install
 
-Add the [OpenUPM](https://openupm.com) scoped registry and dependency to `Packages/manifest.json`:
-
-```json
-{
-  "scopedRegistries": [
-    {
-      "name": "package.openupm.com",
-      "url": "https://package.openupm.com",
-      "scopes": ["com.intelliversex"]
-    }
-  ],
-  "dependencies": {
-    "com.intelliversex.sdk": "5.1.0"
-  }
-}
-```
-
-Or use the OpenUPM CLI: `openupm add com.intelliversex.sdk`
-
-### Option B: Git URL
+Add to `Packages/manifest.json`:
 
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/Intelli-verse-X-SDK"
+    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Assets/Intelli-verse-X-SDK#v5.8.0"
   }
 }
 ```
+
+### 2. One-Drop Setup
+
+1. Run **IntelliVerseX > Generate All Prefabs** from the menu bar
+2. Drag `IVX_Bootstrap.prefab` into your first scene
+3. Configure the Bootstrap Config asset with your server details
+
+### 3. Listen for Ready
 
 ```csharp
 using UnityEngine;
-using IntelliVerseX.Core;
-using IntelliVerseX.Identity;
+using IntelliVerseX.Bootstrap;
 
 public class GameInit : MonoBehaviour
 {
     void Start()
     {
-        IntelliVerseXUserIdentity.InitializeDevice();
-        IVXLogger.Log("IntelliVerseX SDK Ready!");
+        IVXBootstrap.OnBootstrapComplete += success =>
+        {
+            Debug.Log($"IntelliVerseX SDK Ready! Auth: {success}");
+            Debug.Log($"User: {IVXBootstrap.Instance.UserId}");
+        };
     }
 }
 ```
+
+> **No server yet?** The SDK works in offline mode with mock data — press Play and explore the 16 built-in demo UIs through the Demo Hub.
+
+### 4. Setting Up Nakama (backend)
+
+```bash
+docker run -d --name nakama -p 7349:7349 -p 7350:7350 -p 7351:7351 heroiclabs/nakama
+```
+
+Or use [Heroic Labs Cloud](https://heroiclabs.com/) for managed hosting.
 
 For other platforms, see the [Getting Started](#client-libraries) links above.
 
@@ -122,20 +147,21 @@ All IntelliVerseX SDKs share a consistent architecture:
 Your Game
     |
     v
-+----------------------------------------------+
-|          IntelliVerseX SDK (IVXManager)       |
-|  Auth | Profile | Wallet | Leaderboards | RPC |
-+----------------------------------------------+
-    |
++-----------------------------------------------------------+
+|              IntelliVerseX SDK (IVXManager)                |
+|  Auth | Wallet | Social | Leaderboards | Quiz | Ads | IAP |
++-----------------------------------------------------------+
+    |                           |
+    v                           v
++---------------------------+  +----------------------------+
+| Nakama Client (per-plat)  |  |  IntelliVerseX AI Backend  |
++---------------------------+  |  Voice | Host | Entitlement |
+    |                          +----------------------------+
     v
-+----------------------------------------------+
-|       Nakama Client Library (per-platform)    |
-+----------------------------------------------+
-    |
-    v
-+----------------------------------------------+
-|         Nakama Server + Hiro + Satori        |
-+----------------------------------------------+
++-----------------------------------------------------------+
+|   Nakama Server + Hiro (Economy, Streaks, Spin Wheel,     |
+|   Offerwalls, Retention) + Satori (Analytics, A/B Tests)  |
++-----------------------------------------------------------+
 ```
 
 Each platform SDK provides:
@@ -156,7 +182,8 @@ Each platform SDK provides:
 ```
 Intelli-verse-X-Unity-SDK/
 |-- Assets/
-|   +-- Intelli-verse-X-SDK/      # Unity SDK (UPM Package)
+|   |-- Intelli-verse-X-SDK/      # Unity SDK (UPM Package)
+|   +-- _IntelliVerseXSDK/        # AI, Hiro, Satori, Platform, Demos
 |-- SDKs/
 |   |-- unreal/                    # Unreal Engine 5 Plugin
 |   |-- godot/                     # Godot 4 Addon
@@ -204,6 +231,85 @@ Quick links:
 - [API Reference](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/api/core/)
 - [Troubleshooting](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/troubleshooting/faq/)
 - [Changelog](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/changelog/)
+
+---
+
+## AI Agent Skills
+
+Automate your SDK integration with 7 purpose-built AI agent skills. Works with Cursor, Windsurf, Claude Code, Devin, OpenAI Codex, and any agent that reads `SKILL.md` files.
+
+| Skill | What It Does | Trigger Phrases |
+|-------|-------------|----------------|
+| **ivx-sdk-setup** | Install and bootstrap the SDK on any platform | "Set up IntelliVerseX" |
+| **ivx-monetization** | Wire ads, IAP, offerwalls, and revenue strategy | "Monetize my game" |
+| **ivx-multiplayer** | Add lobbies, matchmaking, real-time networking | "Add multiplayer" |
+| **ivx-ai-integration** | Integrate AI voice, NPC dialog, content gen | "Add AI host" |
+| **ivx-live-ops** | Set up Hiro + Satori (33+ systems) | "Add daily rewards" |
+| **ivx-quiz-content** | Build quiz pipelines with S3 + LLM | "Set up daily quiz" |
+| **ivx-cross-platform** | Port features between 10 engines | "Port to Godot" |
+
+### Install
+
+**Cursor / Windsurf:** Clone the repo — skills auto-activate from `.cursor/skills/`.
+
+**Claude Code:**
+```bash
+/plugin marketplace add https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK
+```
+
+**SkillsGate (18+ AI agents):**
+```bash
+skillsgate add @intelliversex/ivx-sdk-setup @intelliversex/ivx-monetization @intelliversex/ivx-multiplayer @intelliversex/ivx-ai-integration @intelliversex/ivx-live-ops @intelliversex/ivx-quiz-content @intelliversex/ivx-cross-platform
+```
+
+📖 [Full Skills Documentation](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/guides/ai-agent-skills/)
+
+---
+
+## MCP Server (Nakama + Hiro + Satori)
+
+The IntelliVerseX MCP server exposes 50+ tools for managing your game backend directly from AI coding agents.
+
+**Capabilities:**
+- **Nakama:** Health check, RPC calls, build/deploy, restart, auth, account management
+- **Hiro:** Config get/set for economy, achievements, energy, streaks, store, challenges, tutorials, unlockables
+- **Satori:** Config get/set, feature flags, A/B experiments, live events, messages
+- **Player Ops:** Inspect, search, wallet view/grant/reset, inventory grant, mailbox
+- **Analytics:** Events timeline, metrics, alerts, webhooks, data lake
+- **Infra:** Storage CRUD, config import/export, cache invalidation, taxonomy management
+
+### Connect
+
+**Cursor / Windsurf (MCP settings):**
+```json
+{
+  "mcpServers": {
+    "intelliversex": {
+      "url": "https://mcp.intelli-verse-x.ai/api/mcp"
+    }
+  }
+}
+```
+
+> **Self-hosted?** If running Nakama locally, use the stdio transport instead:
+> ```json
+> {
+>   "mcpServers": {
+>     "intelliversex": {
+>       "command": "npx",
+>       "args": ["@intelliversex/mcp-server"],
+>       "env": { "NAKAMA_HOST": "127.0.0.1", "NAKAMA_PORT": "7350", "NAKAMA_SERVER_KEY": "defaultkey" }
+>     }
+>   }
+> }
+> ```
+
+**Smithery:**
+```bash
+npx smithery install @intelliversex/game-sdk
+```
+
+📖 [MCP Server Documentation](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/modules/backend/)
 
 ---
 

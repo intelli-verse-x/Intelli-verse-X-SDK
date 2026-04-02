@@ -19,7 +19,7 @@ namespace IntelliVerseX.Editor
     /// </summary>
     public class IVXDependencyInstaller : EditorWindow
     {
-        private const string MANIFEST_PATH = "Assets/_IntelliVerseXSDK/SDK_DEPENDENCIES_MANIFEST.json";
+        private const string MANIFEST_PATH = "Assets/Intelli-verse-X-SDK/SDK_DEPENDENCIES_MANIFEST.json";
         
         private DependencyManifest manifest;
         private Vector2 scrollPosition;
@@ -83,8 +83,8 @@ namespace IntelliVerseX.Editor
         }
         
         // REMOVED: Menu item consolidated into SDK Setup Wizard
-        // [MenuItem("IntelliVerse-X SDK/Install All Dependencies", priority = 3)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Dependencies tab
+        // [MenuItem("IntelliVerseX/Install All Dependencies", priority = 3)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Dependencies tab
         public static void ShowInstaller()
         {
             var window = GetWindow<IVXDependencyInstaller>("Dependency Installer");

@@ -7,7 +7,6 @@ using UnityEngine.SceneManagement;
 using TMPro;
 using IntelliVerseX.Identity;
 using IntelliVerseX.Core;
-using IntelliVerseX.Backend;
 #if DOTWEEN_ENABLED || DOTWEEN
 using DG.Tweening;
 #endif
@@ -96,13 +95,11 @@ namespace IntelliVerseX.Auth.UI
         private int _panelTransitionVersion;
 
         private const string PP_REMEMBER = "IVX_auth.remember";
+        private const string LEGACY_PP_REMEMBER = "auth.remember";
         private const string PP_LAST_EMAIL = "IVX_auth.last_email";
         private const string PP_PERSIST_FLAG = "IVX_auth.persisted";
         private const string PP_USER_ID = "IVX_auth.user_id";
         private const string PP_LOGIN_TYPE = "IVX_auth.login_type";
-
-        private const string DEFAULT_FROM_DEVICE = "machine";
-        private const string DEFAULT_MAC = "00:1A:2B:3C:4D:5E";
 
         #endregion
 
@@ -161,10 +158,6 @@ namespace IntelliVerseX.Auth.UI
             _panel.SetActive(true);
             FadeIn();
             SetStatus("");
-            
-            // Start IP geolocation fetch in background (non-blocking)
-            // This pre-fetches location so it's ready when login completes
-            StartIPGeolocationBackground();
         }
 
         /// <summary>
@@ -264,9 +257,16 @@ namespace IntelliVerseX.Auth.UI
 
         private void SetupRememberMe()
         {
+            if (PlayerPrefs.HasKey(LEGACY_PP_REMEMBER) && !PlayerPrefs.HasKey(PP_REMEMBER))
+            {
+                PlayerPrefs.SetInt(PP_REMEMBER, PlayerPrefs.GetInt(LEGACY_PP_REMEMBER, 1));
+                PlayerPrefs.Save();
+            }
+
             if (!PlayerPrefs.HasKey(PP_REMEMBER))
             {
                 PlayerPrefs.SetInt(PP_REMEMBER, 1);
+                PlayerPrefs.SetInt(LEGACY_PP_REMEMBER, 1);
                 PlayerPrefs.Save();
             }
 
@@ -347,12 +347,14 @@ namespace IntelliVerseX.Auth.UI
             {
                 PlayerPrefs.SetString(PP_LAST_EMAIL, email);
                 PlayerPrefs.SetInt(PP_REMEMBER, 1);
+                PlayerPrefs.SetInt(LEGACY_PP_REMEMBER, 1);
                 PlayerPrefs.Save();
             }
             else
             {
                 PlayerPrefs.DeleteKey(PP_LAST_EMAIL);
                 PlayerPrefs.SetInt(PP_REMEMBER, 0);
+                PlayerPrefs.SetInt(LEGACY_PP_REMEMBER, 0);
                 PlayerPrefs.Save();
             }
 
@@ -366,12 +368,13 @@ namespace IntelliVerseX.Auth.UI
 
             try
             {
+                DeviceInfoHelper.GetLoginDeviceFields(out string fromDevice, out string macForLogin);
                 var req = new APIManager.LoginRequest
                 {
                     email = email,
                     password = password,
-                    fromDevice = DEFAULT_FROM_DEVICE,
-                    macAddress = DEFAULT_MAC
+                    fromDevice = fromDevice,
+                    macAddress = macForLogin
                 };
 
                 using (var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(15)))
@@ -400,6 +403,11 @@ namespace IntelliVerseX.Auth.UI
                             }
                             PlayerPrefs.Save();
                         }
+                        else
+                        {
+                            PlayerPrefs.SetInt(PP_PERSIST_FLAG, 0);
+                            PlayerPrefs.Save();
+                        }
 
                         SetStatus("Signed in! Syncing player data...");
 
@@ -413,9 +421,6 @@ namespace IntelliVerseX.Auth.UI
                         {
                             SetStatus("Continuing to game...");
                         }
-
-                        // Sync IP geolocation to player profile (non-blocking)
-                        SyncIPGeolocationToProfile();
 
                         var result = BuildAuthResultFromLoginResponse(resp);
                         _canvasAuth?.NotifyAuthSuccess(result);
@@ -460,7 +465,18 @@ namespace IntelliVerseX.Auth.UI
                 var manager = IntelliVerseX.Backend.Nakama.IVXNManager.Instance;
                 if (manager == null)
                 {
-                    Debug.LogWarning($"[{nameof(IVXPanelLogin)}] No IVXNManager in scene; skipping Nakama init.");
+                    Debug.Log($"[{nameof(IVXPanelLogin)}] No IVXNManager in scene; creating one for login handoff.");
+                    var managerObject = new GameObject("IVXNManager");
+                    DontDestroyOnLoad(managerObject);
+                    manager = managerObject.AddComponent<IntelliVerseX.Backend.Nakama.IVXNManager>();
+                    await Task.Yield();
+                }
+
+                if (global::UserSessionManager.Current == null)
+                {
+                    Debug.LogError(
+                        $"[{nameof(IVXPanelLogin)}] User session is not populated after login. Cannot initialize Nakama. " +
+                        "Ensure APIManager.LoginAsync completed session setup (SaveFromLoginResponse / SetTemporaryFromLoginResponse).");
                     return false;
                 }
 
@@ -592,19 +608,22 @@ namespace IntelliVerseX.Auth.UI
         private void SignInWithGoogle()
         {
             AnimateButton(_googleSignInButton);
-            Debug.Log($"[{nameof(IVXPanelLogin)}] Google Sign-In requested");
+            ShowError("Google sign-in is coming soon.");
+            Debug.Log($"[{nameof(IVXPanelLogin)}] Google Sign-In requested (not yet available)");
         }
 
         private void SignInWithApple()
         {
             AnimateButton(_appleSignInButton);
-            Debug.Log($"[{nameof(IVXPanelLogin)}] Apple Sign-In requested");
+            ShowError("Apple sign-in is coming soon.");
+            Debug.Log($"[{nameof(IVXPanelLogin)}] Apple Sign-In requested (not yet available)");
         }
 
         private void SignInWithFacebook()
         {
             AnimateButton(_facebookSignInButton);
-            Debug.Log($"[{nameof(IVXPanelLogin)}] Facebook Sign-In requested");
+            ShowError("Facebook sign-in is coming soon.");
+            Debug.Log($"[{nameof(IVXPanelLogin)}] Facebook Sign-In requested (not yet available)");
         }
 
         #endregion
@@ -650,7 +669,10 @@ namespace IntelliVerseX.Auth.UI
             {
                 _passwordToggleIcon.sprite = _passwordVisible ? _eyeOpenSprite : _eyeClosedSprite;
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[IVXPanelLogin] Operation failed: {ex.Message}");
+            }
         }
 
         #endregion
@@ -660,6 +682,7 @@ namespace IntelliVerseX.Auth.UI
         private void OnRememberMeChanged(bool on)
         {
             PlayerPrefs.SetInt(PP_REMEMBER, on ? 1 : 0);
+            PlayerPrefs.SetInt(LEGACY_PP_REMEMBER, on ? 1 : 0);
             PlayerPrefs.Save();
             UpdateRememberVisual(on, instant: false);
 
@@ -742,140 +765,6 @@ namespace IntelliVerseX.Auth.UI
                 field.selectionColor = sel;
                 field.caretWidth = focused ? 2 : 1;
             }
-        }
-
-        #endregion
-
-        #region IP Geolocation (Non-Blocking)
-
-        /// <summary>
-        /// Start IP geolocation fetch in background.
-        /// This is non-blocking and will not delay login.
-        /// </summary>
-        private void StartIPGeolocationBackground()
-        {
-            try
-            {
-                // Check if service exists and cache is not already valid
-                if (IVXIPGeolocationService.HasInstance && IVXIPGeolocationService.Instance.IsCacheValid)
-                {
-                    LogGeoVerbose("IP location already cached");
-                    return;
-                }
-
-                // Fire and forget - don't await, don't block
-                _ = FetchIPGeolocationAsync();
-            }
-            catch (Exception ex)
-            {
-                // Never let geolocation errors affect login
-                Debug.LogWarning($"[IVXLogin] IP geolocation background start failed: {ex.Message}");
-            }
-        }
-
-        /// <summary>
-        /// Fetch IP geolocation asynchronously.
-        /// Errors are caught and logged but never thrown.
-        /// </summary>
-        private async Task FetchIPGeolocationAsync()
-        {
-            try
-            {
-                LogGeoVerbose("Starting background IP geolocation fetch...");
-
-                var geoService = IVXIPGeolocationService.Instance;
-                if (geoService == null)
-                {
-                    LogGeoVerbose("IP geolocation service not available");
-                    return;
-                }
-
-                var result = await geoService.GetLocationAsync(false, _cts?.Token ?? default);
-
-                if (result != null && result.Success)
-                {
-                    LogGeoVerbose($"IP location fetched: {result.GetShortLocation()} via {result.Provider}");
-                }
-                else
-                {
-                    LogGeoVerbose($"IP location fetch returned: {result?.Error ?? "null result"}");
-                }
-            }
-            catch (OperationCanceledException)
-            {
-                LogGeoVerbose("IP geolocation fetch cancelled");
-            }
-            catch (Exception ex)
-            {
-                // Swallow all errors - geolocation should never block or affect login
-                Debug.LogWarning($"[IVXLogin] IP geolocation fetch error (non-blocking): {ex.Message}");
-            }
-        }
-
-        /// <summary>
-        /// Get the current IP geolocation result (if available).
-        /// Returns null if not fetched yet or failed.
-        /// </summary>
-        public static IPGeolocationResult GetCurrentIPLocation()
-        {
-            try
-            {
-                if (IVXIPGeolocationService.HasInstance)
-                {
-                    return IVXIPGeolocationService.Instance.GetCachedLocation();
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.LogWarning($"[IVXLogin] Failed to get IP location: {ex.Message}");
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Sync IP geolocation to player profile after successful login.
-        /// This is called internally after successful authentication.
-        /// </summary>
-        private void SyncIPGeolocationToProfile()
-        {
-            try
-            {
-                var ipLocation = GetCurrentIPLocation();
-                if (ipLocation == null || !ipLocation.Success)
-                {
-                    LogGeoVerbose("No IP location available to sync");
-                    return;
-                }
-
-                // Save to PlayerPrefs for persistence
-                if (!string.IsNullOrEmpty(ipLocation.Country))
-                {
-                    PlayerPrefs.SetString("ivx_player_country", ipLocation.Country);
-                    PlayerPrefs.SetString("ivx_player_country_code", ipLocation.CountryCode ?? "");
-                    PlayerPrefs.SetString("ivx_player_city", ipLocation.City ?? "");
-                    PlayerPrefs.SetString("ivx_player_region", ipLocation.Region ?? "");
-                    PlayerPrefs.SetString("ivx_player_timezone", ipLocation.Timezone ?? "");
-                    PlayerPrefs.SetFloat("ivx_player_latitude", (float)ipLocation.Latitude);
-                    PlayerPrefs.SetFloat("ivx_player_longitude", (float)ipLocation.Longitude);
-                    PlayerPrefs.SetString("ivx_player_isp", ipLocation.ISP ?? "");
-                    PlayerPrefs.SetString("ivx_player_ip", ipLocation.IP ?? "");
-                    PlayerPrefs.Save();
-                    
-                    LogGeoVerbose($"Synced IP location to PlayerPrefs: {ipLocation.GetShortLocation()}");
-                }
-            }
-            catch (Exception ex)
-            {
-                // Never let sync errors affect anything
-                Debug.LogWarning($"[IVXLogin] IP location sync error (non-blocking): {ex.Message}");
-            }
-        }
-
-        private void LogGeoVerbose(string message)
-        {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            Debug.Log($"[IVXLogin.Geo] {message}");
-#endif
         }
 
         #endregion

@@ -71,6 +71,10 @@ graph TB
 | Module | Namespace | Description |
 |--------|-----------|-------------|
 | [Social](social.md) | `IntelliVerseX.Social` | Friends, sharing, referrals |
+| [Discord](discord.md) | `IntelliVerseX.Discord` | Discord Social SDK — presence, voice, lobbies, DMs, moderation |
+| [Satori](satori.md) | `IntelliVerseX.Satori` | Satori analytics — events, flags, experiments, live events, messages |
+| [Multiplayer](multiplayer.md) | `IntelliVerseX.GameModes` | Game modes, lobby, matchmaking, local multiplayer |
+| [Wallet & Economy](wallet.md) | `IntelliVerseX.Backend` / `IntelliVerseX.Hiro` | Wallet balance, Hiro economy, store, IAP validation |
 | [Leaderboards](leaderboards.md) | `IntelliVerseX.Leaderboard` | Rankings and scores |
 | [Quiz](quiz.md) | `IntelliVerseX.Quiz` | Quiz game framework |
 | [Localization](localization.md) | `IntelliVerseX.Localization` | Multi-language support |
@@ -81,6 +85,15 @@ graph TB
 | Module | Namespace | Description |
 |--------|-----------|-------------|
 | [Monetization](monetization.md) | `IntelliVerseX.Monetization` | IAP, Ads, Offerwalls |
+
+### AI & Live Ops Modules
+
+| Module | Namespace | Description |
+|--------|-----------|-------------|
+| [AI](ai.md) | `IntelliVerseX.AI` | AI voice personas, host commentary, entitlements |
+| [Hiro](hiro.md) | `IntelliVerseX.Hiro` | Server-authoritative systems (spin wheel, streaks, retention, offerwalls) |
+| [Platform](platform.md) | `IntelliVerseX.Platform` | Deep links, foldable support, edge-to-edge, performance optimizer |
+| [Demos](demos.md) | `IntelliVerseX.Demos` | Ready-to-run demo UIs for AI, spin wheel, streaks, offerwall |
 
 ### Utility Modules
 
@@ -114,6 +127,11 @@ Each module has its own assembly definition:
 | `IntelliVerseX.V2` | Next-gen features |
 | `IntelliVerseX.Editor` | Editor tools |
 | `IntelliVerseX.Auth` | Auth UI panels |
+| `IntelliVerseX.AI` | AI voice, host, entitlements |
+| `IntelliVerseX.Hiro` | Hiro game systems (spin wheel, streaks, etc.) |
+| `IntelliVerseX.Satori` | Server-side analytics |
+| `IntelliVerseX.Platform` | Platform utilities |
+| `IntelliVerseX.Demos` | Demo UIs |
 
 ---
 
@@ -126,13 +144,17 @@ Core (no dependencies)
 ├── Backend (→ Core, Identity)
 │   ├── Social (→ Backend)
 │   ├── Analytics (→ Backend)
-│   └── Leaderboards (→ Backend)
+│   ├── Leaderboards (→ Backend)
+│   └── Hiro (→ Core, Backend)
+├── AI (→ Core, Backend, Storage, Monetization)
 ├── Localization (→ Core)
 ├── Storage (→ Core)
-├── Monetization (→ Core)
+├── Monetization (→ Core, Storage)
+├── Platform (→ Core)
 ├── UI (→ Core)
 ├── Quiz (→ Core, Backend)
-└── MoreOfUs (→ Core, Backend)
+├── MoreOfUs (→ Core, Backend)
+└── Demos (→ AI, Core, Hiro)
 ```
 
 ---
@@ -189,6 +211,54 @@ Core (no dependencies)
     
     [:octicons-arrow-right-24: Localization Documentation](localization.md)
 
+-   :material-robot:{ .lg .middle } __AI Module__
+
+    ---
+    
+    AI voice personas, host game commentary, entitlements, and audio streaming.
+    
+    [:octicons-arrow-right-24: AI Documentation](ai.md)
+
+-   :material-chart-bar:{ .lg .middle } __Satori Analytics__
+
+    ---
+    
+    Event capture, feature flags, A/B experiments, live events, in-app messages, and metrics.
+    
+    [:octicons-arrow-right-24: Satori Documentation](satori.md)
+
+-   :material-gamepad-variant:{ .lg .middle } __Multiplayer & Game Modes__
+
+    ---
+    
+    Solo, local, online lobby, matchmaking, ranked, turn-based, and split-screen.
+    
+    [:octicons-arrow-right-24: Multiplayer Documentation](multiplayer.md)
+
+-   :material-wallet:{ .lg .middle } __Wallet & Economy__
+
+    ---
+    
+    Currency balances, Hiro economy (donations, store, IAP validation), and purchase flows.
+    
+    [:octicons-arrow-right-24: Wallet Documentation](wallet.md)
+
+-   :material-slot-machine:{ .lg .middle } __Hiro Module__
+
+    ---
+    
+    Server-authoritative spin wheel, streaks, retention, offerwalls, and friend systems.
+    
+    [:octicons-arrow-right-24: Hiro Documentation](hiro.md)
+
+-   :material-cellphone-link:{ .lg .middle } __Platform Module__
+
+    ---
+    
+    Deep links, foldable devices, edge-to-edge display, and performance optimization.
+    
+    [:octicons-arrow-right-24: Platform Documentation](platform.md)
+
 </div>
 
 ---
@@ -205,3 +275,7 @@ Core (no dependencies)
 | Localization | None |
 | Quiz | Backend module |
 | UI | TextMeshPro |
+| AI | Core, Backend, Storage, Monetization + IntelliVerseX AI Backend |
+| Hiro | Core, Backend (Nakama + Hiro server plugin) |
+| Platform | Core |
+| Demos | AI, Core, TextMeshPro |

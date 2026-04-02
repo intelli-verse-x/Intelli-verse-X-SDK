@@ -5,7 +5,7 @@
 [![Unity](https://img.shields.io/badge/Unity-2023.3%2B-black.svg)](https://unity.com/)
 [![Unity 6](https://img.shields.io/badge/Unity%206-Supported-blue.svg)](https://unity.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-5.1.0-orange.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-5.8.0-orange.svg)](CHANGELOG.md)
 
 ---
 
@@ -20,11 +20,14 @@
 | 🌍 **Localization** | 12+ languages with RTL support |
 | 💾 **Storage** | Secure cloud saves and local persistence |
 | 🎯 **Leaderboards** | Global rankings with Nakama |
-| 👥 **Social** | Friends, sharing, referrals |
+| 👥 **Social** | Friends, sharing, referrals, clans |
 | 🎲 **Quiz System** | Complete quiz game framework |
 | 🎨 **UI Components** | Production-ready UI utilities |
 | 😀 **Emoji Support** | TMP emoji conversion + production import hardening |
-| 📍 **IP Geolocation** | Fast location detection without GPS (6 free APIs) |
+| 🤖 **AI Voice & Host** | Conversational AI personas, voice streaming, game commentary |
+| 🎰 **Hiro Systems** | Spin wheel, streaks, retention, offerwalls, friend quests |
+| 🛡️ **Platform** | Deep links, foldable support, edge-to-edge, performance optimizer |
+| 📈 **Satori** | Server-side analytics, A/B testing, live events |
 
 ---
 
@@ -47,7 +50,7 @@ Add to your `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/Intelli-verse-X-SDK#v5.1.0"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/Intelli-verse-X-SDK#v5.8.0"
   }
 }
 ```
@@ -185,7 +188,13 @@ Use **IntelliVerseX > Setup Wizard** to install dependencies.
 | **Quiz** | `IntelliVerseX.Quiz` | Quiz game logic |
 | **QuizUI** | `IntelliVerseX.QuizUI` | Quiz UI components |
 | **UI** | `IntelliVerseX.UI` | UI utilities |
-| **V2** | `IntelliVerseX.V2` | Next-gen features |
+| **V2** | `IntelliVerseX.V2` | Next-gen profiles & wallet |
+| **AI** | `IntelliVerseX.AI` | AI voice personas, host commentary, entitlements |
+| **Hiro** | `IntelliVerseX.Hiro` | Spin wheel, streaks, retention, offerwalls, friend systems |
+| **Satori** | `IntelliVerseX.Satori` | Server-side analytics & A/B testing |
+| **Platform** | `IntelliVerseX.Platform` | Deep links, foldable, edge-to-edge, optimizer |
+| **GameModes** | `IntelliVerseX.GameModes` | Solo, local multiplayer, online versus/coop, ranked, matchmaking, lobby |
+| **Demos** | `IntelliVerseX.Demos` | Ready-to-run demo UIs for AI, spin wheel, streaks, offerwall, multiplayer |
 
 ---
 
@@ -196,11 +205,18 @@ Import via **Package Manager > IntelliVerseX SDK > Samples**:
 | Sample | Description |
 |--------|-------------|
 | **Getting Started** | Basic SDK setup and initialization |
+| **Test Scenes** | Pre-built scenes for Auth, Ads, Leaderboard, Wallet, Quiz, Friends, Clans |
 | **Quiz Demo** | Complete quiz game implementation |
 | **Localization** | Multi-language UI with RTL |
 | **IAP Integration** | In-app purchase example |
 | **Leaderboard** | Global rankings demo |
 | **Social Features** | Friends and sharing |
+| **AI Voice Chat Demo** | AI persona voice chat with push-to-talk (`_IntelliVerseXSDK/Demos/`) |
+| **Spin Wheel Demo** | Animated spin wheel with prizes (`_IntelliVerseXSDK/Demos/`) |
+| **Streak / Daily Rewards** | 7-day calendar with shields (`_IntelliVerseXSDK/Demos/`) |
+| **Offerwall Demo** | Scrollable offer cards (`_IntelliVerseXSDK/Demos/`) |
+| **Game Mode Selector** | Solo / Local / Online mode picker (`_IntelliVerseXSDK/Demos/`) |
+| **Lobby Demo** | Online room browser, create, matchmaking (`_IntelliVerseXSDK/Demos/`) |
 
 ---
 
@@ -219,33 +235,37 @@ Access via **IntelliVerseX** menu:
 ## 📁 Package Structure
 
 ```
-_IntelliVerseXSDK/
-├── package.json          # UPM manifest
-├── README.md             # This file
-├── CHANGELOG.md          # Version history
-├── LICENSE               # MIT License
-├── INSTALLATION.md       # Setup guide
-│
-├── Core/                 # Foundation & utilities
-├── Identity/             # Authentication
-├── Backend/              # Nakama integration
-├── Monetization/         # IAP & Ads
-├── Analytics/            # Event tracking
-├── Localization/         # Multi-language
-├── Storage/              # Data persistence
-├── Networking/           # Network layer
-├── Leaderboard/          # Rankings
-├── Social/               # Friends & sharing
-├── Quiz/                 # Quiz logic
-├── QuizUI/               # Quiz components
-├── UI/                   # UI utilities
-├── V2/                   # Next-gen features
-├── Editor/               # Editor tools
-├── Examples/             # Code examples
-│
-├── Documentation~/       # Docs (not imported)
-├── Samples~/             # Importable samples
-└── Tests~/               # Unit tests
+Intelli-verse-X-SDK/          # UPM Package (com.intelliversex.sdk)
+├── package.json              # UPM manifest
+├── README.md                 # This file
+├── CHANGELOG.md              # Version history
+├── Core/                     # Foundation & utilities
+├── Identity/                 # Authentication
+├── Backend/                  # Nakama integration
+├── Monetization/             # IAP & Ads
+├── Analytics/                # Event tracking
+├── Localization/             # Multi-language
+├── Storage/                  # Data persistence
+├── Networking/               # Network layer
+├── Leaderboard/              # Rankings
+├── Social/                   # Friends, clans, sharing
+├── Quiz/                     # Quiz logic + daily/weekly
+├── QuizUI/                   # Quiz components
+├── UI/                       # UI utilities
+├── V2/                       # Next-gen profiles & wallet
+├── Editor/                   # Editor tools & wizards
+├── Samples~/                 # Importable UPM samples
+├── Tests~/                   # Unit tests
+└── Documentation~/           # Docs (not imported)
+
+_IntelliVerseXSDK/            # Extended modules
+├── AI/                       # AI voice, host, entitlements
+├── Multiplayer/              # Game modes, lobby, matchmaking, local MP
+├── Hiro/                     # Spin wheel, streaks, retention, offerwalls
+├── Satori/                   # Server-side analytics
+├── Platform/                 # Deep links, foldable, optimizer
+├── Demos/                    # Ready-to-run demo UIs
+└── IntroScene/               # Intro/splash screen assets
 ```
 
 ---

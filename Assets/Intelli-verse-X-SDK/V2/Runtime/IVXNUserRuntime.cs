@@ -335,6 +335,7 @@ namespace IntelliVerseX.Backend.Nakama
         {
             if (!enableDebugLogs) return;
 
+#if UNITY_EDITOR
             Debug.Log($"{LOGTAG} API USER:");
             Debug.Log($"{LOGTAG}   userId={apiUserId}, userName={apiUserName}, email={apiEmail}, loginType={apiLoginType}, role={apiRole}");
             Debug.Log($"{LOGTAG}   createdAt={apiCreatedAt}, updatedAt={apiUpdatedAt}");
@@ -348,6 +349,9 @@ namespace IntelliVerseX.Backend.Nakama
 
             Debug.Log($"{LOGTAG} NAKAMA:");
             Debug.Log($"{LOGTAG}   userId={nakamaUserId}, username={nakamaUsername}, expireAt={nakamaExpireAtUtc}, isExpired={nakamaIsExpired}");
+#else
+            Debug.Log($"{LOGTAG} Snapshot: isAuthenticated={ivxIsAuthenticated}, isGuest={ivxIsGuest}, isExpired={nakamaIsExpired}");
+#endif
         }
 
         private void Log(string message, bool isWarning = false, bool isError = false)

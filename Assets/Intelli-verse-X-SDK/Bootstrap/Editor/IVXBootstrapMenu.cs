@@ -80,7 +80,7 @@ namespace IntelliVerseX.Bootstrap.Editor
         private static void CreateSDKSettings()
         {
             // Find or create settings asset
-            string settingsPath = "Assets/_IntelliVerseXSDK/Resources/IVXSettings.asset";
+            string settingsPath = "Assets/Intelli-verse-X-SDK/Resources/IVXSettings.asset";
             
             if (File.Exists(settingsPath))
             {
@@ -98,7 +98,7 @@ namespace IntelliVerseX.Bootstrap.Editor
         [MenuItem(MENU_ROOT + "Quick Actions/Locate SDK Folder", false, 201)]
         private static void LocateSDKFolder()
         {
-            string sdkPath = "Assets/_IntelliVerseXSDK";
+            string sdkPath = "Assets/Intelli-verse-X-SDK";
             var folder = AssetDatabase.LoadAssetAtPath<DefaultAsset>(sdkPath);
             
             if (folder != null)
@@ -130,6 +130,8 @@ namespace IntelliVerseX.Bootstrap.Editor
     /// </summary>
     internal class DependencyStatus
     {
+        private static readonly Dictionary<string, Type> _typeCache = new Dictionary<string, Type>();
+
         public bool HasNakama { get; private set; }
         public bool HasPhoton { get; private set; }
         public bool HasDOTween { get; private set; }
@@ -148,10 +150,8 @@ namespace IntelliVerseX.Bootstrap.Editor
         
         private void CheckDependencies()
         {
-            // Get scripting defines using version-compatible API
             string defines = GetCurrentDefines();
             
-            // Check by type existence (more reliable)
             HasNakama = TypeExists("Nakama.Client");
             HasPhoton = TypeExists("Photon.Pun.PhotonNetwork");
             HasDOTween = TypeExists("DG.Tweening.DOTween");
@@ -160,7 +160,6 @@ namespace IntelliVerseX.Bootstrap.Editor
             HasAppodeal = TypeExists("AppodealStack.Monetization.Common.Appodeal");
             HasLevelPlay = TypeExists("Unity.Services.LevelPlay.LevelPlay");
             
-            // Also check for assembly definition symbols
             if (!HasNakama) HasNakama = defines.Contains("INTELLIVERSEX_HAS_NAKAMA");
             if (!HasPhoton) HasPhoton = defines.Contains("INTELLIVERSEX_HAS_PHOTON");
             if (!HasDOTween) HasDOTween = defines.Contains("INTELLIVERSEX_HAS_DOTWEEN");
@@ -174,8 +173,9 @@ namespace IntelliVerseX.Bootstrap.Editor
                 var namedTarget = UnityEditor.Build.NamedBuildTarget.FromBuildTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
                 return PlayerSettings.GetScriptingDefineSymbols(namedTarget);
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.LogWarning($"[DependencyStatus] Failed to get scripting defines: {ex.Message}");
                 return string.Empty;
             }
 #else
@@ -187,18 +187,27 @@ namespace IntelliVerseX.Bootstrap.Editor
         
         private bool TypeExists(string fullTypeName)
         {
+            if (_typeCache.TryGetValue(fullTypeName, out var cached))
+                return cached != null;
+
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 try
                 {
-                    if (assembly.GetType(fullTypeName) != null)
+                    var type = assembly.GetType(fullTypeName);
+                    if (type != null)
+                    {
+                        _typeCache[fullTypeName] = type;
                         return true;
+                    }
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // Ignore assembly load errors
+                    Debug.LogWarning($"[DependencyStatus] Assembly scan error for {fullTypeName}: {ex.Message}");
                 }
             }
+
+            _typeCache[fullTypeName] = null;
             return false;
         }
         
@@ -343,7 +352,7 @@ namespace IntelliVerseX.Bootstrap.Editor
             {
                 alignment = TextAnchor.MiddleCenter
             };
-            GUILayout.Label("2024-2025 IntelliVerseX. All rights reserved.", copyrightStyle);
+            GUILayout.Label("2024-2026 IntelliVerseX. All rights reserved.", copyrightStyle);
             
             GUILayout.Space(10);
         }

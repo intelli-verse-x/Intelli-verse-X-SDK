@@ -12,6 +12,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using IntelliVerseX.Storage;
 
 namespace IntelliVerseX.Backend
 {
@@ -186,8 +187,15 @@ namespace IntelliVerseX.Backend
         private IPGeolocationResult _cachedResult;
         private float _lastFetchTime = float.MinValue;
         private readonly object _stateLock = new object();
-        private volatile bool _isOperationInProgress;
+        private int _isOperationInProgressFlag;
         private CancellationTokenSource _currentCts;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
+        {
+            _instance = null;
+            _isQuitting = false;
+        }
 
         #endregion
 
@@ -217,7 +225,7 @@ namespace IntelliVerseX.Backend
 
         #region Properties
 
-        public bool IsOperationInProgress => _isOperationInProgress;
+        public bool IsOperationInProgress => Interlocked.CompareExchange(ref _isOperationInProgressFlag, 0, 0) == 1;
         public bool HasCachedResult => _cachedResult != null && _cachedResult.Success;
         public IPGeolocationResult CachedResult => _cachedResult;
 
@@ -303,8 +311,7 @@ namespace IntelliVerseX.Backend
                 return _cachedResult;
             }
 
-            // Wait if operation in progress
-            if (_isOperationInProgress)
+            if (Interlocked.CompareExchange(ref _isOperationInProgressFlag, 1, 0) != 0)
             {
                 LogVerbose("Operation in progress, waiting...");
                 return await WaitForCurrentOperationAsync(ct);
@@ -331,7 +338,7 @@ namespace IntelliVerseX.Backend
         /// </summary>
         public void FetchLocationInBackground()
         {
-            if (_isOperationInProgress || IsCacheValid) return;
+            if (IsOperationInProgress || IsCacheValid) return;
             _ = GetLocationAsync(false);
         }
 
@@ -363,7 +370,7 @@ namespace IntelliVerseX.Backend
             catch (ObjectDisposedException) { }
             finally
             {
-                _isOperationInProgress = false;
+                Interlocked.Exchange(ref _isOperationInProgressFlag, 0);
             }
         }
 
@@ -373,7 +380,6 @@ namespace IntelliVerseX.Backend
 
         private async Task<IPGeolocationResult> FetchLocationInternalAsync(CancellationToken ct)
         {
-            _isOperationInProgress = true;
             _currentCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
             
             OnFetchStarted?.Invoke();
@@ -426,7 +432,7 @@ namespace IntelliVerseX.Backend
             }
             finally
             {
-                _isOperationInProgress = false;
+                Interlocked.Exchange(ref _isOperationInProgressFlag, 0);
                 _currentCts?.Dispose();
                 _currentCts = null;
                 OnFetchCompleted?.Invoke();
@@ -846,15 +852,17 @@ namespace IntelliVerseX.Backend
                     return;
 
                 var timestamp = PlayerPrefs.GetString(PREF_TIMESTAMP, "");
-                if (DateTime.TryParse(timestamp, out DateTime cachedTime))
+                if (!DateTime.TryParse(timestamp, out DateTime cachedTime))
                 {
-                    // Check if cache is still valid
-                    var elapsed = (DateTime.UtcNow - cachedTime).TotalSeconds;
-                    if (elapsed > _cacheDurationSeconds)
-                    {
-                        LogVerbose("Cached result expired");
-                        return;
-                    }
+                    LogVerbose("Cached timestamp missing or unparseable, discarding cache");
+                    return;
+                }
+
+                var elapsed = (DateTime.UtcNow - cachedTime).TotalSeconds;
+                if (elapsed > _cacheDurationSeconds)
+                {
+                    LogVerbose("Cached result expired");
+                    return;
                 }
 
                 var result = new IPGeolocationResult
@@ -865,8 +873,8 @@ namespace IntelliVerseX.Backend
                     CountryCode = PlayerPrefs.GetString(PREF_COUNTRY_CODE, ""),
                     Region = PlayerPrefs.GetString(PREF_REGION, ""),
                     City = PlayerPrefs.GetString(PREF_CITY, ""),
-                    Latitude = PlayerPrefs.GetFloat(PREF_LAT, 0),
-                    Longitude = PlayerPrefs.GetFloat(PREF_LON, 0),
+                    Latitude = ParseCachedFloat(PREF_LAT),
+                    Longitude = ParseCachedFloat(PREF_LON),
                     Timezone = PlayerPrefs.GetString(PREF_TIMEZONE, ""),
                     ISP = PlayerPrefs.GetString(PREF_ISP, ""),
                     Provider = PlayerPrefs.GetString(PREF_PROVIDER, "cache"),
@@ -898,8 +906,8 @@ namespace IntelliVerseX.Backend
                 PlayerPrefs.SetString(PREF_COUNTRY_CODE, result.CountryCode ?? "");
                 PlayerPrefs.SetString(PREF_REGION, result.Region ?? "");
                 PlayerPrefs.SetString(PREF_CITY, result.City ?? "");
-                PlayerPrefs.SetFloat(PREF_LAT, (float)result.Latitude);
-                PlayerPrefs.SetFloat(PREF_LON, (float)result.Longitude);
+                IVXSecureStorage.SetString(PREF_LAT, ((float)result.Latitude).ToString(System.Globalization.CultureInfo.InvariantCulture));
+                IVXSecureStorage.SetString(PREF_LON, ((float)result.Longitude).ToString(System.Globalization.CultureInfo.InvariantCulture));
                 PlayerPrefs.SetString(PREF_TIMEZONE, result.Timezone ?? "");
                 PlayerPrefs.SetString(PREF_ISP, result.ISP ?? "");
                 PlayerPrefs.SetString(PREF_PROVIDER, result.Provider ?? "");
@@ -921,8 +929,8 @@ namespace IntelliVerseX.Backend
                 PlayerPrefs.DeleteKey(PREF_COUNTRY_CODE);
                 PlayerPrefs.DeleteKey(PREF_REGION);
                 PlayerPrefs.DeleteKey(PREF_CITY);
-                PlayerPrefs.DeleteKey(PREF_LAT);
-                PlayerPrefs.DeleteKey(PREF_LON);
+                IVXSecureStorage.DeleteKey(PREF_LAT);
+                IVXSecureStorage.DeleteKey(PREF_LON);
                 PlayerPrefs.DeleteKey(PREF_TIMEZONE);
                 PlayerPrefs.DeleteKey(PREF_ISP);
                 PlayerPrefs.DeleteKey(PREF_PROVIDER);
@@ -935,6 +943,34 @@ namespace IntelliVerseX.Backend
             }
         }
 
+        /// <summary>
+        /// Reads a float from IVXSecureStorage, falling back to legacy PlayerPrefs
+        /// for data cached before the secure-storage migration. If found in PlayerPrefs,
+        /// migrates the value to IVXSecureStorage and removes the legacy key.
+        /// </summary>
+        private static float ParseCachedFloat(string key)
+        {
+            var secure = IVXSecureStorage.GetString(key, "");
+            if (!string.IsNullOrEmpty(secure) &&
+                float.TryParse(secure, System.Globalization.NumberStyles.Float,
+                    System.Globalization.CultureInfo.InvariantCulture, out float secVal))
+                return secVal;
+
+            if (PlayerPrefs.HasKey(key))
+            {
+                var legacy = PlayerPrefs.GetString(key, "0");
+                if (float.TryParse(legacy, System.Globalization.NumberStyles.Float,
+                        System.Globalization.CultureInfo.InvariantCulture, out float legVal))
+                {
+                    IVXSecureStorage.SetString(key, legacy);
+                    PlayerPrefs.DeleteKey(key);
+                    return legVal;
+                }
+            }
+
+            return 0f;
+        }
+
         #endregion
 
         #region Helpers
@@ -944,7 +980,7 @@ namespace IntelliVerseX.Backend
             int waitAttempts = 0;
             const int maxWaitAttempts = 150; // 15 seconds max
 
-            while (_isOperationInProgress && waitAttempts < maxWaitAttempts)
+            while (IsOperationInProgress && waitAttempts < maxWaitAttempts)
             {
                 ct.ThrowIfCancellationRequested();
                 await Task.Delay(100, ct);
@@ -982,7 +1018,7 @@ namespace IntelliVerseX.Backend
         [ContextMenu("Debug: Log Cache Status")]
         private void DebugLogCacheStatus()
         {
-            Debug.Log($"[IVXIPGeo] Cache Valid: {IsCacheValid}, Has Result: {HasCachedResult}, In Progress: {_isOperationInProgress}");
+            Debug.Log($"[IVXIPGeo] Cache Valid: {IsCacheValid}, Has Result: {HasCachedResult}, In Progress: {IsOperationInProgress}");
             if (_cachedResult != null)
             {
                 Debug.Log($"[IVXIPGeo] Cached: {_cachedResult}");
@@ -999,19 +1035,33 @@ namespace IntelliVerseX.Backend
         [ContextMenu("Debug: Force Fetch")]
         private async void DebugForceFetch()
         {
-            var result = await GetLocationAsync(true);
-            Debug.Log($"[IVXIPGeo] Force fetch result: {result}");
+            try
+            {
+                var result = await GetLocationAsync(true);
+                Debug.Log($"[IVXIPGeo] Force fetch result: {result}");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
         }
 
         [ContextMenu("Debug: Test All APIs")]
         private async void DebugTestAllApis()
         {
-            Debug.Log("[IVXIPGeo] Testing all APIs...");
-            
-            foreach (var provider in _providers)
+            try
             {
-                var result = await FetchFromProviderAsync(provider, CancellationToken.None);
-                Debug.Log($"[IVXIPGeo] {provider.Name}: {(result.Success ? $"✓ {result.Country}, {result.City}" : $"✗ {result.Error}")}");
+                Debug.Log("[IVXIPGeo] Testing all APIs...");
+
+                foreach (var provider in _providers)
+                {
+                    var result = await FetchFromProviderAsync(provider, CancellationToken.None);
+                    Debug.Log($"[IVXIPGeo] {provider.Name}: {(result.Success ? $"✓ {result.Country}, {result.City}" : $"✗ {result.Error}")}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
             }
         }
 

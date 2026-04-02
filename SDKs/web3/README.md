@@ -1,6 +1,96 @@
 # IntelliVerseX Web3 SDK
 
-> Web3 game development SDK — Wallet auth (MetaMask/WalletConnect), NFT rewards, token gating, on-chain leaderboards, backed by Nakama + Hiro.
+> Web3 game development SDK — Wallet auth (MetaMask/WalletConnect), NFT rewards, token gating, on-chain leaderboards, AI, Multiplayer, Hiro Live-Ops, backed by Nakama + Hiro.
+
+## What's New in v5.8.0
+
+### AI Voice & Host (`IVXAIClient`)
+
+- Voice persona sessions with text & audio
+- AI host game commentary
+- Entitlement & persona management
+
+```typescript
+import { IVXAIClient } from '@intelliversex/sdk-web3';
+
+const ai = new IVXAIClient({
+  apiBaseUrl: 'https://ai.intelli-verse-x.ai',
+  apiKey: 'your-key',
+});
+
+const session = await ai.startVoiceSession('persona-1', userId);
+await ai.sendText(session.sessionId, 'Hello!');
+const personas = await ai.getPersonas();
+```
+
+### Multiplayer & Game Modes (`IVXGameModes`)
+
+- Solo, Local Multiplayer, Online Versus/Co-op, Ranked, Turn-Based
+- Room/lobby management
+- Quick-match & ranked matchmaking
+
+```typescript
+import { IVXGameModes, IVXGameMode } from '@intelliversex/sdk-web3';
+
+const gm = new IVXGameModes();
+gm.selectMode(IVXGameMode.ONLINE_VERSUS, 4);
+gm.addPlayer('Alice', true);
+
+const room = await gm.createRoom({ maxPlayers: 4 });
+await gm.quickMatch(IVXGameMode.RANKED);
+```
+
+### Hiro Live-Ops Systems (`IVXHiroSystems`)
+
+- Spin Wheel, Daily Streaks, Offerwall
+- Friend Quests & Battles
+- IAP Triggers, Smart Ad Timers
+
+```typescript
+import { IVXHiroSystems } from '@intelliversex/sdk-web3';
+
+const hiro = new IVXHiroSystems(nakamaClient, session);
+
+const spin = await hiro.spinWheel('daily_wheel');
+const streak = await hiro.getStreakState();
+await hiro.claimStreak();
+const offers = await hiro.getOfferwallState();
+```
+
+**Also in v5.8.0:**
+
+- Discord Social SDK integration (Rich Presence, friends, lobbies, voice, invites, DMs, moderation)
+- Satori Analytics (events, feature flags, A/B experiments, live events)
+- Hiro parity: retention, IAP triggers, smart ad timer (Unreal/C++/Cocos/Godot/Defold)
+
+### Discord Social SDK (`IVXDiscordSocial`)
+
+- Rich Presence, friends list, lobbies, voice chat
+- Game invites, DMs, moderation tools
+
+```typescript
+import { IVXDiscordSocial } from '@intelliversex/sdk-web3';
+
+const discord = IVXDiscordSocial.getInstance();
+discord.initialize({ applicationId: 'YOUR_APP_ID', clientId: 'YOUR_CLIENT_ID' });
+
+await discord.updatePresence({ state: 'In Match', details: 'Round 3 of 5' });
+const friends = await discord.getFriends();
+```
+
+### Satori Analytics (`IVXSatori`)
+
+- Event capture, feature flags, A/B experiments, live events
+
+```typescript
+import { IVXSatori } from '@intelliversex/sdk-web3';
+
+const satori = IVXSatori.getInstance();
+satori.initialize({ satoriUrl: 'https://satori.example.com', apiKey: 'your-satori-key' });
+
+await satori.captureEvents([{ name: 'level_complete', value: '5' }]);
+const flags = await satori.getFeatureFlags();
+```
 
 ## Configuration and secrets
 
@@ -12,11 +102,29 @@ Sensitive or environment-specific values (e.g. `moralisApiKey`, Nakama host/port
 - [@heroiclabs/nakama-js](https://github.com/heroiclabs/nakama-js) v2.7+
 - [ethers](https://docs.ethers.org/) v6+
 
+### Platform Support
+
+- **Web3**: Browser (with Web3 wallet), Node.js
+
 ## Installation
 
 ```bash
 npm install @intelliversex/sdk-web3 @heroiclabs/nakama-js ethers
 ```
+
+## Setting Up Nakama Server
+
+The SDK requires a [Nakama](https://heroiclabs.com/nakama/) game server for backend features.
+
+**Quick start with Docker:**
+
+```bash
+docker run -d --name nakama -p 7349:7349 -p 7350:7350 -p 7351:7351 heroiclabs/nakama
+```
+
+**Heroic Labs Cloud:** For production, use [Heroic Labs Cloud](https://heroiclabs.com/) for managed hosting.
+
+See [Nakama documentation](https://heroiclabs.com/docs/nakama/) for full setup instructions.
 
 ## Quick Start
 
@@ -63,20 +171,28 @@ const records = await ivx.fetchLeaderboard('weekly_leaderboard');
 
 | Feature | Status |
 |---------|--------|
-| Wallet Connection (MetaMask / EIP-1193) | Supported |
-| Wallet Signature Auth | Supported |
-| Device Auth (fallback) | Supported |
-| NFT Ownership Queries | Supported |
-| ERC-20 Token Balances | Supported |
-| Token Gating | Supported |
-| Profile Management | Supported |
-| Wallet / Economy (Hiro) | Supported |
-| Leaderboards | Supported |
-| Cloud Storage | Supported |
-| RPC Calls | Supported |
-| TypeScript Types | Full Support |
+| Wallet Connection (MetaMask / EIP-1193) | ✅ Supported |
+| Wallet Signature Auth | ✅ Supported |
+| Device Auth (fallback) | ✅ Supported |
+| NFT Ownership Queries | ✅ Supported |
+| ERC-20 Token Balances | ✅ Supported |
+| Token Gating | ✅ Supported |
+| Profile Management | ✅ Supported |
+| Wallet / Economy (Hiro) | ✅ Supported |
+| Leaderboards | ✅ Supported |
+| Cloud Storage | ✅ Supported |
+| RPC Calls | ✅ Supported |
+| AI Voice & Host | 🔶 Stub |
+| Multiplayer & Game Modes | 🔶 Stub |
+| Hiro Live-Ops Systems | 🔶 Stub |
+| Analytics | ✅ Supported |
+| Discord Social SDK | 🔶 Stub |
+| Satori Analytics | 🔶 Stub |
+| TypeScript Types | ✅ Full Support |
 | Thirdweb Integration | Config Ready |
 | Moralis Integration | Config Ready |
+
+> 🔶 **Stub** = Full API surface exists. Methods log warnings and return empty/mock data. Zero code changes needed when backend support ships.
 
 ## Web3-Specific API
 
@@ -155,6 +271,17 @@ Any EVM-compatible chain works. Common chain IDs:
 npm test
 ```
 
+## Project Structure
+
+```
+src/
+├── index.ts              # Core IVXWeb3Manager
+├── types.ts              # Shared types
+├── IVXAIClient.ts        # AI voice & host client
+├── IVXGameModes.ts       # Multiplayer & game mode management
+└── IVXHiroSystems.ts     # Hiro live-ops typed wrappers
+```
+
 ## Architecture
 
 ```
@@ -178,6 +305,17 @@ Your Game / dApp
 | + Hiro + Satori  |  | (via RPC nodes)  |
 +------------------+  +------------------+
 ```
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Connection timeout | Verify Nakama server is running and accessible at the configured host:port |
+| Auth failed | Check server key matches your Nakama configuration |
+| AI features not working | Verify AI API endpoint and key are set in config |
+| Wallet connection failed | Ensure MetaMask or compatible Web3 wallet is installed and unlocked |
+| Discord not connecting | Ensure `applicationId` and `clientId` are valid and Discord app is approved |
+| Satori events not captured | Check `satoriUrl` and `apiKey` are correctly configured |
 
 ## License
 

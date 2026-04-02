@@ -255,12 +255,16 @@ namespace IntelliVerseX.Analytics
         /// </summary>
         public void TrackQuizComplete(string quizId, int score, int totalQuestions, float timeSeconds)
         {
+            int percentage = 0;
+            if (totalQuestions > 0)
+                percentage = (score * 100) / totalQuestions;
+
             TrackEvent(EVENT_QUIZ_COMPLETE, new
             {
                 quiz_id = quizId,
                 score = score,
                 total_questions = totalQuestions,
-                percentage = (score * 100) / totalQuestions,
+                percentage = percentage,
                 time_seconds = timeSeconds
             });
         }

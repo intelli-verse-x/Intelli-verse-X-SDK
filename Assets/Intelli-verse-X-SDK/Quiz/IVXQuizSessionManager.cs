@@ -294,8 +294,7 @@ namespace IntelliVerseX.Quiz
 
             if (saveToBackend)
             {
-                // TODO: Implement backend saving if needed
-                IVXLogger.Log("Session saved to backend (not yet implemented)");
+                IVXLogger.Log("[IVXQuizSessionManager] Backend session persistence is not yet available. Session saved locally only.");
                 await Task.CompletedTask;
             }
         }

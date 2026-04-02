@@ -15,9 +15,13 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [
-        "INTELLIVERSEX_HAS_NAKAMA"
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.demigiant.dotween",
+            "expression": "",
+            "define": "INTELLIVERSEX_HAS_DOTWEEN"
+        }
     ],
-    "versionDefines": [],
     "noEngineReferences": false
 }

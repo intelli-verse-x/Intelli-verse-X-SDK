@@ -1,61 +1,23 @@
-# 🎛️ Intent Taxonomy (Closed Set)
+# IntelliVerseX SDK — Intents Registry
 
-> **Purpose:** Convert natural language requests into a small, consistent set of intents.
-> **Version:** 1.0.0
-> **Last Updated:** 2026-01-13
-> **Status:** Active
+Defines the explicit intents that AI agents can handle for this project.
 
----
+## Development Intents
 
-## Why this exists
+| Intent | Description | Typical Trigger |
+|--------|-------------|----------------|
+| `setup-sdk` | Install and bootstrap the SDK | "Set up IntelliVerseX" |
+| `add-feature` | Add a new SDK feature module | "Add multiplayer" |
+| `fix-bug` | Diagnose and fix a bug | "Fix the auth flow" |
+| `refactor` | Improve code structure | "Refactor the manager" |
+| `add-docs` | Create or update documentation | "Document the API" |
+| `port-feature` | Port a feature to another platform | "Port to Godot" |
+| `configure` | Set up configuration | "Configure ads" |
+| `optimize` | Performance improvement | "Reduce GC allocations" |
+| `test` | Add or fix tests | "Add tests for auth" |
 
-Without a closed set of intents, work drifts into:
-- vague scope
-- inconsistent verification
-- accidental architecture changes
+## Scope Rules
 
-This taxonomy is the **routing layer**: request → intent → required context → required outputs.
-
----
-
-## Intent Set
-
-| Intent | Meaning | Typical Outputs | Required Verification |
-|--------|---------|------------------|-----------------------|
-| `docs_update` | Update docs/context | Updated `.md` | CI context validation |
-| `bugfix` | Fix incorrect behavior | Minimal code change | Compile + targeted test |
-| `feature_add` | Add new capability (non-breaking) | New/updated APIs | Tests + CHANGELOG |
-| `refactor` | Restructure without behavior change | Internal code movement | Compile + regression check |
-| `api_change` | Public API change (potentially breaking) | Updated public surface | Version plan + ADR |
-| `performance` | Reduce CPU/GC/memory | Optimized code | Profiling evidence (where possible) |
-| `security` | Auth/token/PII/storage changes | Hardened handling | Mandatory human review + ADR |
-| `build_release` | Package/release operations | Version/tag/docs | CI + release checklist |
-| `tooling` | Scripts/CI/dev tooling | New tools/workflows | Script run proof + CI passing |
-
----
-
-## Intent → Context Loading Minimum
-
-All intents must load (at minimum):
-
-1. `.cursor/NON_GOALS.md`
-2. `.cursor/AI_GUARDRAILS.md`
-3. `.cursor/ANTI_PATTERNS.md` (if code is touched)
-4. `.cursor/architecture.md` (if structure is touched)
-5. `.cursor/naming-and-style.md` (if code is created/edited)
-
----
-
-## Escalation Rules (Intent-based)
-
-- `security` → human approval required (see `.cursor/AI_GUARDRAILS.md`)
-- `api_change` → ADR required + SemVer planning
-- `feature_add` touching 3+ modules → ADR recommended
-- Any request touching read-only zones → stop and report (`.cursor/NON_GOALS.md`)
-
----
-
-## Command Registry
-
-See: `.cursor/commands.json`
-
+- All intents must respect `.cursor/NON_GOALS.md` boundaries
+- Read-only zones are never modified (see `.cursorrules`)
+- New features require architecture alignment (see `.cursor/architecture.md`)

@@ -13,6 +13,10 @@ class INTELLIVERSEX_API UIVXConfig : public UPrimaryDataAsset
     GENERATED_BODY()
 
 public:
+    /** Game ID (UUID) for this title on the IntelliVerseX platform. Obtain from https://intelli-verse-x.ai/developers or POST https://msapi.intelli-verse-x.io/api/games/game/info */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "IntelliVerseX|Game Identity")
+    FString GameId;
+
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Nakama")
     FString NakamaHost = TEXT("nakama-rest.intelli-verse-x.ai");
 

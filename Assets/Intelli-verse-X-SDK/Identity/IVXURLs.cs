@@ -9,6 +9,8 @@
 
 using UnityEngine.Networking;
 
+namespace IntelliVerseX.Identity
+{
 /// <summary>
 /// Centralized API endpoints for IntelliVerse-X platform.
 /// Static class - zero allocations, instant access.
@@ -33,8 +35,44 @@ public static class IVXURLs
     /// <summary>Payment services gateway</summary>
     public const string PaymentBaseUrl = "https://payment.intelli-verse-x.ai/";
     
-    /// <summary>Default Game ID for QuizVerse</summary>
-    public const string GameId = "a6bde9e8-ebc5-4c7b-9254-02e9c0e02d74";
+    /// <summary>Microservices API gateway (game management)</summary>
+    public const string MsApiBaseUrl = "https://msapi.intelli-verse-x.io/";
+
+    /// <summary>
+    /// Create a new game via POST to <c>msapi.intelli-verse-x.io/api/games/game/info</c>.
+    /// Requires admin bearer token from <see cref="AdminLogin"/>.
+    /// Response: <c>{"status":true,"data":{"gameId":"UUID"}}</c>
+    /// </summary>
+    public const string CreateGame = MsApiBaseUrl + "api/games/game/info";
+
+    /// <summary>Admin login endpoint — returns bearer token for game management APIs.</summary>
+    public const string AdminLogin = BaseUrl + "api/admin/auth/login";
+
+    /// <summary>Fallback game ID used when <see cref="GameId"/> has not been set.
+    /// In production, always set your own Game ID from the IntelliVerseX dashboard or API.</summary>
+    public const string DefaultGameId = "a6bde9e8-ebc5-4c7b-9254-02e9c0e02d74";
+
+    private static string _gameId = DefaultGameId;
+
+    /// <summary>
+    /// Game ID (UUID) for all API calls. Obtain from
+    /// <see href="https://intelli-verse-x.ai/developers">intelli-verse-x.ai/developers</see>
+    /// or via <see cref="CreateGame"/> API. Set this at startup before any backend calls.
+    /// </summary>
+    public static string GameId
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(_gameId) || _gameId == DefaultGameId)
+            {
+                Debug.LogWarning("[IVXURLs] GameId is not set — using DefaultGameId. " +
+                    "Set IVXURLs.GameId at startup or configure via IVXBootstrapConfig.");
+                return DefaultGameId;
+            }
+            return _gameId;
+        }
+        set => _gameId = value?.Trim() ?? string.Empty;
+    }
     
     // ========================================================================
     // AUTHENTICATION - LOGIN
@@ -396,4 +434,5 @@ public static class IVXURLs
     public const string ClaimSignupReward = BaseUrl + "api/user/user/claim-signup-reward";
     
     #endregion
+}
 }

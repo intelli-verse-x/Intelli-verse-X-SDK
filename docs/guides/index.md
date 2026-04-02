@@ -64,6 +64,62 @@ Step-by-step tutorials for common integration scenarios.
 
     [:octicons-arrow-right-24: Leaderboards Guide](leaderboard-integration.md)
 
+-   :material-robot:{ .lg .middle } **AI & LLM Stack**
+
+    ---
+
+    Add AI NPCs, moderation, content generation, profiling, and voice to your game
+
+    [:octicons-arrow-right-24: AI Getting Started](ai-getting-started.md)
+
+</div>
+
+---
+
+## Monetization Guides
+
+<div class="grid cards" markdown>
+
+-   :material-currency-usd:{ .lg .middle } **Monetization Strategy**
+
+    ---
+
+    Choose the right revenue model for your game genre — ads, IAP, offerwall, season pass
+
+    [:octicons-arrow-right-24: Monetization Strategy](monetization-strategy.md)
+
+-   :material-gift:{ .lg .middle } **Offerwall Integration**
+
+    ---
+
+    Set up Pubscale and Xsolla offerwalls with reward callbacks
+
+    [:octicons-arrow-right-24: Offerwall Guide](offerwall-integration.md)
+
+-   :material-cart:{ .lg .middle } **IAP Integration**
+
+    ---
+
+    Apple and Google in-app purchases with server-side receipt validation
+
+    [:octicons-arrow-right-24: IAP Guide](iap-integration.md)
+
+</div>
+
+---
+
+## AI Agent Skills
+
+<div class="grid cards" markdown>
+
+-   :material-robot-happy:{ .lg .middle } **AI Agent Skills Reference**
+
+    ---
+
+    7 purpose-built skills for Cursor, Windsurf, Claude Code, and more — automate SDK integration with natural language
+
+    [:octicons-arrow-right-24: AI Agent Skills](ai-agent-skills.md)
+
 </div>
 
 ---
@@ -102,76 +158,45 @@ Step-by-step tutorials for common integration scenarios.
 
 ## Quick Integration Recipes
 
-### 5-Minute Auth Setup
+### 5-Minute Bootstrap Setup
 
 ```csharp
-// 1. Initialize SDK (in your entry scene)
-await IntelliVerseXSDK.InitializeAsync();
-
-// 2. Add auth buttons
-// Guest login
-guestButton.onClick.AddListener(async () =>
+// 1. Add IVX_Bootstrap.prefab to your first scene
+// 2. Configure IVXBootstrapConfig with your Nakama server details
+// 3. Listen for ready event:
+IVXBootstrap.Instance.OnBootstrapComplete += () =>
 {
-    await IVXAuthService.LoginWithDeviceIdAsync();
+    Debug.Log($"SDK ready! Player: {IVXBootstrap.Instance.UserId}");
     SceneManager.LoadScene("MainMenu");
-});
+};
+```
 
-// Email login
-loginButton.onClick.AddListener(async () =>
-{
-    string email = emailField.text;
-    string password = passwordField.text;
-    await IVXAuthService.LoginAsync(email, password);
-    SceneManager.LoadScene("MainMenu");
-});
+### 5-Minute AI NPC Setup
 
-// 3. Check auth on protected screens
-void Start()
+```csharp
+// 1. Create IVXAIConfig asset (Assets > Create > IntelliVerseX > AI > Configuration)
+// 2. Enable Mock Mode for development (no API key needed)
+// 3. Initialize and register an NPC:
+var npc = IVXAINPCDialogManager.Instance;
+npc.Initialize(aiConfig);
+npc.RegisterNPC(new IVXAINPCProfile
 {
-    if (!IVXAuthService.IsAuthenticated)
-    {
-        SceneManager.LoadScene("Login");
-    }
-}
+    NpcId = "merchant",
+    DisplayName = "Elara the Merchant",
+    PersonaPrompt = "Friendly elven merchant who loves to haggle.",
+    MaxTurns = 20
+});
+npc.StartDialog("merchant", playerId, null, session =>
+    npc.SendMessage(session.SessionId, "What's for sale?", r => ShowDialog(r.Text)));
 ```
 
 ### 5-Minute Leaderboard Setup
 
 ```csharp
-// 1. Submit score
-await IVXLeaderboardManager.SubmitScoreAsync("main_leaderboard", score);
-
-// 2. Display leaderboard
-var entries = await IVXLeaderboardManager.GetTopScoresAsync("main_leaderboard", 10);
-
-foreach (var entry in entries)
-{
-    var row = Instantiate(rowPrefab, container);
-    row.GetComponent<LeaderboardRow>().SetData(
-        entry.Rank,
-        entry.Username,
-        entry.Score
-    );
-}
-```
-
-### 5-Minute Ad Integration
-
-```csharp
-// 1. Initialize ads (in your bootstrap)
-IVXAdsManager.Initialize();
-
-// 2. Show rewarded ad
-void OnWatchAdButton()
-{
-    if (IVXAdsManager.IsRewardedAdReady())
-    {
-        IVXAdsManager.ShowRewardedAd(
-            onRewarded: () => GiveReward(100),
-            onFailed: (err) => ShowError("Ad not available")
-        );
-    }
-}
+// After IVXBootstrap is ready:
+var hiro = IVXBootstrap.Instance.HiroCoordinator;
+var result = await hiro.Leaderboards.SubmitScoreAsync(score);
+var top = await hiro.Leaderboards.GetTopScoresAsync(10);
 ```
 
 ---

@@ -217,41 +217,34 @@ namespace IntelliVerseX.Monetization
             
             yield return new WaitForSeconds(0.5f); // Simulate load time
 
-            // Simulate success rate (replace with actual SDK calls)
             bool success = false;
 
+#if UNITY_EDITOR
             switch (network)
             {
                 case IVXAdNetwork.IronSource:
-                    // IronSource.Agent.showRewardedVideo();
-                    // Wait for callback...
-                    success = UnityEngine.Random.value > 0.1f; // 90% success rate
+                    success = UnityEngine.Random.value > 0.1f;
                     break;
-
                 case IVXAdNetwork.AdMob:
-                    // Google Mobile Ads SDK
-                    success = UnityEngine.Random.value > 0.2f; // 80% success rate
+                    success = UnityEngine.Random.value > 0.2f;
                     break;
-
                 case IVXAdNetwork.MetaAudienceNetwork:
-                    // Meta Audience Network SDK
-                    success = UnityEngine.Random.value > 0.3f; // 70% success rate
+                    success = UnityEngine.Random.value > 0.3f;
                     break;
-
                 case IVXAdNetwork.UnityAds:
-                    // Unity Ads SDK
-                    success = UnityEngine.Random.value > 0.2f; // 80% success rate
+                    success = UnityEngine.Random.value > 0.2f;
                     break;
-
                 case IVXAdNetwork.Appodeal:
-                    // Appodeal SDK
-                    success = UnityEngine.Random.value > 0.15f; // 85% success rate
+                    success = UnityEngine.Random.value > 0.15f;
                     break;
-
                 default:
                     success = false;
                     break;
             }
+#else
+            Debug.LogWarning($"[IVXAdsWaterfallManager] No real ad SDK integrated for {network}. Integrate the ad provider SDK for production builds.");
+            success = false;
+#endif
 
             onComplete?.Invoke(success);
         }

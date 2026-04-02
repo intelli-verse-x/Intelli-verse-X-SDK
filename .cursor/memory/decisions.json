@@ -1,53 +1,23 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-01-20",
+  "lastUpdated": "2026-04-01",
   "decisions": [
     {
-      "id": "DEC-20260113-001",
-      "date": "2026-01-13",
+      "id": "DEC-20260401-001",
+      "date": "2026-04-01",
       "category": "architecture",
-      "decision": "Establish context-engineering system for AI governance",
-      "rationale": "Ensure consistent decisions across files, commits, and refactors. Prevent architectural drift and preserve long-term goals.",
-      "alternatives": [
-        "Ad-hoc documentation",
-        "No formal context system"
-      ],
+      "decision": "Use compile defines (#if) for all XR vendor dependencies to keep SDK zero-dependency",
+      "rationale": "Studios should not be forced to install Meta XR SDK or OpenXR just to use the core SDK",
+      "alternatives": ["Hard dependency on OpenXR", "Runtime reflection to detect XR"],
       "outcome": "successful"
     },
     {
-      "id": "DEC-20260113-002",
-      "date": "2026-01-13",
+      "id": "DEC-20260401-002",
+      "date": "2026-04-01",
       "category": "architecture",
-      "decision": "Use IVX prefix for all public SDK types",
-      "rationale": "Avoid naming collisions with consumer code, enable easy discovery via autocomplete, clearly identify SDK types.",
-      "alternatives": [
-        "IntelliVerseX prefix (too long)",
-        "No prefix (collision risk)"
-      ],
-      "outcome": "successful"
-    },
-    {
-      "id": "DEC-20260113-003",
-      "date": "2026-01-13",
-      "category": "architecture",
-      "decision": "Mark third-party SDK folders as read-only zones",
-      "rationale": "Third-party code is upstream maintained. Changes would be lost on SDK updates. Wrapper patterns preferred.",
-      "alternatives": [
-        "Allow modifications (maintenance burden)",
-        "Fork SDKs (version drift risk)"
-      ],
-      "outcome": "successful"
-    },
-    {
-      "id": "DEC-20260120-001",
-      "date": "2026-01-20",
-      "category": "workflow",
-      "decision": "Use -force-d3d11 as the recommended Unity Editor fallback when D3D12 is unstable on NVIDIA drivers",
-      "rationale": "Unity 6 projects can crash on startup under D3D12 for some NVIDIA driver versions. D3D11 provides a stable editor experience without code changes.",
-      "alternatives": [
-        "Keep D3D12 and require driver rollbacks",
-        "Disable hardware acceleration (performance regression)"
-      ],
+      "decision": "Console support uses adapter interface pattern (IIVXConsoleAdapter) rather than direct platform code",
+      "rationale": "Console SDKs are under NDA and cannot be shipped in a public repository",
+      "alternatives": ["Ship console code in private packages", "No console support"],
       "outcome": "successful"
     }
   ]

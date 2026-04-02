@@ -52,7 +52,7 @@ namespace IntelliVerseX.Tests.Editor
             // If installed as package, check there
             if (guids.Length == 0)
             {
-                guids = AssetDatabase.FindAssets("package t:TextAsset", new[] { "Assets/_IntelliVerseXSDK" });
+                guids = AssetDatabase.FindAssets("package t:TextAsset", new[] { "Assets/Intelli-verse-X-SDK" });
             }
             
             Assert.Greater(guids.Length, 0, "package.json should exist in the SDK folder");
@@ -215,7 +215,7 @@ namespace IntelliVerseX.Tests.Editor
             }
             
             // Try Assets location
-            packagePath = "Assets/_IntelliVerseXSDK/package.json";
+            packagePath = "Assets/Intelli-verse-X-SDK/package.json";
             if (System.IO.File.Exists(packagePath))
             {
                 return packagePath;

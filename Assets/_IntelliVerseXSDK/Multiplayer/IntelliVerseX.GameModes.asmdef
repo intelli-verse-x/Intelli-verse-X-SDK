@@ -1,0 +1,28 @@
+{
+    "name": "IntelliVerseX.GameModes",
+    "rootNamespace": "IntelliVerseX.GameModes",
+    "references": [
+        "IntelliVerseX.Core",
+        "IntelliVerseX.Backend"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.heroiclabs.nakama-unity",
+            "expression": "",
+            "define": "INTELLIVERSEX_HAS_NAKAMA"
+        },
+        {
+            "name": "com.unity.inputsystem",
+            "expression": "",
+            "define": "INTELLIVERSEX_HAS_NEW_INPUT"
+        }
+    ],
+    "noEngineReferences": false
+}

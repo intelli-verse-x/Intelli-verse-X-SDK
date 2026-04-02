@@ -20,6 +20,15 @@ Authentication flow test scene with:
 - Registration flow
 - Forgot password
 
+### IVX_Clan
+Clan system demo scene featuring:
+- Current clan loading through Nakama group RPCs
+- Clan creation flow
+- Clan browsing and joining
+- Clan leaving flow
+- Clan member list loading
+- Safe fallback UI that works without extra prefab wiring
+
 ### IVX_LeaderboardTest
 Leaderboard integration test scene showing:
 - Score submission

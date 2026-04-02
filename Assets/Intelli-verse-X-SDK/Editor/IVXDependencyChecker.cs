@@ -26,10 +26,10 @@ namespace IntelliVerseX.Editor
         private static bool? _nakamaFolderExists;
         
         // REMOVED: Menu items consolidated into SDK Setup Wizard
-        // [MenuItem("IntelliVerse-X SDK/Check Dependencies", priority = 1)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Dependencies tab
+        // [MenuItem("IntelliVerseX/Check Dependencies", priority = 1)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Dependencies tab
         
-        // [MenuItem("IntelliVerse-X SDK/Check Dependencies (Console)", priority = 2)]
+        // [MenuItem("IntelliVerseX/Check Dependencies (Console)", priority = 2)]
         public static void CheckDependenciesConsole()
         {
             Debug.Log("========================================");
@@ -69,7 +69,7 @@ namespace IntelliVerseX.Editor
             {
                 Debug.LogError("❌ MISSING DEPENDENCIES!");
                 Debug.LogError("❌ Please install missing dependencies before using the SDK.");
-                Debug.LogError("📖 See: Assets/_IntelliVerseXSDK/DEPENDENCIES.md for installation guide");
+                Debug.LogError("📖 See: Assets/Intelli-verse-X-SDK/DEPENDENCIES.md for installation guide");
             }
             Debug.Log("========================================");
         }
@@ -159,7 +159,7 @@ namespace IntelliVerseX.Editor
                     
                     if (GUILayout.Button("Open DEPENDENCIES.md", GUILayout.Height(30)))
                     {
-                        string docPath = Path.Combine(Application.dataPath, "_IntelliVerseXSDK/DEPENDENCIES.md");
+                        string docPath = Path.Combine(Application.dataPath, "Intelli-verse-X-SDK/DEPENDENCIES.md");
                         if (File.Exists(docPath))
                         {
                             System.Diagnostics.Process.Start(docPath);
@@ -176,7 +176,7 @@ namespace IntelliVerseX.Editor
             
             // Footer
             GUILayout.Space(10);
-            EditorGUILayout.LabelField("IntelliVerseX SDK v1.0.0", EditorStyles.centeredGreyMiniLabel);
+            EditorGUILayout.LabelField("IntelliVerseX SDK v5.1.0", EditorStyles.centeredGreyMiniLabel);
         }
         
         private void CheckAllDependencies()
@@ -304,7 +304,7 @@ namespace IntelliVerseX.Editor
                 }
                 
                 Debug.LogWarning("📖 Run: IntelliVerseX > Check Dependencies for details");
-                Debug.LogWarning("📖 See: Assets/_IntelliVerseXSDK/DEPENDENCIES.md for installation guide");
+                Debug.LogWarning("📖 See: Assets/Intelli-verse-X-SDK/DEPENDENCIES.md for installation guide");
                 Debug.LogWarning("========================================");
             }
         }

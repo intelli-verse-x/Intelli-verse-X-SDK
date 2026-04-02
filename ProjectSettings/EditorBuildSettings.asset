@@ -21,6 +21,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Tests/IVX_AdsTest.unity
     guid: 3773811c36cfca345aa94975240d9b26
   - enabled: 1
+    path: Assets/Scenes/Tests/IVX_Clan.unity
+    guid: 593d6da1d3440ee4fb6a05095ebb75ca
+  - enabled: 1
     path: Assets/Scenes/Tests/IVX_WeeklyQuizTest.unity
     guid: 4c0d724ad5af6db47a7231d6ac0313fd
   - enabled: 1

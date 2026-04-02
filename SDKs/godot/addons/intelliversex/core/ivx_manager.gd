@@ -14,7 +14,7 @@ signal profile_loaded(profile: Dictionary)
 signal wallet_updated(wallet: Dictionary)
 signal error(message: String)
 
-const SDK_VERSION := "5.1.0"
+const SDK_VERSION := "5.8.0"
 const SESSION_TOKEN_KEY := "ivx_session_token"
 const REFRESH_TOKEN_KEY := "ivx_refresh_token"
 const DEVICE_ID_KEY := "ivx_device_id"
@@ -74,6 +74,9 @@ func _load_nakama_refs() -> Dictionary:
 
 func initialize(sdk_config: IVXConfig) -> void:
 	config = sdk_config
+
+	if config.game_id.strip_edges().is_empty():
+		push_warning("[IntelliVerseX] gameId is empty. Get yours from https://intelli-verse-x.ai/developers")
 
 	if _nakama_refs.is_empty():
 		_nakama_refs = _load_nakama_refs()

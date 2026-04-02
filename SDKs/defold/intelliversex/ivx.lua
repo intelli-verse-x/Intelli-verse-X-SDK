@@ -11,9 +11,13 @@ local log = require "nakama.util.log"
 
 local M = {}
 
-M.SDK_VERSION = "5.1.0"
+M.SDK_VERSION = "5.8.0"
 
-local config = {}
+-- game_id: IntelliVerseX platform Game ID (UUID); default "". Set via configure({ game_id = "..." }).
+-- Obtain from https://intelli-verse-x.ai/developers or POST https://msapi.intelli-verse-x.io/api/games/game/info
+local config = {
+    game_id = "",
+}
 local client = nil
 local session = nil
 local socket = nil
@@ -22,14 +26,85 @@ local callbacks = {}
 
 local SESSION_FILE = sys.get_save_file("intelliversex", "session")
 
+-- Internal helpers (local; must be defined before M.* methods that reference them)
+local _uuid_seeded = false
+
+local function _log(fmt, ...)
+    if config.debug then
+        print(string.format("[IntelliVerseX] " .. fmt, ...))
+    end
+end
+
+local function _emit(event, ...)
+    if callbacks[event] then
+        callbacks[event](...)
+    end
+end
+
+local function _uuid()
+    if not _uuid_seeded then
+        math.randomseed(os.time() + os.clock() * 1000)
+        _uuid_seeded = true
+    end
+    local template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+    return string.gsub(template, "[xy]", function(c)
+        local v = (c == "x") and math.random(0, 15) or math.random(8, 11)
+        return string.format("%x", v)
+    end)
+end
+
+local function _get_persistent_device_id()
+    local saved = sys.load(SESSION_FILE) or {}
+    if saved.device_id and saved.device_id ~= "" then
+        return saved.device_id
+    end
+
+    local info = sys.get_sys_info()
+    local id = info.device_ident ~= "" and info.device_ident or _uuid()
+    saved.device_id = id
+    sys.save(SESSION_FILE, saved)
+    return id
+end
+
+local function _sync_metadata()
+    if not M.has_valid_session() then return end
+
+    local meta = {
+        sdk_version = M.SDK_VERSION,
+        platform = sys.get_sys_info().system_name,
+        engine = "defold",
+        engine_version = sys.get_engine_info().version,
+    }
+
+    M.call_rpc("ivx_sync_metadata", json.encode({ metadata = meta }))
+end
+
+local function _on_auth_success(result)
+    if not result.token or result.token == "" then
+        _emit("auth_error", "Authentication response missing token")
+        return
+    end
+
+    session = nakama.session_create(result.token, result.refresh_token)
+    sys.save(SESSION_FILE, { token = result.token, refresh_token = result.refresh_token })
+    _log("Authenticated — UserId: %s", session.user_id or "unknown")
+    _sync_metadata()
+    _emit("auth_success", session)
+end
+
 --- Configure the SDK.
---- @param opts table Configuration: host, port, server_key, use_ssl, debug
+--- @param opts table Configuration: game_id, host, port, server_key, use_ssl, debug
 function M.configure(opts)
+    config.game_id = (opts and opts.game_id) or ""
     config.host = opts.host or "nakama-rest.intelli-verse-x.ai"
     config.port = opts.port or 443
     config.server_key = opts.server_key or "defaultkey"
     config.use_ssl = opts.use_ssl == nil and true or opts.use_ssl
     config.debug = opts.debug or false
+
+    if config.game_id == nil or config.game_id == "" then
+        print("[IntelliVerseX] WARNING: gameId is empty. Get yours from https://intelli-verse-x.ai/developers")
+    end
 
     local scheme = config.use_ssl and "https" or "http"
     client = nakama.create_client({
@@ -426,66 +501,7 @@ function M.connect_socket(callback)
     end)
 end
 
-
--- Internal helpers
-
-function _on_auth_success(result)
-    if not result.token or result.token == "" then
-        _emit("auth_error", "Authentication response missing token")
-        return
-    end
-
-    session = nakama.session_create(result.token, result.refresh_token)
-    sys.save(SESSION_FILE, { token = result.token, refresh_token = result.refresh_token })
-    _log("Authenticated — UserId: %s", session.user_id or "unknown")
-    _sync_metadata()
-    _emit("auth_success", session)
-end
-
-function _sync_metadata()
-    if not M.has_valid_session() then return end
-
-    local meta = {
-        sdk_version = M.SDK_VERSION,
-        platform = sys.get_sys_info().system_name,
-        engine = "defold",
-        engine_version = sys.get_engine_info().version,
-    }
-
-    M.call_rpc("ivx_sync_metadata", json.encode({ metadata = meta }))
-end
-
-function _get_persistent_device_id()
-    local saved = sys.load(SESSION_FILE) or {}
-    if saved.device_id and saved.device_id ~= "" then
-        return saved.device_id
-    end
-
-    local info = sys.get_sys_info()
-    local id = info.device_ident ~= "" and info.device_ident or _uuid()
-    saved.device_id = id
-    sys.save(SESSION_FILE, saved)
-    return id
-end
-
-function _uuid()
-    local template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
-    return string.gsub(template, "[xy]", function(c)
-        local v = (c == "x") and math.random(0, 15) or math.random(8, 11)
-        return string.format("%x", v)
-    end)
-end
-
-function _emit(event, ...)
-    if callbacks[event] then
-        callbacks[event](...)
-    end
-end
-
-function _log(fmt, ...)
-    if config.debug then
-        print(string.format("[IntelliVerseX] " .. fmt, ...))
-    end
-end
+-- Sub-modules
+M.multiplayer = require "intelliversex.multiplayer"
 
 return M

@@ -338,6 +338,18 @@ namespace IntelliVerseX.Core
             }
         }
 
+        private static string _metaAudienceTestDeviceHash = string.Empty;
+
+        /// <summary>
+        /// Meta Audience Network test device hash (from the AN debugger). Used when <see cref="TEST_MODE"/> is true.
+        /// Set at runtime before ads init if you need test ads on a physical device.
+        /// </summary>
+        public static string MetaAudienceTestDeviceHash
+        {
+            get => _metaAudienceTestDeviceHash;
+            set => _metaAudienceTestDeviceHash = value?.Trim() ?? string.Empty;
+        }
+
         /// <summary>
         /// Enable consent flow
         /// </summary>

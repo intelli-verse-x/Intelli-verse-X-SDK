@@ -4,6 +4,10 @@
 class_name IVXConfig
 extends Resource
 
+## Game ID (UUID) for this title on the IntelliVerseX platform. Obtain from https://intelli-verse-x.ai/developers or POST https://msapi.intelli-verse-x.io/api/games/game/info
+@export_group("Game Identity")
+@export var game_id: String = ""
+
 @export_group("Nakama")
 @export var nakama_host: String = "nakama-rest.intelli-verse-x.ai"
 @export var nakama_port: int = 443

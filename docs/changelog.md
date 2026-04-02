@@ -6,6 +6,43 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [5.8.0] - 2026-04-01
+
+### 🚀 Added
+- **AI & LLM Stack** — 8 AI subsystems: NPC Dialog, In-Game Assistant, Chat Moderation, Content Generation, Player Profiling, Voice Services, Voice Personas, AI Host Commentary
+- **Discord Social SDK** — Full parity wrapper: Rich Presence, Unified Friends, DM/Voice/Lobbies, Game Invites, Linked Channels, Account Linking, Moderation bridge
+- **Satori Analytics** — `IVXSatoriClient` for live events, experiments, feature flags, custom properties
+- **Hiro Economy** — 33 systems via `IVXHiroCoordinator`: Achievements, Leaderboards, Inventory, Economy, Energy, Stats, Teams, Tutorials, Event Leaderboards, Progression, Base Building, and more
+- **Bootstrap System** — `IVXBootstrap` one-drop prefab: single MonoBehaviour initializes Nakama, Hiro, Satori, Discord in order with graceful offline fallback
+- **Multiplayer** — `IVXGameModeManager`, `IVXLobbyManager`, `IVXMatchmakingManager`, `IVXLocalMultiplayerManager`
+- **Retention** — Spin Wheel, Daily Rewards/Streak, Offerwall
+- **AI Config Enhancements** — `IVXAIProvider` enum (IntelliVerseX / OpenAI / Azure / Anthropic / Custom), `MockMode`, `MaxRetries`, `RateLimitPerSecond`, runtime `SetApiKey()` / `SetApiBaseUrl()`, collection size limits
+- **AI Auth Fix** — Bearer token auth (`SetAuthToken`) on all 7 AI managers (was missing on Moderator, ContentGenerator, Profiler, VoiceServices)
+- **AI Memory Safety** — `AudioClip.Destroy()` after playback, capped conversation history, event queue, and audio queue
+- **Cross-Platform SDKs** — Discord, Satori, and AI stubs added to all 9 non-Unity platforms (JS/TS, Web3, Java, Flutter, Unreal, Godot, Defold, C++, Cocos2d-x)
+- **Documentation** — `docs/guides/ai-getting-started.md`, updated MASTER_INTEGRATION_PROMPT, quickstart, installation, and all platform READMEs
+
+### 🐛 Fixed
+- IP Geolocation: `PlayerPrefs` → `IVXSecureStorage` migration now falls back to legacy data
+- Bearer token not sent on 4 of 7 AI managers (Moderator, ContentGenerator, Profiler, VoiceServices)
+- `IVXAIAudioPlayer` leaked native `AudioClip` memory after playback
+- `IVXAIAssistant._conversationLines` grew unboundedly; now capped by `MaxConversationHistory`
+- `IVXAIProfiler._eventQueue` grew unboundedly; now capped by `MaxEventQueueSize`
+- `IVXAIVoiceServices._wsHost` GameObject not destroyed on `OnDestroy()`
+- `GameBootstrap.cs` example used stale `IntelliVerseXManager` API; rewritten for `IVXBootstrap`
+- Documentation version drift: all docs, configs, and package manifests synced to v5.8.0
+- Installation guide had wrong UPM Git path
+- Changelog was missing entries for v5.2.0–v5.7.0
+
+### 🔧 Changed
+- **Breaking:** Minimum Unity version is now 2023.3+ (2021.3 may work but is unsupported)
+- `IVXBootstrapConfig` now warns on default `127.0.0.1` / `defaultkey` values in `OnValidate()`
+- All Editor `[MenuItem]` paths unified under `IntelliVerseX/`
+- `[HelpURL]` added to all core MonoBehaviours and ScriptableObjects
+- `[DisallowMultipleComponent]` on `IVXBootstrap`
+
+---
+
 ## [5.1.0] - 2026-03-02
 
 ### 🚀 Added
@@ -219,8 +256,9 @@ The following features will be removed in v6.0:
 
 | Version | Unity Support | Status |
 |---------|---------------|--------|
-| 5.1.x | 2023.3+ | ✅ Current |
-| 5.0.x | 2023.3+ | ✅ Active |
+| 5.8.x | 2023.3+ | ✅ Current |
+| 5.1.x | 2023.3+ | ✅ Active |
+| 5.0.x | 2023.3+ | ⚠️ Maintenance |
 | 4.2.x | 2021.3+ | ⚠️ Security fixes only |
 | 4.1.x | 2020.3+ | ❌ End of life |
 | 4.0.x | 2020.3+ | ❌ End of life |
@@ -230,6 +268,6 @@ The following features will be removed in v6.0:
 
 ## Links
 
-- [Full Release Notes](https://github.com/intelli-verse-x/Intelli-verse-X-Unity-SDK/releases)
+- [Full Release Notes](https://github.com/intelli-verse-x/Intelli-verse-X-SDK/releases)
 - [Migration Guide](guides/migration.md)
-- [API Reference](api/index.md)
+- [AI Getting Started](guides/ai-getting-started.md)

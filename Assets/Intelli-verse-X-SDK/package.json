@@ -1,8 +1,8 @@
 {
   "name": "com.intelliversex.sdk",
-  "version": "5.1.0",
+  "version": "5.8.0",
   "displayName": "IntelliVerseX SDK",
-  "description": "Complete modular game development SDK with 15+ packages: Core, Identity, Auth, Backend, Networking, Localization, Storage, Quiz, QuizUI, UI, Leaderboard, Social, Monetization (IAP, Ads), Analytics, and more. Battle-tested in production. Includes support for Nakama, Photon PUN2, DOTween, LevelPlay, Appodeal, AdMob, and more.",
+  "description": "Complete game SDK: Bootstrap (one-drop init), 33 Hiro live-ops systems, 7 AI/LLM subsystems (NPC dialog, assistant, moderation, content gen, profiling, voice services, personas), 11 Discord Social subsystems, multiplayer, analytics, 16 demo UIs. 10-platform support. Battle-tested in production.",
   "unity": "2023.3",
   "unityRelease": "0f1",
   "documentationUrl": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK#readme",
@@ -42,7 +42,20 @@
     "mobile",
     "crossplatform",
     "emoji",
-    "textmeshpro"
+    "textmeshpro",
+    "ai",
+    "llm",
+    "nlp",
+    "moderation",
+    "discord",
+    "persona",
+    "voice",
+    "multiplayer",
+    "lobby",
+    "matchmaking",
+    "local-multiplayer",
+    "pvp",
+    "coop"
   ],
   "author": {
     "name": "IntelliVerse-X",
@@ -51,7 +64,7 @@
   },
   "dependencies": {
     "com.unity.textmeshpro": "3.0.6",
-    "com.unity.nuget.newtonsoft-json": "3.2.1"
+    "com.unity.nuget.newtonsoft-json": "3.2.2"
   },
   "samples": [
     {

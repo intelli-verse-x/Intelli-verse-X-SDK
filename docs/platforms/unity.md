@@ -11,7 +11,11 @@
 | Unity 2022.x | May work |
 | Unity 2021.x | Not Supported |
 
-**Platforms:** Android, iOS, WebGL, Windows, macOS
+**Platforms:** Android, iOS, WebGL, Windows, macOS, Linux
+
+**XR / VR / AR:** Meta Quest, SteamVR (OpenXR), Apple Vision Pro (visionOS), PSVR2, Windows Mixed Reality, AR Foundation (ARKit/ARCore). See [XR/VR/AR guide](xr-vr-ar.md).
+
+**Consoles:** PS5, Xbox Series X|S, Nintendo Switch (via adapter pattern, NDA SDKs required). See [Console guide](console.md).
 
 ## Installation
 
@@ -30,7 +34,7 @@ With specific version tag:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v5.1.0"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v5.8.0"
   }
 }
 ```

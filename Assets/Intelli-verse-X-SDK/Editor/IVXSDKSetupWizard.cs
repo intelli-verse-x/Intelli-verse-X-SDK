@@ -3,7 +3,7 @@
 // Version: 5.0.0
 // Author: IntelliVerseX Team
 // Description: Single unified panel for ALL SDK module setup including Auth, Friends, Monetization, Platform Validation, etc.
-// Note: Supports both development (Assets/_IntelliVerseXSDK) and UPM package (Packages/com.intelliversex.sdk) installations.
+// Note: Supports both development (Assets/Intelli-verse-X-SDK) and UPM package (Packages/com.intelliversex.sdk) installations.
 // Production-ready for WebGL, Android, and iOS.
 
 using System;
@@ -29,7 +29,7 @@ namespace IntelliVerseX.Editor
         #region Constants
 
         private const string WINDOW_TITLE = "IntelliVerseX SDK Setup";
-        private const string SDK_VERSION = "5.1.0";
+        private const string SDK_VERSION = "5.8.0";
         private const string PACKAGE_NAME = "com.intelliversex.sdk";
         
         // Version check URLs
@@ -39,9 +39,8 @@ namespace IntelliVerseX.Editor
         private const double VERSION_CHECK_INTERVAL_HOURS = 1.0; // Check every hour
 
         // Paths - These are relative paths within the SDK, resolved at runtime
-        private const string SDK_ASSETS_ROOT = "Assets/_IntelliVerseXSDK";
+        private const string SDK_ASSETS_ROOT = "Assets/Intelli-verse-X-SDK";
         private const string SDK_PACKAGE_ROOT = "Packages/com.intelliversex.sdk";
-        private const string QUIZVERSE_ROOT = "Assets/_QuizVerse";
         private const string RESOURCES_PATH = "Assets/Resources/IntelliVerseX";
         
         // Writable output path for UPM installs (prefabs, configs, generated assets)
@@ -70,7 +69,7 @@ namespace IntelliVerseX.Editor
         /// <summary>
         /// Gets a writable path for the given sub-folder.
         /// For UPM installs: Assets/IntelliVerseX/Generated/{subFolder}
-        /// For dev installs: Assets/_IntelliVerseXSDK/{subFolder}
+        /// For dev installs: Assets/Intelli-verse-X-SDK/{subFolder}
         /// </summary>
         private static string GetWritablePath(string subFolder)
         {
@@ -98,7 +97,7 @@ namespace IntelliVerseX.Editor
 
         /// <summary>
         /// Gets the SDK root path, automatically detecting whether this is a development
-        /// project (Assets/_IntelliVerseXSDK) or a UPM package installation (Packages/com.intelliversex.sdk).
+        /// project (Assets/Intelli-verse-X-SDK) or a UPM package installation (Packages/com.intelliversex.sdk).
         /// </summary>
         private static string SDK_ROOT
         {
@@ -312,10 +311,12 @@ namespace IntelliVerseX.Editor
         private ModuleSetupState quizModule = new ModuleSetupState();
         private ModuleSetupState localizationModule = new ModuleSetupState();
 
+        // Discord Social SDK
+        private ModuleSetupState discordModule = new ModuleSetupState();
+
         // Monetization Modules
         private ModuleSetupState adsModule = new ModuleSetupState();
         private ModuleSetupState iapModule = new ModuleSetupState();
-        // Note: Retention features removed - QuizVerse-specific
 
         #endregion
 
@@ -363,7 +364,7 @@ namespace IntelliVerseX.Editor
 
         #region Window Management
 
-        [MenuItem("IntelliVerse-X SDK/SDK Setup Wizard", false, 0)]
+        [MenuItem("IntelliVerseX/SDK Setup Wizard", false, 0)]
         public static void ShowWindow()
         {
             var window = GetWindow<IVXSDKSetupWizard>(WINDOW_TITLE);
@@ -2094,6 +2095,10 @@ namespace IntelliVerseX.Editor
             DrawModuleSection("🌍 Localization", localizationModule, CheckLocalizationModule,
                 "Multi-language support with RTL");
 
+            DrawExpandedModuleSection("🎮 Discord Social SDK", discordModule, CheckDiscordModule,
+                "Discord integration: Rich Presence, friends, lobbies, voice, DMs, invites",
+                DrawDiscordModuleActions);
+
             EditorGUILayout.Space(10);
 
             // Feature Actions
@@ -2746,7 +2751,7 @@ namespace IntelliVerseX.Editor
             };
             if (!adNetwork.IsValid)
             {
-                adNetwork.FixMessage = "Install Appodeal or LevelPlay SDK for Android ads. Use: IntelliVerse-X SDK > SDK Setup Wizard > Monetization tab";
+                adNetwork.FixMessage = "Install Appodeal or LevelPlay SDK for Android ads. Use: IntelliVerseX > SDK Setup Wizard > Monetization tab";
             }
             requirements.Add(adNetwork);
 
@@ -2814,7 +2819,7 @@ namespace IntelliVerseX.Editor
             };
             if (!iapSupport.IsValid)
             {
-                iapSupport.FixMessage = "Install Unity Purchasing package for IAP support. Use: IntelliVerse-X SDK > SDK Setup Wizard > Monetization tab";
+                iapSupport.FixMessage = "Install Unity Purchasing package for IAP support. Use: IntelliVerseX > SDK Setup Wizard > Monetization tab";
             }
             requirements.Add(iapSupport);
 
@@ -2828,7 +2833,7 @@ namespace IntelliVerseX.Editor
             };
             if (!iosAdNetwork.IsValid)
             {
-                iosAdNetwork.FixMessage = "Install Appodeal or LevelPlay SDK for iOS ads. Use: IntelliVerse-X SDK > SDK Setup Wizard > Monetization tab";
+                iosAdNetwork.FixMessage = "Install Appodeal or LevelPlay SDK for iOS ads. Use: IntelliVerseX > SDK Setup Wizard > Monetization tab";
             }
             requirements.Add(iosAdNetwork);
 
@@ -3017,6 +3022,11 @@ namespace IntelliVerseX.Editor
             DrawTestSceneButton("🎯 Daily Quiz Demo Scene",
                 "Test daily quiz feature with Nakama integration",
                 "IVX_DailyQuiz",
+                null);
+
+            DrawTestSceneButton("🛡 Clan Demo Scene",
+                "Test clan creation, browsing, joining, leaving, and member loading",
+                "IVX_Clan",
                 null);
                 
             DrawTestSceneButton("📅 Weekly Quiz Demo Scene",
@@ -3646,7 +3656,81 @@ namespace IntelliVerseX.Editor
                 : "IAP components missing";
         }
 
-        // Note: CheckRetentionModule removed - QuizVerse-specific feature
+        private void CheckDiscordModule()
+        {
+            if (discordModule.setupSteps == null || discordModule.setupSteps.Count == 0)
+            {
+                discordModule.setupSteps = new List<string>
+                {
+                    "Install com.discord.social-sdk UPM package",
+                    "Create IVXDiscordConfig asset",
+                    "Add IVXDiscordManager to scene"
+                };
+                discordModule.stepCompleted = new List<bool> { false, false, false };
+            }
+
+            discordModule.stepCompleted[0] = CheckAssemblyExists("Discord.Social") ||
+                TypeExists("discordpp.Client");
+
+            var configType = GetTypeByName("IntelliVerseX.Discord.IVXDiscordConfig");
+            discordModule.stepCompleted[1] = configType != null &&
+                AssetDatabase.LoadAssetAtPath<ScriptableObject>("Assets/_IntelliVerseXSDK/Discord/Config/IVXDiscordConfig.asset") != null;
+
+            var mgrType = GetTypeByName("IntelliVerseX.Discord.IVXDiscordManager");
+            discordModule.stepCompleted[2] = mgrType != null &&
+                UnityEngine.Object.FindFirstObjectByType(mgrType) != null;
+
+            discordModule.isSetupComplete = discordModule.stepCompleted.TrueForAll(x => x);
+            discordModule.statusMessage = discordModule.isSetupComplete
+                ? "Discord Social SDK is configured"
+                : "Discord SDK components missing — see steps below";
+        }
+
+        private void DrawDiscordModuleActions()
+        {
+            EditorGUILayout.Space(5);
+            EditorGUILayout.BeginHorizontal();
+
+            if (GUILayout.Button("Create Discord Config", GUILayout.Height(25)))
+            {
+                var existing = AssetDatabase.LoadAssetAtPath<ScriptableObject>(
+                    "Assets/_IntelliVerseXSDK/Discord/Config/IVXDiscordConfig.asset");
+                if (existing != null)
+                {
+                    EditorGUIUtility.PingObject(existing);
+                    Selection.activeObject = existing;
+                }
+                else
+                {
+                    var cfgType = GetTypeByName("IntelliVerseX.Discord.IVXDiscordConfig");
+                    if (cfgType != null)
+                    {
+                        var cfg = ScriptableObject.CreateInstance(cfgType);
+                        if (!AssetDatabase.IsValidFolder("Assets/_IntelliVerseXSDK/Discord"))
+                            AssetDatabase.CreateFolder("Assets/_IntelliVerseXSDK", "Discord");
+                        if (!AssetDatabase.IsValidFolder("Assets/_IntelliVerseXSDK/Discord/Config"))
+                            AssetDatabase.CreateFolder("Assets/_IntelliVerseXSDK/Discord", "Config");
+                        AssetDatabase.CreateAsset(cfg, "Assets/_IntelliVerseXSDK/Discord/Config/IVXDiscordConfig.asset");
+                        AssetDatabase.SaveAssets();
+                        EditorGUIUtility.PingObject(cfg);
+                        Selection.activeObject = cfg;
+                    }
+                }
+            }
+
+            if (GUILayout.Button("Add Discord Manager", GUILayout.Height(25)))
+            {
+                var discordType = GetTypeByName("IntelliVerseX.Discord.IVXDiscordManager");
+                if (discordType != null && UnityEngine.Object.FindFirstObjectByType(discordType) == null)
+                {
+                    var go = new GameObject("[IVXDiscordManager]");
+                    go.AddComponent(discordType);
+                    Undo.RegisterCreatedObjectUndo(go, "Add Discord Manager");
+                }
+            }
+
+            EditorGUILayout.EndHorizontal();
+        }
 
         /// <summary>
         /// Checks if DOTween is installed in the project.
@@ -4689,27 +4773,40 @@ namespace IntelliVerseX.Editor
         /// This is the most reliable way to check if SDK scripts are available,
         /// regardless of whether they're in Assets or Packages.
         /// </summary>
+        private static readonly Dictionary<string, Type> _typeCache = new Dictionary<string, Type>();
+
         private static Type GetTypeByName(string fullName)
         {
             if (string.IsNullOrEmpty(fullName)) return null;
-            
-            // Try direct type lookup first
+
+            if (_typeCache.TryGetValue(fullName, out var cached))
+                return cached;
+
             var type = Type.GetType(fullName);
-            if (type != null) return type;
-            
-            // Search all loaded assemblies
+            if (type != null)
+            {
+                _typeCache[fullName] = type;
+                return type;
+            }
+
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 try
                 {
                     type = assembly.GetType(fullName);
-                    if (type != null) return type;
+                    if (type != null)
+                    {
+                        _typeCache[fullName] = type;
+                        return type;
+                    }
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // Ignore assemblies that can't be searched
+                    Debug.LogWarning($"[IVXSDKSetupWizard] Assembly scan error for {fullName}: {ex.Message}");
                 }
             }
+
+            _typeCache[fullName] = null;
             return null;
         }
 

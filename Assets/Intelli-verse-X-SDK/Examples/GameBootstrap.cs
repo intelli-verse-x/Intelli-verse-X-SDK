@@ -1,182 +1,138 @@
 using UnityEngine;
-using IntelliVerseX.Core;
+using IntelliVerseX.AI;
+using IntelliVerseX.Bootstrap;
+using IntelliVerseX.Hiro;
 
 /// <summary>
-/// Example game bootstrap for IntelliVerse-X SDK integration.
-/// This shows the minimal code needed to integrate any game with the SDK.
-/// 
+/// Example game bootstrap for IntelliVerseX SDK integration.
+/// Shows the minimal code needed to integrate any game with the SDK.
+///
 /// Steps to integrate your game:
-/// 1. Copy this script to your game folder
-/// 2. Create a GameConfig ScriptableObject (Assets → Create → IntelliVerse-X → Game Configuration)
-/// 3. Set your game ID in the config
+/// 1. Add the IVX_Bootstrap.prefab to your first scene (Assets → _IntelliVerseXSDK → Bootstrap)
+/// 2. Configure IVXBootstrapConfig with your Nakama server details
+/// 3. (Optional) Create an IVXAIConfig asset for AI features
 /// 4. Attach this script to a GameObject in your first scene
-/// 5. Assign the config in the inspector
-/// 6. Implement your game logic in StartGame()
-/// 
+/// 5. Implement your game logic in StartGame()
+///
 /// That's it! Your game now has:
-/// - Unified identity (Cognito + Nakama + Photon)
-/// - Dual-wallet system
-/// - Leaderboards
-/// - Ads
-/// - Multi-language support
+/// - Unified identity (Nakama + optional Cognito)
+/// - Hiro economy, leaderboards, and inventory
+/// - AI NPC Dialog, Moderation, Content Generation
+/// - Discord Social SDK integration
+/// - Analytics via Satori
+/// - Multiplayer via Game Modes
 /// </summary>
 public class GameBootstrap : MonoBehaviour
 {
-    [Header("SDK Configuration")]
-    [Tooltip("Assign your game's config asset here")]
-    [SerializeField] private IntelliVerseXConfig gameConfig;
+    [Header("AI Configuration (Optional)")]
+    [Tooltip("Assign your IVXAIConfig asset to enable AI features")]
+    [SerializeField] private IVXAIConfig aiConfig;
 
     [Header("Debug")]
     [SerializeField] private bool showSDKInfo = true;
 
-    private void Start()
+    private void OnEnable()
     {
-        // Load config from Resources if not assigned
-        if (gameConfig == null)
-        {
-            // Try to load from Resources/IntelliVerseX/
-            gameConfig = Resources.Load<IntelliVerseXConfig>("IntelliVerseX/GameConfig");
-            
-            if (gameConfig == null)
-            {
-                Debug.LogError("[GameBootstrap] No config assigned! Create one in Assets → Create → IntelliVerse-X → Game Configuration");
-                return;
-            }
-        }
-
-        // Initialize SDK
-        Debug.Log($"[GameBootstrap] Initializing SDK for {gameConfig.gameName}...");
-        IntelliVerseXManager.Initialize(gameConfig);
-
-        // Wait for SDK to be ready
-        IntelliVerseXManager.Instance.OnReady += OnSDKReady;
-        IntelliVerseXManager.Instance.OnError += OnSDKError;
-
-        // Subscribe to identity events
-        IntelliVerseXIdentity.OnIdentityUpdated += OnIdentityUpdated;
-        IntelliVerseXIdentity.OnWalletBalanceChanged += OnWalletBalanceChanged;
+        IVXBootstrap.Instance.OnBootstrapComplete += OnSDKReady;
     }
 
-    private void OnSDKReady()
+    private void OnDisable()
     {
-        Debug.Log("[GameBootstrap] ✅ SDK Ready!");
+        if (IVXBootstrap.Instance != null)
+            IVXBootstrap.Instance.OnBootstrapComplete -= OnSDKReady;
+    }
+
+    private void OnSDKReady(bool success)
+    {
+        Debug.Log("[GameBootstrap] SDK Ready!");
 
         if (showSDKInfo)
-        {
             PrintSDKInfo();
-        }
 
-        // Start your game
+        if (aiConfig != null)
+            InitializeAI();
+
         StartGame();
     }
 
-    private void OnSDKError(string error)
+    private void InitializeAI()
     {
-        Debug.LogError($"[GameBootstrap] ❌ SDK Error: {error}");
+        string token = IVXBootstrap.Instance.AuthToken;
+        string userId = IVXBootstrap.Instance.UserId;
+
+        IVXAINPCDialogManager.Instance?.Initialize(aiConfig);
+        IVXAINPCDialogManager.Instance?.SetAuthToken(token);
+
+        IVXAIAssistant.Instance?.Initialize(aiConfig);
+        IVXAIAssistant.Instance?.SetAuthToken(token);
+
+        IVXAIModerator.Instance?.Initialize(aiConfig);
+        IVXAIModerator.Instance?.SetAuthToken(token);
+
+        IVXAIContentGenerator.Instance?.Initialize(aiConfig);
+        IVXAIContentGenerator.Instance?.SetAuthToken(token);
+
+        if (!string.IsNullOrEmpty(userId))
+        {
+            IVXAIProfiler.Instance?.Initialize(aiConfig, userId);
+            IVXAIProfiler.Instance?.SetAuthToken(token);
+            IVXAIProfiler.Instance?.StartAutoTracking();
+        }
+
+        IVXAIVoiceServices.Instance?.Initialize(aiConfig);
+        IVXAIVoiceServices.Instance?.SetAuthToken(token);
+
+        Debug.Log("[GameBootstrap] AI managers initialized.");
     }
 
-    private void OnIdentityUpdated()
-    {
-        Debug.Log($"[GameBootstrap] Identity updated - Username: {IntelliVerseXIdentity.Username}");
-    }
-
-    private void OnWalletBalanceChanged(int gameBalance, int globalBalance)
-    {
-        Debug.Log($"[GameBootstrap] Wallet updated - Game: {gameBalance}, Global: {globalBalance}");
-    }
-
-    /// <summary>
-    /// Implement your game startup logic here
-    /// </summary>
     private void StartGame()
     {
         Debug.Log("=== GAME STARTING ===");
-        Debug.Log($"Welcome {IntelliVerseXIdentity.Username}!");
-        Debug.Log($"Game Balance: {IntelliVerseXIdentity.GameWalletBalance}");
-        Debug.Log($"Global Balance: {IntelliVerseXIdentity.GlobalWalletBalance}");
-        
-        // Example: Load main menu scene
+        Debug.Log($"Welcome, Player {IVXBootstrap.Instance.UserId}!");
+
+        // Your game logic here:
         // SceneManager.LoadScene("MainMenu");
-        
-        // Example: Show login screen if guest
-        // if (IntelliVerseXIdentity.IsGuest)
-        // {
-        //     ShowGuestWarning();
-        // }
     }
 
     private void PrintSDKInfo()
     {
-        Debug.Log("=== IntelliVerseX SDK Info ===");
-        Debug.Log(IntelliVerseXManager.GetSDKInfo());
-        Debug.Log($"Is Guest: {IntelliVerseXIdentity.IsGuest}");
-        Debug.Log($"Has Cognito Account: {IntelliVerseXIdentity.HasCognitoAccount}");
-        Debug.Log($"Has Wallet IDs: {IntelliVerseXIdentity.HasWalletIds}");
-        Debug.Log($"Email: {IntelliVerseXIdentity.Email}");
-        Debug.Log("==============================");
+        var bootstrap = IVXBootstrap.Instance;
+        Debug.Log("=== IntelliVerseX SDK v5.8.0 ===");
+        Debug.Log($"User ID:    {bootstrap.UserId}");
+        Debug.Log($"User Name:  {bootstrap.UserName}");
+        Debug.Log($"AI Config:  {(aiConfig != null ? aiConfig.Provider.ToString() : "None")}");
+        Debug.Log($"Mock Mode:  {(aiConfig != null ? aiConfig.MockMode.ToString() : "N/A")}");
+        Debug.Log("================================");
     }
 
-    private void OnDestroy()
+    // Example: Submit score to leaderboard
+    public async void SubmitScore(long score)
     {
-        // Unsubscribe from events
-        if (IntelliVerseXManager.Instance != null)
-        {
-            IntelliVerseXManager.Instance.OnReady -= OnSDKReady;
-            IntelliVerseXManager.Instance.OnError -= OnSDKError;
-        }
-
-        IntelliVerseXIdentity.OnIdentityUpdated -= OnIdentityUpdated;
-        IntelliVerseXIdentity.OnWalletBalanceChanged -= OnWalletBalanceChanged;
+        var hiro = IVXHiroCoordinator.Instance;
+        if (hiro == null || !hiro.IsInitialized) return;
+        var result = await hiro.Leaderboards.SubmitScoreAsync((int)score);
+        if (result != null && result.success)
+            Debug.Log($"Score {score} submitted!");
     }
 
-    // Example: Show guest account warning
-    private void ShowGuestWarning()
+    // Example: Moderate chat before sending
+    public void SendChat(string message)
     {
-        if (IntelliVerseXIdentity.IsGuest && !IntelliVerseXIdentity.IsGuestExpired)
+        if (IVXAIModerator.Instance == null || !IVXAIModerator.Instance.IsEnabled)
         {
-            int daysRemaining = IntelliVerseXIdentity.GuestDaysRemaining;
-            Debug.LogWarning($"Guest account expires in {daysRemaining} days. Create full account to keep progress!");
+            BroadcastChat(message);
+            return;
         }
-        else if (IntelliVerseXIdentity.IsGuestExpired)
-        {
-            Debug.LogError("Guest account expired! Data will be lost.");
-        }
-    }
 
-    // Example: Show rewarded ad
-    public void ShowRewardedAd()
-    {
-        IntelliVerseX.Monetization.IVXAdsManager.ShowRewardedAd((success, reward) =>
+        IVXAIModerator.Instance.FilterMessage(message, filtered =>
         {
-            if (success)
-            {
-                Debug.Log($"Rewarded ad success! Earned {reward} coins");
-                // Give reward to player
-            }
-            else
-            {
-                Debug.LogWarning("Rewarded ad failed or cancelled");
-            }
+            if (!string.IsNullOrEmpty(filtered))
+                BroadcastChat(filtered);
         });
     }
 
-    // Example: Submit score to leaderboard using new IVXGLeaderboardManager
-    public async void SubmitScore(long score)
+    private void BroadcastChat(string message)
     {
-        var result = await IntelliVerseX.Games.Leaderboard.IVXGLeaderboardManager.SubmitScoreAsync((int)score);
-        if (result != null && result.success)
-        {
-            Debug.Log($"Score {score} submitted successfully! Reward: {result.reward_earned}");
-        }
-        else
-        {
-            Debug.LogWarning($"Score submission failed: {result?.error ?? "Unknown error"}");
-        }
-    }
-
-    // Example: Check if can buy item
-    public bool CanBuyItem(int cost)
-    {
-        return IntelliVerseX.Backend.IVXWalletManager.CanAfford(cost);
+        Debug.Log($"[Chat] {message}");
     }
 }

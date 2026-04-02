@@ -45,7 +45,7 @@ import java.util.prefs.Preferences;
  * {@link #initialize(IVXConfig)}.
  */
 public class IVXManager {
-    public static final String SDK_VERSION = "5.2.0";
+    public static final String SDK_VERSION = "5.8.0";
 
     private static final String PREF_SESSION_TOKEN = "ivx_session_token";
     private static final String PREF_REFRESH_TOKEN = "ivx_refresh_token";
@@ -114,6 +114,11 @@ public class IVXManager {
         Objects.requireNonNull(config, "config must not be null");
         this.config = config;
 
+        String gid = config.getGameId();
+        if (gid == null || gid.trim().isEmpty()) {
+            System.err.println("[IntelliVerseX] WARNING: gameId is empty. Get yours from https://intelli-verse-x.ai/developers");
+        }
+
         this.client = new DefaultClient(
                 config.getNakamaServerKey(),
                 config.getNakamaHost(),
@@ -128,6 +133,14 @@ public class IVXManager {
 
     // ΓöÇΓöÇΓöÇ Auth (blocking) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
+    /**
+     * Authenticates with a device ID (blocking).
+     *
+     * <p><b>WARNING:</b> This method blocks the calling thread. On Android, call from a
+     * background thread or use {@link #authenticateDeviceAsync} to avoid ANR.</p>
+     *
+     * @param deviceId device identifier, or {@code null}/empty to use a persisted generated id
+     */
     public void authenticateDevice(String deviceId) {
         ensureInitialized();
         String resolvedId = (deviceId == null || deviceId.isEmpty()) ? getPersistentDeviceId() : deviceId;
@@ -141,6 +154,16 @@ public class IVXManager {
         }
     }
 
+    /**
+     * Authenticates with email and password (blocking).
+     *
+     * <p><b>WARNING:</b> This method blocks the calling thread. On Android, call from a
+     * background thread or use {@link #authenticateEmailAsync} to avoid ANR.</p>
+     *
+     * @param email    user email
+     * @param password user password
+     * @param create   if {@code true}, register when the account does not exist
+     */
     public void authenticateEmail(String email, String password, boolean create) {
         ensureInitialized();
 
@@ -152,6 +175,14 @@ public class IVXManager {
         }
     }
 
+    /**
+     * Authenticates with a Google ID token (blocking).
+     *
+     * <p><b>WARNING:</b> This method blocks the calling thread. On Android, call from a
+     * background thread or use {@link #authenticateGoogleAsync} to avoid ANR.</p>
+     *
+     * @param token OAuth ID token from Google Sign-In
+     */
     public void authenticateGoogle(String token) {
         ensureInitialized();
 
@@ -163,6 +194,14 @@ public class IVXManager {
         }
     }
 
+    /**
+     * Authenticates with an Apple identity token (blocking).
+     *
+     * <p><b>WARNING:</b> This method blocks the calling thread. On Android, call from a
+     * background thread or use {@link #authenticateAppleAsync} to avoid ANR.</p>
+     *
+     * @param token identity token from Sign in with Apple
+     */
     public void authenticateApple(String token) {
         ensureInitialized();
 
@@ -174,6 +213,14 @@ public class IVXManager {
         }
     }
 
+    /**
+     * Authenticates with a custom identifier (blocking).
+     *
+     * <p><b>WARNING:</b> This method blocks the calling thread. On Android, call from a
+     * background thread or use {@link #authenticateCustomAsync} to avoid ANR.</p>
+     *
+     * @param customId stable custom id from your auth system
+     */
     public void authenticateCustom(String customId) {
         ensureInitialized();
 

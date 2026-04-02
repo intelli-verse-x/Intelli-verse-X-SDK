@@ -1,0 +1,31 @@
+{
+    "name": "IntelliVerseX.Bootstrap",
+    "rootNamespace": "IntelliVerseX.Bootstrap",
+    "references": [
+        "IntelliVerseX.AI",
+        "IntelliVerseX.Discord",
+        "IntelliVerseX.Hiro",
+        "IntelliVerseX.Satori",
+        "IntelliVerseX.GameModes",
+        "IntelliVerseX.Platform",
+        "IntelliVerseX.Core",
+        "IntelliVerseX.Backend",
+        "NakamaRuntime",
+        "Newtonsoft.Json"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.heroiclabs.nakama-unity",
+            "expression": "",
+            "define": "INTELLIVERSEX_HAS_NAKAMA"
+        }
+    ],
+    "noEngineReferences": false
+}

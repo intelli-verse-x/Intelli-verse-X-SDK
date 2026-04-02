@@ -33,7 +33,7 @@
 
 | Platform | Location | Language | Nakama Client |
 |----------|----------|----------|---------------|
-| **Unity / .NET** | `Assets/_IntelliVerseXSDK/` | C# | nakama-unity |
+| **Unity / .NET** | `Assets/Intelli-verse-X-SDK/` + `Assets/_IntelliVerseXSDK/` | C# | nakama-unity |
 | **Unreal Engine** | `SDKs/unreal/` | C++ / Blueprints | nakama-unreal |
 | **Godot Engine** | `SDKs/godot/` | GDScript | nakama-godot |
 | **Defold** | `SDKs/defold/` | Lua | nakama-defold |
@@ -41,62 +41,84 @@
 | **JavaScript** | `SDKs/javascript/` | TypeScript | nakama-js |
 | **C / C++** | `SDKs/cpp/` | C++ | nakama-cpp |
 | **Java / Android** | `SDKs/java/` | Java | nakama-java |
+| **Flutter / Dart** | `SDKs/flutter/` | Dart | nakama-dart |
+| **Web3** | `SDKs/web3/` | TypeScript | nakama-js + ethers |
 
 ---
 
 ## 📦 SDK MODULES
 
+### Core Package (`Assets/Intelli-verse-X-SDK/`)
+
 | Module | Namespace | Purpose | Key Classes |
 |--------|-----------|---------|-------------|
-| **Core** | `IntelliVerseX.Core` | SDK lifecycle, config | `IntelliVerseXConfig` |
-| **Identity** | `IntelliVerseX.Identity` | Authentication | `IVXIdentityManager` |
-| **Backend** | `IntelliVerseX.Backend` | Nakama integration | `IVXBackendManager` |
-| **Analytics** | `IntelliVerseX.Analytics` | Event tracking | `IVXAnalyticsManager` |
-| **Monetization** | `IntelliVerseX.Monetization` | Ads, IAP | `IVXAdsManager`, `IVXIAPManager` |
-| **Localization** | `IntelliVerseX.Localization` | Language support | `IVXLocalizationManager` |
-| **Social** | `IntelliVerseX.Social` | Referrals, sharing | `IVXSocialManager` |
-| **Leaderboard** | `IntelliVerseX.Leaderboard` | Rankings | `IVXLeaderboardManager` |
-| **Quiz** | `IntelliVerseX.Quiz` | Quiz game support | `IVXQuizManager` |
-| **Storage** | `IntelliVerseX.Storage` | Cloud save | `IVXStorageService` |
-| **Editor** | `IntelliVerseX.Editor` | Editor tools | `IVXSetupWizard` |
+| **Core** | `IntelliVerseX.Core` | SDK lifecycle, config, logging | `IntelliVerseXConfig`, `IVXLogger`, `IVXSafeSingleton<T>` |
+| **Identity** | `IntelliVerseX.Identity` | Authentication, sessions | `IntelliVerseXUserIdentity`, `UserSessionManager`, `APIManager` |
+| **Auth** | `IntelliVerseX.Auth` | Login/register UI panels | `IVXPanelLogin`, `IVXPanelRegister`, `IVXCanvasAuth` |
+| **Backend** | `IntelliVerseX.Backend` | Nakama integration, wallet | `IVXNakamaManager`, `IVXBackendService`, `IVXWalletManager` |
+| **Analytics** | `IntelliVerseX.Analytics` | Event tracking | `IVXAnalyticsManager`, `IVXEventTracker` |
+| **Monetization** | `IntelliVerseX.Monetization` | Ads, IAP, offerwalls | `IVXAdsManager`, `IVXIAPManager`, `IVXOfferwallManager` |
+| **Localization** | `IntelliVerseX.Localization` | 12+ languages, RTL | `IVXLocalizationService`, `IVXLanguageManager` |
+| **Social** | `IntelliVerseX.Social` | Friends, clans, sharing | `IVXFriendsManager`, `IVXClanManager`, `IVXShareService` |
+| **Leaderboard** | `IntelliVerseX.Leaderboard` | Rankings, scores | `IVXGLeaderboardManager` |
+| **Quiz** | `IntelliVerseX.Quiz` | Quiz game framework | `IVXQuizSessionManager`, `IVXDailyQuizManager`, `IVXWeeklyQuizManager` |
+| **Storage** | `IntelliVerseX.Storage` | Secure persistence | `IVXSecureStorage` |
+| **Networking** | `IntelliVerseX.Networking` | HTTP requests | `IVXNetworkRequest` |
+| **UI** | `IntelliVerseX.UI` | UI utilities, wallet display | `IVXUIManager`, `IVXWalletDisplay` |
+| **V2** | `IntelliVerseX.V2` | Next-gen profiles, wallet | `IVXNManager`, `IVXNProfileManager`, `IVXNWalletManager` |
+| **Editor** | `IntelliVerseX.Editor` | Setup wizards, tools | `IVXSDKSetupWizard`, `IVXProjectSetup` |
+
+### Extended Modules (`Assets/_IntelliVerseXSDK/`)
+
+| Module | Namespace | Purpose | Key Classes |
+|--------|-----------|---------|-------------|
+| **AI** | `IntelliVerseX.AI` | AI voice personas, host commentary | `IVXAISessionManager`, `IVXAIApiClient`, `IVXAIWebSocketClient` |
+| **Hiro** | `IntelliVerseX.Hiro` | Server-authoritative game systems | `IVXHiroCoordinator`, `IVXSpinWheelSystem`, `IVXStreaksSystem` |
+| **Satori** | `IntelliVerseX.Satori` | Server-side analytics, A/B tests | `IVXSatoriClient`, `IVXSatoriRpcClient` |
+| **Platform** | `IntelliVerseX.Platform` | Device utilities | `IVXPlatformOptimizer`, `IVXDeepLinkManager` |
+| **Demos** | `IntelliVerseX.Demos` | Ready-to-run demo UIs | `IVXAIVoiceChatDemo`, `IVXSpinWheelDemo`, `IVXStreakDemo` |
 
 ---
 
 ## FOLDER STRUCTURE
 
 ```
-Intelli-verse-X-Unity-SDK/
-|-- Assets/_IntelliVerseXSDK/      # Unity SDK (UPM Package)
-|   |-- Core/                      # SDK core, configuration
-|   |-- Identity/                  # Authentication providers
-|   |-- Backend/                   # Nakama integration
-|   |-- Analytics/                 # Event tracking
-|   |-- Monetization/              # Ads and IAP
-|   |-- Localization/              # Language support
-|   |-- Social/                    # Social features
-|   |-- Leaderboard/               # Rankings
-|   |-- Quiz/                      # Quiz support
-|   |-- Storage/                   # Cloud storage
-|   |-- Hiro/                      # Hiro systems integration
-|   |-- Satori/                    # Satori analytics
-|   |-- V2/                        # Next-gen features
-|   +-- Editor/                    # Editor tools
-|-- SDKs/
+Intelli-verse-X-SDK/
+|-- Assets/
+|   |-- Intelli-verse-X-SDK/       # Unity UPM Package (com.intelliversex.sdk)
+|   |   |-- Core/                  # Foundation, config, logging
+|   |   |-- Identity/              # Auth providers, sessions
+|   |   |-- Auth/                  # Login/Register UI panels
+|   |   |-- Backend/               # Nakama integration, wallet
+|   |   |-- Analytics/             # Event tracking
+|   |   |-- Monetization/          # Ads, IAP, offerwalls
+|   |   |-- Localization/          # 12+ languages, RTL
+|   |   |-- Social/                # Friends, clans, sharing
+|   |   |-- Leaderboard/           # Rankings, scores
+|   |   |-- Quiz/                  # Quiz + daily/weekly
+|   |   |-- Storage/               # Secure persistence
+|   |   |-- Networking/            # HTTP layer
+|   |   |-- UI/                    # UI utilities
+|   |   |-- V2/                    # Next-gen profiles
+|   |   |-- Editor/                # Setup wizards, tools
+|   |   |-- Samples~/              # Importable UPM samples
+|   |   +-- Tests~/                # Unit tests
+|   +-- _IntelliVerseXSDK/         # Extended modules
+|       |-- AI/                    # AI voice, host, entitlements
+|       |-- Hiro/                  # Spin wheel, streaks, retention
+|       |-- Satori/                # Server-side analytics
+|       |-- Platform/              # Deep links, foldable, optimizer
+|       +-- Demos/                 # Ready-to-run demo UIs
+|-- SDKs/                          # Cross-platform SDKs
 |   |-- unreal/                    # Unreal Engine 5 Plugin
-|   |   +-- Source/IntelliVerseX/  # C++ source
 |   |-- godot/                     # Godot 4 Addon
-|   |   +-- addons/intelliversex/  # GDScript source
 |   |-- defold/                    # Defold Library Module
-|   |   +-- intelliversex/         # Lua source
 |   |-- cocos2dx/                  # Cocos2d-x / CMake
-|   |   +-- Classes/IntelliVerseX/ # C++ source
 |   |-- javascript/                # npm / TypeScript
-|   |   +-- src/                   # TypeScript source
 |   |-- cpp/                       # Native C++ / CMake
-|   |   |-- include/intelliversex/ # Public headers
-|   |   +-- src/                   # Implementation
-|   +-- java/                      # Java / Gradle / Android
-|       +-- src/main/java/         # Java source
+|   |-- java/                      # Java / Gradle / Android
+|   |-- flutter/                   # Flutter / Dart (pub.dev)
+|   +-- web3/                      # Web3 / TypeScript (ethers.js)
 |-- docs/                          # MkDocs documentation
 +-- .github/workflows/             # CI/CD
 ```
@@ -203,7 +225,7 @@ Logs/
 | **Naming Guide** | `.cursor/naming-and-style.md` |
 | **Assumptions** | `.cursor/assumptions.md` |
 | **Context Validator (CI + Local)** | `tools/context/validate_context.py` |
-| **Changelog** | `Assets/_IntelliVerseXSDK/CHANGELOG.md` |
+| **Changelog** | `CHANGELOG.md` (root) + `Assets/Intelli-verse-X-SDK/CHANGELOG.md` |
 
 ---
 

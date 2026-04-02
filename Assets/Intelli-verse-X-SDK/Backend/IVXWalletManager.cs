@@ -19,9 +19,15 @@ namespace IntelliVerseX.Backend
     /// </summary>
     public static class IVXWalletManager
     {
-        // Events
-        public static event Action<int, int> OnBalanceChanged; // gameBalance, globalBalance
+        public static event Action<int, int> OnBalanceChanged;
         public static event Action<string> OnWalletError;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
+        {
+            OnBalanceChanged = null;
+            OnWalletError = null;
+        }
 
         /// <summary>
         /// Get cached game wallet balance (no network call)

@@ -20,7 +20,7 @@ namespace IntelliVerseX.Editor
         private const int DefaultMaxTextureSize = 4096;
         private const string DefaultEmojiOneAssetPath = "Assets/TextMesh Pro/Resources/Sprite Assets/EmojiOne.asset";
         private const string ImportedEmojiRootPath = "Assets/IntelliVerseX/Generated/Emoji";
-        private const string QuizVerseAssetsRootPath = "C:/Office/Unity/intelliverse-x-games-platform-2/games/quiz-verse/Assets";
+        private const string QuizVerseAssetsRootPath = "";
         private const string DefaultValidationSampleText = "Hello 😋 😍 😁";
 
         [SerializeField] private TMP_SpriteAsset _primarySpriteAsset;
@@ -39,7 +39,7 @@ namespace IntelliVerseX.Editor
         /// <summary>
         /// Opens the emoji support setup and validation window.
         /// </summary>
-        [MenuItem("IntelliVerse-X SDK/Tools/Emoji/Setup & Validate", priority = 65)]
+        [MenuItem("IntelliVerseX/Tools/Emoji/Setup & Validate", priority = 65)]
         public static void ShowWindow()
         {
             var window = GetWindow<IVXEmojiSupportSetupWindow>(WindowTitle);
@@ -50,7 +50,7 @@ namespace IntelliVerseX.Editor
         /// <summary>
         /// Applies production-safe emoji setup using the built-in TMP EmojiOne sprite asset.
         /// </summary>
-        [MenuItem("IntelliVerse-X SDK/Tools/Emoji/Apply Production Defaults", priority = 66)]
+        [MenuItem("IntelliVerseX/Tools/Emoji/Apply Production Defaults", priority = 66)]
         public static void ApplyProductionDefaultsMenu()
         {
             TMP_SpriteAsset defaultAsset = AssetDatabase.LoadAssetAtPath<TMP_SpriteAsset>(DefaultEmojiOneAssetPath);
@@ -67,7 +67,7 @@ namespace IntelliVerseX.Editor
         /// <summary>
         /// Validates emoji setup using the built-in TMP EmojiOne sprite asset.
         /// </summary>
-        [MenuItem("IntelliVerse-X SDK/Tools/Emoji/Validate Production Defaults", priority = 67)]
+        [MenuItem("IntelliVerseX/Tools/Emoji/Validate Production Defaults", priority = 67)]
         public static void ValidateProductionDefaultsMenu()
         {
             TMP_SpriteAsset defaultAsset = AssetDatabase.LoadAssetAtPath<TMP_SpriteAsset>(DefaultEmojiOneAssetPath);
@@ -90,9 +90,15 @@ namespace IntelliVerseX.Editor
         /// <summary>
         /// Imports Twemoji/SidMoji sprite assets from the known quiz-verse path and wires fallback chain.
         /// </summary>
-        // [MenuItem("IntelliVerse-X SDK/Tools/Emoji/Import From QuizVerse Assets", priority = 68)] // Disabled - QuizVerse specific
+        // [MenuItem("IntelliVerseX/Tools/Emoji/Import From QuizVerse Assets", priority = 68)] // Disabled - QuizVerse specific
         public static void ImportFromQuizVerseAssetsMenu()
         {
+            if (string.IsNullOrEmpty(QuizVerseAssetsRootPath))
+            {
+                Debug.LogError("[IVXEmojiSupportSetupWindow] QuizVerseAssetsRootPath is not configured. Set the path before importing.");
+                return;
+            }
+
             Directory.CreateDirectory(ImportedEmojiRootPath);
 
             string[] relativeFiles =
