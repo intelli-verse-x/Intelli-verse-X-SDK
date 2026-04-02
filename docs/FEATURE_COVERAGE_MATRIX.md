@@ -1,8 +1,10 @@
 # IntelliVerseX SDK v5.9.0 — Feature Coverage Matrix
 
-> Verified, audited feature parity across all 10 supported platforms.
+> Verified, audited feature parity across all 11 supported platforms.
 
 **Legend:** `Y` = Implemented | `S` = Stub/Mock (API exists, local only) | `-` = Not present | `P` = Partial
+
+> **Roblox (11th platform):** Lightweight SDK shipping only AI/LLM, Hiro Live-Ops, and Cross-Game Identity — features Roblox doesn't provide natively. Leaderboards, matchmaking, monetization, analytics, etc. use Roblox's built-in services.
 
 ---
 
@@ -196,6 +198,9 @@
 | **Defold** | **30** | 30 | 23 | **36%** |
 | **Cocos2d-x** | **25** | 30 | 28 | **30%** |
 | **C++ (CMake)** | **26** | 40 | 17 | **31%** |
+| **Roblox (Luau)** | **26** | 0 | 57 | **31%** |
+
+> **Roblox note:** 26 features implemented with zero stubs — every feature present is a real implementation. The 57 "Not Present" features are intentionally excluded because Roblox provides them natively (leaderboards, matchmaking, monetization, analytics, voice, chat, storage, etc.).
 
 > **API Surface Coverage** (Y + S combined) represents what a developer can code against today.
 > Stubs are zero-code-change upgradeable once backend RPCs are configured.
@@ -234,4 +239,4 @@ This means you can:
 
 ---
 
-*IntelliVerseX SDK v5.9.0 — 10 platforms, 96 features, one API.*
+*IntelliVerseX SDK v5.9.0 — 11 platforms, 96 features, one API.*

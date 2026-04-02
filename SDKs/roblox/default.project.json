@@ -1,0 +1,18 @@
+{
+  "name": "IntelliVerseX",
+  "tree": {
+    "$className": "DataModel",
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "IntelliVerseX": {
+        "$path": "src"
+      }
+    },
+    "ServerStorage": {
+      "$className": "ServerStorage",
+      "IntelliVerseXPlugin": {
+        "$path": "plugin"
+      }
+    }
+  }
+}
