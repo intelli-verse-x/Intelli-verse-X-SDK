@@ -10,12 +10,14 @@ on:
     paths:
       - 'Assets/_IntelliVerseXSDK/**'
       - 'Assets/Intelli-verse-X-SDK/**'
+      - 'Assets/Editor/**'
       - '.github/workflows/unity-tests.yml'
   pull_request:
     branches: [main, develop]
     paths:
       - 'Assets/_IntelliVerseXSDK/**'
       - 'Assets/Intelli-verse-X-SDK/**'
+      - 'Assets/Editor/**'
       - '.github/workflows/unity-tests.yml'
   workflow_dispatch:
     inputs:
@@ -28,16 +30,31 @@ env:
   PACKAGE_PATH: Assets/Intelli-verse-X-SDK
 
 jobs:
-  # Job 1: Validate package structure before running tests
+  # Job 1: Validate package structure and check secrets before running tests
   validate-package:
     name: Validate Package Structure
     runs-on: ubuntu-latest
     outputs:
       package_valid: ${{ steps.validate.outputs.valid }}
+      has_unity_license: ${{ steps.check-license.outputs.has_license }}
     
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+      
+      - name: Check Unity License
+        id: check-license
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        run: |
+          if [ -n "$UNITY_LICENSE" ] || [ -n "$UNITY_SERIAL" ]; then
+            echo "has_license=true" >> $GITHUB_OUTPUT
+            echo "✅ Unity license secrets found"
+          else
+            echo "has_license=false" >> $GITHUB_OUTPUT
+            echo "::warning::Unity license secrets (UNITY_LICENSE or UNITY_SERIAL) are not configured. Test and build jobs will be skipped. See https://game.ci/docs/github/activation for setup instructions."
+          fi
       
       - name: Validate package.json
         id: validate
@@ -77,7 +94,7 @@ jobs:
   test-unity-2023:
     name: Test Unity 2023 LTS
     needs: validate-package
-    if: needs.validate-package.outputs.package_valid == 'true'
+    if: needs.validate-package.outputs.package_valid == 'true' && needs.validate-package.outputs.has_unity_license == 'true'
     runs-on: ubuntu-latest
     
     steps:
@@ -141,7 +158,7 @@ jobs:
   test-unity-6:
     name: Test Unity 6
     needs: validate-package
-    if: needs.validate-package.outputs.package_valid == 'true'
+    if: needs.validate-package.outputs.package_valid == 'true' && needs.validate-package.outputs.has_unity_license == 'true'
     runs-on: ubuntu-latest
     
     steps:
@@ -204,7 +221,7 @@ jobs:
   build-validation:
     name: Build Validation
     needs: validate-package
-    if: needs.validate-package.outputs.package_valid == 'true'
+    if: needs.validate-package.outputs.package_valid == 'true' && needs.validate-package.outputs.has_unity_license == 'true'
     runs-on: ${{ matrix.target-platform == 'iOS' && 'macos-latest' || 'ubuntu-latest' }}
     strategy:
       fail-fast: false
@@ -258,12 +275,19 @@ jobs:
           echo "## 🧪 Unity Test Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
+          HAS_LICENSE="${{ needs.validate-package.outputs.has_unity_license }}"
+          if [ "$HAS_LICENSE" != "true" ]; then
+            echo "> **Note:** Unity license secrets are not configured. Test and build jobs were skipped." >> $GITHUB_STEP_SUMMARY
+            echo "> See [game-ci activation docs](https://game.ci/docs/github/activation) to set up \`UNITY_LICENSE\`." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+          
           echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
           echo "| Package Validation | ${{ needs.validate-package.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Unity 2023 Tests | ${{ needs.test-unity-2023.result == 'success' && '✅ Passed' || needs.test-unity-2023.result == 'skipped' && '⏭️ Skipped' || '⚠️ Issues' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Unity 6 Tests | ${{ needs.test-unity-6.result == 'success' && '✅ Passed' || needs.test-unity-6.result == 'skipped' && '⏭️ Skipped' || '⚠️ Issues' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Build Validation | ${{ needs.build-validation.result == 'success' && '✅ Passed' || needs.build-validation.result == 'skipped' && '⏭️ Skipped' || '⚠️ Issues' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Unity 2023 Tests | ${{ needs.test-unity-2023.result == 'success' && '✅ Passed' || needs.test-unity-2023.result == 'skipped' && '⏭️ Skipped (no license)' || '⚠️ Issues' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Unity 6 Tests | ${{ needs.test-unity-6.result == 'success' && '✅ Passed' || needs.test-unity-6.result == 'skipped' && '⏭️ Skipped (no license)' || '⚠️ Issues' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build Validation | ${{ needs.build-validation.result == 'success' && '✅ Passed' || needs.build-validation.result == 'skipped' && '⏭️ Skipped (no license)' || '⚠️ Issues' }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
           echo "### 📦 Tested Package" >> $GITHUB_STEP_SUMMARY
