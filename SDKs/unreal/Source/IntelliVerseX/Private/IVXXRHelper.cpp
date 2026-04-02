@@ -17,8 +17,14 @@ EIVXXRPlatform UIVXXRHelper::DetectXRPlatform()
         return EIVXXRPlatform::MetaQuest;
     if (SystemName.Contains(TEXT("SteamVR")))
         return EIVXXRPlatform::SteamVR;
-    if (SystemName.Contains(TEXT("AppleVision")))
+    if (SystemName.Contains(TEXT("AppleVision")) || SystemName.Contains(TEXT("Apple")))
         return EIVXXRPlatform::AppleVisionPro;
+    if (SystemName.Contains(TEXT("PSVR")) || SystemName.Contains(TEXT("PlayStation")))
+        return EIVXXRPlatform::PSVR2;
+    if (SystemName.Contains(TEXT("ARKit")))
+        return EIVXXRPlatform::ARKit;
+    if (SystemName.Contains(TEXT("ARCore")) || SystemName.Contains(TEXT("GoogleAR")))
+        return EIVXXRPlatform::ARCore;
     if (SystemName.Contains(TEXT("OpenXR")))
         return EIVXXRPlatform::GenericOpenXR;
 
@@ -39,5 +45,24 @@ bool UIVXXRHelper::IsHandTrackingAvailable()
 bool UIVXXRHelper::IsPassthroughAvailable()
 {
     EIVXXRPlatform platform = DetectXRPlatform();
-    return platform == EIVXXRPlatform::MetaQuest || platform == EIVXXRPlatform::AppleVisionPro;
+    return platform == EIVXXRPlatform::MetaQuest
+        || platform == EIVXXRPlatform::AppleVisionPro
+        || platform == EIVXXRPlatform::PSVR2;
+}
+
+bool UIVXXRHelper::IsEyeTrackingAvailable()
+{
+    EIVXXRPlatform platform = DetectXRPlatform();
+    return platform == EIVXXRPlatform::MetaQuest
+        || platform == EIVXXRPlatform::AppleVisionPro
+        || platform == EIVXXRPlatform::PSVR2;
+}
+
+FString UIVXXRHelper::GetXRSystemName()
+{
+    if (!GEngine || !GEngine->XRSystem.IsValid())
+    {
+        return TEXT("None");
+    }
+    return GEngine->XRSystem->GetSystemName().ToString();
 }

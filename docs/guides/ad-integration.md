@@ -481,4 +481,124 @@ IVXAdsManager.OnAdRevenue += (revenueData) =>
 3. Review AndroidManifest
 4. Test on multiple devices
 
+---
+
+## Server-Side Reward Validation
+
+### Why Server Validation Matters
+
+Client-side reward granting is vulnerable to fraud: modified clients, network replay attacks, and memory manipulation can all produce fake reward events. Server-side validation ensures every rewarded-ad payout is backed by a legitimate, verified ad completion.
+
+!!! danger "Without Server Validation"
+    A modified client can fire `OnRewardedVideoCompleted` without the user watching an ad, granting unlimited free currency. Always validate on the server for competitive or economy-sensitive games.
+
+### Nakama `rewarded_ads` Module
+
+The IntelliVerseX backend includes a Nakama RPC module `rewarded_ad_complete` that:
+
+1. Receives the ad completion data (network name, placement ID, signature)
+2. Validates the ad network's callback signature
+3. Checks for duplicate transaction IDs
+4. Grants the reward to the player's wallet
+5. Logs the event for analytics and audit
+
+### Validation Flow
+
+```mermaid
+sequenceDiagram
+    participant Player
+    participant Client as Game Client
+    participant AdNetwork as Ad Network SDK
+    participant Nakama as Nakama Server
+
+    Player->>Client: Taps "Watch Ad for Coins"
+    Client->>AdNetwork: ShowRewardedVideo()
+    AdNetwork->>Player: Plays video ad
+    Player->>AdNetwork: Completes full video
+    AdNetwork->>Client: OnRewardedVideoCompleted(reward, signature)
+    Client->>Nakama: RPC "rewarded_ad_complete" (placement, txn_id, signature)
+    Nakama->>Nakama: Validate signature against ad network secret
+    Nakama->>Nakama: Check duplicate txn_id
+    Nakama->>Nakama: Grant currency to player wallet
+    Nakama->>Client: Response (success, new_balance)
+    Client->>Player: Show reward animation
+```
+
+### Implementation
+
+```csharp
+using IntelliVerseX.Monetization;
+using IntelliVerseX.Backend;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class ServerValidatedAdController : MonoBehaviour
+{
+    private void OnEnable()
+    {
+        IVXAdsManager.OnRewardedVideoCompleted += OnAdCompleted;
+    }
+
+    private void OnDisable()
+    {
+        IVXAdsManager.OnRewardedVideoCompleted -= OnAdCompleted;
+    }
+
+    private async void OnAdCompleted(RewardInfo reward)
+    {
+        var payload = new Dictionary<string, object>
+        {
+            { "placement_id", reward.PlacementId },
+            { "ad_network", reward.NetworkName },
+            { "transaction_id", reward.TransactionId },
+            { "signature", reward.Signature },
+            { "reward_type", reward.Currency },
+            { "reward_amount", reward.Amount }
+        };
+
+        var response = await IVXNakamaClient.Instance.RpcAsync(
+            "rewarded_ad_complete", payload
+        );
+
+        if (response.Success)
+        {
+            int newBalance = response.GetInt("new_balance");
+            Debug.Log($"[Ads] Server validated. New balance: {newBalance}");
+            UpdateCoinDisplay(newBalance);
+            ShowRewardAnimation(reward.Amount);
+        }
+        else
+        {
+            Debug.LogWarning($"[Ads] Server rejected reward: {response.Error}");
+        }
+    }
+
+    private void UpdateCoinDisplay(int balance) { /* your UI update */ }
+    private void ShowRewardAnimation(int amount) { /* your animation */ }
+}
+```
+
+### Enabling Server Validation
+
+In your `IVXAdsConfig` ScriptableObject, enable the server validation toggle:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `EnableServerValidation` | `bool` | Route all rewarded-ad completions through Nakama |
+| `ValidationTimeoutSec` | `float` | Max seconds to wait for server response (default: `10`) |
+| `GrantOnTimeout` | `bool` | Grant reward locally if server times out (default: `false`) |
+
+!!! tip "Timeout Strategy"
+    Set `GrantOnTimeout = false` for competitive games where economy integrity is critical. Set it to `true` for casual games where a good user experience takes priority over occasional unverified rewards.
+
+```
+Server Validation:        ✅ Enabled
+Validation Timeout Sec:   10
+Grant on Timeout:         ❌ (strict mode)
+```
+
+When server validation is enabled, the client **does not** grant rewards locally. All reward granting happens inside the Nakama RPC, ensuring a single source of truth.
+
+---
+
 See [Ads Configuration](../configuration/ads-config.md) for detailed setup instructions.

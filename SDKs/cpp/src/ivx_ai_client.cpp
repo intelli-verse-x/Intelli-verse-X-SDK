@@ -2,8 +2,8 @@
 // MIT License — see LICENSE in the project root.
 
 #include "intelliversex/ivx_ai_client.h"
+#include "ivx_http_internal.h"
 #include <iostream>
-#include <stdexcept>
 
 namespace ivx {
 
@@ -30,13 +30,25 @@ void AIClient::startVoiceSession(const std::string& personaId, const std::string
         if (err) err({-1, "AIClient not initialized"});
         return;
     }
-    // Placeholder: real implementation would POST /v1/ai/voice/sessions
-    log("startVoiceSession persona=" + personaId + " user=" + userId);
-    if (cb) {
-        AISessionResponse r;
-        r.status = "pending";
-        cb(r);
-    }
+
+    std::string body = "{\"personaId\":\"" + json::escape(personaId)
+                     + "\",\"userId\":\"" + json::escape(userId) + "\"}";
+
+    http::post(_baseUrl + "/ai-voice/session", body, _apiKey,
+        [this, cb, err](const http::HttpResponse& resp) {
+            if (!resp.success) {
+                log("startVoiceSession failed: " + resp.error);
+                if (err) err({static_cast<int>(resp.statusCode), resp.error});
+                else if (cb) cb(AISessionResponse{});
+                return;
+            }
+            AISessionResponse r;
+            r.sessionId = json::getString(resp.body, "sessionId");
+            r.status    = json::getString(resp.body, "status");
+            r.wsUrl     = json::getString(resp.body, "wsUrl");
+            log("Voice session started: " + r.sessionId);
+            if (cb) cb(r);
+        });
 }
 
 void AIClient::endVoiceSession(const std::string& sessionId, VoidCallback cb, ErrorCb err) {
@@ -44,8 +56,17 @@ void AIClient::endVoiceSession(const std::string& sessionId, VoidCallback cb, Er
         if (err) err({-1, "AIClient not initialized"});
         return;
     }
-    log("endVoiceSession session=" + sessionId);
-    if (cb) cb();
+
+    http::post(_baseUrl + "/ai-voice/session/" + sessionId + "/end", "{}", _apiKey,
+        [this, sessionId, cb, err](const http::HttpResponse& resp) {
+            if (!resp.success) {
+                log("endVoiceSession failed: " + resp.error);
+                if (err) err({static_cast<int>(resp.statusCode), resp.error});
+                return;
+            }
+            log("Voice session ended: " + sessionId);
+            if (cb) cb();
+        });
 }
 
 void AIClient::sendText(const std::string& sessionId, const std::string& text,
@@ -54,8 +75,18 @@ void AIClient::sendText(const std::string& sessionId, const std::string& text,
         if (err) err({-1, "AIClient not initialized"});
         return;
     }
-    log("sendText session=" + sessionId + " len=" + std::to_string(text.size()));
-    if (cb) cb();
+
+    std::string body = "{\"text\":\"" + json::escape(text) + "\"}";
+
+    http::post(_baseUrl + "/ai-voice/session/" + sessionId + "/text", body, _apiKey,
+        [this, cb, err](const http::HttpResponse& resp) {
+            if (!resp.success) {
+                log("sendText failed: " + resp.error);
+                if (err) err({static_cast<int>(resp.statusCode), resp.error});
+                return;
+            }
+            if (cb) cb();
+        });
 }
 
 // --- Host sessions ---
@@ -66,18 +97,49 @@ void AIClient::startHostSession(const std::string& matchId, const HostProfile& p
         if (err) err({-1, "AIClient not initialized"});
         return;
     }
-    log("startHostSession match=" + matchId + " persona=" + profile.personaId);
-    if (cb) {
-        AISessionResponse r;
-        r.status = "pending";
-        cb(r);
-    }
+
+    std::string body = "{\"matchId\":\"" + json::escape(matchId)
+                     + "\",\"profile\":{\"displayName\":\"" + json::escape(profile.displayName) + "\"";
+    if (!profile.voiceId.empty())
+        body += ",\"voiceId\":\"" + json::escape(profile.voiceId) + "\"";
+    if (!profile.language.empty())
+        body += ",\"language\":\"" + json::escape(profile.language) + "\"";
+    if (!profile.personaId.empty())
+        body += ",\"personaId\":\"" + json::escape(profile.personaId) + "\"";
+    body += "}}";
+
+    http::post(_baseUrl + "/ai-host/session", body, _apiKey,
+        [this, cb, err](const http::HttpResponse& resp) {
+            if (!resp.success) {
+                log("startHostSession failed: " + resp.error);
+                if (err) err({static_cast<int>(resp.statusCode), resp.error});
+                else if (cb) cb(AISessionResponse{});
+                return;
+            }
+            AISessionResponse r;
+            r.sessionId = json::getString(resp.body, "sessionId");
+            r.status    = json::getString(resp.body, "status");
+            r.wsUrl     = json::getString(resp.body, "wsUrl");
+            log("Host session started: " + r.sessionId);
+            if (cb) cb(r);
+        });
 }
 
 void AIClient::sendHostEvent(const std::string& sessionId, const std::string& eventType,
                              const std::string& data) {
     if (!_init) return;
-    log("sendHostEvent session=" + sessionId + " type=" + eventType);
+
+    std::string body = "{\"eventType\":\"" + json::escape(eventType)
+                     + "\",\"data\":\"" + json::escape(data) + "\"}";
+
+    http::post(_baseUrl + "/ai-host/session/" + sessionId + "/event", body, _apiKey,
+        [this, eventType](const http::HttpResponse& resp) {
+            if (!resp.success) {
+                log("sendHostEvent failed: " + resp.error);
+                return;
+            }
+            log("Host event sent: " + eventType);
+        });
 }
 
 // --- Entitlement ---
@@ -88,11 +150,22 @@ void AIClient::checkEntitlement(const std::string& userId,
         if (err) err({-1, "AIClient not initialized"});
         return;
     }
-    log("checkEntitlement user=" + userId);
-    if (cb) {
-        AIEntitlement e;
-        cb(e);
-    }
+
+    http::get(_baseUrl + "/ai-voice/entitlement/" + userId, _apiKey,
+        [this, cb, err](const http::HttpResponse& resp) {
+            if (!resp.success) {
+                log("checkEntitlement failed: " + resp.error);
+                if (err) err({static_cast<int>(resp.statusCode), resp.error});
+                else if (cb) cb(AIEntitlement{});
+                return;
+            }
+            AIEntitlement e;
+            e.entitled         = json::getBool(resp.body, "entitled");
+            e.tier             = json::getString(resp.body, "tier");
+            e.remainingCredits = json::getInt(resp.body, "remainingCredits");
+            e.expiresAt        = json::getString(resp.body, "expiresAt");
+            if (cb) cb(e);
+        });
 }
 
 // --- Personas ---
@@ -102,11 +175,31 @@ void AIClient::getPersonas(Callback<std::vector<AIPersona>> cb, ErrorCb err) {
         if (err) err({-1, "AIClient not initialized"});
         return;
     }
-    log("getPersonas");
-    if (cb) {
-        std::vector<AIPersona> empty;
-        cb(empty);
-    }
+
+    http::get(_baseUrl + "/ai-voice/personas", _apiKey,
+        [this, cb, err](const http::HttpResponse& resp) {
+            if (!resp.success) {
+                log("getPersonas failed: " + resp.error);
+                if (err) err({static_cast<int>(resp.statusCode), resp.error});
+                else if (cb) cb({});
+                return;
+            }
+            std::vector<AIPersona> personas;
+            auto elements = json::getArrayElements(resp.body);
+            for (const auto& elem : elements) {
+                AIPersona p;
+                p.personaId = json::getString(elem, "personaId");
+                if (p.personaId.empty())
+                    p.personaId = json::getString(elem, "id");
+                p.name        = json::getString(elem, "name");
+                p.description = json::getString(elem, "description");
+                p.voiceId     = json::getString(elem, "voiceId");
+                p.avatarUrl   = json::getString(elem, "avatarUrl");
+                personas.push_back(std::move(p));
+            }
+            log("getPersonas returned " + std::to_string(personas.size()) + " personas");
+            if (cb) cb(personas);
+        });
 }
 
 // --- Logging ---

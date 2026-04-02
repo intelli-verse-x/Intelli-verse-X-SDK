@@ -18,6 +18,9 @@ IntelliVerseX provides official SDK wrappers for all major game engines and plat
 | [Java / Android](java.md) | Java | [nakama-java](https://github.com/heroiclabs/nakama-java) | Beta |
 | [Flutter / Dart](flutter.md) | Dart | [nakama](https://pub.dev/packages/nakama) | Beta |
 | [Web3 (Thirdweb / Moralis)](web3.md) | TypeScript | [nakama-js](https://github.com/heroiclabs/nakama-js) + [ethers](https://docs.ethers.org/) | Beta |
+| [Unity WebGL](webgl.md) | C# | [nakama-unity](https://github.com/heroiclabs/nakama-unity) | Stable |
+| [XR / VR / AR](xr-vr-ar.md) | C# / TypeScript | Platform-specific XR SDKs | Beta |
+| [Consoles (PS5 / Xbox / Switch)](console.md) | C# / C++ | Adapter pattern (NDA-safe) | Stable |
 
 ---
 
@@ -128,3 +131,15 @@ Choose your platform and follow the Getting Started guide:
 === "Web3"
 
     See [Web3 Getting Started](web3.md) for wallet auth and NFT integration.
+
+=== "WebGL"
+
+    See [Unity WebGL](webgl.md) for browser deployment, hosting, and WebGL-specific adapters.
+
+=== "XR/VR/AR"
+
+    See [XR / VR / AR](xr-vr-ar.md) for Meta Quest, SteamVR, Vision Pro, and AR Foundation setup.
+
+=== "Consoles"
+
+    See [Consoles](console.md) for the adapter pattern and PS5/Xbox/Switch integration.

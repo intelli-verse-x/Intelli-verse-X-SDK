@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace IntelliVerseX.Platform
@@ -6,6 +7,7 @@ namespace IntelliVerseX.Platform
     /// <summary>
     /// Detects VR/AR/XR capabilities and provides platform-specific helpers.
     /// Supports Meta Quest, Apple Vision Pro, SteamVR, PSVR2, and AR Foundation.
+    /// Queries real XR subsystems when vendor SDKs are present.
     /// </summary>
     public sealed class IVXXRPlatformHelper : MonoBehaviour
     {
@@ -80,6 +82,19 @@ namespace IntelliVerseX.Platform
         }
         #endregion
 
+        #region Unity Lifecycle
+        private void OnApplicationFocus(bool hasFocus)
+        {
+            Debug.Log($"[{LOG_TAG}] Focus changed: {hasFocus}");
+            OnXRFocusChanged?.Invoke(hasFocus);
+
+            if (hasFocus && IsXRActive)
+            {
+                RefreshCapabilities();
+            }
+        }
+        #endregion
+
         #region Public Methods
         /// <summary>
         /// Detect the current XR platform. Called automatically on Awake.
@@ -103,9 +118,18 @@ namespace IntelliVerseX.Platform
                 if (loaderName.Contains("Oculus") || loaderName.Contains("Meta"))
                 {
                     ActivePlatform = XRPlatformType.MetaQuest;
-                    HandTrackingAvailable = true;
-                    EyeTrackingAvailable = true;
-                    PassthroughAvailable = true;
+                }
+                else if (loaderName.Contains("Apple") || loaderName.Contains("Vision") || loaderName.Contains("PolySpatial"))
+                {
+                    ActivePlatform = XRPlatformType.AppleVisionPro;
+                }
+                else if (loaderName.Contains("PlayStation") || loaderName.Contains("PSVR"))
+                {
+                    ActivePlatform = XRPlatformType.PSVR2;
+                }
+                else if (loaderName.Contains("Windows Mixed Reality") || loaderName.Contains("WindowsMR") || loaderName.Contains("WMR"))
+                {
+                    ActivePlatform = XRPlatformType.WindowsMR;
                 }
                 else if (loaderName.Contains("OpenXR"))
                 {
@@ -114,15 +138,9 @@ namespace IntelliVerseX.Platform
                     ActivePlatform = XRPlatformType.SteamVR;
 #endif
                 }
-                else if (loaderName.Contains("Apple") || loaderName.Contains("Vision"))
-                {
-                    ActivePlatform = XRPlatformType.AppleVisionPro;
-                    HandTrackingAvailable = true;
-                    EyeTrackingAvailable = true;
-                    PassthroughAvailable = true;
-                }
 
                 TrackingState = XRTrackingState.Full;
+                RefreshCapabilities();
             }
 #endif
 
@@ -138,6 +156,19 @@ namespace IntelliVerseX.Platform
             Debug.Log($"[{LOG_TAG}] XR Detection: active={IsXRActive}, platform={ActivePlatform}");
             OnXRDeviceChanged?.Invoke(ActivePlatform);
             OnTrackingStateChanged?.Invoke(TrackingState);
+        }
+
+        /// <summary>
+        /// Re-query XR subsystems to refresh capability flags at runtime.
+        /// Useful after headset firmware updates or peripheral connections.
+        /// </summary>
+        public void RefreshCapabilities()
+        {
+            QueryMetaCapabilities();
+            QueryOpenXRCapabilities();
+            QueryFallbackCapabilities();
+
+            Debug.Log($"[{LOG_TAG}] Capabilities refreshed: hand={HandTrackingAvailable}, eye={EyeTrackingAvailable}, passthrough={PassthroughAvailable}");
         }
 
         /// <summary>
@@ -172,6 +203,22 @@ namespace IntelliVerseX.Platform
                     TargetFrameRate = 90,
                     RecommendedRenderScale = 1.0f,
                 },
+                XRPlatformType.PSVR2 => new XRRecommendedSettings
+                {
+                    UIScale = 0.001f,
+                    UseWorldSpaceUI = true,
+                    PreferHandTracking = false,
+                    TargetFrameRate = 90,
+                    RecommendedRenderScale = 1.0f,
+                },
+                XRPlatformType.WindowsMR => new XRRecommendedSettings
+                {
+                    UIScale = 0.001f,
+                    UseWorldSpaceUI = true,
+                    PreferHandTracking = false,
+                    TargetFrameRate = 90,
+                    RecommendedRenderScale = 1.0f,
+                },
                 XRPlatformType.ARFoundation => new XRRecommendedSettings
                 {
                     UIScale = 1.0f,
@@ -182,6 +229,72 @@ namespace IntelliVerseX.Platform
                 },
                 _ => new XRRecommendedSettings(),
             };
+        }
+        #endregion
+
+        #region Private Methods
+        private void QueryMetaCapabilities()
+        {
+#if INTELLIVERSEX_HAS_META_XR
+            try
+            {
+                HandTrackingAvailable = OVRPlugin.GetHandTrackingEnabled();
+                EyeTrackingAvailable = OVRPlugin.GetEyeTrackingEnabled();
+                PassthroughAvailable = OVRManager.isInsightPassthroughEnabled;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[{LOG_TAG}] Meta XR capability query failed: {e.Message}");
+            }
+#endif
+        }
+
+        private void QueryOpenXRCapabilities()
+        {
+#if INTELLIVERSEX_HAS_OPENXR
+            try
+            {
+                var handSubsystems = new List<UnityEngine.XR.Hands.XRHandSubsystem>();
+                SubsystemManager.GetSubsystems(handSubsystems);
+                HandTrackingAvailable = handSubsystems.Count > 0 && handSubsystems[0].running;
+
+                var eyeSubsystems = new List<UnityEngine.XR.XREyeSubsystem>();
+                SubsystemManager.GetSubsystems(eyeSubsystems);
+                EyeTrackingAvailable = eyeSubsystems.Count > 0 && eyeSubsystems[0].running;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[{LOG_TAG}] OpenXR subsystem query failed: {e.Message}");
+            }
+#endif
+        }
+
+        private void QueryFallbackCapabilities()
+        {
+#if !INTELLIVERSEX_HAS_META_XR && !INTELLIVERSEX_HAS_OPENXR
+            switch (ActivePlatform)
+            {
+                case XRPlatformType.MetaQuest:
+                case XRPlatformType.AppleVisionPro:
+                    HandTrackingAvailable = true;
+                    EyeTrackingAvailable = true;
+                    PassthroughAvailable = true;
+                    break;
+                case XRPlatformType.PSVR2:
+                    HandTrackingAvailable = false;
+                    EyeTrackingAvailable = true;
+                    PassthroughAvailable = true;
+                    break;
+                case XRPlatformType.WindowsMR:
+                    HandTrackingAvailable = false;
+                    EyeTrackingAvailable = false;
+                    PassthroughAvailable = false;
+                    break;
+                case XRPlatformType.SteamVR:
+                case XRPlatformType.GenericOpenXR:
+                    break;
+            }
+#endif
         }
         #endregion
 

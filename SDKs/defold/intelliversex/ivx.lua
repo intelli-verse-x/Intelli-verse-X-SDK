@@ -501,4 +501,7 @@ function M.connect_socket(callback)
     end)
 end
 
+-- Sub-modules
+M.multiplayer = require "intelliversex.multiplayer"
+
 return M

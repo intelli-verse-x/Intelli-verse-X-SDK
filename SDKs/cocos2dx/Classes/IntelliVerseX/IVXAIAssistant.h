@@ -29,7 +29,7 @@ struct IVXAITutorialResponse {
     std::string featureId;
 };
 
-/// AI assistant — stub matching Unity IVXAIAssistant.
+/// In-game AI assistant — delegates to the AI service via HTTP.
 class IVXAIAssistant {
 public:
     static IVXAIAssistant& getInstance();
@@ -54,6 +54,16 @@ public:
 
 private:
     IVXAIAssistant() = default;
+
+    bool _initialized = false;
+    bool _processing = false;
+    std::string _authToken;
+    std::string _apiUrl = "https://ai.intelli-verse-x.ai";
+    std::string _sessionId;
+
+    void httpPost(const std::string& path, const std::string& bodyJson,
+                  std::function<void(const std::string&)> onSuccess, ErrorCallback onError);
+    void log(const std::string& msg);
 };
 
 } // namespace IntelliVerseX

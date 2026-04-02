@@ -109,6 +109,20 @@ export type { IVXLinkedChannel } from './discord-linked-channels';
 export { IVXDiscordDebug, IVXDiscordLogLevel } from './discord-debug';
 export type { IVXDiscordLogEntry, IVXDiscordLogCallback } from './discord-debug';
 
+// Multiplayer (Lobby & Matchmaking)
+export { IVXMultiplayer } from './IVXMultiplayer';
+export type {
+  IVXLobby,
+  IVXLobbyPlayer,
+  IVXMatchmakingTicket,
+  IVXMultiplayerLobbyAPI,
+  IVXMultiplayerMatchmakingAPI,
+} from './IVXMultiplayer';
+
+// Deep Links
+export { IVXDeepLinks } from './IVXDeepLinks';
+export type { DeepLinkConfig, DeepLinkResult, DeepLinkHandler } from './IVXDeepLinks';
+
 // Satori Analytics
 export { IVXSatori } from './ivx-satori';
 export type {
@@ -118,3 +132,7 @@ export type {
   IVXSatoriExperiment,
   IVXSatoriLiveEvent,
 } from './ivx-satori';
+
+// WebXR
+export { IVXWebXRHelper, WebXRSessionType } from './IVXWebXRHelper';
+export type { WebXRCapabilities } from './IVXWebXRHelper';

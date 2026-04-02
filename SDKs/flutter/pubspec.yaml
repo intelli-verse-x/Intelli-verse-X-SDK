@@ -22,4 +22,4 @@ dependencies:
 
 dev_dependencies:
   test: ^1.25.0
-  lints: ^5.0.0
+  lints: ^3.0.0

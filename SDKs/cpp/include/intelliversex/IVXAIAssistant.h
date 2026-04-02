@@ -3,8 +3,8 @@
 
 #pragma once
 
+#include "ivx_types.h"
 #include <functional>
-#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -40,42 +40,47 @@ struct AITutorialResponse {
     int estimatedTimeSeconds = 0;
 };
 
-/// In-game assistant — stub matching Unity IVXAIAssistant.
+/// In-game AI assistant — delegates to the AI service via HTTP.
 class IVXAIAssistant {
 public:
-    static IVXAIAssistant& instance() {
-        static IVXAIAssistant inst;
-        return inst;
-    }
+    static IVXAIAssistant& instance();
 
-    bool isProcessing() const { return false; }
-    bool isInitialized() const { return false; }
+    bool isProcessing() const;
+    bool isInitialized() const;
     std::string systemPrompt;
 
-    void initialize(void*) { throw std::runtime_error("Not implemented"); }
-    void setAuthToken(const std::string&) { throw std::runtime_error("Not implemented"); }
-    void clearHistory() { throw std::runtime_error("Not implemented"); }
-    void setSystemPrompt(const std::string& p) { systemPrompt = p; }
+    void initialize(void* config);
+    void setAuthToken(const std::string& token);
+    void clearHistory();
+    void setSystemPrompt(const std::string& prompt);
 
-    void ask(const std::string&, const AIGameContext*, std::function<void(const AIAssistantResponse*)> = nullptr) {
-        throw std::runtime_error("Not implemented");
-    }
+    void ask(const std::string& question, const AIGameContext* ctx,
+             std::function<void(const AIAssistantResponse*)> onComplete = nullptr,
+             ErrorCb onError = nullptr);
 
-    void getHint(const std::string&, const std::string&, const AIGameContext*,
-                 std::function<void(const AIHintResponse*)> = nullptr) {
-        throw std::runtime_error("Not implemented");
-    }
+    void getHint(const std::string& levelId, const std::string& objectiveId,
+                 const AIGameContext* ctx,
+                 std::function<void(const AIHintResponse*)> onComplete = nullptr,
+                 ErrorCb onError = nullptr);
 
-    void getTutorial(const std::string&, std::function<void(const AITutorialResponse*)> = nullptr) {
-        throw std::runtime_error("Not implemented");
-    }
+    void getTutorial(const std::string& featureId,
+                     std::function<void(const AITutorialResponse*)> onComplete = nullptr,
+                     ErrorCb onError = nullptr);
 
-    void searchKnowledgeBase(const std::string&, std::function<void(std::vector<std::string>)> = nullptr) {
-        throw std::runtime_error("Not implemented");
-    }
+    void searchKnowledgeBase(const std::string& query,
+                             std::function<void(std::vector<std::string>)> onResults = nullptr,
+                             ErrorCb onError = nullptr);
 
 private:
     IVXAIAssistant() = default;
+
+    bool _initialized = false;
+    bool _processing = false;
+    std::string _authToken;
+    std::string _apiUrl = "https://ai.intelli-verse-x.ai";
+    std::string _sessionId;
+
+    void log(const std::string& msg);
 };
 
 } // namespace ivx

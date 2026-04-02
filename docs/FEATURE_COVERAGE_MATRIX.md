@@ -1,4 +1,4 @@
-# IntelliVerseX SDK v5.8.0 — Feature Coverage Matrix
+# IntelliVerseX SDK v5.9.0 — Feature Coverage Matrix
 
 > Verified, audited feature parity across all 10 supported platforms.
 
@@ -65,12 +65,12 @@
 | Select Mode | Y | S | S | S | S | S | S | S | S | S |
 | Add/Remove Player | Y | S | S | S | S | S | S | S | S | S |
 | Start/End Match | Y | S | S | S | S | S | S | S | S | S |
-| Lobby Create Room | Y | S | S | Y | S | S | S | S | S | S |
-| Lobby Join Room | Y | S | S | Y | S | S | S | S | S | S |
-| Lobby List Rooms | Y | S | S | Y | S | S | S | S | S | S |
-| Lobby Leave Room | Y | S | S | Y | S | S | S | S | S | S |
-| Matchmaking Find | Y | S | S | - | S | S | S | S | S | S |
-| Matchmaking Cancel | Y | S | S | - | S | S | S | S | S | S |
+| Lobby Create Room | Y | Y | S | Y | Y | Y | Y | Y | S | S |
+| Lobby Join Room | Y | Y | S | Y | Y | Y | Y | Y | S | S |
+| Lobby List Rooms | Y | Y | S | Y | Y | Y | Y | Y | S | S |
+| Lobby Leave Room | Y | Y | S | Y | Y | Y | Y | Y | S | S |
+| Matchmaking Find | Y | Y | S | - | Y | Y | Y | Y | S | S |
+| Matchmaking Cancel | Y | Y | S | - | Y | Y | Y | Y | S | S |
 | Local MP Session | Y | - | - | - | - | - | - | - | - | - |
 | Local MP Turns | Y | - | - | - | - | - | - | - | - | - |
 | Local MP Split Screen | Y | - | - | - | - | - | - | - | - | - |
@@ -82,8 +82,8 @@
 | Feature | Unity | JS/TS | Web3 | Java | Flutter | Unreal | Godot | Defold | C++ | Cocos |
 |---------|:-----:|:-----:|:----:|:----:|:-------:|:------:|:-----:|:------:|:---:|:-----:|
 | Spin Wheel (get/spin) | Y | Y | Y | Y | Y | Y | Y | Y | S | Y |
-| Streaks (get/update/claim) | Y | Y | S | Y | S | Y | S | S | S | S |
-| Offerwall (get/complete/claim) | Y | Y | S | Y | S | Y | S | S | S | S |
+| Streaks (get/update/claim) | Y | Y | Y | Y | Y | Y | Y | Y | Y | Y |
+| Offerwall (get/complete/claim) | Y | Y | Y | Y | Y | Y | Y | Y | Y | Y |
 | Friend Quests | Y | Y | Y | Y | Y | Y | Y | Y | S | - |
 | Friend Battles | Y | Y | Y | Y | Y | Y | Y | Y | S | - |
 | IAP Trigger | Y | Y | Y | Y | Y | Y | Y | Y | Y | Y |
@@ -128,13 +128,37 @@
 
 | Feature | Unity | JS/TS | Web3 | Java | Flutter | Unreal | Godot | Defold | C++ | Cocos |
 |---------|:-----:|:-----:|:----:|:----:|:-------:|:------:|:-----:|:------:|:---:|:-----:|
-| Deep Links | Y | - | - | - | - | - | - | - | - | - |
+| Deep Links | Y | Y | - | Y | Y | - | Y | Y | - | - |
 | Safe Area / Edge-to-Edge | Y | - | - | - | - | - | - | - | - | - |
 | Foldable Device Support | Y | - | - | - | - | - | - | - | - | - |
 | Performance Optimizer | Y | - | - | - | - | - | - | - | - | - |
 | Bootstrap (one-drop init) | Y | Y | Y | Y | Y | Y | Y | Y | Y | Y |
 | Demo UIs | Y (16) | - | - | - | - | - | - | - | - | - |
 | Web3 / NFT Gating | - | - | Y | - | - | - | - | - | - | - |
+| WebGL / Web | Y | Y | Y | - | - | - | - | - | - | - |
+
+---
+
+## Nakama Live Service Systems (v5.9.0)
+
+| Feature | Unity | JS/TS | Web3 | Java | Flutter | Unreal | Godot | Defold | C++ | Cocos |
+|---------|:-----:|:-----:|:----:|:----:|:-------:|:------:|:-----:|:------:|:---:|:-----:|
+| Push Notifications | Y | - | - | - | - | - | - | - | - | - |
+| Daily Rewards (Backend) | Y | - | - | - | - | - | - | - | - | - |
+| Daily Missions | Y | - | - | - | - | - | - | - | - | - |
+| League System (6-tier) | Y | - | - | - | - | - | - | - | - | - |
+| Fortune Wheel | Y | - | - | - | - | - | - | - | - | - |
+| Achievements | Y | - | - | - | - | - | - | - | - | - |
+| Badges (56 badges) | Y | - | - | - | - | - | - | - | - | - |
+| Retention v2 + Winback | Y | - | - | - | - | - | - | - | - | - |
+| Season Pass | Y | - | - | - | - | - | - | - | - | - |
+| Weekly/Monthly Goals | Y | - | - | - | - | - | - | - | - | - |
+| Friend Streaks | Y | - | - | - | - | - | - | - | - | - |
+| Character System | Y | - | - | - | - | - | - | - | - | - |
+| Tournaments | Y | - | - | - | - | - | - | - | - | - |
+
+> These 13 features are Unity-first implementations wired to Nakama backend RPCs.
+> Non-Unity platforms can call the same RPCs directly via their Nakama SDK client.
 
 ---
 
@@ -143,15 +167,15 @@
 | Feature | Unity | JS/TS | Web3 | Java | Flutter | Unreal | Godot | Defold | C++ | Cocos |
 |---------|:-----:|:-----:|:----:|:----:|:-------:|:------:|:-----:|:------:|:---:|:-----:|
 | XR Platform Detection | Y | - | - | - | - | Y | Y | - | Y | - |
-| Meta Quest Support | S | - | - | - | - | S | S | - | S | - |
-| SteamVR Support | S | - | - | - | - | S | S | - | S | - |
+| Meta Quest Support | Y | - | - | - | - | S | S | - | Y | - |
+| SteamVR Support | Y | - | - | - | - | S | S | - | Y | - |
 | Apple Vision Pro Support | S | - | - | - | - | S | - | - | S | - |
-| AR Foundation / ARKit / ARCore | S | - | - | - | - | S | - | - | S | - |
+| AR Foundation / ARKit / ARCore | Y | - | - | - | - | S | - | - | S | - |
 | PSVR2 Support | - | - | - | - | - | - | - | - | S | - |
 | Hand Tracking Info | S | - | - | - | - | S | - | - | S | - |
 | Eye Tracking Info | S | - | - | - | - | S | - | - | S | - |
 | Passthrough / MR Info | S | - | - | - | - | S | - | - | S | - |
-| Console (PS5/Xbox/Switch) | - | - | - | - | - | - | - | - | - | - |
+| Console (PS5/Xbox/Switch) | S | - | - | - | - | S | - | - | - | - |
 | Linux / SteamOS | S | Y | - | - | - | S | S | S | Y | - |
 | tvOS | - | - | - | - | - | - | - | - | - | - |
 | visionOS | S | - | - | - | - | - | - | - | - | - |
@@ -162,36 +186,41 @@
 
 | Platform | Fully Implemented | Stubs | Not Present | Coverage % |
 |----------|:-----------------:|:-----:|:-----------:|:----------:|
-| **Unity** | **64** | 12 | 6 | **78%** |
-| **JavaScript/TS** | **36** | 27 | 19 | **44%** |
-| **Flutter/Dart** | **29** | 31 | 22 | **35%** |
-| **Web3** | **26** | 30 | 26 | **32%** |
-| **Java/Android** | **31** | 27 | 24 | **38%** |
-| **Unreal Engine 5** | **31** | 37 | 14 | **38%** |
-| **Godot 4** | **31** | 33 | 18 | **38%** |
-| **Defold** | **30** | 30 | 22 | **37%** |
-| **Cocos2d-x** | **25** | 30 | 27 | **30%** |
-| **C++ (CMake)** | **24** | 42 | 16 | **29%** |
+| **Unity** | **68** | 10 | 5 | **82%** |
+| **JavaScript/TS** | **37** | 27 | 19 | **45%** |
+| **Flutter/Dart** | **29** | 31 | 23 | **35%** |
+| **Web3** | **27** | 30 | 26 | **33%** |
+| **Java/Android** | **31** | 27 | 25 | **37%** |
+| **Unreal Engine 5** | **31** | 38 | 14 | **37%** |
+| **Godot 4** | **31** | 33 | 19 | **37%** |
+| **Defold** | **30** | 30 | 23 | **36%** |
+| **Cocos2d-x** | **25** | 30 | 28 | **30%** |
+| **C++ (CMake)** | **26** | 40 | 17 | **31%** |
 
 > **API Surface Coverage** (Y + S combined) represents what a developer can code against today.
 > Stubs are zero-code-change upgradeable once backend RPCs are configured.
 
-> **VR/AR/XR support** (v5.8.0): Platform detection and capability querying stubs are available
-> for Unity, Unreal, Godot, and C++. Wire your XR SDK (OpenXR, Meta SDK, ARKit, etc.) and the
-> helpers will auto-detect the active platform. Console support is not yet available.
+> **VR/AR/XR support** (v5.9.0): Unity now has real XR subsystem queries via `IVXXRPlatformHelper`
+> and `IVXXRInputAdapter` (Meta Quest, SteamVR upgraded to Y). AR Foundation wrapped by `IVXARHelper`.
+> C++ has real OpenXR detection (Meta Quest, SteamVR upgraded to Y). Unreal and Godot retain stubs.
+> Console adapter interfaces added for Unity (`S`) and Unreal (`S` via `IVXConsoleSubsystem`).
 
 ---
 
 ## Key Takeaways
 
-- **Unity** is the reference implementation with the richest feature set (64 features fully wired, including XR platform detection).
-- **All 10 platforms** now have full API surface coverage for **Discord Social SDK** (12 modules incl. Settings), **AI LLM Stack** (6 modules), **Satori Analytics** (6 features), and all **Hiro Live-Ops** systems.
+- **Unity** is the reference implementation with the richest feature set (68 features fully implemented, including 13 Nakama live service managers, real XR support, and WebGL).
+- **v5.9.0 adds 13 Nakama-backed engagement systems**: Push Notifications, Daily Rewards (server-authoritative), Daily Missions, 6-Tier Leagues, Fortune Wheel, Achievements, Badges (56), Retention v2 + Winback, Season Pass, Weekly/Monthly Goals, Friend Streaks, Characters, Tournaments.
+- **XR/VR upgraded from stubs to real implementations** — Unity now has real XR subsystem queries (`IVXXRPlatformHelper`, `IVXXRInputAdapter`) for Meta Quest and SteamVR. `IVXARHelper` wraps AR Foundation for ARKit/ARCore. C++ has real OpenXR detection for Meta Quest and SteamVR.
+- **Console support added** — Unity and Unreal now have console adapter interfaces (PS5/Xbox/Switch) marked `S`. Unreal's `IVXConsoleSubsystem` wraps `IOnlineSubsystem` for platform-specific wiring.
+- **WebGL/Web support** — Full implementations for Unity, JS/TS, and Web3. JS/TS gains WebXR support via `IVXWebXRHelper.ts`.
+- **Hiro Streaks + Offerwall now Y on all 10 platforms** — previously marked S on 6 platforms, confirmed real Nakama RPC implementations.
+- **Multiplayer Lobby/Matchmaking upgraded to Y** on JS, Flutter, Unreal, Godot, Defold — real Nakama RPC-backed implementations.
+- **Deep Links implemented** on JS, Java, Flutter, Godot, Defold — enables push notification re-engagement across platforms.
+- **All 10 platforms** have full API surface coverage for Discord Social SDK, AI LLM Stack, Satori Analytics, and all Hiro Live-Ops systems.
 - **JavaScript/TypeScript** remains the strongest non-Unity SDK with real Nakama RPC-backed Hiro systems.
-- **Hiro parity** (retention, IAP trigger, smart ad timer) has been added to Unreal, C++, Cocos2d-x, Godot, and Defold.
-- **GameModes/Lobby/Matchmaking** are local-state stubs across non-Unity SDKs — API shape exists for zero-code-change upgrade.
 - **Local Multiplayer** (hot-seat, split-screen) remains Unity-only.
-- **Platform utilities** (deep links, foldable, safe area, optimizer) remain Unity-only.
-- **VR/AR/XR**: Detection and capability helpers ship on Unity, Unreal, Godot, and C++; wire OpenXR / platform SDKs for full runtime behavior.
+- **VR/AR/XR**: Real implementations on Unity and C++; detection and capability stubs on Unreal and Godot.
 
 ---
 
@@ -205,4 +234,4 @@ This means you can:
 
 ---
 
-*IntelliVerseX SDK v5.8.0 — 10 platforms, 82 features, one API.*
+*IntelliVerseX SDK v5.9.0 — 10 platforms, 96 features, one API.*

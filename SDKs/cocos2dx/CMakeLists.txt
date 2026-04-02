@@ -6,7 +6,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(IVX_BUILD_EXAMPLES "Build example projects" OFF)
 
-find_package(nakama-sdk REQUIRED)
+include(FetchContent)
+
+FetchContent_Declare(
+  nakama-sdk
+  GIT_REPOSITORY https://github.com/heroiclabs/nakama-cpp.git
+  GIT_TAG        v2.8.5
+  GIT_SHALLOW    TRUE
+)
+
+option(NAKAMA_BUILD_TESTS "Build Nakama tests" OFF)
+option(NAKAMA_BUILD_EXAMPLES "Build Nakama examples" OFF)
+FetchContent_MakeAvailable(nakama-sdk)
 
 set(IVX_SOURCES
     Classes/IntelliVerseX/IVXManager.cpp
@@ -42,7 +53,7 @@ target_include_directories(intelliversex PUBLIC
 )
 
 target_link_libraries(intelliversex PUBLIC
-    nakama-sdk
+    nakama-cpp
 )
 
 if(IVX_BUILD_EXAMPLES)

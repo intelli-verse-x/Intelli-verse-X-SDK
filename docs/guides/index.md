@@ -76,6 +76,54 @@ Step-by-step tutorials for common integration scenarios.
 
 ---
 
+## Monetization Guides
+
+<div class="grid cards" markdown>
+
+-   :material-currency-usd:{ .lg .middle } **Monetization Strategy**
+
+    ---
+
+    Choose the right revenue model for your game genre — ads, IAP, offerwall, season pass
+
+    [:octicons-arrow-right-24: Monetization Strategy](monetization-strategy.md)
+
+-   :material-gift:{ .lg .middle } **Offerwall Integration**
+
+    ---
+
+    Set up Pubscale and Xsolla offerwalls with reward callbacks
+
+    [:octicons-arrow-right-24: Offerwall Guide](offerwall-integration.md)
+
+-   :material-cart:{ .lg .middle } **IAP Integration**
+
+    ---
+
+    Apple and Google in-app purchases with server-side receipt validation
+
+    [:octicons-arrow-right-24: IAP Guide](iap-integration.md)
+
+</div>
+
+---
+
+## AI Agent Skills
+
+<div class="grid cards" markdown>
+
+-   :material-robot-happy:{ .lg .middle } **AI Agent Skills Reference**
+
+    ---
+
+    7 purpose-built skills for Cursor, Windsurf, Claude Code, and more — automate SDK integration with natural language
+
+    [:octicons-arrow-right-24: AI Agent Skills](ai-agent-skills.md)
+
+</div>
+
+---
+
 ## Advanced Guides
 
 <div class="grid cards" markdown>

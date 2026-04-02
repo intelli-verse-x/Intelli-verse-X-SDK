@@ -1,0 +1,69 @@
+{
+  "name": "intelliversex-game-sdk",
+  "version": "1.0.0",
+  "description": "IntelliVerseX Game SDK — 7 AI agent skills for game development across 10 platforms",
+  "author": {
+    "name": "IntelliVerse-X",
+    "email": "team@intelli-verse-x.ai",
+    "url": "https://intelli-verse-x.ai"
+  },
+  "repository": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK",
+  "homepage": "https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/",
+  "license": "MIT",
+  "plugins": [
+    {
+      "name": "ivx-sdk-setup",
+      "source": "./.cursor/skills/ivx-sdk-setup",
+      "description": "Set up and configure IntelliVerseX SDK for Unity or cross-platform engines"
+    },
+    {
+      "name": "ivx-monetization",
+      "source": "./.cursor/skills/ivx-monetization",
+      "description": "Configure ads, IAP, offerwalls, and monetization strategy"
+    },
+    {
+      "name": "ivx-multiplayer",
+      "source": "./.cursor/skills/ivx-multiplayer",
+      "description": "Add lobbies, matchmaking, game modes, and real-time networking"
+    },
+    {
+      "name": "ivx-ai-integration",
+      "source": "./.cursor/skills/ivx-ai-integration",
+      "description": "Integrate AI voice host, NPC dialog, content generation, and moderation"
+    },
+    {
+      "name": "ivx-live-ops",
+      "source": "./.cursor/skills/ivx-live-ops",
+      "description": "Set up Hiro live-ops and Satori analytics — 33+ game systems"
+    },
+    {
+      "name": "ivx-quiz-content",
+      "source": "./.cursor/skills/ivx-quiz-content",
+      "description": "Build quiz content pipelines with S3 and LLM generation"
+    },
+    {
+      "name": "ivx-cross-platform",
+      "source": "./.cursor/skills/ivx-cross-platform",
+      "description": "Port features between 10 game engines with coverage mapping"
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "intelliversex-nakama",
+      "description": "Nakama game server management — 50+ tools for Hiro, Satori, economy, analytics, live events",
+      "transport": "streamable-http",
+      "url": "https://mcp.intelli-verse-x.ai/api/mcp"
+    }
+  ],
+  "keywords": [
+    "game-sdk",
+    "unity",
+    "unreal",
+    "godot",
+    "nakama",
+    "multiplayer",
+    "monetization",
+    "ai",
+    "live-ops"
+  ]
+}

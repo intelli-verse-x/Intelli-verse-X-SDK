@@ -34,4 +34,10 @@ public:
 
     UFUNCTION(BlueprintPure, Category = "IntelliVerseX|XR")
     static bool IsPassthroughAvailable();
+
+    UFUNCTION(BlueprintPure, Category = "IntelliVerseX|XR")
+    static bool IsEyeTrackingAvailable();
+
+    UFUNCTION(BlueprintPure, Category = "IntelliVerseX|XR")
+    static FString GetXRSystemName();
 };

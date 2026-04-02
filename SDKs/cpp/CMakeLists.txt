@@ -7,14 +7,30 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 option(IVX_BUILD_SHARED "Build shared library" OFF)
 option(IVX_BUILD_EXAMPLES "Build examples" OFF)
 option(IVX_BUILD_TESTS "Build tests" OFF)
+option(IVX_ENABLE_OPENXR "Enable OpenXR XR platform detection (requires OpenXR SDK)" OFF)
 
-find_package(nakama-sdk REQUIRED)
+include(FetchContent)
+
+FetchContent_Declare(
+  nakama-sdk
+  GIT_REPOSITORY https://github.com/heroiclabs/nakama-cpp.git
+  GIT_TAG        v2.8.5
+  GIT_SHALLOW    TRUE
+)
+
+option(NAKAMA_BUILD_TESTS "Build Nakama tests" OFF)
+option(NAKAMA_BUILD_EXAMPLES "Build Nakama examples" OFF)
+FetchContent_MakeAvailable(nakama-sdk)
+
+find_package(CURL REQUIRED)
 
 set(IVX_SOURCES
     src/ivx_manager.cpp
     src/ivx_xr.cpp
     src/ivx_storage.cpp
     src/ivx_ai_client.cpp
+    src/ivx_ai_assistant.cpp
+    src/ivx_http_internal.cpp
     src/ivx_discord_social.cpp
     src/ivx_game_modes.cpp
     src/ivx_hiro_systems.cpp
@@ -60,7 +76,17 @@ target_include_directories(intelliversex PUBLIC
     $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(intelliversex PUBLIC nakama-sdk)
+target_include_directories(intelliversex PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
+target_link_libraries(intelliversex PUBLIC nakama-cpp CURL::libcurl)
+
+if(IVX_ENABLE_OPENXR)
+    find_package(OpenXR REQUIRED)
+    target_compile_definitions(intelliversex PUBLIC IVX_HAS_OPENXR)
+    target_link_libraries(intelliversex PUBLIC OpenXR::openxr_loader)
+endif()
 
 set_target_properties(intelliversex PROPERTIES
     VERSION ${PROJECT_VERSION}

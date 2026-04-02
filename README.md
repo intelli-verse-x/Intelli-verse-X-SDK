@@ -57,6 +57,8 @@ Each SDK wraps the official [Nakama client library](https://heroiclabs.com/docs/
 | AI Voice / Host | Yes | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub |
 | AI LLM Stack (6 modules) | Yes | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub |
 | Monetization (Ads/IAP) | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| XR Platform Detection | Yes | Yes | Yes | -- | -- | WebXR | Yes | -- | -- | -- |
+| Console Adapters (PS5/Xbox/Switch) | Yes | Yes | -- | -- | -- | -- | -- | -- | -- | -- |
 | Localization | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 | Social / Friends | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 | Quiz System | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
@@ -65,6 +67,22 @@ Each SDK wraps the official [Nakama client library](https://heroiclabs.com/docs/
 | Platform Optimizer | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 
 **Yes** = Full native support | **RPC** = Available via server RPC calls | **--** = Planned
+
+### Deployment Targets
+
+Beyond the 10 engine SDKs, the following device/platform targets are supported:
+
+| Target | Engines | Key Features |
+|--------|---------|-------------|
+| **Meta Quest (VR)** | Unity, Unreal, Godot, C++ | Hand/eye tracking, passthrough, XR input adapter |
+| **SteamVR / OpenXR** | Unity, Unreal, Godot, C++ | Generic OpenXR, controller + hand input |
+| **Apple Vision Pro** | Unity | PolySpatial, gaze input, spatial UI |
+| **PSVR2** | Unity, Unreal | Eye tracking, adaptive triggers, passthrough |
+| **PS5 / Xbox Series / Switch** | Unity, Unreal | Console adapter pattern (NDA SDKs), platform auth, achievements, presence |
+| **WebGL / Browser** | Unity, JS/TS | WebXR, browser ads (AdSense), IndexedDB cache |
+| **AR (ARKit / ARCore)** | Unity, Unreal | Plane detection, image tracking, light estimation |
+
+📖 [XR/VR/AR Guide](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/platforms/xr-vr-ar/) | [Console Guide](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/platforms/console/) | [WebGL Guide](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/platforms/webgl/)
 
 ---
 
@@ -213,6 +231,85 @@ Quick links:
 - [API Reference](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/api/core/)
 - [Troubleshooting](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/troubleshooting/faq/)
 - [Changelog](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/changelog/)
+
+---
+
+## AI Agent Skills
+
+Automate your SDK integration with 7 purpose-built AI agent skills. Works with Cursor, Windsurf, Claude Code, Devin, OpenAI Codex, and any agent that reads `SKILL.md` files.
+
+| Skill | What It Does | Trigger Phrases |
+|-------|-------------|----------------|
+| **ivx-sdk-setup** | Install and bootstrap the SDK on any platform | "Set up IntelliVerseX" |
+| **ivx-monetization** | Wire ads, IAP, offerwalls, and revenue strategy | "Monetize my game" |
+| **ivx-multiplayer** | Add lobbies, matchmaking, real-time networking | "Add multiplayer" |
+| **ivx-ai-integration** | Integrate AI voice, NPC dialog, content gen | "Add AI host" |
+| **ivx-live-ops** | Set up Hiro + Satori (33+ systems) | "Add daily rewards" |
+| **ivx-quiz-content** | Build quiz pipelines with S3 + LLM | "Set up daily quiz" |
+| **ivx-cross-platform** | Port features between 10 engines | "Port to Godot" |
+
+### Install
+
+**Cursor / Windsurf:** Clone the repo — skills auto-activate from `.cursor/skills/`.
+
+**Claude Code:**
+```bash
+/plugin marketplace add https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK
+```
+
+**SkillsGate (18+ AI agents):**
+```bash
+skillsgate add @intelliversex/ivx-sdk-setup @intelliversex/ivx-monetization @intelliversex/ivx-multiplayer @intelliversex/ivx-ai-integration @intelliversex/ivx-live-ops @intelliversex/ivx-quiz-content @intelliversex/ivx-cross-platform
+```
+
+📖 [Full Skills Documentation](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/guides/ai-agent-skills/)
+
+---
+
+## MCP Server (Nakama + Hiro + Satori)
+
+The IntelliVerseX MCP server exposes 50+ tools for managing your game backend directly from AI coding agents.
+
+**Capabilities:**
+- **Nakama:** Health check, RPC calls, build/deploy, restart, auth, account management
+- **Hiro:** Config get/set for economy, achievements, energy, streaks, store, challenges, tutorials, unlockables
+- **Satori:** Config get/set, feature flags, A/B experiments, live events, messages
+- **Player Ops:** Inspect, search, wallet view/grant/reset, inventory grant, mailbox
+- **Analytics:** Events timeline, metrics, alerts, webhooks, data lake
+- **Infra:** Storage CRUD, config import/export, cache invalidation, taxonomy management
+
+### Connect
+
+**Cursor / Windsurf (MCP settings):**
+```json
+{
+  "mcpServers": {
+    "intelliversex": {
+      "url": "https://mcp.intelli-verse-x.ai/api/mcp"
+    }
+  }
+}
+```
+
+> **Self-hosted?** If running Nakama locally, use the stdio transport instead:
+> ```json
+> {
+>   "mcpServers": {
+>     "intelliversex": {
+>       "command": "npx",
+>       "args": ["@intelliversex/mcp-server"],
+>       "env": { "NAKAMA_HOST": "127.0.0.1", "NAKAMA_PORT": "7350", "NAKAMA_SERVER_KEY": "defaultkey" }
+>     }
+>   }
+> }
+> ```
+
+**Smithery:**
+```bash
+npx smithery install @intelliversex/game-sdk
+```
+
+📖 [MCP Server Documentation](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/modules/backend/)
 
 ---
 

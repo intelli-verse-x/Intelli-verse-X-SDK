@@ -243,7 +243,6 @@ jobs:
         with:
           unityVersion: ${{ matrix.unity-version }}
           targetPlatform: ${{ matrix.target-platform }}
-          buildMethod: UnityEditor.BuildPlayerWindow.BuildPlayerAndRun
           allowDirtyBuild: true
 
   # Job 5: Summary

@@ -1,0 +1,76 @@
+name: intelliversex-game-sdk
+description: >
+  IntelliVerseX Game SDK MCP Server — 50+ tools for managing Nakama game backends,
+  Hiro live-ops (economy, achievements, energy, streaks, store, challenges),
+  Satori analytics (events, flags, experiments, live events), player management,
+  and server administration.
+icon: https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/assets/logo.svg
+author:
+  name: IntelliVerse-X
+  url: https://intelli-verse-x.ai
+repository: https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK
+license: MIT
+tags:
+  - game-development
+  - nakama
+  - multiplayer
+  - analytics
+  - live-ops
+  - economy
+  - unity
+  - unreal
+  - godot
+transport: streamable-http
+url: https://mcp.intelli-verse-x.ai/api/mcp
+tools:
+  - nakama_health
+  - nakama_auth
+  - nakama_rpc
+  - nakama_systems_status
+  - nakama_build
+  - nakama_restart
+  - hiro_config_get
+  - hiro_config_set
+  - satori_config_get
+  - satori_config_set
+  - player_inspect
+  - player_search
+  - wallet_view
+  - wallet_grant
+  - wallet_reset
+  - inventory_grant
+  - mailbox_send
+  - flag_toggle
+  - live_event_schedule
+  - experiment_setup
+  - events_timeline
+  - storage_list
+  - storage_read
+  - storage_write
+  - config_export
+  - config_import
+  - cache_invalidate
+  - nakama_rpc_list
+  - nakama_account
+  - nakama_build_deploy
+  - reward_bucket_progress
+  - personalizer_preview
+  - personalizer_set_override
+  - message_broadcast
+  - metrics_prometheus
+  - metrics_set_alert
+  - webhooks_list
+  - webhooks_upsert
+  - webhooks_delete
+  - webhooks_test
+  - taxonomy_schemas
+  - taxonomy_upsert
+  - taxonomy_delete
+  - taxonomy_validate
+  - taxonomy_strict_mode
+  - datalake_config
+  - datalake_upsert_target
+  - datalake_delete_target
+  - datalake_toggle
+  - datalake_set_retention
+  - datalake_manual_export

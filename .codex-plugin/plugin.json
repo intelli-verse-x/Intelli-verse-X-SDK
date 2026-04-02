@@ -1,0 +1,33 @@
+{
+  "name": "@intelliversex/game-sdk",
+  "version": "1.0.0",
+  "description": "IntelliVerseX Game SDK integration — 7 skills for 10 game engines, 50+ MCP tools for Nakama backend",
+  "author": "IntelliVerse-X",
+  "homepage": "https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/",
+  "repository": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK",
+  "license": "MIT",
+  "skills": [
+    "ivx-sdk-setup",
+    "ivx-monetization",
+    "ivx-multiplayer",
+    "ivx-ai-integration",
+    "ivx-live-ops",
+    "ivx-quiz-content",
+    "ivx-cross-platform"
+  ],
+  "mcp_servers": [
+    {
+      "name": "intelliversex-nakama",
+      "description": "Nakama + Hiro + Satori game backend management",
+      "url": "https://mcp.intelli-verse-x.ai/api/mcp",
+      "transport": "streamable-http"
+    }
+  ],
+  "supported_agents": [
+    "cursor",
+    "windsurf",
+    "claude-code",
+    "codex",
+    "devin"
+  ]
+}

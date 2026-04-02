@@ -1,0 +1,23 @@
+{
+  "name": "IntelliVerseX Game SDK",
+  "description": "MCP server for managing Nakama game backends with 50+ tools for Hiro live-ops, Satori analytics, economy, player management, and server administration",
+  "version": "1.0.0",
+  "author": {
+    "name": "IntelliVerse-X",
+    "url": "https://intelli-verse-x.ai"
+  },
+  "documentation_url": "https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/",
+  "repository": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK",
+  "transport": [
+    "streamable-http",
+    "stdio"
+  ],
+  "tools_count": 50,
+  "categories": [
+    "game-development",
+    "backend",
+    "analytics",
+    "live-ops"
+  ],
+  "url": "https://mcp.intelli-verse-x.ai/api/mcp"
+}

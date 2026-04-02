@@ -24,6 +24,15 @@ jobs:
       - name: Install CMake
         uses: lukka/get-cmake@latest
 
+      - name: Install system dependencies
+        shell: bash
+        run: |
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            sudo apt-get update && sudo apt-get install -y libcurl4-openssl-dev
+          elif [[ "$RUNNER_OS" == "macOS" ]]; then
+            brew install curl
+          fi
+
       - name: Configure (C++ SDK)
         working-directory: SDKs/cpp
         run: cmake -B build -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} -DIVX_BUILD_TESTS=OFF
