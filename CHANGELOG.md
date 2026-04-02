@@ -208,12 +208,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Unity Support | Status |
 |---------|---------------|--------|
-| 5.2.x | 2023.3+ | Current |
-| 5.1.x | 2023.3+ | Active |
-| 5.0.x | 2023.3+ | Active |
-| 4.2.x | 2021.3+ | Security fixes only |
-| < 4.2 | -- | End of life |
+| 5.4.x | 2023.3+ | **Current** |
+| 5.3.x | 2023.3+ | Active |
+| 5.2.x | 2023.3+ | Active |
+| 5.1.x | 2023.3+ | Maintenance |
+| 5.0.x | 2023.3+ | Maintenance |
+| < 5.0 | 2021.3+ | End of life |
 
 ---
 
-For detailed per-version notes, see [Assets/_IntelliVerseXSDK/CHANGELOG.md](Assets/_IntelliVerseXSDK/CHANGELOG.md).
+For the Unity UPM package changelog, see [Assets/Intelli-verse-X-SDK/CHANGELOG.md](Assets/Intelli-verse-X-SDK/CHANGELOG.md).

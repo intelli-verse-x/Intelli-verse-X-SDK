@@ -91,6 +91,10 @@ nav:
     - Quiz System: modules/quiz.md
     - UI Components: modules/ui.md
     - More Of Us: modules/more-of-us.md
+    - AI Voice & Host: modules/ai.md
+    - Hiro Systems: modules/hiro.md
+    - Platform Utilities: modules/platform.md
+    - Demo UIs: modules/demos.md
   - API Reference:
     - api/index.md
     - Core API: api/core.md

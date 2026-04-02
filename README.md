@@ -3,7 +3,7 @@
 > **Complete modular game development SDK** — Integrate Auth, Identity, Analytics, Backend (Nakama), Social/Referrals, Monetization, and more into your games across **10 platforms**.
 
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-5.1.0-orange.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-5.4.0-orange.svg)](CHANGELOG.md)
 [![Documentation](https://img.shields.io/badge/Docs-Online-blue.svg)](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/)
 [![openupm](https://img.shields.io/npm/v/com.intelliversex.sdk?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.intelliversex.sdk)
 
@@ -57,6 +57,10 @@ Each SDK wraps the official [Nakama client library](https://heroiclabs.com/docs/
 | Localization | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 | Social / Friends | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 | Quiz System | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| AI Voice / Host | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| Retention / Streaks | Yes | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC |
+| Spin Wheel / Engagement | Yes | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC |
+| Platform Optimizer | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 
 **Yes** = Full native support | **RPC** = Available via server RPC calls | **--** = Planned
 
@@ -78,7 +82,7 @@ Add the [OpenUPM](https://openupm.com) scoped registry and dependency to `Packag
     }
   ],
   "dependencies": {
-    "com.intelliversex.sdk": "5.1.0"
+    "com.intelliversex.sdk": "5.4.0"
   }
 }
 ```
@@ -122,20 +126,21 @@ All IntelliVerseX SDKs share a consistent architecture:
 Your Game
     |
     v
-+----------------------------------------------+
-|          IntelliVerseX SDK (IVXManager)       |
-|  Auth | Profile | Wallet | Leaderboards | RPC |
-+----------------------------------------------+
-    |
++-----------------------------------------------------------+
+|              IntelliVerseX SDK (IVXManager)                |
+|  Auth | Wallet | Social | Leaderboards | Quiz | Ads | IAP |
++-----------------------------------------------------------+
+    |                           |
+    v                           v
++---------------------------+  +----------------------------+
+| Nakama Client (per-plat)  |  |  IntelliVerseX AI Backend  |
++---------------------------+  |  Voice | Host | Entitlement |
+    |                          +----------------------------+
     v
-+----------------------------------------------+
-|       Nakama Client Library (per-platform)    |
-+----------------------------------------------+
-    |
-    v
-+----------------------------------------------+
-|         Nakama Server + Hiro + Satori        |
-+----------------------------------------------+
++-----------------------------------------------------------+
+|   Nakama Server + Hiro (Economy, Streaks, Spin Wheel,     |
+|   Offerwalls, Retention) + Satori (Analytics, A/B Tests)  |
++-----------------------------------------------------------+
 ```
 
 Each platform SDK provides:
@@ -156,7 +161,8 @@ Each platform SDK provides:
 ```
 Intelli-verse-X-Unity-SDK/
 |-- Assets/
-|   +-- Intelli-verse-X-SDK/      # Unity SDK (UPM Package)
+|   |-- Intelli-verse-X-SDK/      # Unity SDK (UPM Package)
+|   +-- _IntelliVerseXSDK/        # AI, Hiro, Satori, Platform, Demos
 |-- SDKs/
 |   |-- unreal/                    # Unreal Engine 5 Plugin
 |   |-- godot/                     # Godot 4 Addon

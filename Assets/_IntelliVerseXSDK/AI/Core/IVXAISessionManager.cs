@@ -15,6 +15,7 @@ namespace IntelliVerseX.AI
 
         private static IVXAISessionManager _instance;
 
+        /// <summary>Singleton instance (lazy-found if not yet assigned).</summary>
         public static IVXAISessionManager Instance
         {
             get
@@ -92,23 +93,48 @@ namespace IntelliVerseX.AI
 
         #region Properties
 
+        /// <summary>The active AI configuration asset.</summary>
         public IVXAIConfig Config => _config;
+
+        /// <summary>Whether <see cref="Initialize"/> has been called successfully.</summary>
         public bool IsInitialized { get; private set; }
+
+        /// <summary>The authenticated user's identifier.</summary>
         public string UserId { get; private set; }
+
+        /// <summary>The authenticated user's display name.</summary>
         public string UserName { get; private set; }
+
+        /// <summary>ISO 639-1 language code used for AI sessions.</summary>
         public string CurrentLanguage { get; private set; }
 
+        /// <summary>Backend session ID for the active voice session, or null.</summary>
         public string CurrentVoiceSessionId { get; private set; }
+
+        /// <summary>Persona ID of the active voice session.</summary>
         public string CurrentVoicePersona { get; private set; }
+
+        /// <summary>True when a voice session is currently in progress.</summary>
         public bool IsVoiceSessionActive => !string.IsNullOrEmpty(CurrentVoiceSessionId);
+
+        /// <summary>Whether the active voice session is a premium (paid) session.</summary>
         public bool IsVoicePremium { get; private set; }
+
+        /// <summary>Total allowed duration of the voice session in seconds.</summary>
         public int VoiceSessionDuration { get; private set; }
+
+        /// <summary><see cref="Time.realtimeSinceStartup"/> when the voice session started.</summary>
         public float VoiceSessionStartTime { get; private set; }
+
+        /// <summary>Seconds remaining in the active voice session (0 when inactive).</summary>
         public float RemainingVoiceTime => IsVoiceSessionActive
             ? Mathf.Max(0, VoiceSessionDuration - (Time.realtimeSinceStartup - VoiceSessionStartTime))
             : 0f;
 
+        /// <summary>Backend session ID for the active host session, or null.</summary>
         public string CurrentHostSessionId { get; private set; }
+
+        /// <summary>True when a host commentary session is currently in progress.</summary>
         public bool IsHostSessionActive => !string.IsNullOrEmpty(CurrentHostSessionId);
 
         #endregion
@@ -153,6 +179,10 @@ namespace IntelliVerseX.AI
         /// <summary>
         /// Initialise the AI system. Must be called before starting any session.
         /// </summary>
+        /// <param name="userId">Unique player/user identifier.</param>
+        /// <param name="userName">Display name shown to the AI persona.</param>
+        /// <param name="authToken">Optional bearer token for authenticated API calls.</param>
+        /// <param name="language">Optional ISO 639-1 language code; defaults to <see cref="IVXAIConfig.DefaultLanguage"/>.</param>
         public void Initialize(string userId, string userName, string authToken = null, string language = null)
         {
             if (_config == null)
@@ -200,6 +230,10 @@ namespace IntelliVerseX.AI
         /// Performs an entitlement check first; if the user lacks access,
         /// <see cref="OnEntitlementRequired"/> fires instead.
         /// </summary>
+        /// <param name="personaId">ID of the AI persona to converse with.</param>
+        /// <param name="topic">Optional conversation topic or context hint.</param>
+        /// <param name="onSuccess">Callback invoked on successful session creation.</param>
+        /// <param name="onError">Callback invoked with an error message on failure.</param>
         public void StartVoiceSession(string personaId, string topic = null, Action<IVXAICreateVoiceSessionResponse> onSuccess = null, Action<string> onError = null)
         {
             EnsureInitialized("StartVoiceSession");
@@ -253,6 +287,7 @@ namespace IntelliVerseX.AI
         }
 
         /// <summary>Send a text message in the current voice session.</summary>
+        /// <param name="text">User text to send to the AI persona.</param>
         public void SendText(string text)
         {
             if (!IsVoiceSessionActive) return;
@@ -328,6 +363,9 @@ namespace IntelliVerseX.AI
         /// <summary>
         /// Create an AI Host session for game commentary.
         /// </summary>
+        /// <param name="request">Host session configuration (match ID, game mode, players, etc.).</param>
+        /// <param name="onSuccess">Callback invoked on successful session creation.</param>
+        /// <param name="onError">Callback invoked with an error message on failure.</param>
         public void StartHostSession(IVXAICreateHostSessionRequest request, Action<IVXAICreateHostSessionResponse> onSuccess = null, Action<string> onError = null)
         {
             EnsureInitialized("StartHostSession");
@@ -378,6 +416,8 @@ namespace IntelliVerseX.AI
         }
 
         /// <summary>Send text in the host session.</summary>
+        /// <param name="playerId">Identifier of the player sending the message.</param>
+        /// <param name="text">Text message to relay to the AI host.</param>
         public void SendHostText(string playerId, string text)
         {
             if (IsHostSessionActive)
@@ -385,6 +425,9 @@ namespace IntelliVerseX.AI
         }
 
         /// <summary>Send a game event to the host.</summary>
+        /// <param name="eventType">Type of game event (e.g. "round_start", "question_reveal").</param>
+        /// <param name="state">Serialised game state snapshot.</param>
+        /// <param name="data">Optional additional event payload.</param>
         public void SendHostGameEvent(string eventType, string state, string data = null)
         {
             if (IsHostSessionActive)
@@ -392,6 +435,8 @@ namespace IntelliVerseX.AI
         }
 
         /// <summary>Submit a player answer to the host.</summary>
+        /// <param name="playerId">Identifier of the answering player.</param>
+        /// <param name="answerIndex">Zero-based index of the selected answer option.</param>
         public void SubmitHostAnswer(string playerId, int answerIndex)
         {
             if (IsHostSessionActive)

@@ -10,11 +10,11 @@
 
     [:octicons-arrow-right-24: Getting Started](getting-started/index.md)
 
--   :material-puzzle:{ .lg .middle } __15+ Modular Features__
+-   :material-puzzle:{ .lg .middle } __20+ Modular Features__
 
     ---
 
-    Authentication, Backend, Monetization, Analytics, Localization, Leaderboards, Social, and more.
+    Auth, Backend, Monetization, Analytics, AI Voice/Host, Hiro Live Ops, Social, and more.
 
     [:octicons-arrow-right-24: Explore Modules](modules/index.md)
 
@@ -61,6 +61,9 @@
 | :material-account-group: **Social** | Friends system, sharing, referrals |
 | :material-head-question: **Quiz System** | Complete quiz game framework |
 | :material-palette: **UI Components** | Production-ready UI utilities |
+| :material-robot: **AI Voice & Host** | Conversational AI personas, voice streaming, game commentary |
+| :material-slot-machine: **Hiro Live Ops** | Spin wheel, streaks, retention, offerwalls, friend systems |
+| :material-cellphone: **Platform** | Deep links, foldable devices, edge-to-edge, performance optimizer |
 
 ---
 
@@ -71,7 +74,7 @@ Add to your `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/Intelli-verse-X-SDK"
   }
 }
 ```
@@ -81,7 +84,7 @@ Or with a specific version:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v5.0.0"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/Intelli-verse-X-SDK#v5.4.0"
   }
 }
 ```
@@ -148,11 +151,15 @@ graph TB
         Monetization[Monetization Module]
         Analytics[Analytics Module]
         Localization[Localization Module]
+        AI[AI Module]
+        Hiro[Hiro Systems]
+        Platform[Platform Module]
         UI[UI Module]
     end
     
     subgraph "External Services"
-        Nakama[Nakama Server]
+        Nakama[Nakama + Hiro + Satori]
+        AIBackend[IntelliVerseX AI Backend]
         AdNetworks[Ad Networks]
         IAP[Unity IAP]
     end
@@ -162,9 +169,12 @@ graph TB
     Identity --> Backend
     Backend --> Nakama
     Social --> Backend
+    Hiro --> Backend
+    AI --> AIBackend
     Monetization --> AdNetworks
     Monetization --> IAP
     Analytics --> Backend
+    Platform --> Core
     UI --> Core
 ```
 
@@ -186,11 +196,11 @@ IntelliVerseX SDK is licensed under the [MIT License](https://github.com/Intelli
 
 <div class="grid cards" markdown>
 
--   :material-clock-fast:{ .lg .middle } __Version 5.0.0__
+-   :material-clock-fast:{ .lg .middle } __Version 5.4.0__
 
     ---
 
-    Latest stable release with production-ready features.
+    Latest release: AI Voice/Host module, Hiro systems, Demo UIs, comprehensive bug sweep.
     
     [:octicons-arrow-right-24: Changelog](changelog.md)
 

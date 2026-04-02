@@ -79,22 +79,55 @@ namespace IntelliVerseX.AI
 
         #region Properties
 
+        /// <summary>Base URL for the IVX AI REST API.</summary>
         public string ApiBaseUrl => _apiBaseUrl;
+
+        /// <summary>Optional API key used when bearer-token auth is not available.</summary>
         public string ApiKey => _apiKey;
+
+        /// <summary>Interval in seconds between HTTP polling requests.</summary>
         public float PollingInterval => _pollingInterval;
+
+        /// <summary>HTTP request timeout in seconds.</summary>
         public float RequestTimeout => _requestTimeout;
+
+        /// <summary>Whether to prefer WebSocket transport over HTTP polling.</summary>
         public bool PreferWebSocket => _preferWebSocket;
+
+        /// <summary>Whether verbose debug logging is enabled.</summary>
         public bool DebugLogging => _debugLogging;
+
+        /// <summary>Audio sample rate in Hz (default 16 000).</summary>
         public int AudioSampleRate => _audioSampleRate;
+
+        /// <summary>Number of audio channels (1 = mono).</summary>
         public int AudioChannels => _audioChannels;
+
+        /// <summary>Buffer size in bytes for streaming audio.</summary>
         public int AudioBufferSize => _audioBufferSize;
+
+        /// <summary>Default ISO 639-1 language code.</summary>
         public string DefaultLanguage => _defaultLanguage;
+
+        /// <summary>Array of ISO 639-1 language codes the backend supports.</summary>
         public string[] SupportedLanguages => _supportedLanguages;
+
+        /// <summary>Number of free voice sessions allowed per user per day.</summary>
         public int FreeSessionsPerDay => _freeSessionsPerDay;
+
+        /// <summary>Whether to show an upsell prompt during free sessions.</summary>
         public bool ShowUpsellDuringFreeSessions => _showUpsellDuringFreeSessions;
+
+        /// <summary>Seconds before session end to display the upsell prompt.</summary>
         public int UpsellSecondsBeforeEnd => _upsellSecondsBeforeEnd;
+
+        /// <summary>Whether to display social-proof data (active users, ratings) in the UI.</summary>
         public bool ShowSocialProof => _showSocialProof;
+
+        /// <summary>Whether to show scarcity/urgency messages to drive conversions.</summary>
         public bool ShowScarcityMessages => _showScarcityMessages;
+
+        /// <summary>Whether to show the remaining-time countdown in the voice UI.</summary>
         public bool ShowSessionTimer => _showSessionTimer;
 
         #endregion

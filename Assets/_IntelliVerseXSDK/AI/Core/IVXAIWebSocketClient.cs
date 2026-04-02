@@ -32,23 +32,47 @@ namespace IntelliVerseX.AI
 
         #region Events
 
+        /// <summary>Fired when the WebSocket connection is established.</summary>
         public event Action OnConnected;
+
+        /// <summary>Fired when the connection is closed (includes reason string).</summary>
         public event Action<string> OnDisconnected;
+
+        /// <summary>Fired when the connection drops unexpectedly.</summary>
         public event Action OnConnectionLost;
+
+        /// <summary>Fired on each reconnection attempt (current attempt, max attempts).</summary>
         public event Action<int, int> OnReconnecting;
+
+        /// <summary>Fired when a reconnection attempt succeeds.</summary>
         public event Action OnReconnected;
+
+        /// <summary>Fired when all reconnection attempts are exhausted.</summary>
         public event Action<string> OnReconnectionFailed;
+
+        /// <summary>Fired when a JSON text message is received from the server.</summary>
         public event Action<string> OnMessageReceived;
+
+        /// <summary>Fired when a binary message (e.g. PCM audio) is received.</summary>
         public event Action<byte[]> OnBinaryReceived;
+
+        /// <summary>Fired when an error occurs during connection or communication.</summary>
         public event Action<string> OnError;
 
         #endregion
 
         #region Properties
 
+        /// <summary>Current state of the WebSocket connection.</summary>
         public IVXAIConnectionState ConnectionState { get; private set; } = IVXAIConnectionState.Disconnected;
+
+        /// <summary>Shorthand for <c>ConnectionState == Connected</c>.</summary>
         public bool IsConnected => ConnectionState == IVXAIConnectionState.Connected;
+
+        /// <summary>Session ID associated with this connection.</summary>
         public string SessionId { get; private set; }
+
+        /// <summary>Round-trip latency in milliseconds measured by heartbeat ping/pong.</summary>
         public int LatencyMs { get; private set; }
 
         #endregion
@@ -120,6 +144,8 @@ namespace IntelliVerseX.AI
             _headers = headers ?? new Dictionary<string, string>();
         }
 
+        /// <summary>Enable or disable verbose debug logging.</summary>
+        /// <param name="enabled">True to enable debug logs.</param>
         public void SetDebugLogging(bool enabled) => _debugLogging = enabled;
 
         /// <summary>Open the WebSocket connection.</summary>

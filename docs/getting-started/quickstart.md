@@ -248,6 +248,30 @@ Now that the SDK is initialized, explore these features:
     
     [:octicons-arrow-right-24: Localization Module](../modules/localization.md)
 
+-   :material-robot:{ .lg .middle } __AI Voice & Host__
+
+    ---
+    
+    Add AI conversational personas and game commentary.
+    
+    [:octicons-arrow-right-24: AI Module](../modules/ai.md)
+
+-   :material-slot-machine:{ .lg .middle } __Hiro Systems__
+
+    ---
+    
+    Spin wheel, streaks, retention, offerwalls, and friend systems.
+    
+    [:octicons-arrow-right-24: Hiro Module](../modules/hiro.md)
+
+-   :material-play-box:{ .lg .middle } __Demo UIs__
+
+    ---
+    
+    Try pre-built demos to see features in action.
+    
+    [:octicons-arrow-right-24: Demo UIs](../modules/demos.md)
+
 </div>
 
 ---

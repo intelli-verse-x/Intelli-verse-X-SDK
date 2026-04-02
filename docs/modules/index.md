@@ -82,6 +82,15 @@ graph TB
 |--------|-----------|-------------|
 | [Monetization](monetization.md) | `IntelliVerseX.Monetization` | IAP, Ads, Offerwalls |
 
+### AI & Live Ops Modules
+
+| Module | Namespace | Description |
+|--------|-----------|-------------|
+| [AI](ai.md) | `IntelliVerseX.AI` | AI voice personas, host commentary, entitlements |
+| [Hiro](hiro.md) | `IntelliVerseX.Hiro` | Server-authoritative systems (spin wheel, streaks, retention, offerwalls) |
+| [Platform](platform.md) | `IntelliVerseX.Platform` | Deep links, foldable support, edge-to-edge, performance optimizer |
+| [Demos](demos.md) | `IntelliVerseX.Demos` | Ready-to-run demo UIs for AI, spin wheel, streaks, offerwall |
+
 ### Utility Modules
 
 | Module | Namespace | Description |
@@ -114,6 +123,11 @@ Each module has its own assembly definition:
 | `IntelliVerseX.V2` | Next-gen features |
 | `IntelliVerseX.Editor` | Editor tools |
 | `IntelliVerseX.Auth` | Auth UI panels |
+| `IntelliVerseX.AI` | AI voice, host, entitlements |
+| `IntelliVerseX.Hiro` | Hiro game systems (spin wheel, streaks, etc.) |
+| `IntelliVerseX.Satori` | Server-side analytics |
+| `IntelliVerseX.Platform` | Platform utilities |
+| `IntelliVerseX.Demos` | Demo UIs |
 
 ---
 
@@ -126,13 +140,17 @@ Core (no dependencies)
 ├── Backend (→ Core, Identity)
 │   ├── Social (→ Backend)
 │   ├── Analytics (→ Backend)
-│   └── Leaderboards (→ Backend)
+│   ├── Leaderboards (→ Backend)
+│   └── Hiro (→ Core, Backend)
+├── AI (→ Core, Backend, Storage, Monetization)
 ├── Localization (→ Core)
 ├── Storage (→ Core)
-├── Monetization (→ Core)
+├── Monetization (→ Core, Storage)
+├── Platform (→ Core)
 ├── UI (→ Core)
 ├── Quiz (→ Core, Backend)
-└── MoreOfUs (→ Core, Backend)
+├── MoreOfUs (→ Core, Backend)
+└── Demos (→ AI, Core, Hiro)
 ```
 
 ---
@@ -189,6 +207,30 @@ Core (no dependencies)
     
     [:octicons-arrow-right-24: Localization Documentation](localization.md)
 
+-   :material-robot:{ .lg .middle } __AI Module__
+
+    ---
+    
+    AI voice personas, host game commentary, entitlements, and audio streaming.
+    
+    [:octicons-arrow-right-24: AI Documentation](ai.md)
+
+-   :material-slot-machine:{ .lg .middle } __Hiro Module__
+
+    ---
+    
+    Server-authoritative spin wheel, streaks, retention, offerwalls, and friend systems.
+    
+    [:octicons-arrow-right-24: Hiro Documentation](hiro.md)
+
+-   :material-cellphone-link:{ .lg .middle } __Platform Module__
+
+    ---
+    
+    Deep links, foldable devices, edge-to-edge display, and performance optimization.
+    
+    [:octicons-arrow-right-24: Platform Documentation](platform.md)
+
 </div>
 
 ---
@@ -205,3 +247,7 @@ Core (no dependencies)
 | Localization | None |
 | Quiz | Backend module |
 | UI | TextMeshPro |
+| AI | Core, Backend, Storage, Monetization + IntelliVerseX AI Backend |
+| Hiro | Core, Backend (Nakama + Hiro server plugin) |
+| Platform | Core |
+| Demos | AI, Core, TextMeshPro |
