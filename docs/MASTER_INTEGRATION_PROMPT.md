@@ -626,6 +626,157 @@ void OnApplicationQuit()
 
 ---
 
+### Step 12b — Cross-Platform Initialization Examples
+
+For non-Unity platforms, initialization follows a similar pattern — create a client, configure, initialize modules:
+
+#### JavaScript / TypeScript
+
+```typescript
+import {
+  IVXClient, IVXAIAssistant, IVXAINPCDialogManager,
+  IVXAIModerator, IVXAIContentGenerator, IVXAIProfiler,
+  IVXAIVoiceServices, IVXDiscordMessages, IVXDiscordModeration
+} from '@intelliversex/sdk';
+
+// 1. Create and configure the client
+const client = new IVXClient({
+  apiBase: 'https://api.intelli-verse-x.ai',
+  nakamaHost: 'your-server.com',
+  nakamaPort: 7350,
+  nakamaKey: 'your-key'
+});
+
+// 2. Initialize (authenticates, connects to backend)
+await client.initialize();
+const userId = client.userId;
+
+// 3. Use any feature
+const assistant = new IVXAIAssistant(client);
+await assistant.initialize({ apiKey: 'YOUR_AI_KEY' });
+const answer = await assistant.ask('How do I craft a sword?');
+
+const npc = new IVXAINPCDialogManager(client);
+await npc.initialize({ apiKey: 'YOUR_AI_KEY' });
+npc.registerNPC({ npcId: 'blacksmith', persona: 'Gruff dwarf blacksmith' });
+const response = await npc.sendMessage('blacksmith', 'Got any rare metals?');
+
+const profiler = new IVXAIProfiler(client);
+await profiler.initialize({ apiKey: 'YOUR_AI_KEY', playerId: userId });
+profiler.trackEvent('purchase', { item: 'gem_pack', price: 4.99 });
+
+const dms = new IVXDiscordMessages(client);
+await dms.sendDM(recipientId, 'GG! Rematch?');
+```
+
+#### Flutter / Dart
+
+```dart
+import 'package:intelliversex_sdk/intelliversex_sdk.dart';
+
+// 1. Create client
+final client = IVXClient(
+  apiBase: 'https://api.intelli-verse-x.ai',
+  nakamaHost: 'your-server.com',
+  nakamaPort: 7350,
+);
+
+// 2. Initialize
+await client.initialize();
+
+// 3. AI Assistant
+final assistant = IVXAIAssistant(client);
+await assistant.initialize(apiKey: 'YOUR_AI_KEY');
+final answer = await assistant.ask('How do I defeat the boss?');
+
+// 4. NPC Dialog
+final npc = IVXAINPCDialogManager(client);
+await npc.initialize(apiKey: 'YOUR_AI_KEY');
+npc.registerNPC(IVXNPCProfile(npcId: 'guard', persona: 'Stern city guard'));
+final response = await npc.sendMessage('guard', 'Can I pass?');
+
+// 5. Content Moderation
+final mod = IVXAIModerator(client);
+await mod.initialize(apiKey: 'YOUR_AI_KEY');
+final result = await mod.classifyText(playerMessage);
+if (result.isSafe) broadcastChat(playerMessage);
+
+// 6. Discord Messages
+final dms = IVXDiscordMessages(client);
+await dms.sendDM(recipientId, 'Want to team up?');
+```
+
+#### Java / Android
+
+```java
+// 1. Create client
+IVXClient client = IVXClient.builder()
+    .apiBase("https://api.intelli-verse-x.ai")
+    .nakamaHost("your-server.com")
+    .nakamaPort(7350)
+    .nakamaKey("your-key")
+    .build();
+
+// 2. Initialize
+client.initialize().thenAccept(v -> {
+    String userId = client.getUserId();
+
+    // 3. AI features
+    IVXAIAssistant assistant = IVXAIAssistant.getInstance();
+    assistant.initialize("YOUR_AI_KEY");
+    assistant.ask("How do I craft a sword?", answer -> {
+        Log.d("IVX", "Answer: " + answer);
+    });
+
+    // 4. NPC Dialog
+    IVXAINPCDialogManager npc = IVXAINPCDialogManager.getInstance();
+    npc.initialize("YOUR_AI_KEY");
+    npc.registerNPC("blacksmith", "Gruff dwarf blacksmith");
+    npc.sendMessage("blacksmith", "Got any rare metals?", response -> {
+        Log.d("IVX", "NPC: " + response.getContent());
+    });
+
+    // 5. Profiler
+    IVXAIProfiler profiler = IVXAIProfiler.getInstance();
+    profiler.initialize("YOUR_AI_KEY", userId);
+    profiler.trackEvent("purchase", Map.of("item", "gem_pack", "price", "4.99"));
+
+    // 6. Discord
+    IVXDiscordMessages dms = IVXDiscordMessages.getInstance();
+    dms.sendDM(recipientId, "GG! Rematch?");
+});
+```
+
+#### Godot (GDScript)
+
+```gdscript
+# 1. Autoload IVXClient in project settings
+var client = IVXClient.new()
+client.api_base = "https://api.intelli-verse-x.ai"
+client.nakama_host = "your-server.com"
+await client.initialize()
+
+# 2. AI Assistant
+var assistant = IVXAIAssistant.new()
+await assistant.initialize("YOUR_AI_KEY")
+var answer = await assistant.ask("How do I defeat the boss?")
+print("Answer: " + answer)
+
+# 3. NPC Dialog
+var npc = IVXAINPCDialogManager.new()
+await npc.initialize("YOUR_AI_KEY")
+npc.register_npc("blacksmith", "Gruff dwarf blacksmith")
+var response = await npc.send_message("blacksmith", "Got any swords?")
+print("NPC: " + response.content)
+
+# 4. Profiler
+var profiler = IVXAIProfiler.new()
+await profiler.initialize("YOUR_AI_KEY", client.user_id)
+profiler.track_event("purchase", {"item": "gem_pack", "price": 4.99})
+```
+
+---
+
 ### Feature Matrix (All 10 Platforms)
 
 | Feature | Unity | UE5 | Godot | Defold | Cocos | JS | C++ | Java | Flutter | Web3 |

@@ -82,6 +82,7 @@ nav:
     - Core: modules/core.md
     - Identity & Authentication: modules/identity.md
     - Backend (Nakama): modules/backend.md
+    - Discord Social SDK: modules/discord.md
     - Social & Friends: modules/social.md
     - Monetization: modules/monetization.md
     - Analytics: modules/analytics.md
@@ -96,6 +97,9 @@ nav:
     - Hiro Systems: modules/hiro.md
     - Platform Utilities: modules/platform.md
     - Demo UIs: modules/demos.md
+  - Integration:
+    - Master Integration Prompt: MASTER_INTEGRATION_PROMPT.md
+    - Feature Coverage Matrix: FEATURE_COVERAGE_MATRIX.md
   - API Reference:
     - api/index.md
     - Core API: api/core.md
