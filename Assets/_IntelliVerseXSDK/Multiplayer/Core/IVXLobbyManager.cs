@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace IntelliVerseX.GameModes
@@ -210,21 +211,66 @@ namespace IntelliVerseX.GameModes
         {
             IsRefreshing = true;
 
-            // TODO: Replace with actual Nakama match listing when backend is wired
-            // #if INTELLIVERSEX_HAS_NAKAMA
-            // var result = await nakamaClient.ListMatchesAsync(session, ...);
-            // #endif
-
+#if INTELLIVERSEX_HAS_NAKAMA
+            var task = RefreshRoomListNakamaAsync(filter);
+            while (!task.IsCompleted) yield return null;
+            if (task.IsFaulted)
+            {
+                Debug.LogError($"[{nameof(IVXLobbyManager)}] Nakama ListMatches error: {task.Exception?.InnerException?.Message}");
+                IsRefreshing = false;
+                yield break;
+            }
+#else
             yield return new WaitForSeconds(0.3f);
-
             _rooms.Clear();
             _rooms.AddRange(GenerateMockRooms(filter));
+#endif
 
             IsRefreshing = false;
             OnRoomListUpdated?.Invoke(_rooms);
 
             Debug.Log($"[{nameof(IVXLobbyManager)}] Room list refreshed: {_rooms.Count} rooms");
         }
+
+#if INTELLIVERSEX_HAS_NAKAMA
+        private async Task RefreshRoomListNakamaAsync(IVXRoomFilter filter)
+        {
+            var backend = IntelliVerseX.Backend.IVXNakamaManager.Instance;
+            if (backend == null || backend.Client == null || backend.Session == null)
+            {
+                Debug.LogWarning($"[{nameof(IVXLobbyManager)}] Nakama not connected; falling back to mock rooms.");
+                _rooms.Clear();
+                _rooms.AddRange(GenerateMockRooms(filter));
+                return;
+            }
+
+            var matchList = await backend.Client.ListMatchesAsync(
+                backend.Session,
+                min: 0,
+                max: filter.Limit,
+                limit: filter.Limit,
+                authoritative: true,
+                label: null);
+
+            _rooms.Clear();
+            foreach (var m in matchList.Matches)
+            {
+                _rooms.Add(new IVXRoomInfo
+                {
+                    RoomId = m.MatchId,
+                    RoomName = string.IsNullOrEmpty(m.Label) ? m.MatchId[..8] : m.Label,
+                    HostName = "Host",
+                    PlayerCount = m.Size,
+                    MaxPlayers = 4,
+                    Mode = IVXGameMode.OnlineVersus,
+                    IsPasswordProtected = false,
+                    IsInProgress = m.Size >= 2,
+                    CreatedAt = DateTime.UtcNow,
+                    PingMs = -1
+                });
+            }
+        }
+#endif
 
         private IEnumerator AutoRefreshRoutine(float interval, IVXRoomFilter filter)
         {
@@ -237,6 +283,15 @@ namespace IntelliVerseX.GameModes
 
         private IEnumerator CreateRoomRoutine(IVXCreateRoomRequest request)
         {
+#if INTELLIVERSEX_HAS_NAKAMA
+            var task = CreateRoomNakamaAsync(request);
+            while (!task.IsCompleted) yield return null;
+            if (task.IsFaulted)
+            {
+                OnError?.Invoke(task.Exception?.InnerException?.Message ?? "Create room failed.");
+                yield break;
+            }
+#else
             yield return new WaitForSeconds(0.2f);
 
             var roomId = Guid.NewGuid().ToString("N").Substring(0, 8);
@@ -265,10 +320,53 @@ namespace IntelliVerseX.GameModes
             OnRoomCreated?.Invoke(response);
 
             Debug.Log($"[{nameof(IVXLobbyManager)}] Room created: {roomId}");
+#endif
         }
+
+#if INTELLIVERSEX_HAS_NAKAMA
+        private async Task CreateRoomNakamaAsync(IVXCreateRoomRequest request)
+        {
+            var backend = IntelliVerseX.Backend.IVXNakamaManager.Instance;
+            if (backend?.Socket == null)
+            {
+                OnError?.Invoke("Nakama socket not connected.");
+                return;
+            }
+
+            var match = await backend.Socket.CreateMatchAsync(request.RoomName ?? Guid.NewGuid().ToString("N")[..8]);
+
+            var roomId = match.Id;
+            CurrentRoom = new IVXRoomInfo
+            {
+                RoomId = roomId,
+                RoomName = request.RoomName ?? $"Room-{roomId[..8]}",
+                HostName = IVXGameModeManager.Instance.LocalPlayer?.DisplayName ?? "Host",
+                PlayerCount = 1,
+                MaxPlayers = request.Config.MaxPlayers,
+                Mode = request.Config.Mode,
+                IsPasswordProtected = !string.IsNullOrEmpty(request.Password),
+                CreatedAt = DateTime.UtcNow
+            };
+
+            IsInRoom = true;
+            IVXGameModeManager.Instance.SetConfig(request.Config);
+
+            OnRoomCreated?.Invoke(new IVXCreateRoomResponse { RoomId = roomId, Success = true });
+            Debug.Log($"[{nameof(IVXLobbyManager)}] Nakama match created: {roomId}");
+        }
+#endif
 
         private IEnumerator JoinRoomRoutine(IVXJoinRoomRequest request)
         {
+#if INTELLIVERSEX_HAS_NAKAMA
+            var task = JoinRoomNakamaAsync(request);
+            while (!task.IsCompleted) yield return null;
+            if (task.IsFaulted)
+            {
+                OnError?.Invoke(task.Exception?.InnerException?.Message ?? "Join room failed.");
+                yield break;
+            }
+#else
             yield return new WaitForSeconds(0.3f);
 
             var room = _rooms.Find(r => r.RoomId == request.RoomId);
@@ -316,7 +414,50 @@ namespace IntelliVerseX.GameModes
             });
 
             Debug.Log($"[{nameof(IVXLobbyManager)}] Joined room: {request.RoomId}");
+#endif
         }
+
+#if INTELLIVERSEX_HAS_NAKAMA
+        private async Task JoinRoomNakamaAsync(IVXJoinRoomRequest request)
+        {
+            var backend = IntelliVerseX.Backend.IVXNakamaManager.Instance;
+            if (backend?.Socket == null)
+            {
+                OnError?.Invoke("Nakama socket not connected.");
+                return;
+            }
+
+            var match = await backend.Socket.JoinMatchAsync(request.RoomId);
+
+            CurrentRoom = new IVXRoomInfo
+            {
+                RoomId = match.Id,
+                RoomName = match.Id[..8],
+                HostName = "Host",
+                PlayerCount = match.Presences?.Count() ?? 1,
+                MaxPlayers = 4,
+                Mode = IVXGameMode.OnlineVersus,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            IsInRoom = true;
+
+            var config = new IVXMatchConfig
+            {
+                Mode = CurrentRoom.Mode,
+                MaxPlayers = CurrentRoom.MaxPlayers
+            };
+            IVXGameModeManager.Instance.SetConfig(config);
+
+            OnRoomJoined?.Invoke(new IVXJoinRoomResponse
+            {
+                Success = true,
+                Players = new List<IVXPlayerSlot>(IVXGameModeManager.Instance.Players)
+            });
+
+            Debug.Log($"[{nameof(IVXLobbyManager)}] Joined Nakama match: {match.Id}");
+        }
+#endif
 
         private List<IVXRoomInfo> GenerateMockRooms(IVXRoomFilter filter)
         {

@@ -3,9 +3,13 @@
     "rootNamespace": "IntelliVerseX.Demos",
     "references": [
         "IntelliVerseX.AI",
+        "IntelliVerseX.Bootstrap",
         "IntelliVerseX.Core",
+        "IntelliVerseX.Discord",
         "IntelliVerseX.Hiro",
         "IntelliVerseX.GameModes",
+        "IntelliVerseX.Platform",
+        "IntelliVerseX.Satori",
         "Unity.TextMeshPro",
         "Newtonsoft.Json"
     ],

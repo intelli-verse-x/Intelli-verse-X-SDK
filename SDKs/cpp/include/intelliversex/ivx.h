@@ -13,3 +13,13 @@
 #include "ivx_ai_client.h"
 #include "ivx_game_modes.h"
 #include "ivx_hiro_systems.h"
+
+// Discord DMs & moderation / AI LLM stack (stub surfaces; optional includes)
+#include "IVXDiscordMessages.h"
+#include "IVXDiscordModeration.h"
+#include "IVXAINPCDialogManager.h"
+#include "IVXAIAssistant.h"
+#include "IVXAIModerator.h"
+#include "IVXAIContentGenerator.h"
+#include "IVXAIProfiler.h"
+#include "IVXAIVoiceServices.h"

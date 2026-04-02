@@ -1,337 +1,1016 @@
 # IntelliVerseX SDK — Master Integration Prompt
 
-> **One prompt to integrate every SDK feature into any game project.**
-> Copy, customize, paste into your AI coding assistant, and go.
-
-**SDK Version:** 5.5.0  
-**Supported Platforms:** Unity | Unreal Engine 5 | Godot 4 | Defold | Cocos2d-x | JavaScript/TypeScript | C++ | Java/Android | Flutter/Dart | Web3
+> **Copy this entire prompt into any AI assistant (Cursor, ChatGPT, Claude, etc.) alongside your game project to integrate ALL IntelliVerseX SDK features in one shot.**
 
 ---
 
-## The Prompt
+## Prompt
 
-Copy everything inside the code block below:
-
-````text
-Integrate the IntelliVerseX SDK (v5.5.0) into my game project.
-The SDK provides a complete game backend through Nakama + Hiro + Satori + IntelliVerseX AI.
-
-### Backend Configuration
-- Nakama server URL: [YOUR_NAKAMA_URL]
-- Nakama server key: [YOUR_SERVER_KEY]
-- AI backend URL: [YOUR_AI_URL]           (leave blank if not using AI)
-- AI API key: [YOUR_AI_KEY]               (leave blank if not using AI)
+You are integrating the **IntelliVerseX SDK v5.7.0** into my game. The SDK provides a complete backend-as-a-service with AI, social, monetization, and engagement features. Follow every step below precisely.
 
 ---
 
-## 1. SDK Initialization
-Create a central manager that runs on app start:
-1. Configure IVXConfig with the Nakama server URL and server key.
-2. Call IVXManager.initialize() once.
-3. Restore a saved session if one exists; otherwise authenticate with device ID.
-4. On successful auth, fetch the player profile and wallet.
+### Step 0 — Prerequisites
 
-## 2. Player Identity & Profile
-- Support authentication methods: device ID, email/password, Google Sign-In, Apple Sign-In, custom token.
-- Fetch and cache the player profile (username, avatar URL, metadata JSON).
-- Allow the player to update their display name and avatar.
-- Persist the session token securely so the player does not re-authenticate on every launch.
-
-## 3. Virtual Economy & Wallet
-- Fetch the player's wallet balances (coins, gems, premium currency).
-- Grant currency after match completions, daily rewards, or purchases.
-- Use Hiro Economy system for a managed virtual store with catalog items.
-- Display wallet balances in the HUD.
-
-## 4. Leaderboards
-- After each match, submit the score: provide leaderboard ID, score value, and optional metadata JSON.
-- Display a leaderboard screen with global and friends-only tabs.
-- Support multiple time windows: daily, weekly, all-time.
-- Paginate results (20 per page) and highlight the current player's rank.
-
-## 5. Cloud Storage
-- Save player progress, settings, and inventory as JSON objects.
-- Use the collection / key / userId pattern:
-  - "progress" / "level_data" / playerId
-  - "settings" / "preferences" / playerId
-- Auto-save on key events: match end, level complete, settings change.
-- Load on launch and merge with local state.
-
-## 6. AI Voice & Host
-Initialize IVXAIClient with the AI backend URL and API key.
-
-### Voice Personas — Conversational AI characters
-1. Call getPersonas() to list available AI personalities.
-2. Display a persona selection grid (name, avatar, short bio).
-3. On selection, call startVoiceSession(personaId, userId, language).
-4. Build a chat UI with scrollable message bubbles.
-5. Send player text via sendText(sessionId, text).
-6. Poll for AI responses via pollMessages(sessionId, lastTimestamp).
-7. Display AI responses as new chat bubbles.
-8. On exit, call endVoiceSession(sessionId).
-
-### AI Host — Real-time game commentary
-1. When a match starts, call startHostSession(matchId, playerProfile).
-2. During gameplay, send events: sendHostEvent(sessionId, "goal_scored", eventDataJson).
-3. Display host commentary in a floating overlay at the top of the game screen.
-4. End the host session when the match concludes.
-
-### Entitlements — Premium AI access
-1. Call checkEntitlement(userId) to see what the player has access to.
-2. Lock premium personas behind the entitlement gate.
-3. Show an upgrade prompt for locked personas.
-
-## 7. Multiplayer & Game Modes
-
-### Mode Selection
-Use IVXGameModeManager to present a mode selector screen:
-- **Solo** — Single player with optional AI bots.
-- **Local Multiplayer** — Same-device play (hot-seat or split-screen).
-- **Online Versus** — PvP via Nakama matchmaking.
-- **Online Co-op** — Team-based cooperative play.
-- **Ranked** — ELO-based competitive matchmaking.
-- **Turn-Based** — Asynchronous multiplayer.
-
-Call selectMode(mode) and display a player roster that shows slots, ready states, and teams.
-
-### Lobby System
-Use IVXLobbyManager:
-1. Browse rooms: listRooms(filter) — show room name, player count, map, mode.
-2. Create a room: createRoom(name, config) — name, max players, password, map selection.
-3. Join a room: joinRoom(roomId, password) — navigate to the room screen.
-4. Ready up: setReady(true) — when all players are ready, the host starts the match.
-5. Leave room: leaveRoom().
-
-### Matchmaking
-Use IVXMatchmakingManager:
-1. Quick match: findMatch(config) — auto-matched by skill level.
-2. Ranked match: uses the player's ELO rating for fair pairing.
-3. Show a "Searching…" animation with elapsed time.
-4. On match found, display opponent info and transition to gameplay.
-5. Allow cancel: cancelSearch().
-
-### Local Multiplayer
-Use IVXLocalMultiplayerManager:
-1. Start a local session with the desired player count (2–4).
-2. For hot-seat: cycle turns with endTurn() / jumpToPlayer(index).
-3. For split-screen: calculate viewport rects with calculateSplitScreenRects(count).
-4. Show a turn indicator or split-screen divider UI.
-
-## 8. Hiro Live-Ops Systems
-Initialize IVXHiroSystems with the Nakama client and session.
-
-### Spin Wheel
-- Fetch wheel state: hiro.spinWheel.get()
-- Execute spin: hiro.spinWheel.spin()
-- Build an animated wheel UI with labeled prize segments.
-- Show spins remaining and cooldown timer.
-
-### Daily Streaks
-- Fetch streak state: hiro.streaks.get()
-- Record daily login: hiro.streaks.update(streakId)
-- Claim milestone rewards: hiro.streaks.claimMilestone(streakId, day)
-- Display a 7-day reward calendar: claimed (check), today (glow), locked (grey).
-- Show a fire icon with the current streak count.
-
-### Offerwall
-- List available offers: hiro.offerwall.get()
-- Mark an offer as complete: hiro.offerwall.complete(offerId)
-- Claim all pending rewards: hiro.offerwall.claimPending()
-- Display offer cards with: icon, title, reward amount, progress bar, claim button.
-
-### Friend Quests
-- List active cooperative quests: hiro.friendQuests.getActive()
-- Contribute progress: hiro.friendQuests.contribute(questId, progressDelta)
-- Show quest cards with combined progress bar.
-
-### Friend Battles
-- Challenge a friend: hiro.friendBattles.challenge(friendId, score)
-- List active battles: hiro.friendBattles.getActive()
-- Show challenge cards with scores and timer.
-
-### IAP Triggers
-- After key events (level_complete, out_of_lives, boss_defeated), call:
-  hiro.iapTrigger.check(eventType)
-- If triggered, display a contextual purchase offer.
-
-### Smart Ad Timer
-- Before showing an ad, call: hiro.smartAdTimer.canShowAd(placement)
-- Only show the ad if the response says it is optimal timing.
-- Reduces ad fatigue and improves eCPM.
-
-### Retention
-- On each session start: hiro.retention.get() then hiro.retention.update()
-- Use the returned data to personalize welcome-back messages.
-
-## 9. Analytics (Satori)
-- Identify the player on session start: satori.identify(userId, properties).
-- Track custom events: satori.track("match_completed", { score, duration, mode }).
-- Use live experiments for A/B testing UI variations.
-- Use feature flags to gate new features.
-- Segment players by behavior (whale, casual, new, churning).
-
-## 10. Platform Utilities
-- **Deep Links:** Register a URL scheme handler. On incoming link, parse the action (invite, reward_claim, match_join) and route accordingly.
-- **Safe Area:** Apply safe area insets to all UI panels (notch, home indicator, rounded corners).
-- **Foldable Devices:** Detect fold state changes and adapt layout (single-screen vs table-top vs book mode).
-- **Performance Optimizer:** On startup, detect device tier (low/mid/high) and auto-set quality: texture resolution, shadow quality, particle count, LOD bias.
-
-## Implementation Guidelines
-- All async operations return Promises / Futures / Tasks / Coroutines. Always handle errors with try-catch or error callbacks.
-- Use event listeners / delegates / signals to decouple UI from backend logic.
-- Cache server responses locally to minimize round-trips (profile, wallet, leaderboard).
-- Implement exponential-backoff retry for transient network failures.
-- Never hardcode secrets in client code. Store server keys in config files excluded from version control.
-- Log errors with the pattern: [ClassName] message — for easy filtering.
-
-## Recommended File Structure
-Create these integration files in your project:
-
-- **GameBootstrap** — SDK init, auth flow, session restore
-- **ProfileManager** — Player profile CRUD, avatar management
-- **EconomyManager** — Wallet display, currency grants, store UI
-- **LeaderboardManager** — Score submission, ranking display
-- **StorageManager** — Save/load progress, auto-save triggers
-- **AIManager** — Voice persona chat UI, host commentary overlay (optional)
-- **MultiplayerManager** — Mode selector, lobby browser, matchmaking UI (optional)
-- **LiveOpsManager** — Spin wheel, streaks, offerwall, friend quests (optional)
-- **AnalyticsManager** — Event tracking, experiment evaluation (optional)
-- **PlatformManager** — Deep links, safe area, device adaptation (optional)
-````
-
----
-
-## How to Use
-
-### Step 1: Copy the Prompt
-
-Select and copy the entire prompt block above (everything between the ```` markers).
-
-### Step 2: Customize the Placeholders
-
-Replace these bracketed values with your actual configuration:
-
-| Placeholder | Description | Example |
-|------------|-------------|---------|
-| `[YOUR_NAKAMA_URL]` | Your Nakama server URL | `https://nakama.mygame.com` |
-| `[YOUR_SERVER_KEY]` | Your Nakama server key | `defaultkey` |
-| `[YOUR_AI_URL]` | IntelliVerseX AI backend URL | `https://ai.intelliversex.com` |
-| `[YOUR_AI_KEY]` | Your AI API key | `ivx_ai_xxxxxxxxxxxx` |
-
-### Step 3: Add Your Project Context
-
-Before pasting the prompt, tell the AI assistant about your game:
-
-```text
-My project:
-- Engine: [Unity 6 / Unreal 5.4 / Godot 4.3 / etc.]
-- Language: [C# / C++ / GDScript / TypeScript / etc.]
-- Game type: [casual puzzle / competitive FPS / RPG / etc.]
-- Current state: [new project / existing project with auth already done / etc.]
-- Features I want: [all / only sections 1-5 and 8 / etc.]
+```
+Unity 2021.3+ or Unity 6
+TextMeshPro (included in Unity)
+Newtonsoft JSON (com.unity.nuget.newtonsoft-json)
+Optional: Nakama SDK (com.heroiclabs.nakama-unity) for backend features
+Optional: Discord Social SDK (com.discord.social-sdk) for Discord features
 ```
 
-### Step 4: Iterate
+Install the IntelliVerseX UPM package:
 
-The AI will generate integration code for your specific platform. Review it, test it, and ask follow-up questions for any section you want to refine.
+```
+Window > Package Manager > + > Add package from git URL:
+https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Assets/Intelli-verse-X-SDK
+```
 
 ---
 
-## Platform Installation Quick Reference
+### Step 1 — One-Drop Bootstrap (Recommended)
 
-### Unity (UPM)
-```json
-"com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Assets/Intelli-verse-X-SDK#v5.5.0"
+Create a single config asset, attach the bootstrap, and everything initializes automatically.
+
+```csharp
+// 1. Create config assets via Unity menu:
+//    Assets > Create > IntelliVerseX > Bootstrap Config
+//    Assets > Create > IntelliVerseX > AI > Configuration
+//    Assets > Create > IntelliVerseX > Discord Config
+
+// 2. Attach IVXBootstrap to a GameObject in your first scene.
+//    Assign the Bootstrap Config in the Inspector.
+//    Enable "Auto Initialize" (default).
+
+// 3. That's it. On Start(), the bootstrap will:
+//    - Authenticate via device ID (Nakama)
+//    - Initialize all 33 Hiro live-ops systems
+//    - Initialize Satori analytics
+//    - Initialize all 7 AI subsystems
+//    - Initialize all 11 Discord subsystems
+//    - Initialize multiplayer game modes
+//    - Apply platform optimizations
+
+// 4. Listen for completion:
+using IntelliVerseX.Bootstrap;
+
+public class MyGame : MonoBehaviour
+{
+    void Start()
+    {
+        var bootstrap = IVXBootstrap.Instance;
+        if (bootstrap == null)
+        {
+            Debug.LogWarning("IVXBootstrap not in scene — add it to your first scene.");
+            return;
+        }
+
+        if (bootstrap.IsInitialized)
+        {
+            OnSDKReady();
+            return;
+        }
+
+        bootstrap.OnBootstrapComplete += success =>
+        {
+            if (success)
+                OnSDKReady();
+            else
+                Debug.LogWarning("SDK bootstrap had issues — some features may be offline.");
+        };
+
+        bootstrap.OnModuleFailed += (module, error) =>
+            Debug.LogWarning($"Module {module} failed: {error}");
+    }
+
+    void OnSDKReady()
+    {
+        Debug.Log($"SDK ready! User: {IVXBootstrap.Instance.UserId}");
+    }
+}
 ```
-All managers are `MonoBehaviour` singletons with `DontDestroyOnLoad`. Demo UIs included.
 
-### Unreal Engine 5
-Copy `SDKs/unreal/` into your project's `Plugins/` folder. All types are Blueprint-callable via `UFUNCTION`/`USTRUCT`/`UENUM` macros.
+**Or generate all prefabs:** `IntelliVerseX > Generate All Prefabs` — creates `IVX_Bootstrap.prefab` and `IVX_AllManagers.prefab`.
 
-### Godot 4
-Copy `addons/intelliversex/` to your project. Enable in Project → Project Settings → Plugins. Add `IVXManager` as an Autoload.
+---
 
-### JavaScript / TypeScript
-```bash
-npm install @intelliversex/sdk
+### Step 2 — Manual Bootstrap (Advanced)
+
+If you need fine-grained control over initialization order:
+
+```csharp
+using System.Threading.Tasks;
+using UnityEngine;
+using IntelliVerseX.AI;
+using IntelliVerseX.Discord;
+using IntelliVerseX.Hiro;
+using IntelliVerseX.Satori;
+using IntelliVerseX.GameModes;
+
+public class ManualBootstrap : MonoBehaviour
+{
+    [SerializeField] private IVXAIConfig _aiConfig;
+    [SerializeField] private IVXDiscordConfig _discordConfig;
+
+    private async void Start()
+    {
+        string userId, userName, authToken;
+
+        // Phase 1: Backend auth
+        #if INTELLIVERSEX_HAS_NAKAMA
+        var client = new Nakama.Client("http", "your-server.com", 7350, "your-key");
+        var session = await client.AuthenticateDeviceAsync(SystemInfo.deviceUniqueIdentifier);
+        userId = session.UserId;
+        userName = session.Username;
+        authToken = session.AuthToken;
+
+        // Phase 2: Hiro (33 live-ops systems)
+        IVXHiroCoordinator.Instance.InitializeSystems(client, session);
+
+        // Phase 3: Satori analytics
+        IVXSatoriClient.Instance.Initialize(client, session);
+        #else
+        userId = "offline-player";
+        userName = "Player";
+        authToken = null;
+        #endif
+
+        // Phase 4: Discord
+        IVXDiscordManager.Instance.Initialize(_discordConfig);
+
+        // Phase 5: AI (7 subsystems)
+        IVXAISessionManager.Instance.Initialize(userId, userName, authToken);
+        IVXAINPCDialogManager.Instance.Initialize(_aiConfig);
+        IVXAINPCDialogManager.Instance.SetAuthToken(authToken);
+        IVXAIAssistant.Instance.Initialize(_aiConfig);
+        IVXAIAssistant.Instance.SetAuthToken(authToken);
+        IVXAIModerator.Instance.Initialize(_aiConfig);
+        IVXAIContentGenerator.Instance.Initialize(_aiConfig);
+        IVXAIProfiler.Instance.Initialize(_aiConfig, userId);
+        IVXAIVoiceServices.Instance.Initialize(_aiConfig);
+
+        // Phase 6: Multiplayer
+        IVXGameModeManager.Instance.SelectMode(IVXGameMode.Solo);
+
+        Debug.Log("All systems go!");
+    }
+}
 ```
+
+---
+
+### Step 3 — Identity & Authentication
+
+```csharp
+// Device auth (automatic via Bootstrap)
+// Email auth:
+#if INTELLIVERSEX_HAS_NAKAMA
+var session = await client.AuthenticateEmailAsync("user@email.com", "password");
+IVXHiroCoordinator.Instance.RefreshSession(session);
+IVXSatoriClient.Instance.RefreshSession(session);
+#endif
+
+// Discord account linking (no callback — listen to events instead):
+IVXDiscordManager.Instance.LinkAccount();
+
+// Session persistence (built into Bootstrap):
+// Saved to PlayerPrefs automatically when PersistSession = true
+```
+
+---
+
+### Step 4 — Hiro Live-Ops (33 Systems)
+
+All Hiro systems use **async/await** with `*Async` method names. After Hiro initialization, access any system:
+
+```csharp
+var hiro = IVXHiroCoordinator.Instance;
+
+// Economy — Donations & Rewarded Videos
+var donation = await hiro.Economy.RequestDonationAsync("daily_donation");
+var giveResult = await hiro.Economy.GiveDonationAsync("target_user_id", "daily_donation", 1);
+var reward = await hiro.Economy.ClaimDonationsAsync(new[] { "daily_donation" });
+var videoReward = await hiro.Economy.CompleteRewardedVideoAsync();
+
+// Leaderboards
+await hiro.Leaderboards.SubmitScoreAsync("global", 12500);
+var records = await hiro.Leaderboards.GetRecordsAsync("global", limit: 10);
+var allBoards = await hiro.Leaderboards.ListAsync();
+
+// Streaks
+var streaks = await hiro.Streaks.GetAsync();
+var updated = await hiro.Streaks.UpdateAsync("daily_login");
+var milestone = await hiro.Streaks.ClaimMilestoneAsync("daily_login", 7);
+
+// Spin Wheel
+var wheelConfig = await hiro.SpinWheel.GetAsync();
+var spinResult = await hiro.SpinWheel.SpinAsync("free");
+
+// Achievements
+var achievements = await hiro.Achievements.ListAsync();
+var progress = await hiro.Achievements.AddProgressAsync("first_kill", 1);
+var claimed = await hiro.Achievements.ClaimAsync("first_kill");
+
+// Energy / Stamina
+var energyState = await hiro.Energy.GetAsync();
+bool spent = await hiro.Energy.SpendAsync("stamina", 1);
+var refilled = await hiro.Energy.RefillAsync("stamina");
+
+// Store / IAP
+var catalog = await hiro.Store.ListAsync();
+var purchase = await hiro.Store.PurchaseAsync("weapons_section", "sword_01");
+
+// Offerwall
+var offers = await hiro.Offerwall.GetAsync();
+var completed = await hiro.Offerwall.CompleteOfferAsync("offer_1", "provider", "tx_123");
+
+// Teams / Guilds
+var teamData = await hiro.Teams.GetAsync("group_id");
+await hiro.Teams.UpdateStatAsync("group_id", "wins", 1);
+var teamWallet = await hiro.Teams.GetWalletAsync("group_id");
+
+// Mailbox
+var messages = await hiro.Mailbox.ListAsync();
+var claimMsg = await hiro.Mailbox.ClaimAsync("msg_id");
+await hiro.Mailbox.ClaimAllAsync();
+await hiro.Mailbox.DeleteAsync("msg_id");
+
+// Retention
+var retentionState = await hiro.Retention.GetAsync();
+var heartbeat = await hiro.Retention.HeartbeatAsync();
+await hiro.Retention.CompleteOnboardingStepAsync(1);
+var comebackBonus = await hiro.Retention.ClaimComebackBonusAsync();
+
+// Streak Shield
+var shieldState = await hiro.StreakShield.GetAsync();
+var activated = await hiro.StreakShield.ActivateAsync();
+
+// Session Boosters
+var boosters = await hiro.SessionBoosters.GetAsync();
+var boost = await hiro.SessionBoosters.ActivateAsync("xp_2x_booster");
+var freeClaim = await hiro.SessionBoosters.ClaimFreeAsync();
+
+// IAP Triggers
+var trigger = await hiro.IAPTriggers.EvaluateAsync("level_up", 5);
+await hiro.IAPTriggers.DismissAsync("trigger_id");
+await hiro.IAPTriggers.RecordConversionAsync("trigger_id", "receipt_data");
+
+// Smart Ad Timer
+var adState = await hiro.SmartAdTimer.GetAsync();
+var canShow = await hiro.SmartAdTimer.CanShowAsync("rewarded");
+await hiro.SmartAdTimer.RecordImpressionAsync("rewarded", "level_complete");
+
+// Friend Quests
+var quests = await hiro.FriendQuests.GetAsync();
+await hiro.FriendQuests.AcceptAsync("quest_id", "partner_user_id");
+await hiro.FriendQuests.ReportProgressAsync("quest_id", 10);
+
+// Friend Battles
+var battles = await hiro.FriendBattles.GetAsync();
+await hiro.FriendBattles.SendChallengeAsync("friend_user_id", "quiz_mode", 0);
+await hiro.FriendBattles.AcceptChallengeAsync("challenge_id");
+await hiro.FriendBattles.SubmitScoreAsync("challenge_id", 950);
+```
+
+---
+
+### Step 5 — Satori Analytics
+
+```csharp
+var satori = IVXSatoriClient.Instance;
+
+// Track custom events
+await satori.CaptureEventAsync("level_complete", new Dictionary<string, string>
+{
+    { "level", "5" }, { "score", "12500" }, { "time_seconds", "45" }
+});
+
+// Feature flags
+var flags = await satori.GetAllFlagsAsync();
+foreach (var flag in flags)
+    if (flag.name == "new_ui" && flag.enabled) EnableNewUI();
+
+// Single flag
+var singleFlag = await satori.GetFlagAsync("new_ui", "false");
+
+// A/B experiments
+var experiments = await satori.GetExperimentsAsync();
+var variant = await satori.GetExperimentVariantAsync("onboarding_flow");
+LoadOnboardingVariant(variant.name, variant.config);
+
+// Player identity / segmentation
+await satori.UpdateIdentityAsync(
+    defaultProperties: new Dictionary<string, string>
+    {
+        { "platform", Application.platform.ToString() }
+    },
+    customProperties: new Dictionary<string, string>
+    {
+        { "install_date", DateTime.UtcNow.ToString("O") }
+    }
+);
+
+// Audience memberships
+var audiences = await satori.GetAudienceMembershipsAsync();
+
+// Live events
+var liveEvents = await satori.GetLiveEventsAsync();
+foreach (var ev in liveEvents.events)
+    if (ev.IsActive) await satori.JoinLiveEventAsync(ev.id);
+
+// Messages
+var satoriMessages = await satori.GetMessagesAsync();
+```
+
+---
+
+### Step 6 — AI Conversational & LLM Stack
+
+#### 6a. NPC Dialog System
+
+```csharp
+var npc = IVXAINPCDialogManager.Instance;
+
+// Register an NPC
+npc.RegisterNPC(new IVXAINPCProfile
+{
+    NpcId = "blacksmith",
+    DisplayName = "Gorrak the Smith",
+    PersonaPrompt = "Gruff but kind dwarf blacksmith. Expert in rare metals.",
+    KnowledgeBaseIds = new[] { "weapons", "armor", "rare_materials" },
+    VoiceId = "deep_male_01",
+    MaxTurns = 20,
+    AvailableActions = new[] { "open_shop", "give_quest", "repair_item" }
+});
+
+// Listen for NPC responses and actions
+npc.OnNPCResponse += (sessionId, text) =>
+    ShowDialogBubble(text);
+
+npc.OnNPCAction += (sessionId, action) =>
+    HandleNPCAction(action);  // e.g. open shop, give quest
+
+// Start a dialog session (playerId is required)
+string playerId = IVXBootstrap.Instance?.UserId ?? "local_player";
+npc.StartDialog("blacksmith", playerId, "Player is level 42 warrior", session =>
+{
+    Debug.Log($"Dialog started: {session.SessionId}");
+
+    // Send a message (keyed by sessionId, not npcId)
+    npc.SendMessage(session.SessionId, "Can you forge a dragon-slaying sword?", response =>
+    {
+        Debug.Log($"NPC says: {response}");
+    });
+});
+```
+
+#### 6b. In-Game Assistant
+
+```csharp
+var assistant = IVXAIAssistant.Instance;
+
+// Ask a question (optional game context)
+assistant.Ask("How do I defeat the fire boss?", null, response =>
+    ShowHelpPopup(response.Response));
+
+// Get contextual hints (requires levelId + objectiveId)
+assistant.GetHint("level_5", "defeat_boss", null, hint =>
+    ShowHintBubble(hint.Hint));
+
+// Tutorial generation (by featureId)
+assistant.GetTutorial("crafting_system", tutorial =>
+    StartTutorialSequence(tutorial.Steps));
+
+// Knowledge base search (returns string[])
+assistant.SearchKnowledgeBase("enchantment recipes", results =>
+{
+    foreach (var r in results) DisplaySearchResult(r);
+});
+```
+
+#### 6c. Content Moderation
+
+```csharp
+var mod = IVXAIModerator.Instance;
+
+// Classify a chat message
+mod.ClassifyText(playerMessage, result =>
+{
+    // result has: Category, Severity, Confidence, SuggestedAction, Replacement
+    if (result.SuggestedAction == IVXModerationActionType.Allow)
+        BroadcastChat(playerMessage);
+    else
+        ShowWarning($"Blocked ({result.Category}, severity: {result.Severity})");
+});
+
+// Filter with custom rules
+mod.AddCustomRule(new IVXModerationRule
+{
+    Pattern = "cheat|hack|exploit",
+    Category = IVXContentCategory.Harassment,
+    Action = IVXModerationActionType.Block,
+    ReplacementText = "***"
+});
+
+// Filter a message (returns cleaned text)
+mod.FilterMessage(playerMessage, filtered =>
+    BroadcastChat(filtered));
+
+// Batch scan
+mod.ScanBatch(chatMessages, results =>
+{
+    foreach (var r in results)
+        if (r.SuggestedAction != IVXModerationActionType.Allow)
+            FlagMessage(r.OriginalText);
+});
+```
+
+#### 6d. AI Content Generation
+
+```csharp
+var gen = IVXAIContentGenerator.Instance;
+
+// Generate a quest
+gen.GenerateQuest(new IVXQuestTemplate
+{
+    Genre = "dragon_slaying",
+    Difficulty = "hard",
+    RequiredElements = new[] { "boss_fight", "rare_loot" },
+    EstimatedDurationMinutes = 30
+}, null, quest =>
+{
+    Debug.Log($"Quest: {quest.Title} — {quest.Description}");
+    StartQuest(quest);
+});
+
+// Generate dialogue (scenario + character array)
+gen.GenerateDialogue("player_buying_potion", new[] { "merchant", "player" },
+    dialogue => PlayDialogue(dialogue));
+
+// Generate item descriptions
+gen.GenerateItemDescription("Flamebrand", "weapon", "legendary",
+    item => AddToInventory(item));
+
+// Generate story content
+gen.GenerateStory("A dark forest conceals an ancient temple", "fantasy", 500,
+    story => DisplayStory(story));
+```
+
+#### 6e. Player Behavior Profiling
+
+```csharp
+var profiler = IVXAIProfiler.Instance;
+
+// Track events
+profiler.TrackEvent("purchase", new Dictionary<string, object>
+{
+    { "item", "gem_pack_100" }, { "price", 4.99 }
+});
+
+// Get profile (TotalSessionCount, not TotalSessions)
+profiler.GetPlayerProfile(profile =>
+    Debug.Log($"Sessions: {profile.TotalSessionCount}, Cohort: {profile.Cohort}"));
+
+// Predict churn
+profiler.PredictChurn((risk, factors) =>
+{
+    if (risk > 0.7f) SendRetentionOffer();
+    Debug.Log($"Churn risk: {risk:P0}, factors: {string.Join(", ", factors)}");
+});
+
+// Get personalization hints (returns List<IVXPersonalizationHint>, not List<string>)
+profiler.GetPersonalizationHints(hints =>
+{
+    foreach (var hint in hints)
+        ApplyPersonalization(hint);
+});
+
+// Classify player (returns IVXPlayerCohort enum, not string)
+profiler.ClassifyPlayer(cohort =>
+    Debug.Log($"Player cohort: {cohort}"));
+
+// Auto-tracking (session events, periodic flush)
+profiler.StartAutoTracking();
+```
+
+#### 6f. Voice AI Services
+
+```csharp
+var voice = IVXAIVoiceServices.Instance;
+
+// Text-to-Speech (voiceId is optional)
+voice.SynthesizeSpeech("Welcome, brave adventurer!", null, audioBytes =>
+    PlayAudio(audioBytes));
+
+// Speech-to-Text (returns IVXTranscriptionResult with .Text, .Language, .Confidence)
+voice.TranscribeAudio(micPcmData, 16000, result =>
+    ProcessPlayerSpeech(result.Text));
+
+// List available voices
+voice.ListVoices(voices =>
+    PopulateVoiceSelector(voices));
+
+// Language detection
+voice.DetectLanguage(audioPcmData, 16000, (lang, confidence) =>
+    SetGameLanguage(lang));
+
+// Streaming transcription
+voice.StartStreamingTranscription(16000);
+voice.FeedAudioChunk(pcmChunk); // feed chunks as they arrive
+voice.OnTranscriptionResult += result => ShowTranscription(result.Text);
+voice.StopStreamingTranscription();
+```
+
+#### 6g. AI Voice Personas & Host
+
+```csharp
+var ai = IVXAISessionManager.Instance;
+
+// Set player context for personalized AI
+ai.SetPlayerContext(new IVXAIPlayerContext
+{
+    PlayerId = "player_123",
+    DisplayName = "DragonSlayer42",
+    TotalGamesPlayed = 150,
+    OverallAccuracy = 0.78f,
+    BestScore = 15000
+});
+
+// Start voice persona session
+ai.StartVoiceSession("persona_id", "general_chat",
+    onSuccess: session => Debug.Log($"Voice session: {session}"),
+    onError: err => Debug.LogError($"Voice error: {err}")
+);
+
+// Listen for captions and audio
+ai.OnCaptionReceived += (text) => ShowCaption(text);
+ai.OnCaptionComplete += (fullText) => FinalizeCaption(fullText);
+ai.OnAudioReceived += (base64Audio) => PlayBase64Audio(base64Audio);
+
+// Send text input
+ai.SendText("Tell me about the dragon's weakness");
+
+// AI Host commentary
+ai.StartHostSession(new IVXAICreateHostSessionRequest
+{
+    HostPersonaId = "sports_commentator",
+    Topic = "trivia_round"
+}, onSuccess: session => Debug.Log($"Host session: {session}"),
+   onError: err => Debug.LogError(err)
+);
+
+ai.OnHostMessageReceived += msg => ShowCommentary(msg);
+ai.SendHostGameEvent("player_scored", "Player1 answered correctly!");
+
+// Get available personas
+ai.GetPersonas(
+    onSuccess: personas =>
+    {
+        foreach (var p in personas) Debug.Log($"Persona: {p.Name}");
+    },
+    onError: err => Debug.LogError(err)
+);
+```
+
+---
+
+### Step 7 — Discord Social SDK (11 Subsystems)
+
+```csharp
+// Account Linking
+IVXDiscordManager.Instance.LinkAccount(); // no callback — fire-and-forget
+
+// Mobile PKCE flow (requires redirect scheme)
+IVXDiscordManager.Instance.StartMobileOAuth2Flow("mygame://oauth2", (success) =>
+    Debug.Log($"Mobile OAuth2: {success}"));
+
+// Console device code flow
+IVXDiscordManager.Instance.StartConsoleOAuth2Flow(
+    onDeviceCode: code => ShowDeviceCodeUI(code),  // show code to user
+    onComplete: success => Debug.Log($"Console OAuth2: {success}")
+);
+
+// Rich Presence (note: details first, then state)
+var presence = IVXDiscordPresence.Instance;
+presence.SetActivity("Fighting the Dragon Boss", "In Battle"); // (details, state)
+presence.SetParty("party_123", 3, 4);
+presence.StartTimer();  // elapsed time from now
+presence.AddButton("Join Game", "https://yourgame.com/join");
+presence.SetSupportedPlatforms(IVXActivityPlatforms.Desktop | IVXActivityPlatforms.Mobile);
+
+// Friends & Relationships (IDs are ulong for Discord, string for game friends)
+var friends = IVXDiscordFriends.Instance;
+friends.Refresh();
+friends.OnFriendsUpdated += list =>
+{
+    foreach (var f in list) Debug.Log($"{f.DisplayName} ({f.Source})");
+};
+friends.SendGameFriendRequest("player_username");     // by username
+friends.SendGameFriendRequestById(123456789UL);       // by Discord user ID
+friends.BlockUser(123456789UL);                       // ulong, not string
+
+// Direct Messages (recipientId is ulong)
+var dms = IVXDiscordMessages.Instance;
+dms.SendDM(123456789UL, "GG! Want to rematch?",
+    onSuccess: messageId => Debug.Log($"Sent: {messageId}"),
+    onError: err => Debug.LogError(err));
+dms.GetDMHistory(123456789UL, 20, messages =>
+{
+    foreach (var m in messages) DisplayMessage(m);
+});
+dms.GetDMSummaries(summaries => UpdateInbox(summaries));
+
+// Lobbies (uses secret string, not name+maxPlayers)
+var lobby = IVXDiscordLobby.Instance;
+lobby.CreateOrJoinLobby("ranked_match_secret");
+lobby.CreateOrJoinLobbyWithMetadata("ranked_secret", "map=arena", "role=dps",
+    onComplete: lobbyId => Debug.Log($"Joined lobby: {lobbyId}"));
+lobby.SendMessage("I'm ready!");
+lobby.OnMessageReceived += (sender, msg) => ShowChat(sender, msg);
+lobby.SetLobbyIdleTimeout(300);
+
+// Voice Chat (no callback on JoinCall)
+var discordVoice = IVXDiscordVoice.Instance;
+discordVoice.JoinCall(lobby.CurrentLobbyId);
+discordVoice.SetSelfMute(true);
+discordVoice.SetVADThreshold(useCustom: true, thresholdDb: -25f);
+
+// Game Invites
+IVXDiscordInvites.Instance.SendInvite("discord_user_id_string", "Join my match!");
+IVXDiscordInvites.Instance.OnInviteReceived += invite => ShowInviteUI(invite);
+
+// Linked Channels
+IVXDiscordLinkedChannels.Instance.SendToLinkedChannel("Boss defeated!");
+
+// Moderation (userId is ulong)
+var discordMod = IVXDiscordModeration.Instance;
+discordMod.EnableAutoModeration(true);
+discordMod.ReportUser(123456789UL, "Toxic behavior", success =>
+    Debug.Log($"Report submitted: {success}"));
+
+// Debug
+IVXDiscordDebug.Instance.SetLogLevel(IVXDiscordLogLevel.Warning);
+```
+
+---
+
+### Step 8 — Multiplayer & Game Modes
+
+```csharp
+// Game Mode Manager — SelectMode (not SetGameMode)
+var modes = IVXGameModeManager.Instance;
+modes.SelectMode(IVXGameMode.OnlineVersus, maxPlayers: 4);
+
+// Or use a full config
+modes.SetConfig(IVXMatchConfig.OnlineVersus(maxPlayers: 4));
+modes.SetConfig(IVXMatchConfig.Ranked());
+modes.SetConfig(IVXMatchConfig.Local(maxPlayers: 2));
+
+// Add players
+var localPlayer = modes.AddLocalPlayer("Player 1", inputDeviceIndex: 0);
+var bot = modes.AddBot("CPU");
+modes.SetPlayerReady(localPlayer.SlotIndex, true);
+modes.StartMatch();
+
+// Events
+modes.OnModeChanged += mode => Debug.Log($"Mode: {mode}");
+modes.OnAllPlayersReady += config => StartGame(config);
+
+// Lobby system — uses request objects
+var lobby = IVXLobbyManager.Instance;
+
+// List rooms (event-driven, not callback)
+lobby.OnRoomListUpdated += rooms => DisplayRoomList(rooms);
+lobby.RefreshRoomList(new IVXRoomFilter { OnlyAvailable = true, Limit = 20 });
+
+// Create room (request object, not bare args)
+lobby.CreateRoom(new IVXCreateRoomRequest
+{
+    RoomName = "My Room",
+    Config = IVXMatchConfig.OnlineVersus(maxPlayers: 4),
+    Password = null
+});
+lobby.OnRoomCreated += response => Debug.Log($"Room: {response.RoomId}");
+
+// Join room (request object)
+lobby.JoinRoom(new IVXJoinRoomRequest { RoomId = "room_id" });
+lobby.OnRoomJoined += response => Debug.Log($"Joined: {response.Success}");
+
+// Matchmaking — StartSearch (not StartMatchmaking)
+var mm = IVXMatchmakingManager.Instance;
+mm.StartSearch(IVXMatchConfig.Ranked());
+mm.OnMatchFound += match =>
+{
+    Debug.Log($"Match: {match.MatchId} vs {match.OpponentDisplayName}");
+    LoadMatch(match);
+};
+mm.OnSearchProgress += elapsed => UpdateSearchUI(elapsed);
+
+// Quick match / ranked shortcuts
+mm.QuickMatch();
+mm.RankedMatch();
+
+// Local Multiplayer — uses IVXGameModeManager for player registration
+modes.SelectMode(IVXGameMode.LocalMultiplayer, maxPlayers: 4);
+modes.AddLocalPlayer("Player 1", 0);
+modes.AddLocalPlayer("Player 2", 1);
+
+var local = IVXLocalMultiplayerManager.Instance;
+local.StartSession(hotSeat: true, turnTimeLimitSeconds: 30f);
+local.OnTurnStarted += player => ShowTurnUI(player.DisplayName);
+local.OnRoundCompleted += round => Debug.Log($"Round {round} complete");
+```
+
+---
+
+### Step 9 — Error Handling Pattern
+
+Every SDK call should follow this pattern:
+
+```csharp
+try
+{
+    var manager = IVXSomeManager.Instance;
+    if (manager == null || !manager.IsInitialized)
+    {
+        Debug.LogWarning("Manager not ready — use IVXBootstrap or call Initialize()");
+        return;
+    }
+
+    // For async Hiro/Satori calls:
+    var result = await manager.SomeAsync("param");
+
+    // For callback-based AI/Discord calls:
+    manager.DoSomething(result =>
+    {
+        if (result != null)
+            HandleSuccess(result);
+        else
+            HandleFallback();
+    });
+}
+catch (Exception e)
+{
+    Debug.LogError($"SDK error: {e.Message}");
+    ShowOfflineFallback();
+}
+```
+
+---
+
+### Step 10 — Demo Hub
+
+Drop the `IVX_DemoHub` prefab (or `IVXDemoHub` component) into any scene to access all **16 interactive demos**:
+
+| # | Demo | Features Shown |
+|---|------|---------------|
+| 1 | Discord Social | All 11 Discord subsystems |
+| 2 | AI Voice Chat | Voice persona conversations |
+| 3 | AI Host | Live game commentary |
+| 4 | AI NPC Dialog | Branching NPC conversations |
+| 5 | AI Assistant | Contextual help & tutorials |
+| 6 | AI Moderation | Content classification & filtering |
+| 7 | AI Content Gen | Quest/story/item generation |
+| 8 | Spin Wheel | Daily reward wheel |
+| 9 | Daily Streak | Login streak rewards |
+| 10 | Offerwall | Ad monetization |
+| 11 | Game Modes | Solo/Local/Online selection |
+| 12 | Lobby | Online lobby & matchmaking |
+| 13 | Identity & Auth | Authentication & sessions |
+| 14 | Leaderboard | Score submission & rankings |
+| 15 | AI Profiler | Behavior tracking & predictions |
+| 16 | AI Voice Services | Standalone STT/TTS |
+
+Generate all prefabs: `IntelliVerseX > Generate All Prefabs`
+
+---
+
+### Step 11 — Lifecycle Management
+
+```csharp
+void OnApplicationPause(bool paused)
+{
+    if (paused)
+        IVXAIProfiler.Instance?.FlushEvents();
+}
+
+void OnApplicationQuit()
+{
+    IVXBootstrap.Instance?.Shutdown();
+    IVXAIProfiler.Instance?.StopAutoTracking();
+}
+```
+
+---
+
+### Step 12 — Cross-Platform Installation
+
+| Platform | Install Method |
+|----------|---------------|
+| **Unity** | UPM git URL (see Step 0) |
+| **Unreal** | Copy `SDKs/unreal/` to `Plugins/IntelliVerseX/` |
+| **Godot** | Copy `SDKs/godot/addons/intelliversex/` to `addons/` |
+| **Defold** | Add `SDKs/defold/` as library dependency |
+| **Cocos2d-x** | Add `SDKs/cocos2dx/Classes/IntelliVerseX/` to CMake |
+| **JavaScript/TypeScript** | `npm install @intelliversex/sdk` |
+| **Java/Android** | Add `SDKs/java/` as Gradle module |
+| **Flutter** | `flutter pub add intelliversex_sdk` |
+| **C++** | Add `SDKs/cpp/include/` to include path |
+| **Web3** | `npm install @intelliversex/web3-sdk` |
+
+---
+
+### Step 12b — Cross-Platform Initialization Examples
+
+For non-Unity platforms, initialization follows a similar pattern — create a client, configure, initialize modules:
+
+#### JavaScript / TypeScript
+
 ```typescript
-import { IVXManager, IVXAIClient, IVXGameModes, IVXHiroSystems } from '@intelliversex/sdk';
+import {
+  IVXClient, IVXAIAssistant, IVXAINPCDialogManager,
+  IVXAIModerator, IVXAIContentGenerator, IVXAIProfiler,
+  IVXAIVoiceServices, IVXDiscordMessages, IVXDiscordModeration
+} from '@intelliversex/sdk';
+
+const client = new IVXClient({
+  apiBase: 'https://api.intelli-verse-x.ai',
+  nakamaHost: 'your-server.com',
+  nakamaPort: 7350,
+  nakamaKey: 'your-key'
+});
+
+await client.initialize();
+const userId = client.userId;
+
+const assistant = new IVXAIAssistant(client);
+await assistant.initialize({ apiKey: 'YOUR_AI_KEY' });
+const answer = await assistant.ask('How do I craft a sword?');
+
+const npc = new IVXAINPCDialogManager(client);
+await npc.initialize({ apiKey: 'YOUR_AI_KEY' });
+npc.registerNPC({ npcId: 'blacksmith', personaPrompt: 'Gruff dwarf blacksmith' });
+const session = await npc.startDialog('blacksmith', userId);
+const response = await npc.sendMessage(session.sessionId, 'Got any rare metals?');
+
+const profiler = new IVXAIProfiler(client);
+await profiler.initialize({ apiKey: 'YOUR_AI_KEY', playerId: userId });
+profiler.trackEvent('purchase', { item: 'gem_pack', price: 4.99 });
 ```
 
-### Web3 (TypeScript + ethers.js)
-```bash
-npm install @intelliversex/sdk-web3
-```
-Extends the base JS SDK with wallet connect, signature auth, NFT gating, and token queries.
+#### Flutter / Dart
 
-### Java / Android
-```groovy
-implementation 'ai.intelli-verse-x:sdk:5.5.0'
+```dart
+import 'package:intelliversex_sdk/intelliversex_sdk.dart';
+
+final client = IVXClient(
+  apiBase: 'https://api.intelli-verse-x.ai',
+  nakamaHost: 'your-server.com',
+  nakamaPort: 7350,
+);
+
+await client.initialize();
+
+final assistant = IVXAIAssistant(client);
+await assistant.initialize(apiKey: 'YOUR_AI_KEY');
+final answer = await assistant.ask('How do I defeat the boss?');
+
+final npc = IVXAINPCDialogManager(client);
+await npc.initialize(apiKey: 'YOUR_AI_KEY');
+npc.registerNPC(IVXNPCProfile(npcId: 'guard', personaPrompt: 'Stern city guard'));
+final session = await npc.startDialog('guard', client.userId);
+final response = await npc.sendMessage(session.sessionId, 'Can I pass?');
+
+final mod = IVXAIModerator(client);
+await mod.initialize(apiKey: 'YOUR_AI_KEY');
+final result = await mod.classifyText(playerMessage);
+if (result.suggestedAction == ModerationAction.allow) broadcastChat(playerMessage);
 ```
 
-### Flutter / Dart
-```yaml
-dependencies:
-  intelliversex_sdk: ^5.5.0
+#### Java / Android
+
+```java
+IVXClient client = IVXClient.builder()
+    .apiBase("https://api.intelli-verse-x.ai")
+    .nakamaHost("your-server.com")
+    .nakamaPort(7350)
+    .nakamaKey("your-key")
+    .build();
+
+client.initialize().thenAccept(v -> {
+    String userId = client.getUserId();
+
+    IVXAIAssistant assistant = IVXAIAssistant.getInstance();
+    assistant.initialize("YOUR_AI_KEY");
+    assistant.ask("How do I craft a sword?", null, response -> {
+        Log.d("IVX", "Answer: " + response.getResponse());
+    });
+
+    IVXAINPCDialogManager npc = IVXAINPCDialogManager.getInstance();
+    npc.initialize("YOUR_AI_KEY");
+    npc.registerNPC("blacksmith", "Gruff dwarf blacksmith");
+    npc.startDialog("blacksmith", userId, null, session -> {
+        npc.sendMessage(session.getSessionId(), "Got any rare metals?", text -> {
+            Log.d("IVX", "NPC: " + text);
+        });
+    });
+
+    IVXAIProfiler profiler = IVXAIProfiler.getInstance();
+    profiler.initialize("YOUR_AI_KEY", userId);
+    profiler.trackEvent("purchase", Map.of("item", "gem_pack", "price", "4.99"));
+});
 ```
 
-### C++ (CMake)
-```cmake
-FetchContent_Declare(intelliversex
-  GIT_REPOSITORY https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git
-  GIT_TAG v5.5.0
-  SOURCE_SUBDIR SDKs/cpp)
-FetchContent_MakeAvailable(intelliversex)
-```
+#### Godot (GDScript)
 
-### Cocos2d-x
-Add `Classes/IntelliVerseX/` from `SDKs/cocos2dx/` to your `CMakeLists.txt`.
+```gdscript
+var client = IVXClient.new()
+client.api_base = "https://api.intelli-verse-x.ai"
+client.nakama_host = "your-server.com"
+await client.initialize()
 
-### Defold
-Add as a library dependency in `game.project`:
-```
-https://github.com/intelli-verse-x/Intelli-verse-X-SDK/archive/v5.5.0.zip
+var assistant = IVXAIAssistant.new()
+await assistant.initialize("YOUR_AI_KEY")
+var answer = await assistant.ask("How do I defeat the boss?")
+print("Answer: " + answer.response)
+
+var npc = IVXAINPCDialogManager.new()
+await npc.initialize("YOUR_AI_KEY")
+npc.register_npc("blacksmith", "Gruff dwarf blacksmith")
+var session = await npc.start_dialog("blacksmith", client.user_id)
+var response = await npc.send_message(session.session_id, "Got any swords?")
+print("NPC: " + response)
 ```
 
 ---
 
-## Feature Parity Matrix
+### Feature Matrix (All 10 Platforms)
 
-| Feature | Unity | Unreal | Godot | Defold | Cocos | JS/TS | C++ | Java | Flutter | Web3 |
-|---------|:-----:|:------:|:-----:|:------:|:-----:|:-----:|:---:|:----:|:-------:|:----:|
-| Auth & Identity | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Player Profile | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Wallet & Economy | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Leaderboards | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Cloud Storage | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| AI Voice & Host | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Multiplayer & Modes | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Hiro Live-Ops | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Satori Analytics | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Platform Utilities | ✅ | ✅ | — | — | — | — | — | ✅ | ✅ | — |
-| Demo UIs | ✅ | — | — | — | — | — | — | — | — | — |
-| Web3 / NFT | — | — | — | — | — | — | — | — | — | ✅ |
+| Feature | Unity | UE5 | Godot | Defold | Cocos | JS | C++ | Java | Flutter | Web3 |
+|---------|-------|-----|-------|--------|-------|-----|-----|------|---------|------|
+| Bootstrap | Full | - | - | - | - | - | - | - | - | - |
+| Identity | Full | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub |
+| Hiro (33 systems) | Full | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | - |
+| Satori Analytics | Full | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | - |
+| AI Voice/Host | Full | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub |
+| AI NPC Dialog | Full | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub |
+| AI Assistant | Full | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub |
+| AI Moderation | Full | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub |
+| AI Content Gen | Full | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub |
+| AI Profiler | Full | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub |
+| AI Voice Services | Full | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub |
+| Discord Social | Full | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub |
+| Multiplayer | Full | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | - |
+| Demo UIs | Full | - | - | - | - | - | - | - | - | - |
+| Platform Utils | Full | Partial | - | - | - | - | - | Partial | Partial | - |
 
----
-
-## Minimal Integration Example (Any Platform)
-
-If you only want the absolute basics (auth + profile + leaderboard), use this trimmed prompt:
-
-````text
-Integrate IntelliVerseX SDK v5.5.0 basics into my game:
-
-Server: [YOUR_NAKAMA_URL], Key: [YOUR_SERVER_KEY]
-
-1. Initialize SDK on app start, authenticate with device ID
-2. Fetch and display player profile (username, avatar)
-3. After each match, submit score to leaderboard "main"
-4. Display top 20 global leaderboard with player's rank highlighted
-5. Save player progress to cloud storage on level complete
-6. Load progress on launch
-````
+**Full** = Production-ready implementation
+**Stub** = API surface matching Unity, ready for backend wiring
+**Partial** = Key features implemented
+**-** = Not applicable for platform
 
 ---
 
-*IntelliVerseX SDK v5.5.0 — One SDK, every platform, every feature.*
+### Recommended File Structure
+
+```
+Assets/
+├── _IntelliVerseXSDK/          # SDK package
+│   ├── Bootstrap/              # One-drop init
+│   ├── AI/                     # 7 AI subsystems
+│   ├── Discord/                # 11 Discord subsystems
+│   ├── Hiro/                   # 33 live-ops systems
+│   ├── Satori/                 # Analytics
+│   ├── Multiplayer/            # Game modes
+│   ├── Platform/               # Device optimizations
+│   ├── Demos/                  # 16 demo scenes
+│   └── Prefabs/                # Generated prefabs
+├── Resources/
+│   ├── IVXBootstrapConfig.asset
+│   ├── IVXAIConfig.asset
+│   └── IVXDiscordConfig.asset
+└── Scenes/
+    └── Main.scene              # IVXBootstrap attached to a GameObject
+```
+
+---
+
+### Quick Onboarding Checklist
+
+- [ ] Install IntelliVerseX SDK via UPM
+- [ ] Create `IVXBootstrapConfig` asset (Assets > Create > IntelliVerseX > Bootstrap Config)
+- [ ] Create `IVXAIConfig` asset (Assets > Create > IntelliVerseX > AI > Configuration)
+- [ ] Create `IVXDiscordConfig` asset (Assets > Create > IntelliVerseX > Discord Config)
+- [ ] Fill in server details in Bootstrap Config
+- [ ] Fill in API key in AI Config
+- [ ] Fill in Application ID in Discord Config
+- [ ] Drag `IVXBootstrap` onto a GameObject in your first scene
+- [ ] Assign the Bootstrap Config in the Inspector
+- [ ] Press Play — all systems initialize automatically
+- [ ] Open the Demo Hub to explore features: `IntelliVerseX > Generate All Prefabs`, drop `IVX_DemoHub`
+- [ ] Start integrating features using the code samples above
+
+---
+
+*IntelliVerseX SDK v5.7.0 — 10 platforms, 70+ features, 1 prompt.*

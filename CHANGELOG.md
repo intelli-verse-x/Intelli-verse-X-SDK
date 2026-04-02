@@ -7,6 +7,57 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.7.0] — 2026-04-02
+
+### Added
+
+- **IVXBootstrap** — One-drop MonoBehaviour that auto-initializes all SDK modules in correct dependency order (Platform → Backend → Hiro → Satori → Discord → AI → Multiplayer)
+- **IVXBootstrapConfig** — Master ScriptableObject with server settings, module config references, feature toggles
+- **Bootstrap assembly** (`IntelliVerseX.Bootstrap.asmdef`) referencing all module assemblies
+- **IVXIdentityDemo** — Demo for device/guest authentication and session management
+- **IVXLeaderboardDemo** — Demo for score submission and leaderboard display (mock + Hiro)
+- **IVXAIProfilerDemo** — Demo for event tracking, cohort classification, churn prediction, personalization
+- **IVXAIVoiceServicesDemo** — Demo for standalone STT, TTS, voice listing, language detection
+- **IVX_Bootstrap.prefab** — Generated prefab for the bootstrap system
+- Updated `IVXDemoHub` to 16 demos (was 12) with grid layout improvements
+- Updated `IVXPrefabGenerator` to include Bootstrap prefab in both individual and AllManagers
+- Complete rewrite of `MASTER_INTEGRATION_PROMPT.md` with executable code samples for all features
+
+### Fixed
+
+- Profiler demo API calls aligned to actual `IVXAIProfiler` method signatures (`ClassifyPlayer`, `PredictChurn(float, string[])`, `GetPersonalizationHints`)
+- Voice Services demo API calls aligned to actual `IVXAIVoiceServices` signatures (`DetectLanguage(byte[], int, Action<string, float>)`)
+
+### Changed
+
+- Package version bumped to 5.7.0
+- `IntelliVerseX.Demos.asmdef` now references Bootstrap, Satori, and Platform assemblies
+
+---
+
+## [5.6.0] — 2026-04-02
+
+### Added
+
+- Full Discord Social SDK parity: Direct Messages, Relationship Management, Account Linking from Discord, Mobile PKCE, Console Device Code, Publisher-Level Linking, Advanced Rich Presence (URLs, buttons, status type, platforms, RPC-only), Advanced Voice (VAD, audio callbacks, global controls), Moderation (metadata, voice capture, reporting), Social Settings, Debug Logging, Lobby Metadata
+- Complete Conversational & LLM Stack: AI NPC Dialog System, AI In-Game Assistant, AI Chat Moderation, AI Content Generation (quests, stories, items, dialogue), Player Behavior Profiling, Standalone Voice AI Services (STT/TTS)
+- Demo Hub with 12 demo panels
+- Prefab Generator editor tool
+- 5 new demo UIs: Discord Social, AI NPC, AI Assistant, AI Moderation, AI Content Generation
+- Cross-platform API stubs for new features across all 9 non-Unity SDKs
+
+### Changed
+
+- `IVXDiscordConfig`: added 11 new configuration fields
+- `IVXDiscordFriends`: expanded with 18 relationship management methods
+- `IVXDiscordManager`: added 9 methods for advanced account linking and social settings
+- `IVXDiscordPresence`: added 9 methods for advanced Rich Presence
+- `IVXDiscordVoice`: added 6 methods for advanced voice controls
+- `IVXDiscordLobby`: added 4 methods for lobby metadata management
+- `IVXAISessionManager`: wired PlayerContext into voice sessions, added speech detection events
+
+---
+
 ## [5.5.0] - 2026-04-01
 
 ### Added
@@ -225,7 +276,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Unity Support | Status |
 |---------|---------------|--------|
-| 5.5.x | 2023.3+ | **Current** |
+| 5.6.x | 2023.3+ | **Current** |
+| 5.5.x | 2023.3+ | Active |
 | 5.4.x | 2023.3+ | Active |
 | 5.3.x | 2023.3+ | Active |
 | 5.2.x | 2023.3+ | Active |

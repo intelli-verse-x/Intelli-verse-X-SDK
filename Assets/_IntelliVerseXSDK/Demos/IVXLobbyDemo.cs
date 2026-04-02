@@ -822,16 +822,4 @@ namespace IntelliVerseX.Demos
 
         #endregion
     }
-
-    internal static class LobbyLayoutExt
-    {
-        public static void SetLayout(this LayoutElement le, float minW, float minH, float flexW = -1f,
-            float flexH = -1f)
-        {
-            if (minW >= 0) { le.minWidth = minW; le.preferredWidth = minW; }
-            if (minH >= 0) { le.minHeight = minH; le.preferredHeight = minH; }
-            if (flexW >= 0) le.flexibleWidth = flexW;
-            if (flexH >= 0) le.flexibleHeight = flexH;
-        }
-    }
 }

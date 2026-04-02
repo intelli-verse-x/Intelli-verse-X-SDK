@@ -76,6 +76,12 @@ namespace IntelliVerseX.AI
         /// <summary>Entitlement check determined that payment is required.</summary>
         public event Action<IVXAIEntitlementResponse> OnEntitlementRequired;
 
+        /// <summary>Fired when the backend reports user speech start (VAD).</summary>
+        public event Action OnSpeechDetected;
+
+        /// <summary>Fired when the backend reports user speech end.</summary>
+        public event Action OnSpeechStopped;
+
         #endregion
 
         #region Events — Host Session
@@ -151,6 +157,7 @@ namespace IntelliVerseX.AI
         private IVXAIConnectionMode _connectionMode;
         private Coroutine _pollingCoroutine;
         private Coroutine _hostPollingCoroutine;
+        private IVXAIPlayerContext _playerContext;
 
         #endregion
 
@@ -219,6 +226,12 @@ namespace IntelliVerseX.AI
         {
             _authToken = token;
             _api?.SetAuthToken(token);
+        }
+
+        /// <summary>Set player context for AI personalization in voice sessions.</summary>
+        public void SetPlayerContext(IVXAIPlayerContext context)
+        {
+            _playerContext = context;
         }
 
         #endregion
@@ -480,7 +493,8 @@ namespace IntelliVerseX.AI
                 UserId = UserId,
                 UserName = UserName,
                 Topic = topic,
-                Language = CurrentLanguage
+                Language = CurrentLanguage,
+                PlayerContext = _playerContext != null ? JsonConvert.SerializeObject(_playerContext) : null
             };
 
             _api.CreateVoiceSession(request, resp =>
@@ -634,6 +648,12 @@ namespace IntelliVerseX.AI
                     break;
                 case IVXAIMessageType.VoiceTurnComplete:
                     OnTurnComplete?.Invoke();
+                    break;
+                case IVXAIMessageType.SpeechDetected:
+                    OnSpeechDetected?.Invoke();
+                    break;
+                case IVXAIMessageType.SpeechStopped:
+                    OnSpeechStopped?.Invoke();
                     break;
                 case IVXAIMessageType.SocialProof:
                     if (msg.SocialProof != null) OnSocialProofReceived?.Invoke(msg.SocialProof);
