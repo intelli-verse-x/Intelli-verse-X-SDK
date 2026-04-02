@@ -3,7 +3,7 @@
 > **Complete modular game development SDK** — Integrate Auth, Identity, Analytics, Backend (Nakama), Social/Referrals, Monetization, and more into your games across **10 platforms**.
 
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-5.4.0-orange.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-5.5.0-orange.svg)](CHANGELOG.md)
 [![Documentation](https://img.shields.io/badge/Docs-Online-blue.svg)](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/)
 [![openupm](https://img.shields.io/npm/v/com.intelliversex.sdk?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.intelliversex.sdk)
 
@@ -82,7 +82,7 @@ Add the [OpenUPM](https://openupm.com) scoped registry and dependency to `Packag
     }
   ],
   "dependencies": {
-    "com.intelliversex.sdk": "5.4.0"
+    "com.intelliversex.sdk": "5.5.0"
   }
 }
 ```

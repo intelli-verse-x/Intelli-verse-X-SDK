@@ -5,7 +5,7 @@
 [![Unity](https://img.shields.io/badge/Unity-2023.3%2B-black.svg)](https://unity.com/)
 [![Unity 6](https://img.shields.io/badge/Unity%206-Supported-blue.svg)](https://unity.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-5.4.0-orange.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-5.5.0-orange.svg)](CHANGELOG.md)
 
 ---
 
@@ -50,7 +50,7 @@ Add to your `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/Intelli-verse-X-SDK#v5.4.0"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/Intelli-verse-X-SDK#v5.5.0"
   }
 }
 ```
@@ -193,7 +193,8 @@ Use **IntelliVerseX > Setup Wizard** to install dependencies.
 | **Hiro** | `IntelliVerseX.Hiro` | Spin wheel, streaks, retention, offerwalls, friend systems |
 | **Satori** | `IntelliVerseX.Satori` | Server-side analytics & A/B testing |
 | **Platform** | `IntelliVerseX.Platform` | Deep links, foldable, edge-to-edge, optimizer |
-| **Demos** | `IntelliVerseX.Demos` | Ready-to-run demo UIs for AI, spin wheel, streaks, offerwall |
+| **GameModes** | `IntelliVerseX.GameModes` | Solo, local multiplayer, online versus/coop, ranked, matchmaking, lobby |
+| **Demos** | `IntelliVerseX.Demos` | Ready-to-run demo UIs for AI, spin wheel, streaks, offerwall, multiplayer |
 
 ---
 
@@ -214,6 +215,8 @@ Import via **Package Manager > IntelliVerseX SDK > Samples**:
 | **Spin Wheel Demo** | Animated spin wheel with prizes (`_IntelliVerseXSDK/Demos/`) |
 | **Streak / Daily Rewards** | 7-day calendar with shields (`_IntelliVerseXSDK/Demos/`) |
 | **Offerwall Demo** | Scrollable offer cards (`_IntelliVerseXSDK/Demos/`) |
+| **Game Mode Selector** | Solo / Local / Online mode picker (`_IntelliVerseXSDK/Demos/`) |
+| **Lobby Demo** | Online room browser, create, matchmaking (`_IntelliVerseXSDK/Demos/`) |
 
 ---
 
@@ -257,6 +260,7 @@ Intelli-verse-X-SDK/          # UPM Package (com.intelliversex.sdk)
 
 _IntelliVerseXSDK/            # Extended modules
 ├── AI/                       # AI voice, host, entitlements
+├── Multiplayer/              # Game modes, lobby, matchmaking, local MP
 ├── Hiro/                     # Spin wheel, streaks, retention, offerwalls
 ├── Satori/                   # Server-side analytics
 ├── Platform/                 # Deep links, foldable, optimizer

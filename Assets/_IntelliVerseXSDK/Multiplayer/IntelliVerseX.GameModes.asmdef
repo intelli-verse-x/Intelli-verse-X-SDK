@@ -1,13 +1,9 @@
 {
-    "name": "IntelliVerseX.Demos",
-    "rootNamespace": "IntelliVerseX.Demos",
+    "name": "IntelliVerseX.GameModes",
+    "rootNamespace": "IntelliVerseX.GameModes",
     "references": [
-        "IntelliVerseX.AI",
         "IntelliVerseX.Core",
-        "IntelliVerseX.Hiro",
-        "IntelliVerseX.GameModes",
-        "Unity.TextMeshPro",
-        "Newtonsoft.Json"
+        "IntelliVerseX.Backend"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -21,6 +17,11 @@
             "name": "com.heroiclabs.nakama-unity",
             "expression": "",
             "define": "INTELLIVERSEX_HAS_NAKAMA"
+        },
+        {
+            "name": "com.unity.inputsystem",
+            "expression": "",
+            "define": "INTELLIVERSEX_HAS_NEW_INPUT"
         }
     ],
     "noEngineReferences": false

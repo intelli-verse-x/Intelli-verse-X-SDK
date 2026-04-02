@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.5.0] - 2026-04-01
+
+### Added
+
+#### Multiplayer & Game Modes (`IntelliVerseX.GameModes`)
+- **IVXGameModeManager** — Central singleton for game mode selection (Solo, Local Multiplayer, Online Versus, Online Co-op, Ranked, Turn-Based), player slot management, match lifecycle phases
+- **IVXLobbyManager** — Online room creation, join, listing with filters, auto-refresh, password protection, kick functionality (Nakama-ready with mock fallback)
+- **IVXMatchmakingManager** — Quick match / ranked matchmaking with search progress, timeout, cancel, and match-found result (Nakama matchmaker-ready with mock fallback)
+- **IVXLocalMultiplayerManager** — Same-device multiplayer with hot-seat turn management, turn timers, round tracking, split-screen viewport helpers
+- **Models** — IVXGameMode enum (7 modes), IVXPlayerSlot, IVXMatchConfig (with factory methods: Solo, Local, OnlineVersus, OnlineCoop, Ranked), IVXRoomInfo, IVXRoomFilter, IVXLobbyEvent, IVXMatchFoundResult, team/phase/transport enums
+
+#### Demo UIs
+- **IVXGameModeSelectorDemo** — 6-card game mode picker with per-mode accent colors, ONLINE/LOCAL tags, player configuration panel (player count +/-, name inputs, quick match / browse rooms buttons)
+- **IVXLobbyDemo** — 3-tab lobby interface: Browse Rooms (scrollable room cards with ping/mode/lock), Create Room (name/mode/players/visibility form), Matchmaking (animated search with opponent card reveal)
+
+---
+
 ## [5.4.0] - 2026-04-01
 
 ### Added
@@ -208,7 +225,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Unity Support | Status |
 |---------|---------------|--------|
-| 5.4.x | 2023.3+ | **Current** |
+| 5.5.x | 2023.3+ | **Current** |
+| 5.4.x | 2023.3+ | Active |
 | 5.3.x | 2023.3+ | Active |
 | 5.2.x | 2023.3+ | Active |
 | 5.1.x | 2023.3+ | Maintenance |
