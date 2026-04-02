@@ -41,3 +41,13 @@ export type {
   IVXFriendInfo,
   IVXHiroEventMap,
 } from './IVXHiroSystems';
+
+export { IVXDiscordSocial } from './IVXDiscordSocial';
+export type {
+  IVXDiscordConfig,
+  IVXUnifiedFriend,
+  IVXGameInvite,
+  IVXDiscordLobbyInfo,
+  IVXVoiceParticipant,
+  IVXDiscordSocialEventMap,
+} from './IVXDiscordSocial';

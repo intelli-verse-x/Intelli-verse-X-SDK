@@ -8,6 +8,7 @@ library intelliversex_sdk;
 
 export 'src/ivx_ai_client.dart';
 export 'src/ivx_config.dart';
+export 'src/ivx_discord_social.dart';
 export 'src/ivx_game_modes.dart';
 export 'src/ivx_hiro_systems.dart';
 export 'src/ivx_manager.dart';

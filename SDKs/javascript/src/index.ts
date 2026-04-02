@@ -53,3 +53,14 @@ export type {
   IVXIapTriggerResult,
   IVXSmartAdResult,
 } from './IVXHiroSystems';
+
+// Discord Social
+export { IVXDiscordSocial } from './IVXDiscordSocial';
+export type {
+  IVXDiscordConfig,
+  IVXUnifiedFriend,
+  IVXGameInvite,
+  IVXDiscordLobbyInfo,
+  IVXVoiceParticipant,
+  IVXDiscordSocialEventMap,
+} from './IVXDiscordSocial';
