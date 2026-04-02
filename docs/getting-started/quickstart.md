@@ -182,8 +182,8 @@ Use the **[Master Integration Prompt](../MASTER_INTEGRATION_PROMPT.md)** — a s
 
     ```csharp
     var hiro = IVXHiroCoordinator.Instance;
-    hiro.Leaderboards.SubmitScore("global", 12500);
-    hiro.Leaderboards.GetTopN("global", 10, entries => { /* display */ });
+    await hiro.Leaderboards.SubmitScoreAsync("global", 12500);
+    var records = await hiro.Leaderboards.GetRecordsAsync("global", limit: 10);
     ```
 
 === "AI NPC Dialog"
@@ -194,18 +194,21 @@ Use the **[Master Integration Prompt](../MASTER_INTEGRATION_PROMPT.md)** — a s
     {
         NpcId = "blacksmith",
         DisplayName = "Gorrak the Smith",
-        Persona = "Gruff but kind dwarf blacksmith."
+        PersonaPrompt = "Gruff but kind dwarf blacksmith."
     });
-    npc.StartDialog("blacksmith", session => Debug.Log("Dialog started!"));
-    npc.SendMessage("blacksmith", "Can you forge a sword?", response =>
-        Debug.Log($"NPC: {response.Content}"));
+    string playerId = IVXBootstrap.Instance?.UserId ?? "local";
+    npc.StartDialog("blacksmith", playerId, null, session =>
+    {
+        npc.SendMessage(session.SessionId, "Can you forge a sword?", response =>
+            Debug.Log($"NPC: {response}"));
+    });
     ```
 
 === "Discord Presence"
 
     ```csharp
     var presence = IVXDiscordPresence.Instance;
-    presence.SetActivity("In Battle", "Fighting the Dragon Boss");
+    presence.SetActivity("Fighting the Dragon Boss", "In Battle");
     presence.SetParty("party_123", 3, 4);
     presence.AddButton("Join Game", "https://yourgame.com/join");
     ```
@@ -216,7 +219,8 @@ Use the **[Master Integration Prompt](../MASTER_INTEGRATION_PROMPT.md)** — a s
     var mod = IVXAIModerator.Instance;
     mod.ClassifyText(playerMessage, result =>
     {
-        if (result.IsSafe) BroadcastChat(playerMessage);
+        if (result.SuggestedAction == IVXModerationActionType.Allow)
+            BroadcastChat(playerMessage);
         else ShowWarning($"Blocked: {result.Category}");
     });
     ```
@@ -225,7 +229,7 @@ Use the **[Master Integration Prompt](../MASTER_INTEGRATION_PROMPT.md)** — a s
 
     ```csharp
     var hiro = IVXHiroCoordinator.Instance;
-    hiro.SpinWheel.Spin(prize => Debug.Log($"Won: {prize.Name}"));
+    var prize = await hiro.SpinWheel.SpinAsync("free");
     ```
 
 ---
