@@ -74,6 +74,7 @@ nav:
     - WebGL / Web: platforms/webgl.md
     - XR / VR / AR: platforms/xr-vr-ar.md
     - Consoles (PS5/Xbox/Switch): platforms/console.md
+    - Roblox: platforms/roblox.md
   - Configuration:
     - configuration/index.md
     - Game Configuration: configuration/game-config.md

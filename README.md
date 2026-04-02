@@ -24,6 +24,7 @@ IntelliVerseX provides official SDK wrappers for all major game engines and plat
 | **Godot Engine** | GDScript | [Guide](SDKs/godot/README.md) | [SDKs/godot](SDKs/godot/) |
 | **Defold** | Lua | [Guide](SDKs/defold/README.md) | [SDKs/defold](SDKs/defold/) |
 | **Cocos2d-x Engine** | C++ | [Guide](SDKs/cocos2dx/README.md) | [SDKs/cocos2dx](SDKs/cocos2dx/) |
+| **Roblox** | Luau | [Guide](SDKs/roblox/README.md) | [SDKs/roblox](SDKs/roblox/) |
 | **JavaScript** | TypeScript / JS | [Guide](SDKs/javascript/README.md) | [SDKs/javascript](SDKs/javascript/) |
 | **C / C++** | C++ | [Guide](SDKs/cpp/README.md) | [SDKs/cpp](SDKs/cpp/) |
 | **Java / Android** | Java | [Guide](SDKs/java/README.md) | [SDKs/java](SDKs/java/) |
@@ -189,6 +190,7 @@ Intelli-verse-X-Unity-SDK/
 |   |-- godot/                     # Godot 4 Addon
 |   |-- defold/                    # Defold Library Module
 |   |-- cocos2dx/                  # Cocos2d-x / CMake
+|   |-- roblox/                    # Roblox / Luau (Wally)
 |   |-- javascript/                # npm / TypeScript
 |   |-- cpp/                       # Native C++ / CMake
 |   |-- java/                      # Java / Gradle / Android

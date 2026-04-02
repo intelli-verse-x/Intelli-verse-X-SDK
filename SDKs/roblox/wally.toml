@@ -1,0 +1,13 @@
+[package]
+name = "intelliversex/ivx-roblox"
+version = "5.9.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "server"
+description = "IntelliVerseX SDK for Roblox — AI/LLM, Hiro Live-Ops, Cross-Game Identity"
+license = "MIT"
+authors = ["Intelli-verse-X <dev@intelli-verse-x.ai>"]
+include = ["src/**", "default.project.json", "README.md", "LICENSE"]
+
+[dependencies]
+
+[dev-dependencies]
