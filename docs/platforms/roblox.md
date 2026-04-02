@@ -161,6 +161,157 @@ local save = IVX.Identity.read_storage(player, "saves", "slot1")
 | Text Chat | `TextChatService` | Native Roblox |
 | Cloud Storage | `DataStoreService` | Native (use Identity for cross-game) |
 
+## Complete API Reference
+
+### Core (`IVX`)
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `configure` | `(opts: table) -> ()` | Initialize the SDK with game_id, host, keys |
+| `on` | `(event: string, fn: function) -> ()` | Register callback: `"auth_success"`, `"auth_error"` |
+| `is_initialized` | `() -> boolean` | Check if SDK is configured |
+| `authenticate` | `(player: Player) -> (boolean, string?)` | Authenticate a player via Nakama |
+| `enable_auto_auth` | `() -> ()` | Auto-authenticate on PlayerAdded, cleanup on PlayerRemoving |
+| `call_rpc` | `(player: Player, rpc_id: string, payload: string?) -> (any?, string?)` | Call any Nakama RPC |
+
+### AI — NPC (`IVX.AI.NPC`)
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `start_dialog` | `(config: NPCConfig, player_id: string) -> (any?, string?)` | Start NPC conversation |
+| `send_message` | `(dialog_id: string, message: string) -> (any?, string?)` | Send player message, get response |
+| `end_dialog` | `(dialog_id: string) -> (boolean, string?)` | End conversation |
+| `get_history` | `(dialog_id: string) -> ({any}?, string?)` | Fetch dialog history |
+
+**NPCConfig fields:** `npc_id` (string), `persona_id` (string), `name` (string), `system_prompt` (string?), `knowledge_base` (string?), `max_turns` (number?)
+
+### AI — Voice (`IVX.AI.Voice`)
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `start_session` | `(persona_id: string, user_id: string) -> (any?, string?)` | Start TTS/STT session |
+| `end_session` | `(session_id: string) -> (boolean, string?)` | End voice session |
+| `send_text` | `(session_id: string, text: string) -> (any?, string?)` | Send text for synthesis |
+| `poll_messages` | `(session_id: string) -> ({any}?, string?)` | Poll for new messages |
+
+### AI — Assistant (`IVX.AI.Assistant`)
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `create_session` | `(persona_id, user_id, context?) -> (any?, string?)` | Start assistant session |
+| `send_message` | `(session_id: string, message: string) -> (any?, string?)` | Chat with assistant |
+| `end_session` | `(session_id: string) -> (boolean, string?)` | End session |
+| `list_personas` | `() -> ({any}?, string?)` | List available personas |
+
+### AI — ContentGenerator (`IVX.AI.ContentGenerator`)
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `generate_text` | `(prompt: string, params?: table) -> (any?, string?)` | Generate text (quests, dialog, lore) |
+| `generate_structured` | `(schema: string, params?: table) -> (any?, string?)` | Generate structured game data |
+| `generate_quiz` | `(topic, count?, difficulty?) -> (any?, string?)` | Generate quiz questions |
+
+### AI — Moderator (`IVX.AI.Moderator`)
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `check_text` | `(text: string, context?: string) -> (ModerationResult?, string?)` | Moderate text |
+| `check_username` | `(username: string) -> (ModerationResult?, string?)` | Moderate a username |
+| `check_batch` | `(texts: {string}) -> ({ModerationResult}?, string?)` | Batch-moderate |
+
+**ModerationResult:** `{ flagged: boolean, categories: table?, scores: table?, filtered_text: string? }`
+
+### AI — Profiler (`IVX.AI.Profiler`)
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `track_event` | `(player_id, event, properties?) -> (boolean, string?)` | Submit behavior event |
+| `get_profile` | `(player_id: string) -> (any?, string?)` | Get player profile/segments |
+| `get_recommendations` | `(player_id, context?) -> (any?, string?)` | Get personalization hints |
+| `predict_churn` | `(player_id: string) -> (any?, string?)` | Churn prediction score |
+
+### Hiro Live-Ops (`IVX.Hiro`)
+
+All Hiro methods take `(player: Player)` as the first argument and return `(any?, string?)`.
+
+| System | Methods |
+|--------|---------|
+| `SpinWheel` | `get`, `spin` |
+| `Streaks` | `get`, `update`, `claim(player, streak_id)` |
+| `DailyRewards` | `get_status`, `claim` |
+| `DailyMissions` | `list`, `complete(player, id)`, `claim(player, id)` |
+| `Achievements` | `list`, `claim(player, id)`, `update_progress(player, id, progress)` |
+| `SeasonPass` | `get`, `claim_tier(player, tier)`, `add_xp(player, amount)` |
+| `Leagues` | `get`, `get_leaderboard(player, league_id?)`, `submit_score(player, score)` |
+| `FortuneWheel` | `get`, `spin` |
+| `Tournaments` | `list`, `join(player, id)`, `submit_score(player, id, score)`, `get_leaderboard(player, id)` |
+| `Goals` | `get_weekly`, `get_monthly`, `update_progress(player, id, progress)`, `claim(player, id)` |
+| `Retention` | `get`, `update` |
+| `FriendStreaks` | `get`, `update(player, friend_id)`, `claim(player, id)` |
+
+### Identity (`IVX.Identity`)
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `fetch_profile` | `(player) -> (profile?, string?)` | Cross-game profile |
+| `update_profile` | `(player, fields) -> (boolean, string?)` | Update display_name, avatar_url, lang_tag |
+| `fetch_wallet` | `(player) -> (any?, string?)` | Cross-game currency balances |
+| `grant_currency` | `(player, currency_id, amount) -> (any?, string?)` | Grant currency |
+| `read_storage` | `(player, collection, key) -> (any?, string?)` | Read cross-game data |
+| `write_storage` | `(player, collection, key, value) -> (boolean, string?)` | Write cross-game data |
+
+### Remotes (`IVX.Remotes`)
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `get_event` | `(name: string) -> RemoteEvent` | Get or create RemoteEvent |
+| `get_function` | `(name: string) -> RemoteFunction` | Get or create RemoteFunction |
+| `fire_client` | `(event, player, ...) -> ()` | Fire event to one player |
+| `fire_all` | `(event, ...) -> ()` | Fire event to all players |
+| `on_server_event` | `(event, callback) -> ()` | Listen for client events |
+| `on_server_invoke` | `(func, callback) -> ()` | Register server-side function |
+
+---
+
+## Security Model
+
+| Layer | How It Works |
+|-------|-------------|
+| **Transport** | All HTTP uses HTTPS (TLS 1.2+). Plaintext HTTP never used in production. |
+| **Server key** | Sent as `Basic base64(key:)` in the Authorization header. Never exposed to clients. |
+| **Session tokens** | Bearer tokens stored server-side only. Players never see raw tokens. |
+| **Client isolation** | Clients communicate exclusively through RemoteEvents/Functions — they cannot call `HttpService`. |
+| **DataStore encryption** | Session tokens cached in DataStoreService are server-accessible only (Roblox enforces this). |
+
+**Best practices:**
+
+- Never pass raw tokens to clients via RemoteEvents
+- Always validate client input before passing to SDK methods
+- Use `pcall` around SDK calls to handle unexpected errors gracefully
+- Rotate your server key periodically via the developer dashboard
+
+---
+
+## Performance & Limits
+
+| Resource | Roblox Limit | SDK Usage | Headroom |
+|----------|-------------|-----------|----------|
+| HTTP requests | 500/minute | ~1 per SDK call | High — even 100 players doing 2 calls/min = 200/min |
+| DataStore reads | 60 + 10×players/min | 1 per player join | Very high |
+| DataStore writes | 60 + 10×players/min | 1 per player join | Very high |
+| Memory | ~4 GB server | ~1 KB/player (tokens) | Negligible |
+| Module load time | N/A | ~10ms for all 34 scripts | One-time cost |
+| AI response latency | N/A | 500ms–2s typical | Show typing indicator |
+
+**Optimization tips:**
+
+- Cache Hiro data client-side for display; only call server for mutations
+- Use `on_server_invoke` (RemoteFunction) for request/response patterns
+- Use `on_server_event` (RemoteEvent) for fire-and-forget patterns
+- Batch multiple UI updates into a single RemoteEvent fire
+
+---
+
 ## Studio Plugin
 
 The IntelliVerseX Studio Plugin provides a configuration panel:
@@ -171,13 +322,28 @@ The IntelliVerseX Studio Plugin provides a configuration panel:
 4. Click **Test Connection** to verify
 5. Click **Save Configuration**
 
+Settings persist across Studio sessions via `plugin:SetSetting()`.
+
+---
+
 ## Troubleshooting
 
-**"HTTP Requests are not enabled"**
-Enable in Game Settings > Security > Allow HTTP Requests.
+| Error | Cause | Fix |
+|-------|-------|-----|
+| `"HTTP Requests are not enabled"` | HttpService disabled | Game Settings > Security > Allow HTTP Requests > ON |
+| `"Auth failed: HTTP 0"` | Backend unreachable or timeout | Check host config; verify internet in Studio |
+| `"Auth failed: HTTP 401"` | Wrong server key | Verify `server_key` matches your dashboard |
+| `"No session for player"` | Player not authenticated | Call `IVX.enable_auto_auth()` before other modules |
+| `"RPC failed: HTTP 404"` | RPC not registered | Verify Hiro modules are configured on backend |
+| `"SDK not initialized"` | `configure()` not called | Ensure `IVX.configure()` runs before `authenticate()` |
+| AI returns nil | Missing API key or wrong URL | Check `ai_base_url` and `ai_api_key` in config |
+| DataStore warnings | Studio has limited DataStore access | Enable Studio Access to API Services in Game Settings |
 
-**"Auth failed: HTTP 0"**
-The backend is unreachable. Check your host configuration and ensure the server is running.
+---
 
-**"No session for player"**
-Call `IVX.authenticate(player)` or `IVX.enable_auto_auth()` before using other modules.
+## Further Reading
+
+- [Roblox Integration Guide](../guides/roblox-integration.md) — Step-by-step walkthrough with genre patterns
+- [AI Getting Started](../guides/ai-getting-started.md) — Deep dive into AI capabilities
+- [Hiro Integration](../guides/hiro-integration.md) — All Hiro systems explained
+- [Feature Coverage Matrix](../FEATURE_COVERAGE_MATRIX.md) — Cross-platform feature comparison

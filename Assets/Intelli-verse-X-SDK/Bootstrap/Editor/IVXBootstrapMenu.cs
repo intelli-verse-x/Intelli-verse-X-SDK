@@ -295,7 +295,7 @@ namespace IntelliVerseX.Bootstrap.Editor
                 alignment = TextAnchor.MiddleCenter,
                 fontSize = 14
             };
-            GUILayout.Label("Version 5.0.0", versionStyle);
+            GUILayout.Label("Version 5.8.0", versionStyle);
             
             GUILayout.Space(20);
             

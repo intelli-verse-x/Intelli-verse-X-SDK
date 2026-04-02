@@ -107,6 +107,7 @@ nav:
   - Integration:
     - Master Integration Prompt: MASTER_INTEGRATION_PROMPT.md
     - Feature Coverage Matrix: FEATURE_COVERAGE_MATRIX.md
+    - Publishing Checklist: PUBLISHING_CHECKLIST.md
   - API Reference:
     - api/index.md
     - Core API: api/core.md
@@ -171,6 +172,7 @@ nav:
     - Monetization Strategy: guides/monetization-strategy.md
     - Offerwall Integration: guides/offerwall-integration.md
     - IAP Integration: guides/iap-integration.md
+    - Roblox Integration: guides/roblox-integration.md
     - AI Agent Skills: guides/ai-agent-skills.md
     - Skills:
       - guides/skills/index.md

@@ -11,12 +11,12 @@ using UnityEngine;
 namespace IntelliVerseX.Editor
 {
     /// <summary>
-    /// Editor utility that generates manager and demo prefabs under <c>Assets/_IntelliVerseXSDK/Prefabs/</c>.
+    /// Editor utility that generates manager and demo prefabs under <c>Assets/Intelli-verse-X-SDK/Prefabs/</c>.
     /// Run via IntelliVerseX > Generate All Prefabs.
     /// </summary>
     public static class IVXPrefabGenerator
     {
-        private const string PrefabFolder = "Assets/_IntelliVerseXSDK/Prefabs";
+        private const string PrefabFolder = "Assets/Intelli-verse-X-SDK/Prefabs";
 
         [MenuItem("IntelliVerseX/Generate All Prefabs")]
         public static void GenerateAllPrefabs()
@@ -112,9 +112,9 @@ namespace IntelliVerseX.Editor
         private static void EnsurePrefabFolderExists()
         {
             if (AssetDatabase.IsValidFolder(PrefabFolder)) return;
-            if (!AssetDatabase.IsValidFolder("Assets/_IntelliVerseXSDK"))
-                AssetDatabase.CreateFolder("Assets", "_IntelliVerseXSDK");
-            AssetDatabase.CreateFolder("Assets/_IntelliVerseXSDK", "Prefabs");
+            if (!AssetDatabase.IsValidFolder("Assets/Intelli-verse-X-SDK"))
+                AssetDatabase.CreateFolder("Assets", "Intelli-verse-X-SDK");
+            AssetDatabase.CreateFolder("Assets/Intelli-verse-X-SDK", "Prefabs");
         }
 
         private static int SavePrefab(string fileName, System.Action<GameObject> configure)
