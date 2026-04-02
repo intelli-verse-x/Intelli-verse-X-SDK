@@ -662,7 +662,10 @@ namespace IntelliVerseX.Auth.UI
             {
                 _passwordToggleIcon.sprite = _passwordVisible ? _eyeOpenSprite : _eyeClosedSprite;
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[IVXPanelLogin] Operation failed: {ex.Message}");
+            }
         }
 
         #endregion

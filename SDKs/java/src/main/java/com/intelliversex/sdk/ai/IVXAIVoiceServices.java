@@ -24,11 +24,11 @@ public final class IVXAIVoiceServices {
     }
 
     public List<IVXAIVoice> getAvailableVoices() {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     public void initialize(Object config) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     public CompletableFuture<IVXTranscriptionResult> transcribeAudio(byte[] pcmData, int sampleRate) {
@@ -48,20 +48,20 @@ public final class IVXAIVoiceServices {
     }
 
     public void startStreamingTranscription(int sampleRate) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     public void stopStreamingTranscription() {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     public void feedAudioChunk(byte[] pcmChunk) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     private static <T> CompletableFuture<T> failed() {
         CompletableFuture<T> f = new CompletableFuture<>();
-        f.completeExceptionally(new UnsupportedOperationException("Not implemented"));
+        f.completeExceptionally(new UnsupportedOperationException("Not yet implemented — stub only"));
         return f;
     }
 

@@ -168,8 +168,8 @@ public async void LoginAsGuest()
 ```csharp
 public async Task<bool> LoginWithEmail(string email, string password)
 {
-    // TODO: Cognito integration coming soon
-    // For now, use guest login
+    // Cognito email/password auth is planned for a future release.
+    // For now, use guest login or social auth providers.
     return true;
 }
 ```

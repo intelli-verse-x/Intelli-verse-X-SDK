@@ -15,24 +15,33 @@ type syncMetadataRequest struct {
 	Metadata map[string]interface{} `json:"metadata"`
 }
 
+const maxMetadataKeys = 200
+
 // SyncMetadata stores SDK metadata (version, platform, engine) on the user account.
 // Called by all 8 SDKs after successful authentication.
 func SyncMetadata(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, payload string) (string, error) {
-	userID, ok := ctx.Value(runtime.RUNTIME_CTX_USER_ID).(string)
-	if !ok || userID == "" {
-		return `{"success":false,"error":"not authenticated"}`, nil
+	userID, err := requireAuthUser(ctx)
+	if err != nil {
+		return "", err
 	}
 
 	var req syncMetadataRequest
 	if err := json.Unmarshal([]byte(payload), &req); err != nil {
 		logger.Warn("ivx_sync_metadata: invalid payload from user %s: %v", userID, err)
-		return `{"success":false,"error":"invalid payload"}`, nil
+		return "", runtime.NewError("invalid payload", 3)
+	}
+
+	if req.Metadata == nil {
+		return "", runtime.NewError("metadata is required", 3)
+	}
+	if len(req.Metadata) > maxMetadataKeys {
+		return "", runtime.NewError("metadata exceeds maximum allowed keys", 3)
 	}
 
 	account, err := nk.AccountGetId(ctx, userID)
 	if err != nil {
 		logger.Error("ivx_sync_metadata: failed to get account %s: %v", userID, err)
-		return `{"success":false,"error":"account lookup failed"}`, nil
+		return "", runtime.NewError("account lookup failed", 13)
 	}
 
 	existing := make(map[string]interface{})
@@ -44,10 +53,13 @@ func SyncMetadata(ctx context.Context, logger runtime.Logger, db *sql.DB, nk run
 		existing[k] = v
 	}
 
-	updated, _ := json.Marshal(existing)
+	updated, err := json.Marshal(existing)
+	if err != nil {
+		return "", runtime.NewError("metadata could not be serialized", 3)
+	}
 	if err := nk.AccountUpdateId(ctx, userID, "", nil, "", "", "", "", string(updated)); err != nil {
 		logger.Error("ivx_sync_metadata: failed to update account %s: %v", userID, err)
-		return `{"success":false,"error":"update failed"}`, nil
+		return "", runtime.NewError("update failed", 13)
 	}
 
 	logger.Info("ivx_sync_metadata: updated metadata for user %s", userID)

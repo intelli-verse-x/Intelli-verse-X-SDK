@@ -24,7 +24,7 @@ public final class IVXAIContentGenerator {
     }
 
     public void initialize(Object config) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     public CompletableFuture<IVXGeneratedQuest> generateQuest(
@@ -53,12 +53,12 @@ public final class IVXAIContentGenerator {
     }
 
     public void cancelGeneration() {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     private static <T> CompletableFuture<T> failed() {
         CompletableFuture<T> f = new CompletableFuture<>();
-        f.completeExceptionally(new UnsupportedOperationException("Not implemented"));
+        f.completeExceptionally(new UnsupportedOperationException("Not yet implemented — stub only"));
         return f;
     }
 

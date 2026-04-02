@@ -1,7 +1,7 @@
 # 📅 Context Freshness Tracker
 
 > **Purpose:** Track when context files were last verified and flag stale information.
-> **Last Updated:** 2026-01-20
+> **Last Updated:** 2026-04-01
 
 ---
 
@@ -10,19 +10,20 @@
 ### Core Context Files
 | File | Last Verified | Verified By | Status | Next Review |
 |------|---------------|-------------|--------|-------------|
-| `context.md` | 2026-01-20 | AI Update | 🟢 Fresh | 2026-02-19 |
-| `architecture.md` | 2026-01-13 | Initial Creation | 🟢 Fresh | 2026-02-13 |
-| `naming-and-style.md` | 2026-01-13 | Initial Creation | 🟢 Fresh | 2026-02-13 |
-| `assumptions.md` | 2026-01-20 | AI Update | 🟢 Fresh | 2026-02-19 |
-| `NON_GOALS.md` | 2026-01-13 | Initial Creation | 🟢 Fresh | 2026-02-13 |
-| `.cursorrules` | 2026-01-13 | Initial Creation | 🟢 Fresh | 2026-02-13 |
-| `HOT_CONTEXT.md` | 2026-01-20 | AI Update | 🟢 Fresh | 2026-02-03 |
+| `context.md` | 2026-01-20 | AI Update | 🟢 Fresh | 2026-05-01 |
+| `architecture.md` | 2026-01-13 | Initial Creation | 🟢 Fresh | 2026-05-01 |
+| `naming-and-style.md` | 2026-01-13 | Initial Creation | 🟢 Fresh | 2026-05-01 |
+| `assumptions.md` | 2026-04-01 | AI Update | 🟢 Fresh | 2026-05-01 |
+| `NON_GOALS.md` | 2026-01-13 | Initial Creation | 🟢 Fresh | 2026-05-01 |
+| `.cursorrules` | 2026-01-13 | Initial Creation | 🟢 Fresh | 2026-05-01 |
+| `HOT_CONTEXT.md` | 2026-01-20 | AI Update | 🟢 Fresh | 2026-05-01 |
+| `SYSTEM_MAP.md` | 2026-04-01 | AI Update | 🟢 Fresh | 2026-05-01 |
 
 ### Rules Files
 | File | Last Verified | Verified By | Status | Next Review |
 |------|---------------|-------------|--------|-------------|
-| `rules/core/RULE.md` | 2026-01-13 | Initial Creation | 🟢 Fresh | 2026-02-13 |
-| `rules/upm/RULE.md` | 2026-01-13 | Initial Creation | 🟢 Fresh | 2026-02-13 |
+| `rules/core/RULE.md` | 2026-01-13 | Initial Creation | 🟢 Fresh | 2026-05-01 |
+| `rules/upm/RULE.md` | 2026-01-13 | Initial Creation | 🟢 Fresh | 2026-05-01 |
 
 ### Memory Files
 | File | Last Verified | Verified By | Status | Next Review |
@@ -34,8 +35,8 @@
 ### Project Files
 | File | Last Verified | Verified By | Status | Next Review |
 |------|---------------|-------------|--------|-------------|
-| `AGENT.md` | 2026-01-13 | Initial Creation | 🟢 Fresh | 2026-02-01 |
-| `AGENTS.md` | 2026-01-13 | Initial Creation | 🟢 Fresh | 2026-02-01 |
+| `AGENT.md` | 2026-01-13 | Initial Creation | 🟢 Fresh | 2026-05-01 |
+| `AGENTS.md` | 2026-01-13 | Initial Creation | 🟢 Fresh | 2026-05-01 |
 
 ---
 
@@ -86,6 +87,9 @@ When verifying a context file:
 | 2026-01-20 | HOT_CONTEXT.md | Added MoreOfUs + setup wizard quick ops | AI Update |
 | 2026-01-20 | memory/decisions.json | Logged D3D11 fallback decision | AI Update |
 | 2026-01-20 | memory/patterns.json | Added cleanup-safe singleton pattern | AI Update |
+| 2026-04-01 | SYSTEM_MAP.md | Added all 10 CI workflows, dual-tree layout, corrected UPM paths | AI Update |
+| 2026-04-01 | assumptions.md | Aligned Unity CI versions to 6000.2.8f1 | AI Update |
+| 2026-04-01 | FRESHNESS.md | Updated all dates to April 2026 | AI Update |
 
 ---
 

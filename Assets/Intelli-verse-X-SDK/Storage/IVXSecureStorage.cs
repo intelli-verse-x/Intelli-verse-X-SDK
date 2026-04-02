@@ -1,39 +1,43 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 
 namespace IntelliVerseX.Storage
 {
     /// <summary>
-    /// Secure storage wrapper for PlayerPrefs with XOR encryption.
-    /// Provides GDPR-compliant data storage with validation and migration support.
-    /// Part of IntelliVerse.GameSDK.Storage package.
+    /// Secure storage wrapper for PlayerPrefs with AES-256-CBC encryption.
+    /// Derives a per-device key via PBKDF2. Provides GDPR-compliant data
+    /// storage with validation and migration support.
     /// </summary>
     public static class IVXSecureStorage
     {
-        private const int DATA_VERSION = 1;
+        private const int DATA_VERSION = 2;
         private const string VERSION_KEY = "IVX_STORAGE_VERSION";
-        
-        /// <summary>
-        /// Gets device-specific encryption key (32 bytes for XOR cipher)
-        /// </summary>
+        private const int AES_KEY_SIZE = 256;
+        private const int AES_IV_SIZE = 16;
+        private const int PBKDF2_ITERATIONS = 10000;
+        private static readonly byte[] PBKDF2_SALT =
+            System.Text.Encoding.UTF8.GetBytes("IVXSecureStorage_Salt_v2");
+
+        private static byte[] _cachedKey;
+
         private static byte[] GetEncryptionKey()
         {
+            if (_cachedKey != null) return _cachedKey;
+
             string deviceId = SystemInfo.deviceUniqueIdentifier;
             if (string.IsNullOrEmpty(deviceId))
-            {
-                deviceId = "IntelliVerseX_Default_Key_2025"; // Fallback for editor
-            }
+                deviceId = "IntelliVerseX_Default_Key_2026";
 
-            byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(deviceId);
-            byte[] key = new byte[32];
-            Array.Copy(keyBytes, key, Mathf.Min(keyBytes.Length, 32));
-            
-            return key;
+            using var kdf = new Rfc2898DeriveBytes(
+                deviceId, PBKDF2_SALT, PBKDF2_ITERATIONS, HashAlgorithmName.SHA256);
+            _cachedKey = kdf.GetBytes(AES_KEY_SIZE / 8);
+            return _cachedKey;
         }
 
         /// <summary>
-        /// Encrypts a string using XOR cipher with Base64 encoding
+        /// Encrypts plaintext with AES-256-CBC. Returns Base64(IV + ciphertext).
         /// </summary>
         private static string Encrypt(string plainText)
         {
@@ -43,15 +47,20 @@ namespace IntelliVerseX.Storage
             try
             {
                 byte[] key = GetEncryptionKey();
+                using var aes = Aes.Create();
+                aes.Key = key;
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.PKCS7;
+                aes.GenerateIV();
+
+                using var encryptor = aes.CreateEncryptor();
                 byte[] plainBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
-                byte[] cipherBytes = new byte[plainBytes.Length];
+                byte[] cipherBytes = encryptor.TransformFinalBlock(plainBytes, 0, plainBytes.Length);
 
-                for (int i = 0; i < plainBytes.Length; i++)
-                {
-                    cipherBytes[i] = (byte)(plainBytes[i] ^ key[i % key.Length]);
-                }
-
-                return Convert.ToBase64String(cipherBytes);
+                byte[] result = new byte[AES_IV_SIZE + cipherBytes.Length];
+                Array.Copy(aes.IV, 0, result, 0, AES_IV_SIZE);
+                Array.Copy(cipherBytes, 0, result, AES_IV_SIZE, cipherBytes.Length);
+                return Convert.ToBase64String(result);
             }
             catch (Exception ex)
             {
@@ -61,7 +70,8 @@ namespace IntelliVerseX.Storage
         }
 
         /// <summary>
-        /// Decrypts a string using XOR cipher from Base64
+        /// Decrypts AES-256-CBC ciphertext. Falls back to legacy XOR if AES fails
+        /// (auto-migration from v1 data).
         /// </summary>
         private static string Decrypt(string cipherText)
         {
@@ -70,20 +80,33 @@ namespace IntelliVerseX.Storage
 
             try
             {
+                byte[] raw = Convert.FromBase64String(cipherText);
+                if (raw.Length <= AES_IV_SIZE)
+                    return DecryptLegacyXOR(raw);
+
+                byte[] iv = new byte[AES_IV_SIZE];
+                Array.Copy(raw, 0, iv, 0, AES_IV_SIZE);
+                byte[] cipher = new byte[raw.Length - AES_IV_SIZE];
+                Array.Copy(raw, AES_IV_SIZE, cipher, 0, cipher.Length);
+
                 byte[] key = GetEncryptionKey();
-                byte[] cipherBytes = Convert.FromBase64String(cipherText);
-                byte[] plainBytes = new byte[cipherBytes.Length];
+                using var aes = Aes.Create();
+                aes.Key = key;
+                aes.IV = iv;
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.PKCS7;
 
-                for (int i = 0; i < cipherBytes.Length; i++)
-                {
-                    plainBytes[i] = (byte)(cipherBytes[i] ^ key[i % key.Length]);
-                }
-
+                using var decryptor = aes.CreateDecryptor();
+                byte[] plainBytes = decryptor.TransformFinalBlock(cipher, 0, cipher.Length);
                 return System.Text.Encoding.UTF8.GetString(plainBytes);
+            }
+            catch (CryptographicException)
+            {
+                return TryLegacyDecrypt(cipherText);
             }
             catch (FormatException)
             {
-                Debug.LogWarning($"[IVXSecureStorage] Data not encrypted, returning plain text");
+                Debug.LogWarning("[IVXSecureStorage] Data not encrypted, returning plain text");
                 return cipherText;
             }
             catch (Exception ex)
@@ -91,6 +114,36 @@ namespace IntelliVerseX.Storage
                 Debug.LogError($"[IVXSecureStorage] Decryption failed: {ex.Message}\n{ex.StackTrace}");
                 return cipherText;
             }
+        }
+
+        private static string TryLegacyDecrypt(string cipherText)
+        {
+            try
+            {
+                byte[] raw = Convert.FromBase64String(cipherText);
+                return DecryptLegacyXOR(raw);
+            }
+            catch
+            {
+                return cipherText;
+            }
+        }
+
+        private static string DecryptLegacyXOR(byte[] cipherBytes)
+        {
+            string deviceId = SystemInfo.deviceUniqueIdentifier;
+            if (string.IsNullOrEmpty(deviceId))
+                deviceId = "IntelliVerseX_Default_Key_2025";
+
+            byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(deviceId);
+            byte[] legacyKey = new byte[32];
+            Array.Copy(keyBytes, legacyKey, Mathf.Min(keyBytes.Length, 32));
+
+            byte[] plainBytes = new byte[cipherBytes.Length];
+            for (int i = 0; i < cipherBytes.Length; i++)
+                plainBytes[i] = (byte)(cipherBytes[i] ^ legacyKey[i % legacyKey.Length]);
+
+            return System.Text.Encoding.UTF8.GetString(plainBytes);
         }
 
         /// <summary>

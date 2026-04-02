@@ -51,26 +51,31 @@ export class IVXAIAssistant {
   }
 
   initialize(_config: unknown): void {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   setAuthToken(_token: string | null): void {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   clearHistory(): void {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   setSystemPrompt(_prompt: string): void {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   async ask(
     _question: string,
     _context?: IVXAIGameContext
   ): Promise<IVXAIAssistantResponse | null> {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   async getHint(
@@ -78,16 +83,19 @@ export class IVXAIAssistant {
     _objectiveId: string,
     _context?: IVXAIGameContext
   ): Promise<IVXAIHintResponse | null> {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   async getTutorial(
     _featureId: string
   ): Promise<IVXAITutorialResponse | null> {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   async searchKnowledgeBase(_query: string): Promise<string[]> {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 }

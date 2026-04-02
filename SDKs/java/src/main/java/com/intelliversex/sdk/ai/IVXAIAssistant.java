@@ -33,19 +33,19 @@ public final class IVXAIAssistant {
     }
 
     public void setSystemPrompt(String systemPrompt) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     public void initialize(Object config) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     public void setAuthToken(String token) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     public void clearHistory() {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     public CompletableFuture<IVXAIAssistantResponse> ask(String question, IVXAIGameContext context) {
@@ -67,7 +67,7 @@ public final class IVXAIAssistant {
 
     private static <T> CompletableFuture<T> failed() {
         CompletableFuture<T> f = new CompletableFuture<>();
-        f.completeExceptionally(new UnsupportedOperationException("Not implemented"));
+        f.completeExceptionally(new UnsupportedOperationException("Not yet implemented — stub only"));
         return f;
     }
 

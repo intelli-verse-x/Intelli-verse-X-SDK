@@ -2,6 +2,7 @@
 // MIT License — see LICENSE in the project root.
 
 #include "IntelliVerseX/IVXAINPCDialogManager.h"
+#include "cocos2d.h"
 #include <stdexcept>
 
 namespace IntelliVerseX {
@@ -16,33 +17,39 @@ bool IVXAINPCDialogManager::isInitialized() const {
 }
 
 void IVXAINPCDialogManager::initialize(void*) {
-    throw std::runtime_error("Not implemented");
+    cocos2d::log("[IVX-Cocos] IVXAINPCDialogManager::initialize: stub — not yet implemented. AI features will return empty results.");
 }
 
 void IVXAINPCDialogManager::setAuthToken(const std::string&) {
-    throw std::runtime_error("Not implemented");
+    cocos2d::log("%s", "[IVX-Cocos] AI stub: not yet implemented — stub only");
+    throw std::runtime_error("Not yet implemented — stub only");
 }
 
 void IVXAINPCDialogManager::registerNPC(const IVXAINPCProfile&) {
-    throw std::runtime_error("Not implemented");
+    cocos2d::log("%s", "[IVX-Cocos] AI stub: not yet implemented — stub only");
+    throw std::runtime_error("Not yet implemented — stub only");
 }
 
 void IVXAINPCDialogManager::unregisterNPC(const std::string&) {
-    throw std::runtime_error("Not implemented");
+    cocos2d::log("%s", "[IVX-Cocos] AI stub: not yet implemented — stub only");
+    throw std::runtime_error("Not yet implemented — stub only");
 }
 
 void IVXAINPCDialogManager::startDialog(const std::string&, const std::string&, const std::string&,
                                         std::function<void(const IVXAINPCDialogSession&)>, ErrorCallback onError) {
-    if (onError) onError({-1, "Not implemented"});
+    cocos2d::log("%s", "[IVX-Cocos] AI stub: not yet implemented — stub only");
+    if (onError) onError({-1, "Not yet implemented — stub only"});
 }
 
 void IVXAINPCDialogManager::sendMessage(const std::string&, const std::string&,
                                         std::function<void(const std::string&)>, ErrorCallback onError) {
-    if (onError) onError({-1, "Not implemented"});
+    cocos2d::log("%s", "[IVX-Cocos] AI stub: not yet implemented — stub only");
+    if (onError) onError({-1, "Not yet implemented — stub only"});
 }
 
 void IVXAINPCDialogManager::endDialog(const std::string&, SuccessCallback, ErrorCallback onError) {
-    if (onError) onError({-1, "Not implemented"});
+    cocos2d::log("%s", "[IVX-Cocos] AI stub: not yet implemented — stub only");
+    if (onError) onError({-1, "Not yet implemented — stub only"});
 }
 
 const IVXAINPCDialogSession* IVXAINPCDialogManager::getSession(const std::string&) const {

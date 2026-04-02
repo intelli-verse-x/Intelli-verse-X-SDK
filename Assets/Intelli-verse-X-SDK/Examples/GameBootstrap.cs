@@ -1,5 +1,7 @@
 using UnityEngine;
 using IntelliVerseX.AI;
+using IntelliVerseX.Bootstrap;
+using IntelliVerseX.Hiro;
 
 /// <summary>
 /// Example game bootstrap for IntelliVerseX SDK integration.
@@ -40,7 +42,7 @@ public class GameBootstrap : MonoBehaviour
             IVXBootstrap.Instance.OnBootstrapComplete -= OnSDKReady;
     }
 
-    private void OnSDKReady()
+    private void OnSDKReady(bool success)
     {
         Debug.Log("[GameBootstrap] SDK Ready!");
 
@@ -106,8 +108,8 @@ public class GameBootstrap : MonoBehaviour
     // Example: Submit score to leaderboard
     public async void SubmitScore(long score)
     {
-        var hiro = IVXBootstrap.Instance.HiroCoordinator;
-        if (hiro == null) return;
+        var hiro = IVXHiroCoordinator.Instance;
+        if (hiro == null || !hiro.IsInitialized) return;
         var result = await hiro.Leaderboards.SubmitScoreAsync((int)score);
         if (result != null && result.success)
             Debug.Log($"Score {score} submitted!");

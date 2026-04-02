@@ -161,9 +161,8 @@ export class IVXAIContentGenerator {
    * @param config - AI configuration (base URL, keys, timeouts).
    */
   initialize(_config: IVXAIConfig): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -171,9 +170,8 @@ export class IVXAIContentGenerator {
    * @param token - Bearer token string, or `null` to clear.
    */
   setAuthToken(_token: string | null): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -187,9 +185,8 @@ export class IVXAIContentGenerator {
     _template: IVXQuestTemplate | null,
     _playerContext?: string,
   ): Promise<IVXGeneratedQuest | null> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -204,9 +201,8 @@ export class IVXAIContentGenerator {
     _genre?: string,
     _maxWords?: number,
   ): Promise<IVXGeneratedStory | null> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -221,9 +217,8 @@ export class IVXAIContentGenerator {
     _itemType: string,
     _rarity: string,
   ): Promise<IVXGeneratedItem | null> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -236,9 +231,8 @@ export class IVXAIContentGenerator {
     _scenario: string,
     _characters?: string[],
   ): Promise<IVXGeneratedDialogue | null> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -251,15 +245,13 @@ export class IVXAIContentGenerator {
     _template: string,
     _variables?: Record<string, string>,
   ): Promise<string | null> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /** Aborts the active generation request, if any. */
   cancelGeneration(): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 }

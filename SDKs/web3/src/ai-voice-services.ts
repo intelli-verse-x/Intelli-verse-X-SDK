@@ -30,43 +30,51 @@ export class IVXAIVoiceServices {
   }
 
   initialize(_config: unknown): void {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   async transcribeAudio(
     _pcmData: Uint8Array,
     _sampleRate?: number
   ): Promise<IVXTranscriptionResult | null> {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   async synthesizeSpeech(
     _text: string,
     _voiceId?: string
   ): Promise<Uint8Array | null> {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   async listVoices(): Promise<IVXAIVoice[]> {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   async detectLanguage(
     _pcmData: Uint8Array,
     _sampleRate?: number
   ): Promise<{ language: string; confidence: number }> {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   startStreamingTranscription(_sampleRate?: number): void {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   stopStreamingTranscription(): void {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   feedAudioChunk(_pcmChunk: Uint8Array): void {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 }

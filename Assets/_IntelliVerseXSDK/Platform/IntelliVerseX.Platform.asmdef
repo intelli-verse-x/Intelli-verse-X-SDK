@@ -2,7 +2,8 @@
     "name": "IntelliVerseX.Platform",
     "rootNamespace": "IntelliVerseX.Platform",
     "references": [
-        "IntelliVerseX.Core"
+        "IntelliVerseX.Core",
+        "Unity.XR.Management"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

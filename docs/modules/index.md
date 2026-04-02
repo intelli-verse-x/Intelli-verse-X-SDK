@@ -71,6 +71,10 @@ graph TB
 | Module | Namespace | Description |
 |--------|-----------|-------------|
 | [Social](social.md) | `IntelliVerseX.Social` | Friends, sharing, referrals |
+| [Discord](discord.md) | `IntelliVerseX.Discord` | Discord Social SDK — presence, voice, lobbies, DMs, moderation |
+| [Satori](satori.md) | `IntelliVerseX.Satori` | Satori analytics — events, flags, experiments, live events, messages |
+| [Multiplayer](multiplayer.md) | `IntelliVerseX.GameModes` | Game modes, lobby, matchmaking, local multiplayer |
+| [Wallet & Economy](wallet.md) | `IntelliVerseX.Backend` / `IntelliVerseX.Hiro` | Wallet balance, Hiro economy, store, IAP validation |
 | [Leaderboards](leaderboards.md) | `IntelliVerseX.Leaderboard` | Rankings and scores |
 | [Quiz](quiz.md) | `IntelliVerseX.Quiz` | Quiz game framework |
 | [Localization](localization.md) | `IntelliVerseX.Localization` | Multi-language support |
@@ -214,6 +218,30 @@ Core (no dependencies)
     AI voice personas, host game commentary, entitlements, and audio streaming.
     
     [:octicons-arrow-right-24: AI Documentation](ai.md)
+
+-   :material-chart-bar:{ .lg .middle } __Satori Analytics__
+
+    ---
+    
+    Event capture, feature flags, A/B experiments, live events, in-app messages, and metrics.
+    
+    [:octicons-arrow-right-24: Satori Documentation](satori.md)
+
+-   :material-gamepad-variant:{ .lg .middle } __Multiplayer & Game Modes__
+
+    ---
+    
+    Solo, local, online lobby, matchmaking, ranked, turn-based, and split-screen.
+    
+    [:octicons-arrow-right-24: Multiplayer Documentation](multiplayer.md)
+
+-   :material-wallet:{ .lg .middle } __Wallet & Economy__
+
+    ---
+    
+    Currency balances, Hiro economy (donations, store, IAP validation), and purchase flows.
+    
+    [:octicons-arrow-right-24: Wallet Documentation](wallet.md)
 
 -   :material-slot-machine:{ .lg .middle } __Hiro Module__
 

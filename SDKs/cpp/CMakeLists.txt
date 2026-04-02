@@ -12,6 +12,7 @@ find_package(nakama-sdk REQUIRED)
 
 set(IVX_SOURCES
     src/ivx_manager.cpp
+    src/ivx_xr.cpp
     src/ivx_storage.cpp
     src/ivx_ai_client.cpp
     src/ivx_discord_social.cpp
@@ -24,6 +25,7 @@ set(IVX_SOURCES
 
 set(IVX_HEADERS
     include/intelliversex/ivx.h
+    include/intelliversex/ivx_xr.h
     include/intelliversex/ivx_config.h
     include/intelliversex/ivx_types.h
     include/intelliversex/ivx_manager.h

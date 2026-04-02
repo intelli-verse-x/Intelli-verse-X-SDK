@@ -161,9 +161,8 @@ export class IVXAINPCDialogManager {
    * @param config - AI configuration (base URL, keys, timeouts).
    */
   initialize(_config: IVXAIConfig): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -171,9 +170,8 @@ export class IVXAINPCDialogManager {
    * @param token - Bearer token string, or `null` to clear.
    */
   setAuthToken(_token: string | null): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -181,9 +179,8 @@ export class IVXAINPCDialogManager {
    * @param profile - Full NPC profile definition.
    */
   registerNPC(_profile: IVXAINPCProfile): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -191,9 +188,8 @@ export class IVXAINPCDialogManager {
    * @param npcId - Identifier of the NPC to unregister.
    */
   unregisterNPC(_npcId: string): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -208,9 +204,8 @@ export class IVXAINPCDialogManager {
     _playerId: string,
     _playerContext?: string,
   ): Promise<IVXAINPCDialogSession | null> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -223,9 +218,8 @@ export class IVXAINPCDialogManager {
     _sessionId: string,
     _message: string,
   ): Promise<string | null> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -233,9 +227,8 @@ export class IVXAINPCDialogManager {
    * @param sessionId - Session to terminate.
    */
   async endDialog(_sessionId: string): Promise<void> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -244,9 +237,8 @@ export class IVXAINPCDialogManager {
    * @returns Session data, or `null` if not found.
    */
   getSession(_sessionId: string): IVXAINPCDialogSession | null {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -255,8 +247,7 @@ export class IVXAINPCDialogManager {
    * @returns Array of active sessions (may be empty).
    */
   getSessionsForNPC(_npcId: string): IVXAINPCDialogSession[] {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 }

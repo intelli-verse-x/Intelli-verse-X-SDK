@@ -89,6 +89,10 @@ final flags = await satori.getFeatureFlags();
 - Dart SDK 3.0+
 - [nakama](https://pub.dev/packages/nakama) v1.3+
 
+### Platform Support
+
+- **Flutter**: iOS, Android, Web, macOS, Windows, Linux (via Flutter)
+
 ## Installation
 
 Add to your `pubspec.yaml`:
@@ -170,15 +174,17 @@ Future<void> main() async {
 | Leaderboards | ✅ Supported |
 | Cloud Storage | ✅ Supported |
 | RPC Calls | ✅ Supported |
-| AI Voice & Host | ✅ New in v5.8.0 |
-| Multiplayer & Game Modes | ✅ New in v5.8.0 |
-| Hiro Live-Ops Systems | ✅ New in v5.8.0 |
+| AI Voice & Host | 🔶 Stub |
+| Multiplayer & Game Modes | 🔶 Stub |
+| Hiro Live-Ops Systems | 🔶 Stub |
 | Analytics | ✅ Supported |
-| Discord Social SDK | ✅ New in v5.8.0 |
-| Satori Analytics | ✅ New in v5.8.0 |
+| Discord Social SDK | 🔶 Stub |
+| Satori Analytics | 🔶 Stub |
 | Dart Types | ✅ Full Support |
 | Flutter (iOS/Android) | ✅ Supported |
 | Dart CLI / Server | ✅ Supported |
+
+> 🔶 **Stub** = Full API surface exists. Methods log warnings and return empty/mock data. Zero code changes needed when backend support ships.
 
 ## API Overview
 

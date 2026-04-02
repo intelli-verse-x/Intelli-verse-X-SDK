@@ -28,19 +28,19 @@ class IVXAINPCDialogManager {
   bool get isInitialized => false;
 
   void initialize(Object? config) {
-    throw UnimplementedError('IVXAINPCDialogManager.initialize');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   void setAuthToken(String? token) {
-    throw UnimplementedError('IVXAINPCDialogManager.setAuthToken');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   void registerNPC(IVXAINPCProfile profile) {
-    throw UnimplementedError('IVXAINPCDialogManager.registerNPC');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   void unregisterNPC(String npcId) {
-    throw UnimplementedError('IVXAINPCDialogManager.unregisterNPC');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<IVXAINPCDialogSession?> startDialog(
@@ -48,22 +48,22 @@ class IVXAINPCDialogManager {
     String playerId, [
     String? playerContext,
   ]) async {
-    throw UnimplementedError('IVXAINPCDialogManager.startDialog');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<String?> sendMessage(String sessionId, String message) async {
-    throw UnimplementedError('IVXAINPCDialogManager.sendMessage');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<void> endDialog(String sessionId) async {
-    throw UnimplementedError('IVXAINPCDialogManager.endDialog');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   IVXAINPCDialogSession? getSession(String sessionId) {
-    throw UnimplementedError('IVXAINPCDialogManager.getSession');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   List<IVXAINPCDialogSession> getSessionsForNPC(String npcId) {
-    throw UnimplementedError('IVXAINPCDialogManager.getSessionsForNPC');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 }

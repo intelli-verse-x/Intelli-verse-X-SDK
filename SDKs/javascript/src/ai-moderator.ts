@@ -163,9 +163,8 @@ export class IVXAIModerator {
    * @param config - API configuration; must not be null.
    */
   initialize(_config: IVXAIConfig): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -173,9 +172,8 @@ export class IVXAIModerator {
    * @param token - Bearer token string, or `null` to clear.
    */
   setAuthToken(_token: string | null): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -185,9 +183,8 @@ export class IVXAIModerator {
    * @returns Classification result.
    */
   async classifyText(_text: string): Promise<IVXModerationResult> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -196,9 +193,8 @@ export class IVXAIModerator {
    * @returns Sanitized text string.
    */
   async filterMessage(_text: string): Promise<string> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -207,9 +203,8 @@ export class IVXAIModerator {
    * @returns Per-message moderation results.
    */
   async scanBatch(_messages: string[]): Promise<IVXModerationResult[]> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -217,9 +212,8 @@ export class IVXAIModerator {
    * @param rule - Rule definition.
    */
   addCustomRule(_rule: IVXModerationRule): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -227,9 +221,8 @@ export class IVXAIModerator {
    * @param pattern - Pattern string to remove.
    */
   removeCustomRule(_pattern: string): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -237,16 +230,14 @@ export class IVXAIModerator {
    * @param rules - New rule set.
    */
   setCustomRules(_rules: IVXModerationRule[]): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /** Clears all custom rules. */
   clearCustomRules(): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -255,9 +246,8 @@ export class IVXAIModerator {
    * @returns Moderation result based on local rules.
    */
   checkLocalRules(_text: string): IVXModerationResult {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -268,8 +258,7 @@ export class IVXAIModerator {
   getDiscordModerationMetadata(
     _result: IVXModerationResult,
   ): Record<string, string> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 }

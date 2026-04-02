@@ -1,8 +1,8 @@
 # 🗺️ System Map - Master Index
 
 > **Purpose:** Single source of truth for how all context engineering files connect.
-> **Last Updated:** 2026-01-13
-> **Version:** 2.2.0
+> **Last Updated:** 2026-04-01
+> **Version:** 2.3.0
 
 ---
 
@@ -102,10 +102,17 @@
 ┌─────────────────────────────────────────────────────────────────┐
 │                      .github/ FOLDER 🆕                          │
 ├─────────────────────────────────────────────────────────────────┤
-│  workflows/            │ GitHub Actions                         │
+│  workflows/            │ GitHub Actions (10 workflows)          │
 │  ├── context-validation.yml │ Context validation on PR          │
 │  ├── package-validation.yml │ UPM package structure validation  │
-│  └── release-tag.yml   │ Release tag workflow (for UPM)         │
+│  ├── release-tag.yml   │ Release tag workflow (for UPM)         │
+│  ├── unity-tests.yml   │ Unity EditMode/PlayMode tests + build  │
+│  ├── docs.yml           │ MkDocs documentation deployment       │
+│  ├── platform-sdks-validation.yml │ Cross-platform SDK structure │
+│  ├── javascript-sdk.yml │ JS/TS SDK build + lint                │
+│  ├── java-sdk.yml       │ Java SDK Gradle build                 │
+│  ├── flutter-sdk.yml    │ Flutter SDK analyze + test             │
+│  └── cpp-sdk.yml        │ C++ / Cocos2d-x CMake build           │
 ├─────────────────────────────────────────────────────────────────┤
 │  pull_request_template.md │ PR checklist template               │
 │  CODEOWNERS            │ Code ownership rules                   │
@@ -126,16 +133,29 @@
                                    │
                                    ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                 Assets/_IntelliVerseXSDK/ 🆕                     │
+│         Assets/_IntelliVerseXSDK/ (AI / Bootstrap UPM tree)      │
 ├─────────────────────────────────────────────────────────────────┤
-│  package.json          │ UPM package manifest                   │
-│  README.md             │ SDK documentation                      │
-│  CHANGELOG.md          │ Version history                        │
-│  LICENSE               │ MIT License                            │
-│  INSTALLATION.md       │ Installation guide                     │
+│  Bootstrap/            │ IVXBootstrap, IVXBootstrapConfig       │
+│  AI/                   │ LLM stack (Session, NPC, Voice, etc.)  │
+│  Hiro/                 │ IVXHiroCoordinator (33 sub-systems)    │
+│  Satori/               │ IVXSatoriClient analytics              │
+│  Discord/              │ IVXDiscordManager + sub-managers       │
+│  Demos/                │ 16 demo scenes + scripts               │
 │  Samples~/             │ Importable samples (hidden)            │
 │  Tests~/               │ Unit tests (hidden)                    │
 │  Documentation/        │ SDK documentation                      │
+├─────────────────────────────────────────────────────────────────┤
+│         Assets/Intelli-verse-X-SDK/ (legacy UPM tree)            │
+├─────────────────────────────────────────────────────────────────┤
+│  package.json          │ UPM package manifest                   │
+│  Identity/             │ Auth, Profile, API, URLs               │
+│  Monetization/         │ Ads, IAP, Subscriptions                │
+│  UI/                   │ Panels, Spinners, Login                │
+│  Leaderboard/          │ Nakama leaderboard wrappers            │
+│  Backend/              │ Nakama + Geolocation services          │
+│  Editor/               │ Setup wizards, validators              │
+├─────────────────────────────────────────────────────────────────┤
+│  See docs/architecture/adr/ADR-002-dual-tree-layout.md          │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -230,6 +250,13 @@
 - [x] `.github/workflows/context-validation.yml`
 - [x] `.github/workflows/package-validation.yml`
 - [x] `.github/workflows/release-tag.yml`
+- [x] `.github/workflows/unity-tests.yml`
+- [x] `.github/workflows/docs.yml`
+- [x] `.github/workflows/platform-sdks-validation.yml`
+- [x] `.github/workflows/javascript-sdk.yml`
+- [x] `.github/workflows/java-sdk.yml`
+- [x] `.github/workflows/flutter-sdk.yml`
+- [x] `.github/workflows/cpp-sdk.yml`
 - [x] `.github/pull_request_template.md`
 - [x] `.github/CODEOWNERS`
 
@@ -249,12 +276,12 @@
 - [x] `.github/workflows/` 🆕
 - [x] `tools/scripts/` 🆕
 
-#### SDK Package Files 🆕
-- [x] `Assets/_IntelliVerseXSDK/package.json`
-- [x] `Assets/_IntelliVerseXSDK/README.md`
-- [x] `Assets/_IntelliVerseXSDK/CHANGELOG.md`
-- [x] `Assets/_IntelliVerseXSDK/LICENSE`
-- [x] `Assets/_IntelliVerseXSDK/INSTALLATION.md`
+#### SDK Package Files
+- [x] `Assets/Intelli-verse-X-SDK/package.json` (UPM manifest)
+- [x] `Assets/Intelli-verse-X-SDK/README.md`
+- [x] `Assets/Intelli-verse-X-SDK/CHANGELOG.md`
+- [x] `Assets/Intelli-verse-X-SDK/LICENSE`
+- [x] `Assets/Intelli-verse-X-SDK/INSTALLATION.md`
 - [x] `Assets/_IntelliVerseXSDK/Samples~/`
 - [x] `Assets/_IntelliVerseXSDK/Tests~/`
 
@@ -277,6 +304,7 @@
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 2.3.0 | 2026-04-01 | Added all 10 CI workflows, dual-tree layout docs, corrected UPM package path |
 | 2.1.0 | 2026-01-13 | Added UPM package setup, Samples~, Tests~, Installation guide, reorganization scripts |
 | 2.0.0 | 2026-01-13 | Added GitHub Actions, DECISION_TREE, ENFORCEMENT, GOLDEN_PATHS |
 | 1.0.0 | 2026-01-13 | Initial creation with full context engineering system |

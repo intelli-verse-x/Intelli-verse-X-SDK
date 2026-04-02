@@ -2,6 +2,7 @@
 // MIT License — see LICENSE in the project root.
 
 #include "IntelliVerseX/IVXAIVoiceServices.h"
+#include "cocos2d.h"
 #include <stdexcept>
 
 namespace IntelliVerseX {
@@ -16,38 +17,45 @@ bool IVXAIVoiceServices::isTranscribing() const {
 }
 
 void IVXAIVoiceServices::initialize(void*) {
-    throw std::runtime_error("Not implemented");
+    cocos2d::log("[IVX-Cocos] IVXAIVoiceServices::initialize: stub — not yet implemented. AI features will return empty results.");
 }
 
 void IVXAIVoiceServices::transcribeAudio(const std::uint8_t*, std::size_t, int,
                                           std::function<void(const IVXTranscriptionResult&)>, ErrorCallback onError) {
-    if (onError) onError({-1, "Not implemented"});
+    cocos2d::log("%s", "[IVX-Cocos] AI stub: not yet implemented — stub only");
+    if (onError) onError({-1, "Not yet implemented — stub only"});
 }
 
 void IVXAIVoiceServices::synthesizeSpeech(const std::string&, const std::string&,
                                           std::function<void(const std::vector<std::uint8_t>&)>, ErrorCallback onError) {
-    if (onError) onError({-1, "Not implemented"});
+    cocos2d::log("%s", "[IVX-Cocos] AI stub: not yet implemented — stub only");
+    if (onError) onError({-1, "Not yet implemented — stub only"});
 }
 
 void IVXAIVoiceServices::listVoices(std::function<void(const std::vector<IVXAIVoice>&)>, ErrorCallback onError) {
-    if (onError) onError({-1, "Not implemented"});
+    cocos2d::log("%s", "[IVX-Cocos] AI stub: not yet implemented — stub only");
+    if (onError) onError({-1, "Not yet implemented — stub only"});
 }
 
 void IVXAIVoiceServices::detectLanguage(const std::uint8_t*, std::size_t, int,
                                         std::function<void(const std::string&, float)>, ErrorCallback onError) {
-    if (onError) onError({-1, "Not implemented"});
+    cocos2d::log("%s", "[IVX-Cocos] AI stub: not yet implemented — stub only");
+    if (onError) onError({-1, "Not yet implemented — stub only"});
 }
 
 void IVXAIVoiceServices::startStreamingTranscription(int) {
-    throw std::runtime_error("Not implemented");
+    cocos2d::log("%s", "[IVX-Cocos] AI stub: not yet implemented — stub only");
+    throw std::runtime_error("Not yet implemented — stub only");
 }
 
 void IVXAIVoiceServices::stopStreamingTranscription() {
-    throw std::runtime_error("Not implemented");
+    cocos2d::log("%s", "[IVX-Cocos] AI stub: not yet implemented — stub only");
+    throw std::runtime_error("Not yet implemented — stub only");
 }
 
 void IVXAIVoiceServices::feedAudioChunk(const std::uint8_t*, std::size_t) {
-    throw std::runtime_error("Not implemented");
+    cocos2d::log("%s", "[IVX-Cocos] AI stub: not yet implemented — stub only");
+    throw std::runtime_error("Not yet implemented — stub only");
 }
 
 } // namespace IntelliVerseX

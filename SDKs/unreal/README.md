@@ -106,6 +106,14 @@ auto Flags = Satori->GetFeatureFlags();
 - [Nakama Unreal Plugin](https://github.com/heroiclabs/nakama-unreal) v2.8+
 - C++17 compiler
 
+### Platform Support
+
+- **Unreal**: Windows, macOS, Linux, Android, iOS, Meta Quest (VR), SteamVR — via OpenXR
+
+### VR / XR Support
+
+The plugin exposes **`UIVXXRHelper`** (`IVXXRHelper.h`) for OpenXR-oriented VR/XR helpers: use it when targeting Meta Quest, SteamVR, or other OpenXR runtimes.
+
 ## Installation
 
 ### As an Engine Plugin
@@ -197,13 +205,15 @@ void AMyGameMode::OnIVXReady()
 | Leaderboards | ✅ Supported |
 | Cloud Storage | ✅ Supported |
 | RPC Calls | ✅ Supported |
-| AI Voice & Host | ✅ New in v5.8.0 |
-| Real-time Multiplayer & Game Modes | ✅ New in v5.8.0 |
-| Hiro Live-Ops Systems | ✅ New in v5.8.0 |
+| AI Voice & Host | 🔶 Stub |
+| Real-time Multiplayer & Game Modes | 🔶 Stub |
+| Hiro Live-Ops Systems | 🔶 Stub |
 | Analytics | ✅ Supported |
-| Discord Social SDK | ✅ New in v5.8.0 |
-| Satori Analytics | ✅ New in v5.8.0 |
+| Discord Social SDK | 🔶 Stub |
+| Satori Analytics | 🔶 Stub |
 | Monetization | ✅ Supported |
+
+> 🔶 **Stub** = Full API surface exists. Methods log warnings and return empty/mock data. Zero code changes needed when backend support ships.
 
 ## Project Structure
 

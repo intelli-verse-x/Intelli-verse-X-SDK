@@ -2,6 +2,7 @@
 // MIT License — see LICENSE in the project root.
 
 #include "IVXAIContentGenerator.h"
+#include "IVXManager.h"
 
 TWeakObjectPtr<UIVXAIContentGenerator> UIVXAIContentGenerator::Singleton = nullptr;
 
@@ -15,11 +16,27 @@ UIVXAIContentGenerator* UIVXAIContentGenerator::GetInstance(UObject* WorldContex
     return Singleton.Get();
 }
 
-void UIVXAIContentGenerator::Initialize(UObject* Config) {}
+void UIVXAIContentGenerator::Shutdown()
+{
+    if (Singleton.IsValid())
+    {
+        Singleton->RemoveFromRoot();
+        Singleton = nullptr;
+    }
+}
+
+void UIVXAIContentGenerator::Initialize(UObject* Config)
+{
+    UE_LOG(LogIVX, Warning, TEXT("[IVXAIContentGenerator] Initialize: stub – not yet implemented"));
+}
 
 void UIVXAIContentGenerator::GenerateStory(const FString& Prompt, const FIVXContentJsonDelegate& OnComplete)
 {
+    UE_LOG(LogIVX, Warning, TEXT("[IVXAIContentGenerator] GenerateStory: stub – not yet implemented"));
     OnComplete.ExecuteIfBound(TEXT("{}"));
 }
 
-void UIVXAIContentGenerator::CancelGeneration() {}
+void UIVXAIContentGenerator::CancelGeneration()
+{
+    UE_LOG(LogIVX, Warning, TEXT("[IVXAIContentGenerator] CancelGeneration: stub – not yet implemented"));
+}

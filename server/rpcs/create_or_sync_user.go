@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/heroiclabs/nakama-common/runtime"
 )
@@ -32,18 +33,19 @@ type createOrSyncUserResponse struct {
 // CreateOrSyncUser creates or syncs a user identity in the game backend.
 // Unity SDK calls this after Nakama authentication to set up game-specific state.
 func CreateOrSyncUser(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, payload string) (string, error) {
-	userID, ok := ctx.Value(runtime.RUNTIME_CTX_USER_ID).(string)
-	if !ok || userID == "" {
-		resp := createOrSyncUserResponse{Success: false, Error: "not authenticated"}
-		out, _ := json.Marshal(resp)
-		return string(out), nil
+	userID, err := requireAuthUser(ctx)
+	if err != nil {
+		return "", err
 	}
 
 	var req createOrSyncUserRequest
 	if err := json.Unmarshal([]byte(payload), &req); err != nil {
-		resp := createOrSyncUserResponse{Success: false, Error: "invalid payload"}
-		out, _ := json.Marshal(resp)
-		return string(out), nil
+		return "", runtime.NewError("invalid payload", 3)
+	}
+
+	req.GameID = strings.TrimSpace(req.GameID)
+	if req.GameID == "" {
+		return "", runtime.NewError("game_id is required", 3)
 	}
 
 	objects, err := nk.StorageRead(ctx, []*runtime.StorageRead{{
@@ -70,6 +72,7 @@ func CreateOrSyncUser(ctx context.Context, logger runtime.Logger, db *sql.DB, nk
 		}})
 		if err != nil {
 			logger.Error("create_or_sync_user: storage write failed: %v", err)
+			return "", runtime.NewError("storage write failed", 13)
 		}
 	}
 

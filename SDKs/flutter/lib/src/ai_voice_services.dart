@@ -28,43 +28,43 @@ class IVXAIVoiceServices {
   List<IVXAIVoice> get availableVoices => const [];
 
   void initialize(Object? config) {
-    throw UnimplementedError('IVXAIVoiceServices.initialize');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<IVXTranscriptionResult?> transcribeAudio(
     Uint8List pcmData, {
     int sampleRate = 16000,
   }) async {
-    throw UnimplementedError('IVXAIVoiceServices.transcribeAudio');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<Uint8List?> synthesizeSpeech(
     String text, [
     String? voiceId,
   ]) async {
-    throw UnimplementedError('IVXAIVoiceServices.synthesizeSpeech');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<List<IVXAIVoice>> listVoices() async {
-    throw UnimplementedError('IVXAIVoiceServices.listVoices');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<({String? language, double confidence})> detectLanguage(
     Uint8List pcmData, {
     int sampleRate = 16000,
   }) async {
-    throw UnimplementedError('IVXAIVoiceServices.detectLanguage');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   void startStreamingTranscription({int sampleRate = 16000}) {
-    throw UnimplementedError('IVXAIVoiceServices.startStreamingTranscription');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   void stopStreamingTranscription() {
-    throw UnimplementedError('IVXAIVoiceServices.stopStreamingTranscription');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   void feedAudioChunk(Uint8List pcmChunk) {
-    throw UnimplementedError('IVXAIVoiceServices.feedAudioChunk');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 }

@@ -365,8 +365,7 @@ namespace IntelliVerseX.IAP
 
         private void ShowPaywall()
         {
-            Debug.Log("[IVXPremiumGate] Showing paywall (TODO: implement paywall UI)");
-            // TODO: Show paywall UI
+            Debug.LogWarning("[IVXPremiumGate] Paywall UI not yet implemented. Override ShowPaywall() or listen for OnPaywallRequested.");
         }
 
         #endregion

@@ -103,6 +103,10 @@ var flags = satori.getFeatureFlags();
 - [Nakama Java Client](https://github.com/heroiclabs/nakama-java) (via [JitPack](https://jitpack.io/#heroiclabs/nakama-java), e.g. `v2.5.3`)
 - Gradle 7+
 
+### Platform Support
+
+- **Java**: Android (API 21+), Desktop Java 11+, Kotlin compatible
+
 ## Installation
 
 Your `repositories` must include **JitPack** (transitive Nakama client):
@@ -234,14 +238,16 @@ public class GameActivity extends AppCompatActivity {
 | Leaderboards | ✅ Supported |
 | Cloud Storage | ✅ Supported |
 | RPC Calls | ✅ Supported |
-| AI Voice & Host | ✅ New in v5.8.0 |
-| Multiplayer & Game Modes | ✅ New in v5.8.0 |
-| Hiro Live-Ops Systems | ✅ New in v5.8.0 |
+| AI Voice & Host | 🔶 Stub |
+| Multiplayer & Game Modes | 🔶 Stub |
+| Hiro Live-Ops Systems | 🔶 Stub |
 | Analytics | ✅ Supported |
-| Discord Social SDK | ✅ New in v5.8.0 |
-| Satori Analytics | ✅ New in v5.8.0 |
+| Discord Social SDK | 🔶 Stub |
+| Satori Analytics | 🔶 Stub |
 | Android | ✅ Supported |
 | Desktop Java | ✅ Supported |
+
+> 🔶 **Stub** = Full API surface exists. Methods log warnings and return empty/mock data. Zero code changes needed when backend support ships.
 
 ## Project Structure
 

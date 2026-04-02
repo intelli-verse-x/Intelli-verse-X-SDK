@@ -846,7 +846,10 @@ namespace IntelliVerseX.Games.Leaderboard
                     }
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[IVXGLeaderboardManager] Operation failed: {ex.Message}");
+            }
 
             // 3) Final fallback for robustness in Editor/mobile/web builds.
             try
@@ -858,7 +861,10 @@ namespace IntelliVerseX.Games.Leaderboard
                     return id;
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[IVXGLeaderboardManager] Operation failed: {ex.Message}");
+            }
 
             return null;
         }

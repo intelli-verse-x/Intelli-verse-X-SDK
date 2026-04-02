@@ -117,7 +117,7 @@ export type OnAssistantErrorCallback = (error: string) => void;
  * Mirrors Unity's `IVXAIAssistant` MonoBehaviour — sends questions and game
  * context to the IVX assistant HTTP API and returns grounded answers.
  *
- * **Reference implementation only.** All methods throw `Error` at runtime.
+ * **Stub only.** Each method logs `[IVX-JS] stub – not yet implemented` and throws `Error`.
  * See `docs/guides/ai-getting-started.md` for integration guidance.
  */
 export class IVXAIAssistant {
@@ -150,9 +150,8 @@ export class IVXAIAssistant {
    * @param config - AI configuration. `maxConversationHistory` controls local history trimming.
    */
   initialize(_config: IVXAIConfig): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -160,16 +159,14 @@ export class IVXAIAssistant {
    * @param token - Bearer token string, or `null` to clear.
    */
   setAuthToken(_token: string | null): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /** Clears locally tracked conversation lines used with {@link ask}. */
   clearHistory(): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -177,9 +174,8 @@ export class IVXAIAssistant {
    * @param prompt - System prompt text.
    */
   setSystemPrompt(_prompt: string): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -193,9 +189,8 @@ export class IVXAIAssistant {
     _question: string,
     _context?: IVXAIGameContext,
   ): Promise<IVXAIAssistantResponse | null> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -210,9 +205,8 @@ export class IVXAIAssistant {
     _objectiveId: string,
     _context?: IVXAIGameContext,
   ): Promise<IVXAIHintResponse | null> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -223,9 +217,8 @@ export class IVXAIAssistant {
   async getTutorial(
     _featureId: string,
   ): Promise<IVXAITutorialResponse | null> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -234,8 +227,7 @@ export class IVXAIAssistant {
    * @returns Array of result strings (may be empty).
    */
   async searchKnowledgeBase(_query: string): Promise<string[]> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 }

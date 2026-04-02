@@ -46,6 +46,11 @@ class IVXManager {
 
   void initialize(IVXConfig config) {
     config.validate();
+    if (config.gameId.trim().isEmpty) {
+      print(
+        '[IntelliVerseX] WARNING: gameId is empty. Get yours from https://intelli-verse-x.ai/developers',
+      );
+    }
     _config = config;
 
     _client = getNakamaClient(

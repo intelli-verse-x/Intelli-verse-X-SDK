@@ -2183,13 +2183,17 @@ private void CreateClientIfNeeded()
                         return culture.Name; // e.g., "en-US", "ja-JP"
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning($"[IVXNManager] Operation failed: {ex.Message}");
+                }
 
                 // Fallback to Unity's system language
                 return lang.ToString();
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.LogWarning($"[IVXNManager] Operation failed: {ex.Message}");
                 return "en-US";
             }
         }
@@ -2213,7 +2217,10 @@ private void CreateClientIfNeeded()
                         return tz.StandardName;
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[IVXNManager] Operation failed: {ex.Message}");
+            }
 
             try
             {
@@ -2222,8 +2229,9 @@ private void CreateClientIfNeeded()
                 var sign = offset >= TimeSpan.Zero ? "+" : "-";
                 return $"UTC{sign}{Math.Abs(offset.Hours):D2}:{Math.Abs(offset.Minutes):D2}";
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.LogWarning($"[IVXNManager] Operation failed: {ex.Message}");
                 return "UTC";
             }
         }

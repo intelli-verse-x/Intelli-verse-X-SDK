@@ -21,6 +21,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "IntelliVerseX|AI|NPC", meta = (WorldContextObject = "WorldContextObject"))
     static UIVXAINPCDialogManager* GetInstance(UObject* WorldContextObject);
 
+    UFUNCTION(BlueprintCallable, Category = "IntelliVerseX|AI")
+    static void Shutdown();
+
     UFUNCTION(BlueprintCallable, Category = "IntelliVerseX|AI|NPC")
     void Initialize(UObject* Config);
 

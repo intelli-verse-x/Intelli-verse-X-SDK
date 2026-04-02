@@ -3,6 +3,7 @@
 
 #include "intelliversex/IVXSatori.h"
 
+#include <iostream>
 #include <stdexcept>
 
 namespace ivx {
@@ -30,6 +31,7 @@ void IVXSatori::authenticate(const std::string& identityId,
         if (onError) onError({-1, e.what()});
         return;
     }
+    std::cerr << "[IVX-CPP] IVXSatori::authenticate: stub – not yet implemented\n";
     _identityId = identityId;
     if (onSuccess) onSuccess();
 }
@@ -43,6 +45,7 @@ void IVXSatori::updateIdentity(const std::unordered_map<std::string, std::string
         if (onError) onError({-1, e.what()});
         return;
     }
+    std::cerr << "[IVX-CPP] IVXSatori::updateIdentity: stub – not yet implemented\n";
     if (onSuccess) onSuccess();
 }
 
@@ -53,6 +56,7 @@ void IVXSatori::captureEvents(const std::vector<IVXSatoriEvent>&, SuccessCb onSu
         if (onError) onError({-1, e.what()});
         return;
     }
+    std::cerr << "[IVX-CPP] IVXSatori::captureEvents: stub – not yet implemented\n";
     if (onSuccess) onSuccess();
 }
 
@@ -63,6 +67,7 @@ void IVXSatori::getAllFlags(SatoriFlagsCb onSuccess, ErrorCb onError) {
         if (onError) onError({-1, e.what()});
         return;
     }
+    std::cerr << "[IVX-CPP] IVXSatori::getAllFlags: stub – not yet implemented\n";
     if (onSuccess) onSuccess({});
 }
 
@@ -75,6 +80,7 @@ void IVXSatori::getFlag(const std::string&,
         if (onError) onError({-1, e.what()});
         return;
     }
+    std::cerr << "[IVX-CPP] IVXSatori::getFlag: stub – not yet implemented\n";
     if (onSuccess) onSuccess(false, {});
 }
 
@@ -85,6 +91,7 @@ void IVXSatori::getExperimentVariant(const std::string&, StringCb onSuccess, Err
         if (onError) onError({-1, e.what()});
         return;
     }
+    std::cerr << "[IVX-CPP] IVXSatori::getExperimentVariant: stub – not yet implemented\n";
     if (onSuccess) onSuccess("");
 }
 
@@ -95,6 +102,7 @@ void IVXSatori::getAllExperiments(SatoriExperimentsCb onSuccess, ErrorCb onError
         if (onError) onError({-1, e.what()});
         return;
     }
+    std::cerr << "[IVX-CPP] IVXSatori::getAllExperiments: stub – not yet implemented\n";
     if (onSuccess) onSuccess({});
 }
 
@@ -105,6 +113,7 @@ void IVXSatori::getLiveEvents(SatoriLiveEventsCb onSuccess, ErrorCb onError) {
         if (onError) onError({-1, e.what()});
         return;
     }
+    std::cerr << "[IVX-CPP] IVXSatori::getLiveEvents: stub – not yet implemented\n";
     if (onSuccess) onSuccess({});
 }
 
@@ -115,6 +124,7 @@ void IVXSatori::logout(SuccessCb onSuccess, ErrorCb onError) {
         if (onError) onError({-1, e.what()});
         return;
     }
+    std::cerr << "[IVX-CPP] IVXSatori::logout: stub – not yet implemented\n";
     _identityId.clear();
     if (onSuccess) onSuccess();
 }

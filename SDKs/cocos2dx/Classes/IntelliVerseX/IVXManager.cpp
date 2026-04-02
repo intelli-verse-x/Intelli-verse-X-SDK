@@ -9,6 +9,7 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
+#include <stdexcept>
 
 namespace IntelliVerseX {
 
@@ -20,7 +21,25 @@ IVXManager& IVXManager::getInstance() {
     return instance;
 }
 
+void IVXManager::validateConfig(const IVXConfig& config) {
+    if (config.nakamaHost.empty()) {
+        throw std::invalid_argument("IVXConfig::nakamaHost must not be empty");
+    }
+    if (config.nakamaPort < 1 || config.nakamaPort > 65535) {
+        throw std::invalid_argument("IVXConfig::nakamaPort must be in range [1, 65535]");
+    }
+    if (config.nakamaServerKey.empty()) {
+        throw std::invalid_argument("IVXConfig::nakamaServerKey must not be empty");
+    }
+}
+
 void IVXManager::initialize(const IVXConfig& config) {
+    validateConfig(config);
+
+    if (config.gameId.empty()) {
+        cocos2d::log("[IntelliVerseX] WARNING: gameId is empty. Get yours from https://intelli-verse-x.ai/developers");
+    }
+
     _config = config;
 
     Nakama::NClientParameters params;

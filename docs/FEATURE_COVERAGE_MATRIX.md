@@ -13,8 +13,8 @@
 | SDK Init / Config | Y | Y | Y | Y | Y | Y | Y | Y | Y | Y |
 | Device Auth | Y | Y | Y | Y | Y | Y | Y | Y | Y | Y |
 | Email Auth | Y | Y | - | Y | Y | Y | Y | Y | Y | Y |
-| Google Auth | Y | Y | - | Y | Y | Y | Y | Y | Y | Y |
-| Apple Auth | Y | Y | - | Y | Y | Y | Y | Y | Y | Y |
+| Google Auth | P | Y | - | Y | Y | Y | Y | Y | Y | Y |
+| Apple Auth | P | Y | - | Y | Y | Y | Y | Y | Y | Y |
 | Custom Auth | Y | Y | Y | Y | Y | Y | Y | Y | Y | Y |
 | Session Restore | Y | Y | - | Y | - | Y | Y | Y | Y | Y |
 | Profile Fetch | Y | Y | Y | Y | Y | Y | Y | Y | Y | Y |
@@ -138,35 +138,60 @@
 
 ---
 
+## VR / AR / XR / Console
+
+| Feature | Unity | JS/TS | Web3 | Java | Flutter | Unreal | Godot | Defold | C++ | Cocos |
+|---------|:-----:|:-----:|:----:|:----:|:-------:|:------:|:-----:|:------:|:---:|:-----:|
+| XR Platform Detection | Y | - | - | - | - | Y | Y | - | Y | - |
+| Meta Quest Support | S | - | - | - | - | S | S | - | S | - |
+| SteamVR Support | S | - | - | - | - | S | S | - | S | - |
+| Apple Vision Pro Support | S | - | - | - | - | S | - | - | S | - |
+| AR Foundation / ARKit / ARCore | S | - | - | - | - | S | - | - | S | - |
+| PSVR2 Support | - | - | - | - | - | - | - | - | S | - |
+| Hand Tracking Info | S | - | - | - | - | S | - | - | S | - |
+| Eye Tracking Info | S | - | - | - | - | S | - | - | S | - |
+| Passthrough / MR Info | S | - | - | - | - | S | - | - | S | - |
+| Console (PS5/Xbox/Switch) | - | - | - | - | - | - | - | - | - | - |
+| Linux / SteamOS | S | Y | - | - | - | S | S | S | Y | - |
+| tvOS | - | - | - | - | - | - | - | - | - | - |
+| visionOS | S | - | - | - | - | - | - | - | - | - |
+
+---
+
 ## Coverage Score Summary
 
 | Platform | Fully Implemented | Stubs | Not Present | Coverage % |
 |----------|:-----------------:|:-----:|:-----------:|:----------:|
-| **Unity** | **63** | 3 | 3 | **91%** |
-| **JavaScript/TS** | **35** | 27 | 7 | **51% → 90%** |
-| **Flutter/Dart** | **29** | 31 | 9 | **42% → 87%** |
-| **Web3** | **26** | 30 | 13 | **38% → 81%** |
-| **Java/Android** | **31** | 27 | 11 | **45% → 84%** |
-| **Unreal Engine 5** | **30** | 29 | 10 | **43% → 86%** |
-| **Godot 4** | **30** | 29 | 10 | **43% → 86%** |
-| **Defold** | **30** | 29 | 10 | **43% → 86%** |
-| **Cocos2d-x** | **25** | 30 | 14 | **36% → 80%** |
-| **C++ (CMake)** | **22** | 34 | 13 | **32% → 81%** |
+| **Unity** | **64** | 12 | 6 | **78%** |
+| **JavaScript/TS** | **36** | 27 | 19 | **44%** |
+| **Flutter/Dart** | **29** | 31 | 22 | **35%** |
+| **Web3** | **26** | 30 | 26 | **32%** |
+| **Java/Android** | **31** | 27 | 24 | **38%** |
+| **Unreal Engine 5** | **31** | 37 | 14 | **38%** |
+| **Godot 4** | **31** | 33 | 18 | **38%** |
+| **Defold** | **30** | 30 | 22 | **37%** |
+| **Cocos2d-x** | **25** | 30 | 27 | **30%** |
+| **C++ (CMake)** | **24** | 42 | 16 | **29%** |
 
 > **API Surface Coverage** (Y + S combined) represents what a developer can code against today.
 > Stubs are zero-code-change upgradeable once backend RPCs are configured.
+
+> **VR/AR/XR support** (v5.8.0): Platform detection and capability querying stubs are available
+> for Unity, Unreal, Godot, and C++. Wire your XR SDK (OpenXR, Meta SDK, ARKit, etc.) and the
+> helpers will auto-detect the active platform. Console support is not yet available.
 
 ---
 
 ## Key Takeaways
 
-- **Unity** is the reference implementation with the richest feature set (63 features fully wired).
+- **Unity** is the reference implementation with the richest feature set (64 features fully wired, including XR platform detection).
 - **All 10 platforms** now have full API surface coverage for **Discord Social SDK** (12 modules incl. Settings), **AI LLM Stack** (6 modules), **Satori Analytics** (6 features), and all **Hiro Live-Ops** systems.
 - **JavaScript/TypeScript** remains the strongest non-Unity SDK with real Nakama RPC-backed Hiro systems.
 - **Hiro parity** (retention, IAP trigger, smart ad timer) has been added to Unreal, C++, Cocos2d-x, Godot, and Defold.
 - **GameModes/Lobby/Matchmaking** are local-state stubs across non-Unity SDKs — API shape exists for zero-code-change upgrade.
 - **Local Multiplayer** (hot-seat, split-screen) remains Unity-only.
 - **Platform utilities** (deep links, foldable, safe area, optimizer) remain Unity-only.
+- **VR/AR/XR**: Detection and capability helpers ship on Unity, Unreal, Godot, and C++; wire OpenXR / platform SDKs for full runtime behavior.
 
 ---
 
@@ -180,4 +205,4 @@ This means you can:
 
 ---
 
-*IntelliVerseX SDK v5.8.0 — 10 platforms, 69 features, one API.*
+*IntelliVerseX SDK v5.8.0 — 10 platforms, 82 features, one API.*

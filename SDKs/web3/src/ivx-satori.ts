@@ -58,6 +58,10 @@ export class IVXSatori {
 
   private constructor() {}
 
+  private stubWarn(method: string): void {
+    console.warn(`[IVX-Web3] ${method}: stub – not yet implemented`);
+  }
+
   get isInitialized(): boolean { return this._initialized; }
 
   /** Initialize the Satori analytics client. */
@@ -71,52 +75,61 @@ export class IVXSatori {
   /** Authenticate/identify the current player for analytics. */
   async authenticate(identityId: string, defaultProperties?: Record<string, string>, customProperties?: Record<string, string>): Promise<void> {
     this.ensureInitialized();
+    this.stubWarn('IVXSatori.authenticate');
     this._identityId = identityId;
   }
 
   /** Update the identity properties. */
   async updateIdentity(defaultProperties?: Record<string, string>, customProperties?: Record<string, string>): Promise<void> {
     this.ensureInitialized();
+    this.stubWarn('IVXSatori.updateIdentity');
   }
 
   /** Capture one or more analytics events. */
   async captureEvents(events: IVXSatoriEvent[]): Promise<void> {
     this.ensureInitialized();
+    this.stubWarn('IVXSatori.captureEvents');
   }
 
   /** Get all feature flags for the current identity. */
   async getAllFlags(): Promise<IVXSatoriFlag[]> {
     this.ensureInitialized();
+    this.stubWarn('IVXSatori.getAllFlags');
     return [];
   }
 
   /** Get a specific feature flag by name. */
   async getFlag(name: string): Promise<IVXSatoriFlag | null> {
     this.ensureInitialized();
+    this.stubWarn('IVXSatori.getFlag');
     return null;
   }
 
   /** Get the variant assigned to the current identity for a given experiment. */
   async getExperimentVariant(experimentName: string): Promise<string> {
     this.ensureInitialized();
+    this.stubWarn('IVXSatori.getExperimentVariant');
     return '';
   }
 
   /** Get all experiments and their assigned variants. */
   async getAllExperiments(): Promise<IVXSatoriExperiment[]> {
     this.ensureInitialized();
+    this.stubWarn('IVXSatori.getAllExperiments');
     return [];
   }
 
   /** Get currently active live events. */
   async getLiveEvents(): Promise<IVXSatoriLiveEvent[]> {
     this.ensureInitialized();
+    this.stubWarn('IVXSatori.getLiveEvents');
     return [];
   }
 
   /** Logout / clear the current identity session. */
   async logout(): Promise<void> {
     this.ensureInitialized();
+    this.stubWarn('IVXSatori.logout');
     this._identityId = '';
   }
 

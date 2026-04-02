@@ -21,6 +21,13 @@ Complete API documentation for the IntelliVerseX SDK.
 | `IntelliVerseX.Quiz` | Daily and weekly quizzes |
 | `IntelliVerseX.UI` | UI components and utilities |
 | `IntelliVerseX.MoreOfUs` | Cross-game promotion |
+| `IntelliVerseX.Discord` | Discord Social SDK — presence, voice, lobbies, DMs, moderation |
+| `IntelliVerseX.AI` | AI voice personas, NPC dialog, content generation, moderation |
+| `IntelliVerseX.Hiro` | Hiro live-ops — economy, energy, inventory, spin wheel, streaks |
+| `IntelliVerseX.GameModes` | Game modes, lobby, matchmaking, local multiplayer |
+| `IntelliVerseX.Satori` | Satori analytics — events, flags, experiments, live events |
+| `IntelliVerseX.Platform` | Deep links, foldable devices, edge-to-edge display |
+| `IntelliVerseX.Bootstrap` | One-drop bootstrap for SDK initialization |
 
 ---
 
@@ -251,6 +258,12 @@ For detailed API documentation per module:
 - [Identity API](identity.md)
 - [Backend API](backend.md)
 - [Social API](social.md)
+- [Discord API](discord.md)
+- [AI API](ai.md)
+- [Hiro API](hiro.md)
+- [Multiplayer API](multiplayer.md)
+- [Satori API](satori.md)
+- [Platform API](platform.md)
 - [Monetization API](monetization.md)
 - [Analytics API](analytics.md)
 - [Localization API](localization.md)

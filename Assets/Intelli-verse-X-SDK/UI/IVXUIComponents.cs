@@ -40,6 +40,8 @@ namespace IntelliVerseX.UI
 
         #region Private Fields
 
+        private static readonly string[] DOT_STRINGS = { "", ".", "..", "..." };
+
         private bool _isSpinning;
         private float _textAnimationTimer;
         private int _dotCount;
@@ -75,7 +77,7 @@ namespace IntelliVerseX.UI
                 {
                     _textAnimationTimer = 0f;
                     _dotCount = (_dotCount + 1) % 4;
-                    loadingText.text = defaultLoadingText + new string('.', _dotCount);
+                    loadingText.text = defaultLoadingText + DOT_STRINGS[_dotCount];
                 }
             }
         }

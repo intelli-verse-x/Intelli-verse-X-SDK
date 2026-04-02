@@ -59,44 +59,54 @@ export class IVXAIModerator {
   }
 
   initialize(_config: unknown): void {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   async classifyText(_text: string): Promise<IVXModerationResult> {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   async filterMessage(_text: string): Promise<string> {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   async scanBatch(_messages: string[]): Promise<IVXModerationResult[]> {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   addCustomRule(_rule: IVXModerationRule): void {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   removeCustomRule(_pattern: string): void {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   setCustomRules(_rules: IVXModerationRule[]): void {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   clearCustomRules(): void {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   checkLocalRules(_text: string): IVXModerationResult {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   getDiscordModerationMetadata(
     _result: IVXModerationResult
   ): Record<string, string> {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 }

@@ -49,38 +49,47 @@ export class IVXAIProfiler {
   }
 
   initialize(_config: unknown, _playerId: string): void {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   trackEvent(_eventName: string, _data?: Record<string, unknown>): void {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   flushEvents(): void {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   async getPlayerProfile(): Promise<IVXPlayerProfile | null> {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   async getPersonalizationHints(): Promise<IVXPersonalizationHint[]> {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   async classifyPlayer(): Promise<IVXPlayerCohort> {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   async predictChurn(): Promise<{ score: number; factors: string[] }> {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   startAutoTracking(): void {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   stopAutoTracking(): void {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 }

@@ -161,9 +161,8 @@ export class IVXAIProfiler {
    * @param playerId - Current player identifier.
    */
   initialize(_config: IVXAIConfig, _playerId: string): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -171,9 +170,8 @@ export class IVXAIProfiler {
    * @param token - Bearer token string, or `null` to clear.
    */
   setAuthToken(_token: string | null): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -182,16 +180,14 @@ export class IVXAIProfiler {
    * @param data - Optional properties.
    */
   trackEvent(_eventName: string, _data?: Record<string, unknown>): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /** Sends all queued events immediately. */
   flushEvents(): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -200,9 +196,8 @@ export class IVXAIProfiler {
    * @returns Player profile, or `null` on failure.
    */
   async getPlayerProfile(): Promise<IVXPlayerProfile | null> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -211,9 +206,8 @@ export class IVXAIProfiler {
    * @returns Array of hints (may be empty).
    */
   async getPersonalizationHints(): Promise<IVXPersonalizationHint[]> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -221,9 +215,8 @@ export class IVXAIProfiler {
    * @returns Assigned cohort value.
    */
   async classifyPlayer(): Promise<IVXPlayerCohort> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -232,22 +225,19 @@ export class IVXAIProfiler {
    * @returns Object with `score` (0–1) and `factors` array.
    */
   async predictChurn(): Promise<IVXChurnPrediction> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /** Starts lightweight automatic tracking (session markers and periodic flush). */
   startAutoTracking(): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /** Stops automatic tracking and flushes queued events. */
   stopAutoTracking(): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 }

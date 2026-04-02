@@ -21,6 +21,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "IntelliVerseX|AI|Moderation", meta = (WorldContextObject = "WorldContextObject"))
     static UIVXAIModerator* GetInstance(UObject* WorldContextObject);
 
+    UFUNCTION(BlueprintCallable, Category = "IntelliVerseX|AI")
+    static void Shutdown();
+
     UFUNCTION(BlueprintCallable, Category = "IntelliVerseX|AI|Moderation")
     void Initialize(UObject* Config);
 

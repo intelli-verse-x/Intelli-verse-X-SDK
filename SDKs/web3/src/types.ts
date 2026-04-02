@@ -1,4 +1,4 @@
-export const SDK_VERSION = '5.5.0';
+export const SDK_VERSION = '5.8.0';
 
 export interface IVXWeb3Config {
   /**
@@ -27,10 +27,10 @@ export interface IVXWeb3Config {
 
 export const DEFAULT_WEB3_CONFIG: Required<IVXWeb3Config> = {
   gameId: '',
-  nakamaHost: '127.0.0.1',
-  nakamaPort: 7350,
+  nakamaHost: 'nakama-rest.intelli-verse-x.ai',
+  nakamaPort: 443,
   nakamaServerKey: 'defaultkey',
-  useSSL: false,
+  useSSL: true,
   enableAnalytics: true,
   enableDebugLogs: false,
   verboseLogging: false,
@@ -48,6 +48,9 @@ export function validateWeb3Config(config: IVXWeb3Config): void {
   }
   if (config.nakamaServerKey !== undefined && config.nakamaServerKey.trim() === '') {
     throw new Error('nakamaServerKey cannot be empty.');
+  }
+  if (!config.gameId || config.gameId.trim() === '') {
+    console.warn('[IVX-Web3] gameId is empty. Get yours from https://intelli-verse-x.ai/developers');
   }
 }
 

@@ -97,6 +97,14 @@ satori.getFeatureFlags([](const std::vector<ivx::FeatureFlag>& flags) { /* ... *
 - CMake 3.14+
 - [Nakama C++ SDK](https://github.com/heroiclabs/nakama-cpp) v2.8+
 
+### Platform Support
+
+- **C++**: Windows, macOS, Linux, Android (NDK), iOS, VR (via OpenXR)
+
+### VR / XR Support
+
+The SDK provides **`intelliversex::IVXXRHelper`** (`include/intelliversex/ivx_xr.h`) for OpenXR-oriented VR/XR platform detection and utilities.
+
 ## Installation
 
 ### CMake (Recommended)
@@ -187,14 +195,16 @@ int main() {
 | Leaderboards | ✅ Supported |
 | Cloud Storage | ✅ Supported |
 | RPC Calls | ✅ Supported |
-| AI Voice & Host | ✅ New in v5.8.0 |
-| Multiplayer & Game Modes | ✅ New in v5.8.0 |
-| Hiro Live-Ops Systems | ✅ New in v5.8.0 |
+| AI Voice & Host | 🔶 Stub |
+| Multiplayer & Game Modes | 🔶 Stub |
+| Hiro Live-Ops Systems | 🔶 Stub |
 | Analytics | ✅ Supported |
-| Discord Social SDK | ✅ New in v5.8.0 |
-| Satori Analytics | ✅ New in v5.8.0 |
+| Discord Social SDK | 🔶 Stub |
+| Satori Analytics | 🔶 Stub |
 | Static Library | ✅ Supported |
 | Shared Library | ✅ Supported |
+
+> 🔶 **Stub** = Full API surface exists. Methods log warnings and return empty/mock data. Zero code changes needed when backend support ships.
 
 ## Project Structure
 

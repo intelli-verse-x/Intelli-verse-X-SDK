@@ -113,9 +113,8 @@ export class IVXAIVoiceServices {
    * @param config - Configuration asset (base URL, keys, timeouts).
    */
   initialize(_config: IVXAIConfig): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -123,9 +122,8 @@ export class IVXAIVoiceServices {
    * @param token - Bearer token string, or `null` to clear.
    */
   setAuthToken(_token: string | null): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -139,9 +137,8 @@ export class IVXAIVoiceServices {
     _pcmData: Uint8Array,
     _sampleRate?: number,
   ): Promise<IVXTranscriptionResult | null> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -155,9 +152,8 @@ export class IVXAIVoiceServices {
     _text: string,
     _voiceId?: string,
   ): Promise<Uint8Array | null> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -165,9 +161,8 @@ export class IVXAIVoiceServices {
    * @returns Array of available voice definitions.
    */
   async listVoices(): Promise<IVXAIVoice[]> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -180,9 +175,8 @@ export class IVXAIVoiceServices {
     _pcmData: Uint8Array,
     _sampleRate?: number,
   ): Promise<{ language: string; confidence: number }> {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -190,16 +184,14 @@ export class IVXAIVoiceServices {
    * @param sampleRate - Sample rate advertised to the server (default 16000).
    */
   startStreamingTranscription(_sampleRate?: number): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /** Stops streaming STT and closes the socket. */
   stopStreamingTranscription(): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 
   /**
@@ -207,8 +199,7 @@ export class IVXAIVoiceServices {
    * @param pcmChunk - Raw PCM bytes to feed into the stream.
    */
   feedAudioChunk(_pcmChunk: Uint8Array): void {
-    throw new Error(
-      'Not implemented — Unity reference implementation only. See docs/guides/ai-getting-started.md',
-    );
+    console.warn('[IVX-JS] stub – not yet implemented');
+    throw new Error('[IVX-JS] stub – not yet implemented');
   }
 }

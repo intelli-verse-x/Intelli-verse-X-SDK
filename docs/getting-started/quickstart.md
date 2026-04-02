@@ -205,7 +205,7 @@ public class MyGame : MonoBehaviour
 
 ---
 
-## Step 6 — Explore the Demo Hub
+## Step 7 — Explore the Demo Hub
 
 Drop the Demo Hub prefab into any scene to see all 16 features in action:
 

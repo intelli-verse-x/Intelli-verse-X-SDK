@@ -3,7 +3,6 @@
 
 package com.intelliversex.sdk.analytics;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -110,7 +109,7 @@ public final class IVXSatori {
      */
     public void initialize(SatoriConfig config) {
         Objects.requireNonNull(config, "config");
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     /**
@@ -125,7 +124,7 @@ public final class IVXSatori {
             String identityId,
             Map<String, String> defaultProps,
             Map<String, String> customProps) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     /**
@@ -136,7 +135,7 @@ public final class IVXSatori {
      * @throws UnsupportedOperationException when not implemented
      */
     public void updateIdentity(Map<String, String> defaultProps, Map<String, String> customProps) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     /**
@@ -147,14 +146,14 @@ public final class IVXSatori {
      */
     public void captureEvents(List<SatoriEvent> events) {
         Objects.requireNonNull(events, "events");
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     /**
      * @return all flags for the current user; empty until implemented
      */
     public List<SatoriFlag> getAllFlags() {
-        return Collections.emptyList();
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     /**
@@ -162,7 +161,7 @@ public final class IVXSatori {
      * @return the flag, or {@code null} if unknown / not implemented
      */
     public SatoriFlag getFlag(String name) {
-        return null;
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     /**
@@ -171,21 +170,21 @@ public final class IVXSatori {
      * @throws UnsupportedOperationException when not implemented
      */
     public String getExperimentVariant(String experimentName) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     /**
      * @return all experiments for the current user; empty until implemented
      */
     public List<SatoriExperiment> getAllExperiments() {
-        return Collections.emptyList();
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     /**
      * @return active live events; empty until implemented
      */
     public List<SatoriLiveEvent> getLiveEvents() {
-        return Collections.emptyList();
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     /**
@@ -194,6 +193,6 @@ public final class IVXSatori {
      * @throws UnsupportedOperationException when not implemented
      */
     public void logout() {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 }

@@ -177,7 +177,13 @@ namespace IntelliVerseX.AI
 
         private void OnDestroy()
         {
-            if (_instance == this) _instance = null;
+            if (_instance == this)
+            {
+                StopVoicePolling();
+                DisconnectWebSocket();
+                _audioPlayer?.StopAll();
+                _instance = null;
+            }
         }
 
         #endregion

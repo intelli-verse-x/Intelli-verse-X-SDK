@@ -15,29 +15,29 @@ var is_initialized: bool:
 		return false
 
 func initialize(_config: Resource) -> void:
-	push_error("IVXAIAssistant.initialize: Not implemented")
+	push_warning("IVXAIAssistant.initialize: Not yet implemented — stub only")
 
 func set_auth_token(_token: String) -> void:
-	push_error("IVXAIAssistant.set_auth_token: Not implemented")
+	push_warning("IVXAIAssistant.set_auth_token: Not yet implemented — stub only")
 
 func clear_history() -> void:
-	push_error("IVXAIAssistant.clear_history: Not implemented")
+	push_warning("IVXAIAssistant.clear_history: Not yet implemented — stub only")
 
 func set_system_prompt(p: String) -> void:
 	system_prompt = p
 
 func ask(_question: String, _game_context: Dictionary = {}) -> Dictionary:
-	push_error("IVXAIAssistant.ask: Not implemented")
+	push_warning("IVXAIAssistant.ask: Not yet implemented — stub only")
 	return {}
 
 func get_hint(_level_id: String, _objective_id: String, _game_context: Dictionary = {}) -> Dictionary:
-	push_error("IVXAIAssistant.get_hint: Not implemented")
+	push_warning("IVXAIAssistant.get_hint: Not yet implemented — stub only")
 	return {}
 
 func get_tutorial(_feature_id: String) -> Dictionary:
-	push_error("IVXAIAssistant.get_tutorial: Not implemented")
+	push_warning("IVXAIAssistant.get_tutorial: Not yet implemented — stub only")
 	return {}
 
 func search_knowledge_base(_query: String) -> PackedStringArray:
-	push_error("IVXAIAssistant.search_knowledge_base: Not implemented")
+	push_warning("IVXAIAssistant.search_knowledge_base: Not yet implemented — stub only")
 	return PackedStringArray()

@@ -49,6 +49,40 @@ func InitModule(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runti
 		return err
 	}
 
-	logger.Info("IntelliVerseX: all 10 RPCs registered")
+	// Satori RPCs
+	if err := initializer.RegisterRpc("satori_publish_events", rpcs.SatoriPublishEvents); err != nil {
+		return err
+	}
+	if err := initializer.RegisterRpc("satori_get_flags", rpcs.SatoriGetFlags); err != nil {
+		return err
+	}
+	if err := initializer.RegisterRpc("satori_get_experiments", rpcs.SatoriGetExperiments); err != nil {
+		return err
+	}
+	if err := initializer.RegisterRpc("satori_get_live_events", rpcs.SatoriGetLiveEvents); err != nil {
+		return err
+	}
+
+	// Hiro system RPCs
+	if err := initializer.RegisterRpc("hiro_spin_wheel", rpcs.HiroSpinWheel); err != nil {
+		return err
+	}
+	if err := initializer.RegisterRpc("hiro_get_streaks", rpcs.HiroGetStreaks); err != nil {
+		return err
+	}
+	if err := initializer.RegisterRpc("hiro_claim_streak", rpcs.HiroClaimStreak); err != nil {
+		return err
+	}
+	if err := initializer.RegisterRpc("hiro_get_offerwall", rpcs.HiroGetOfferwall); err != nil {
+		return err
+	}
+	if err := initializer.RegisterRpc("hiro_retention_get", rpcs.HiroRetentionGet); err != nil {
+		return err
+	}
+	if err := initializer.RegisterRpc("hiro_retention_update", rpcs.HiroRetentionUpdate); err != nil {
+		return err
+	}
+
+	logger.Info("IntelliVerseX: all 20 RPCs registered")
 	return nil
 }

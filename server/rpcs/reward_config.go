@@ -34,9 +34,20 @@ const rewardConfigKey = "reward_config"
 // CalculateScoreReward computes the reward for a given score and streak without persisting.
 // Unity SDK calls this to preview potential rewards before submission.
 func CalculateScoreReward(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, payload string) (string, error) {
+	if _, err := requireAuthUser(ctx); err != nil {
+		return "", err
+	}
+
 	var req calculateRewardRequest
 	if err := json.Unmarshal([]byte(payload), &req); err != nil {
-		return marshalJSON(calculateRewardResponse{Success: false})
+		return "", runtime.NewError("invalid payload", 3)
+	}
+
+	if req.Score < 0 {
+		return "", runtime.NewError("score must be non-negative", 3)
+	}
+	if req.CurrentStreak < 0 || req.CurrentStreak > maxReasonableStreak {
+		return "", runtime.NewError("current_streak out of range", 3)
 	}
 
 	streakMul := 1.0 + float64(req.CurrentStreak)*0.1
@@ -65,23 +76,31 @@ func CalculateScoreReward(ctx context.Context, logger runtime.Logger, db *sql.DB
 // UpdateGameRewardConfig persists a game's reward configuration in Nakama storage.
 // Unity SDK calls this from admin/editor tools to tune reward parameters.
 func UpdateGameRewardConfig(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, payload string) (string, error) {
-	userID, ok := ctx.Value(runtime.RUNTIME_CTX_USER_ID).(string)
-	if !ok || userID == "" {
-		return `{"success":false,"error":"not authenticated"}`, nil
+	userID, err := requireAuthUser(ctx)
+	if err != nil {
+		return "", err
 	}
 
 	var req updateRewardConfigRequest
 	if err := json.Unmarshal([]byte(payload), &req); err != nil {
-		return `{"success":false,"error":"invalid payload"}`, nil
+		return "", runtime.NewError("invalid payload", 3)
 	}
 
-	configJSON, _ := json.Marshal(req.Config)
+	if req.Config == nil {
+		return "", runtime.NewError("config is required", 3)
+	}
+
+	configJSON, err := json.Marshal(req.Config)
+	if err != nil {
+		return "", runtime.NewError("config must be JSON-serializable", 3)
+	}
+
 	key := rewardConfigKey
 	if req.GameID != "" {
 		key = rewardConfigKey + "_" + req.GameID
 	}
 
-	_, err := nk.StorageWrite(ctx, []*runtime.StorageWrite{{
+	_, err = nk.StorageWrite(ctx, []*runtime.StorageWrite{{
 		Collection:      rewardConfigCollection,
 		Key:             key,
 		UserID:          userID,
@@ -91,7 +110,7 @@ func UpdateGameRewardConfig(ctx context.Context, logger runtime.Logger, db *sql.
 	}})
 	if err != nil {
 		logger.Error("update_game_reward_config: storage write failed: %v", err)
-		return `{"success":false,"error":"storage write failed"}`, nil
+		return "", runtime.NewError("storage write failed", 13)
 	}
 
 	resp := map[string]interface{}{

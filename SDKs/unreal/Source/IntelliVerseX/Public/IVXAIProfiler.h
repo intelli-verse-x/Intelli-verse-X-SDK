@@ -21,6 +21,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "IntelliVerseX|AI|Profiler", meta = (WorldContextObject = "WorldContextObject"))
     static UIVXAIProfiler* GetInstance(UObject* WorldContextObject);
 
+    UFUNCTION(BlueprintCallable, Category = "IntelliVerseX|AI")
+    static void Shutdown();
+
     UFUNCTION(BlueprintCallable, Category = "IntelliVerseX|AI|Profiler")
     void Initialize(UObject* Config, const FString& PlayerId);
 

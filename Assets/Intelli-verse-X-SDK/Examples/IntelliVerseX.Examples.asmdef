@@ -10,6 +10,10 @@
     "IntelliVerseX.Monetization",
     "IntelliVerseX.Leaderboard",
     "IntelliVerseX.Social",
+    "IntelliVerseX.Bootstrap",
+    "IntelliVerseX.AI",
+    "IntelliVerseX.Hiro",
+    "IntelliVerseX.Discord",
     "Unity.TextMeshPro"
 ],
     "includePlatforms": [],

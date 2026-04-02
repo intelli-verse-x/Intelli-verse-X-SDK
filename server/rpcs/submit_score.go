@@ -26,7 +26,7 @@ type rewardDetails struct {
 	BaseReward       int64   `json:"base_reward"`
 	Score            int64   `json:"score"`
 	Multiplier       float64 `json:"multiplier"`
-	StreakMultiplier  float64 `json:"streak_multiplier"`
+	StreakMultiplier float64 `json:"streak_multiplier"`
 	MilestoneBonus   int64   `json:"milestone_bonus"`
 }
 
@@ -42,19 +42,27 @@ type submitScoreResponse struct {
 const (
 	baseRewardPerPoint = 10
 	defaultLeaderboard = "weekly_high_scores"
+	maxReasonableStreak = 10000
 )
 
 // SubmitScoreAndSync writes a leaderboard record and calculates a score-based reward.
 // Unity SDK calls this after a game round to update scores and grant rewards.
 func SubmitScoreAndSync(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, payload string) (string, error) {
-	userID, ok := ctx.Value(runtime.RUNTIME_CTX_USER_ID).(string)
-	if !ok || userID == "" {
-		return marshalJSON(submitScoreResponse{Success: false, Error: "not authenticated"})
+	userID, err := requireAuthUser(ctx)
+	if err != nil {
+		return "", err
 	}
 
 	var req submitScoreRequest
 	if err := json.Unmarshal([]byte(payload), &req); err != nil {
-		return marshalJSON(submitScoreResponse{Success: false, Error: "invalid payload"})
+		return "", runtime.NewError("invalid payload", 3)
+	}
+
+	if req.Score < 0 || req.Subscore < 0 {
+		return "", runtime.NewError("score and subscore must be non-negative", 3)
+	}
+	if req.CurrentStreak < 0 || req.CurrentStreak > maxReasonableStreak {
+		return "", runtime.NewError("current_streak out of range", 3)
 	}
 
 	leaderboardID := defaultLeaderboard
@@ -62,17 +70,18 @@ func SubmitScoreAndSync(ctx context.Context, logger runtime.Logger, db *sql.DB, 
 		leaderboardID = req.GameID + "_scores"
 	}
 
-	nk.LeaderboardCreate(ctx, leaderboardID, false, "best", "0 0 * * 1", nil, 0, false)
+	_ = nk.LeaderboardCreate(ctx, leaderboardID, false, "desc", "best", "0 0 * * 1", nil, false)
 
-	metaJSON := "{}"
+	meta := map[string]interface{}{}
 	if req.Metadata != nil {
-		b, _ := json.Marshal(req.Metadata)
-		metaJSON = string(b)
+		for k, v := range req.Metadata {
+			meta[k] = v
+		}
 	}
-	_, err := nk.LeaderboardRecordWrite(ctx, leaderboardID, userID, req.Username, req.Score, req.Subscore, metaJSON, nil)
+	_, err = nk.LeaderboardRecordWrite(ctx, leaderboardID, userID, req.Username, req.Score, req.Subscore, meta, nil)
 	if err != nil {
 		logger.Error("submit_score_and_sync: leaderboard write failed: %v", err)
-		return marshalJSON(submitScoreResponse{Success: false, Error: "leaderboard write failed"})
+		return "", runtime.NewError("leaderboard write failed", 13)
 	}
 
 	streakMul := 1.0 + float64(req.CurrentStreak)*0.1
@@ -91,7 +100,10 @@ func SubmitScoreAndSync(ctx context.Context, logger runtime.Logger, db *sql.DB, 
 	reward := int64(float64(req.Score*baseRewardPerPoint)*streakMul) + milestoneBonus
 
 	changeset := map[string]int64{"coins": reward}
-	nk.WalletUpdate(ctx, userID, changeset, nil, true)
+	if _, _, werr := nk.WalletUpdate(ctx, userID, changeset, nil, true); werr != nil {
+		logger.Error("submit_score_and_sync: wallet update failed for %s: %v", userID, werr)
+		return "", runtime.NewError("wallet update failed", 13)
+	}
 
 	account, _ := nk.AccountGetId(ctx, userID)
 	walletBalance := int64(0)
@@ -107,11 +119,11 @@ func SubmitScoreAndSync(ctx context.Context, logger runtime.Logger, db *sql.DB, 
 		RewardCurrency: "coins",
 		WalletBalance:  walletBalance,
 		RewardDetails: &rewardDetails{
-			BaseReward:      req.Score * baseRewardPerPoint,
-			Score:           req.Score,
-			Multiplier:      1.0,
+			BaseReward:       req.Score * baseRewardPerPoint,
+			Score:            req.Score,
+			Multiplier:       1.0,
 			StreakMultiplier: streakMul,
-			MilestoneBonus:  milestoneBonus,
+			MilestoneBonus:   milestoneBonus,
 		},
 	})
 }

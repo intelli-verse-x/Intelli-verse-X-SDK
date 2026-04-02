@@ -35,6 +35,8 @@ namespace IntelliVerseX.Bootstrap
         private string _authToken;
 
         #if INTELLIVERSEX_HAS_NAKAMA
+        private Nakama.IClient _nakamaClient;
+        private Nakama.ISession _nakamaSession;
         private Nakama.ISocket _socket;
         #endif
 
@@ -103,7 +105,11 @@ namespace IntelliVerseX.Bootstrap
 
         private void OnDestroy()
         {
-            if (_instance == this) _instance = null;
+            if (_instance == this)
+            {
+                Shutdown();
+                _instance = null;
+            }
         }
 
         #endregion
@@ -128,6 +134,8 @@ namespace IntelliVerseX.Bootstrap
                 OnBootstrapComplete?.Invoke(false);
                 return false;
             }
+
+            _config.Validate();
 
             if (!string.IsNullOrWhiteSpace(_config.GameId))
             {
@@ -279,6 +287,8 @@ namespace IntelliVerseX.Bootstrap
                         PlayerPrefs.SetString("IVX_SessionToken", session.AuthToken);
                 }
 
+                _nakamaClient = client;
+                _nakamaSession = session;
                 _userId = session.UserId;
                 _userName = session.Username;
                 _authToken = session.AuthToken;
@@ -315,8 +325,7 @@ namespace IntelliVerseX.Bootstrap
                     go.transform.SetParent(transform);
                     coord = go.AddComponent<IntelliVerseX.Hiro.IVXHiroCoordinator>();
                 }
-                // Hiro needs IClient + ISession — stored from backend init
-                // The actual call is deferred to the OnBootstrapComplete handler if needed
+                coord.InitializeSystems(_nakamaClient, _nakamaSession);
                 EmitModuleReady("Hiro");
             }
             catch (Exception e) { EmitModuleFail("Hiro", e); }
@@ -338,6 +347,7 @@ namespace IntelliVerseX.Bootstrap
                     go.transform.SetParent(transform);
                     satori = go.AddComponent<IntelliVerseX.Satori.IVXSatoriClient>();
                 }
+                satori.Initialize(_nakamaClient, _nakamaSession);
                 EmitModuleReady("Satori");
             }
             catch (Exception e) { EmitModuleFail("Satori", e); }

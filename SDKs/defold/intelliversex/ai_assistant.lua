@@ -15,35 +15,43 @@ function M.is_initialized()
 end
 
 function M.initialize(_config)
-    error("Not implemented")
+    print("[IVX] ai_assistant.initialize: stub – not yet implemented")
+    return nil
 end
 
 function M.set_auth_token(_token)
-    error("Not implemented")
+    print("[IVX] ai_assistant.set_auth_token: stub – not yet implemented")
+    return nil
 end
 
 function M.clear_history()
-    error("Not implemented")
+    print("[IVX] ai_assistant.clear_history: stub – not yet implemented")
+    return nil
 end
 
 function M.set_system_prompt(_prompt)
-    error("Not implemented")
+    print("[IVX] ai_assistant.set_system_prompt: stub – not yet implemented")
+    return nil
 end
 
 function M.ask(_question, _game_context)
-    error("Not implemented")
+    print("[IVX] ai_assistant.ask: stub – not yet implemented")
+    return nil
 end
 
 function M.get_hint(_level_id, _objective_id, _game_context)
-    error("Not implemented")
+    print("[IVX] ai_assistant.get_hint: stub – not yet implemented")
+    return nil
 end
 
 function M.get_tutorial(_feature_id)
-    error("Not implemented")
+    print("[IVX] ai_assistant.get_tutorial: stub – not yet implemented")
+    return nil
 end
 
 function M.search_knowledge_base(_query)
-    error("Not implemented")
+    print("[IVX] ai_assistant.search_knowledge_base: stub – not yet implemented")
+    return nil
 end
 
 return M

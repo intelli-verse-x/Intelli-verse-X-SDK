@@ -29,15 +29,15 @@ public final class IVXAIProfiler {
     }
 
     public void initialize(Object config, String playerId) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     public void trackEvent(String eventName, Map<String, Object> data) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     public void flushEvents() {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     public CompletableFuture<IVXPlayerProfile> getPlayerProfile() {
@@ -57,16 +57,16 @@ public final class IVXAIProfiler {
     }
 
     public void startAutoTracking() {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     public void stopAutoTracking() {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     private static <T> CompletableFuture<T> failed() {
         CompletableFuture<T> f = new CompletableFuture<>();
-        f.completeExceptionally(new UnsupportedOperationException("Not implemented"));
+        f.completeExceptionally(new UnsupportedOperationException("Not yet implemented — stub only"));
         return f;
     }
 

@@ -11,6 +11,10 @@ local _initialized = false
 local _config = nil
 local _identity_id = ""
 
+local function _stub(method)
+    print(string.format("[IVX] ivx_satori.%s: stub – not yet implemented", method))
+end
+
 local function _ensure_initialized()
     if not _initialized or not _config then
         error("Satori not initialized. Call M.initialize() first.")
@@ -34,6 +38,7 @@ end
 --- @param custom_props table|nil
 function M.authenticate(identity_id, _default_props, _custom_props)
     _ensure_initialized()
+    _stub("authenticate")
     _identity_id = identity_id or ""
 end
 
@@ -41,16 +46,19 @@ end
 --- @param custom_props table|nil
 function M.update_identity(_default_props, _custom_props)
     _ensure_initialized()
+    _stub("update_identity")
 end
 
 --- @param events table[] Array of { name, value?, metadata?, timestamp? }
 function M.capture_events(_events)
     _ensure_initialized()
+    _stub("capture_events")
 end
 
 --- @return table[] Feature flags for the current identity
 function M.get_all_flags()
     _ensure_initialized()
+    _stub("get_all_flags")
     return {}
 end
 
@@ -58,6 +66,7 @@ end
 --- @return table|nil Flag table or nil
 function M.get_flag(_name)
     _ensure_initialized()
+    _stub("get_flag")
     return nil
 end
 
@@ -65,23 +74,27 @@ end
 --- @return string Assigned variant (empty if none)
 function M.get_experiment_variant(_experiment_name)
     _ensure_initialized()
+    _stub("get_experiment_variant")
     return ""
 end
 
 --- @return table[] Experiments with variants
 function M.get_all_experiments()
     _ensure_initialized()
+    _stub("get_all_experiments")
     return {}
 end
 
 --- @return table[] Active live events
 function M.get_live_events()
     _ensure_initialized()
+    _stub("get_live_events")
     return {}
 end
 
 function M.logout()
     _ensure_initialized()
+    _stub("logout")
     _identity_id = ""
 end
 

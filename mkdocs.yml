@@ -84,6 +84,9 @@ nav:
     - Backend (Nakama): modules/backend.md
     - Discord Social SDK: modules/discord.md
     - Social & Friends: modules/social.md
+    - Satori Analytics: modules/satori.md
+    - Multiplayer & Game Modes: modules/multiplayer.md
+    - Wallet & Economy: modules/wallet.md
     - Monetization: modules/monetization.md
     - Analytics: modules/analytics.md
     - Localization: modules/localization.md
@@ -106,6 +109,12 @@ nav:
     - Identity API: api/identity.md
     - Backend API: api/backend.md
     - Social API: api/social.md
+    - Discord API: api/discord.md
+    - AI API: api/ai.md
+    - Hiro API: api/hiro.md
+    - Multiplayer API: api/multiplayer.md
+    - Satori API: api/satori.md
+    - Platform API: api/platform.md
     - Monetization API: api/monetization.md
     - Localization API: api/localization.md
     - Analytics API: api/analytics.md
@@ -128,18 +137,31 @@ nav:
     - More Of Us Demo: samples/more-of-us-demo.md
     - Daily Quiz Demo: samples/daily-quiz-demo.md
     - Analytics Demo: samples/analytics-demo.md
+    - Discord Demo: samples/discord-demo.md
+    - AI Voice Demo: samples/ai-voice-demo.md
+    - AI NPC Demo: samples/ai-npc-demo.md
+    - AI Content Demo: samples/ai-content-demo.md
+    - Hiro Demo: samples/hiro-demo.md
+    - Multiplayer Demo: samples/multiplayer-demo.md
+    - Satori Demo: samples/satori-demo.md
   - Guides:
     - guides/index.md
     - Authentication Flow: guides/auth-flow.md
     - Nakama Integration: guides/nakama-integration.md
-    - Ad Integration: guides/ad-integration.md
-    - Localization Setup: guides/localization-setup.md
-    - Migration Guide: guides/migration.md
+    - AI Getting Started: guides/ai-getting-started.md
+    - Satori Analytics & Live-Ops: guides/satori-integration.md
+    - Discord Integration: guides/discord-integration.md
+    - Hiro Live-Ops Integration: guides/hiro-integration.md
+    - Multiplayer Integration: guides/multiplayer-integration.md
+    - Wallet & Economy Integration: guides/wallet-integration.md
     - Leaderboard Integration: guides/leaderboard-integration.md
     - Friends Integration: guides/friends-integration.md
+    - Ad Integration: guides/ad-integration.md
+    - Localization Setup: guides/localization-setup.md
     - Theming: guides/theming.md
     - Testing: guides/testing.md
     - Privacy: guides/privacy.md
+    - Migration Guide: guides/migration.md
     - Custom Modules: guides/custom-modules.md
   - Troubleshooting:
     - troubleshooting/index.md

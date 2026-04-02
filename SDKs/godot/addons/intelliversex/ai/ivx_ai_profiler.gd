@@ -15,32 +15,32 @@ var cached_profile: Dictionary:
 		return {}
 
 func initialize(_config: Resource, _player_id: String) -> void:
-	push_error("IVXAIProfiler.initialize: Not implemented")
+	push_warning("IVXAIProfiler.initialize: Not yet implemented — stub only")
 
 func track_event(_event_name: String, _data: Dictionary = {}) -> void:
-	push_error("IVXAIProfiler.track_event: Not implemented")
+	push_warning("IVXAIProfiler.track_event: Not yet implemented — stub only")
 
 func flush_events() -> void:
-	push_error("IVXAIProfiler.flush_events: Not implemented")
+	push_warning("IVXAIProfiler.flush_events: Not yet implemented — stub only")
 
 func get_player_profile() -> Dictionary:
-	push_error("IVXAIProfiler.get_player_profile: Not implemented")
+	push_warning("IVXAIProfiler.get_player_profile: Not yet implemented — stub only")
 	return {}
 
 func get_personalization_hints() -> Array:
-	push_error("IVXAIProfiler.get_personalization_hints: Not implemented")
+	push_warning("IVXAIProfiler.get_personalization_hints: Not yet implemented — stub only")
 	return []
 
 func classify_player() -> String:
-	push_error("IVXAIProfiler.classify_player: Not implemented")
+	push_warning("IVXAIProfiler.classify_player: Not yet implemented — stub only")
 	return ""
 
 func predict_churn() -> Dictionary:
-	push_error("IVXAIProfiler.predict_churn: Not implemented")
+	push_warning("IVXAIProfiler.predict_churn: Not yet implemented — stub only")
 	return {}
 
 func start_auto_tracking() -> void:
-	push_error("IVXAIProfiler.start_auto_tracking: Not implemented")
+	push_warning("IVXAIProfiler.start_auto_tracking: Not yet implemented — stub only")
 
 func stop_auto_tracking() -> void:
-	push_error("IVXAIProfiler.stop_auto_tracking: Not implemented")
+	push_warning("IVXAIProfiler.stop_auto_tracking: Not yet implemented — stub only")

@@ -98,6 +98,8 @@ namespace IntelliVerseX.AI
         private DateTime _lastPingTime;
         private DateTime _lastPongTime;
 
+        private const int MAX_QUEUE_SIZE = 256;
+
         private readonly Queue<string> _messageQueue = new Queue<string>();
         private readonly Queue<byte[]> _binaryQueue = new Queue<byte[]>();
         private readonly object _queueLock = new object();
@@ -388,11 +390,19 @@ namespace IntelliVerseX.AI
                 {
                     if (result.MessageType == WebSocketMessageType.Text)
                     {
-                        lock (_queueLock) _messageQueue.Enqueue(Encoding.UTF8.GetString(msgBuf.ToArray()));
+                        lock (_queueLock)
+                        {
+                            while (_messageQueue.Count >= MAX_QUEUE_SIZE) _messageQueue.Dequeue();
+                            _messageQueue.Enqueue(Encoding.UTF8.GetString(msgBuf.ToArray()));
+                        }
                     }
                     else if (result.MessageType == WebSocketMessageType.Binary)
                     {
-                        lock (_queueLock) _binaryQueue.Enqueue(msgBuf.ToArray());
+                        lock (_queueLock)
+                        {
+                            while (_binaryQueue.Count >= MAX_QUEUE_SIZE) _binaryQueue.Dequeue();
+                            _binaryQueue.Enqueue(msgBuf.ToArray());
+                        }
                     }
                     msgBuf.Clear();
                 }

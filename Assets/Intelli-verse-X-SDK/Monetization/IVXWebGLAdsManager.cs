@@ -859,7 +859,10 @@ namespace IntelliVerseX.Monetization
             {
                 IVXAnalytics.LogEvent(eventName, eventData);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[IVXWebGLAdsManager] Operation failed: {ex.Message}");
+            }
 #endif
         }
 

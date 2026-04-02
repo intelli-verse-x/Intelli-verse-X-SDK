@@ -61,7 +61,16 @@ public static class IVXURLs
     /// </summary>
     public static string GameId
     {
-        get => string.IsNullOrWhiteSpace(_gameId) ? DefaultGameId : _gameId;
+        get
+        {
+            if (string.IsNullOrWhiteSpace(_gameId) || _gameId == DefaultGameId)
+            {
+                Debug.LogWarning("[IVXURLs] GameId is not set — using DefaultGameId. " +
+                    "Set IVXURLs.GameId at startup or configure via IVXBootstrapConfig.");
+                return DefaultGameId;
+            }
+            return _gameId;
+        }
         set => _gameId = value?.Trim() ?? string.Empty;
     }
     

@@ -24,19 +24,19 @@ public final class IVXAINPCDialogManager {
     }
 
     public void initialize(Object config) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     public void setAuthToken(String token) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     public void registerNPC(IVXAINPCProfile profile) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     public void unregisterNPC(String npcId) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     public CompletableFuture<IVXAINPCDialogSession> startDialog(
@@ -53,16 +53,16 @@ public final class IVXAINPCDialogManager {
     }
 
     public IVXAINPCDialogSession getSession(String sessionId) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     public List<IVXAINPCDialogSession> getSessionsForNPC(String npcId) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Not yet implemented — stub only");
     }
 
     private static <T> CompletableFuture<T> failed() {
         CompletableFuture<T> f = new CompletableFuture<>();
-        f.completeExceptionally(new UnsupportedOperationException("Not implemented"));
+        f.completeExceptionally(new UnsupportedOperationException("Not yet implemented — stub only"));
         return f;
     }
 

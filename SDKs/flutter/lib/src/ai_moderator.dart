@@ -59,42 +59,42 @@ class IVXAIModerator {
   List<IVXModerationRule> get customRules => const [];
 
   void initialize(Object? config) {
-    throw UnimplementedError('IVXAIModerator.initialize');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<IVXModerationResult> classifyText(String text) async {
-    throw UnimplementedError('IVXAIModerator.classifyText');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<String> filterMessage(String text) async {
-    throw UnimplementedError('IVXAIModerator.filterMessage');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<List<IVXModerationResult>> scanBatch(List<String> messages) async {
-    throw UnimplementedError('IVXAIModerator.scanBatch');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   void addCustomRule(IVXModerationRule rule) {
-    throw UnimplementedError('IVXAIModerator.addCustomRule');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   void removeCustomRule(String pattern) {
-    throw UnimplementedError('IVXAIModerator.removeCustomRule');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   void setCustomRules(List<IVXModerationRule> rules) {
-    throw UnimplementedError('IVXAIModerator.setCustomRules');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   void clearCustomRules() {
-    throw UnimplementedError('IVXAIModerator.clearCustomRules');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   IVXModerationResult checkLocalRules(String text) {
-    throw UnimplementedError('IVXAIModerator.checkLocalRules');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Map<String, String> getDiscordModerationMetadata(IVXModerationResult result) {
-    throw UnimplementedError('IVXAIModerator.getDiscordModerationMetadata');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 }

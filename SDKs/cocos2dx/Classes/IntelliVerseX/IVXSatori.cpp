@@ -3,6 +3,7 @@
 
 #include "IntelliVerseX/IVXSatori.h"
 
+#include "cocos2d.h"
 #include <stdexcept>
 
 namespace IntelliVerseX {
@@ -35,6 +36,7 @@ void IVXSatori::authenticate(const std::string& identityId,
         if (onError) onError({-1, e.what()});
         return;
     }
+    cocos2d::log("%s", "[IVX-Cocos] IVXSatori::authenticate: stub – not yet implemented");
     _identityId = identityId;
     if (onSuccess) onSuccess();
 }
@@ -48,6 +50,7 @@ void IVXSatori::updateIdentity(const std::map<std::string, std::string>&,
         if (onError) onError({-1, e.what()});
         return;
     }
+    cocos2d::log("%s", "[IVX-Cocos] IVXSatori::updateIdentity: stub – not yet implemented");
     if (onSuccess) onSuccess();
 }
 
@@ -59,6 +62,7 @@ void IVXSatori::captureEvents(const std::vector<IVXSatoriEvent>&, SuccessCallbac
         if (onError) onError({-1, e.what()});
         return;
     }
+    cocos2d::log("%s", "[IVX-Cocos] IVXSatori::captureEvents: stub – not yet implemented");
     if (onSuccess) onSuccess();
 }
 
@@ -69,6 +73,7 @@ void IVXSatori::getAllFlags(SatoriFlagsCallback onSuccess, ErrorCallback onError
         if (onError) onError({-1, e.what()});
         return;
     }
+    cocos2d::log("%s", "[IVX-Cocos] IVXSatori::getAllFlags: stub – not yet implemented");
     if (onSuccess) onSuccess({});
 }
 
@@ -81,6 +86,7 @@ void IVXSatori::getFlag(const std::string&,
         if (onError) onError({-1, e.what()});
         return;
     }
+    cocos2d::log("%s", "[IVX-Cocos] IVXSatori::getFlag: stub – not yet implemented");
     if (onSuccess) onSuccess(false, {});
 }
 
@@ -91,6 +97,7 @@ void IVXSatori::getExperimentVariant(const std::string&, RpcCallback onSuccess, 
         if (onError) onError({-1, e.what()});
         return;
     }
+    cocos2d::log("%s", "[IVX-Cocos] IVXSatori::getExperimentVariant: stub – not yet implemented");
     if (onSuccess) onSuccess("");
 }
 
@@ -101,6 +108,7 @@ void IVXSatori::getAllExperiments(SatoriExperimentsCallback onSuccess, ErrorCall
         if (onError) onError({-1, e.what()});
         return;
     }
+    cocos2d::log("%s", "[IVX-Cocos] IVXSatori::getAllExperiments: stub – not yet implemented");
     if (onSuccess) onSuccess({});
 }
 
@@ -111,6 +119,7 @@ void IVXSatori::getLiveEvents(SatoriLiveEventsCallback onSuccess, ErrorCallback 
         if (onError) onError({-1, e.what()});
         return;
     }
+    cocos2d::log("%s", "[IVX-Cocos] IVXSatori::getLiveEvents: stub – not yet implemented");
     if (onSuccess) onSuccess({});
 }
 
@@ -121,6 +130,7 @@ void IVXSatori::logout(SuccessCallback onSuccess, ErrorCallback onError) {
         if (onError) onError({-1, e.what()});
         return;
     }
+    cocos2d::log("%s", "[IVX-Cocos] IVXSatori::logout: stub – not yet implemented");
     _identityId.clear();
     if (onSuccess) onSuccess();
 }

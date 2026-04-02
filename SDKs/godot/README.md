@@ -97,6 +97,14 @@ var flags = await satori.get_feature_flags()
 
 - Godot 4.2+ (tested with 4.6.x)
 
+### Platform Support
+
+- **Godot**: Windows, macOS, Linux, Android, iOS, Web (HTML5), Meta Quest (via OpenXR)
+
+### VR / XR Support
+
+The addon includes **`IVXXRHelper`** for OpenXR-oriented VR/XR platform detection and helper APIs—useful when shipping to Meta Quest and other OpenXR targets.
+
 ## Dependencies
 
 You **should** add the **official Nakama Godot addon** (Heroic Labs) for real backend (auth, profile, wallet, leaderboards, storage, RPC). Without it the project still opens using a built-in stub, but backend calls will fail until Nakama is installed.
@@ -199,13 +207,15 @@ func _on_error(message: String) -> void:
 | Cloud Storage | ✅ Supported |
 | RPC Calls | ✅ Supported |
 | Real-time Socket | ✅ Supported |
-| AI Voice & Host | ✅ New in v5.8.0 |
-| Multiplayer & Game Modes | ✅ New in v5.8.0 |
-| Hiro Live-Ops Systems | ✅ New in v5.8.0 |
+| AI Voice & Host | 🔶 Stub |
+| Multiplayer & Game Modes | 🔶 Stub |
+| Hiro Live-Ops Systems | 🔶 Stub |
 | Analytics | ✅ Supported |
-| Discord Social SDK | ✅ New in v5.8.0 |
-| Satori Analytics | ✅ New in v5.8.0 |
+| Discord Social SDK | 🔶 Stub |
+| Satori Analytics | 🔶 Stub |
 | Monetization | ✅ Supported |
+
+> 🔶 **Stub** = Full API surface exists. Methods log warnings and return empty/mock data. Zero code changes needed when backend support ships.
 
 ## Troubleshooting
 

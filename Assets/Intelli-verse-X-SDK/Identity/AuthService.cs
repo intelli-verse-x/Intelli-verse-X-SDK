@@ -72,7 +72,10 @@ namespace IntelliVerseX.Identity
                 if (config != null && !string.IsNullOrEmpty(config.authBaseUrl))
                     return config.authBaseUrl.Trim();
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[AuthService] Failed to load auth URL from keys.json: {ex.Message}");
+            }
             return null;
         }
 
@@ -87,7 +90,10 @@ namespace IntelliVerseX.Identity
                 if (config != null && !string.IsNullOrEmpty(config.authBaseUrl))
                     return config.authBaseUrl.Trim();
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[AuthService] Failed to load auth URL from Resources: {ex.Message}");
+            }
             return null;
         }
 
@@ -99,7 +105,10 @@ namespace IntelliVerseX.Identity
                 if (!string.IsNullOrEmpty(envUrl))
                     return envUrl.Trim();
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[AuthService] Failed to read IVX_AUTH_BASE_URL env var: {ex.Message}");
+            }
             return null;
         }
 

@@ -38,14 +38,16 @@ export class IVXAIContentGenerator {
   }
 
   initialize(_config: unknown): void {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   async generateQuest(
     _template: IVXQuestTemplate | null,
     _playerContext?: string
   ): Promise<IVXGeneratedQuest | null> {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   async generateStory(
@@ -53,7 +55,8 @@ export class IVXAIContentGenerator {
     _genre?: string,
     _maxWords?: number
   ): Promise<IVXGeneratedStory | null> {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   async generateItemDescription(
@@ -61,24 +64,28 @@ export class IVXAIContentGenerator {
     _itemType: string,
     _rarity: string
   ): Promise<IVXGeneratedItem | null> {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   async generateDialogue(
     _scenario: string,
     _characters?: string[]
   ): Promise<IVXGeneratedDialogue | null> {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   async generateFromTemplate(
     _template: string,
     _variables?: Record<string, string>
   ): Promise<string | null> {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 
   cancelGeneration(): void {
-    throw new Error('Not implemented');
+    console.warn('[IVX-Web3] stub – not yet implemented');
+    throw new Error('[IVX-Web3] stub – not yet implemented');
   }
 }

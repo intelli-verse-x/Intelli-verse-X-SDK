@@ -21,6 +21,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "IntelliVerseX|AI|Content", meta = (WorldContextObject = "WorldContextObject"))
     static UIVXAIContentGenerator* GetInstance(UObject* WorldContextObject);
 
+    UFUNCTION(BlueprintCallable, Category = "IntelliVerseX|AI")
+    static void Shutdown();
+
     UFUNCTION(BlueprintCallable, Category = "IntelliVerseX|AI|Content")
     void Initialize(UObject* Config);
 

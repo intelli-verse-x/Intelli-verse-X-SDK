@@ -72,27 +72,27 @@ class IVXAIAssistant {
   bool get isProcessing => false;
   bool get isInitialized => false;
 
-  void initialize(Object? config) {
-    throw UnimplementedError('IVXAIAssistant.initialize');
+  void initialize(Map<String, dynamic>? config) {
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   void setAuthToken(String? token) {
-    throw UnimplementedError('IVXAIAssistant.setAuthToken');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   void clearHistory() {
-    throw UnimplementedError('IVXAIAssistant.clearHistory');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   void setSystemPrompt(String prompt) {
-    throw UnimplementedError('IVXAIAssistant.setSystemPrompt');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<IVXAIAssistantResponse?> ask(
     String question, [
     IVXAIGameContext? context,
   ]) async {
-    throw UnimplementedError('IVXAIAssistant.ask');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<IVXAIHintResponse?> getHint(
@@ -100,14 +100,14 @@ class IVXAIAssistant {
     String objectiveId, [
     IVXAIGameContext? context,
   ]) async {
-    throw UnimplementedError('IVXAIAssistant.getHint');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<IVXAITutorialResponse?> getTutorial(String featureId) async {
-    throw UnimplementedError('IVXAIAssistant.getTutorial');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<List<String>> searchKnowledgeBase(String query) async {
-    throw UnimplementedError('IVXAIAssistant.searchKnowledgeBase');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 }

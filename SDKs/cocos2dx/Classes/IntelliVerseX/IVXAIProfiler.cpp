@@ -2,6 +2,7 @@
 // MIT License — see LICENSE in the project root.
 
 #include "IntelliVerseX/IVXAIProfiler.h"
+#include "cocos2d.h"
 #include <stdexcept>
 
 namespace IntelliVerseX {
@@ -20,39 +21,47 @@ const IVXPlayerProfile* IVXAIProfiler::cachedProfile() const {
 }
 
 void IVXAIProfiler::initialize(void*, const std::string&) {
-    throw std::runtime_error("Not implemented");
+    cocos2d::log("[IVX-Cocos] IVXAIProfiler::initialize: stub — not yet implemented. AI features will return empty results.");
 }
 
 void IVXAIProfiler::trackEvent(const std::string&, const std::map<std::string, double>&) {
-    throw std::runtime_error("Not implemented");
+    cocos2d::log("%s", "[IVX-Cocos] AI stub: not yet implemented — stub only");
+    throw std::runtime_error("Not yet implemented — stub only");
 }
 
 void IVXAIProfiler::flushEvents() {
-    throw std::runtime_error("Not implemented");
+    cocos2d::log("%s", "[IVX-Cocos] AI stub: not yet implemented — stub only");
+    throw std::runtime_error("Not yet implemented — stub only");
 }
 
 void IVXAIProfiler::getPlayerProfile(std::function<void(const IVXPlayerProfile*)>, ErrorCallback onError) {
-    if (onError) onError({-1, "Not implemented"});
+    cocos2d::log("%s", "[IVX-Cocos] AI stub: not yet implemented — stub only");
+    if (onError) onError({-1, "Not yet implemented — stub only"});
 }
 
 void IVXAIProfiler::getPersonalizationHints(std::function<void(const std::vector<IVXPersonalizationHint>&)>, ErrorCallback onError) {
-    if (onError) onError({-1, "Not implemented"});
+    cocos2d::log("%s", "[IVX-Cocos] AI stub: not yet implemented — stub only");
+    if (onError) onError({-1, "Not yet implemented — stub only"});
 }
 
 void IVXAIProfiler::classifyPlayer(std::function<void(IVXPlayerCohort)>, ErrorCallback onError) {
-    if (onError) onError({-1, "Not implemented"});
+    cocos2d::log("%s", "[IVX-Cocos] AI stub: not yet implemented — stub only");
+    if (onError) onError({-1, "Not yet implemented — stub only"});
 }
 
 void IVXAIProfiler::predictChurn(std::function<void(float, const std::vector<std::string>&)>, ErrorCallback onError) {
-    if (onError) onError({-1, "Not implemented"});
+    cocos2d::log("%s", "[IVX-Cocos] AI stub: not yet implemented — stub only");
+    if (onError) onError({-1, "Not yet implemented — stub only"});
 }
 
 void IVXAIProfiler::startAutoTracking() {
-    throw std::runtime_error("Not implemented");
+    cocos2d::log("%s", "[IVX-Cocos] AI stub: not yet implemented — stub only");
+    throw std::runtime_error("Not yet implemented — stub only");
 }
 
 void IVXAIProfiler::stopAutoTracking() {
-    throw std::runtime_error("Not implemented");
+    cocos2d::log("%s", "[IVX-Cocos] AI stub: not yet implemented — stub only");
+    throw std::runtime_error("Not yet implemented — stub only");
 }
 
 } // namespace IntelliVerseX

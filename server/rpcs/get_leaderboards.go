@@ -35,22 +35,27 @@ type getLeaderboardsResponse struct {
 	CurrentUser *leaderboardEntry  `json:"currentUser,omitempty"`
 }
 
+const maxLeaderboardLimit = 100
+
 // GetAllLeaderboards returns daily, weekly, and all-time leaderboard records.
 // Unity SDK calls this to populate leaderboard UI panels.
 func GetAllLeaderboards(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, payload string) (string, error) {
-	userID, ok := ctx.Value(runtime.RUNTIME_CTX_USER_ID).(string)
-	if !ok || userID == "" {
-		return marshalJSON(getLeaderboardsResponse{Success: false, Error: "not authenticated"})
+	userID, err := requireAuthUser(ctx)
+	if err != nil {
+		return "", err
 	}
 
 	var req getLeaderboardsRequest
 	if err := json.Unmarshal([]byte(payload), &req); err != nil {
-		return marshalJSON(getLeaderboardsResponse{Success: false, Error: "invalid payload"})
+		return "", runtime.NewError("invalid payload", 3)
 	}
 
 	limit := req.Limit
-	if limit <= 0 || limit > 100 {
+	if limit <= 0 {
 		limit = 20
+	}
+	if limit > maxLeaderboardLimit {
+		return "", runtime.NewError("limit out of range", 3)
 	}
 
 	prefix := "weekly_high_scores"
@@ -81,7 +86,7 @@ func GetAllLeaderboards(ctx context.Context, logger runtime.Logger, db *sql.DB, 
 }
 
 func fetchRecords(ctx context.Context, nk runtime.NakamaModule, leaderboardID string, ownerID string, limit int) []leaderboardEntry {
-	nk.LeaderboardCreate(ctx, leaderboardID, false, "best", "0 0 * * 1", nil, 0, false)
+	_ = nk.LeaderboardCreate(ctx, leaderboardID, false, "desc", "best", "0 0 * * 1", nil, false)
 
 	records, _, _, _, err := nk.LeaderboardRecordsList(ctx, leaderboardID, []string{ownerID}, limit, "", 0)
 	if err != nil {

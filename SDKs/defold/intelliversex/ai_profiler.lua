@@ -11,39 +11,48 @@ function M.is_tracking()
 end
 
 function M.initialize(_config, _player_id)
-    error("Not implemented")
+    print("[IVX] ai_profiler.initialize: stub – not yet implemented")
+    return nil
 end
 
 function M.track_event(_event_name, _data)
-    error("Not implemented")
+    print("[IVX] ai_profiler.track_event: stub – not yet implemented")
+    return nil
 end
 
 function M.flush_events()
-    error("Not implemented")
+    print("[IVX] ai_profiler.flush_events: stub – not yet implemented")
+    return nil
 end
 
 function M.get_player_profile()
-    error("Not implemented")
+    print("[IVX] ai_profiler.get_player_profile: stub – not yet implemented")
+    return nil
 end
 
 function M.get_personalization_hints()
-    error("Not implemented")
+    print("[IVX] ai_profiler.get_personalization_hints: stub – not yet implemented")
+    return nil
 end
 
 function M.classify_player()
-    error("Not implemented")
+    print("[IVX] ai_profiler.classify_player: stub – not yet implemented")
+    return nil
 end
 
 function M.predict_churn()
-    error("Not implemented")
+    print("[IVX] ai_profiler.predict_churn: stub – not yet implemented")
+    return nil
 end
 
 function M.start_auto_tracking()
-    error("Not implemented")
+    print("[IVX] ai_profiler.start_auto_tracking: stub – not yet implemented")
+    return nil
 end
 
 function M.stop_auto_tracking()
-    error("Not implemented")
+    print("[IVX] ai_profiler.stop_auto_tracking: stub – not yet implemented")
+    return nil
 end
 
 return M

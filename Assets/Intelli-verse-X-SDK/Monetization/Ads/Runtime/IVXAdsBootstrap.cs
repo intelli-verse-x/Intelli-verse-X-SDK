@@ -310,7 +310,14 @@ namespace IntelliVerseX.Monetization.Ads
                     string json = (string)getStringMethod.Invoke(appConfig, new object[] { keyAdsControlJson, "{}" });
 
                     AdsControlConfig ctrl = null;
-                    try { ctrl = JsonUtility.FromJson<AdsControlConfig>(json); } catch { }
+                    try
+                    {
+                        ctrl = JsonUtility.FromJson<AdsControlConfig>(json);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogWarning($"[IVXAdsBootstrap] Operation failed: {ex.Message}");
+                    }
 
                     string mode = (ctrl != null && !string.IsNullOrEmpty(ctrl.mode)) ? ctrl.mode.Trim() : "AB";
 
@@ -409,7 +416,10 @@ namespace IntelliVerseX.Monetization.Ads
                     if (task != null) await task;
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[IVXAdsBootstrap] Operation failed: {ex.Message}");
+            }
         }
 
         private static string Sha256(string input)

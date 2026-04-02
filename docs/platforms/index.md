@@ -38,7 +38,9 @@ IntelliVerseX provides official SDK wrappers for all major game engines and plat
 | NFT / Tokens | -- | -- | -- | -- | -- | -- | -- | -- | -- | :white_check_mark: |
 | Token Gating | -- | -- | -- | -- | -- | -- | -- | -- | -- | :white_check_mark: |
 | Hiro | Native | Via RPC | Via RPC | Via RPC | Via RPC | Via RPC | Via RPC | Via RPC | Via RPC | Via RPC |
-| Satori | Native | Planned | Planned | Planned | Planned | Planned | Planned | Planned | Planned | Planned |
+| Satori | Native | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub |
+| Discord Social SDK | Native | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub |
+| VR / AR / XR (platform detection) | :white_check_mark: | :white_check_mark: | :white_check_mark: | -- | -- | -- | :white_check_mark: | -- | -- | -- |
 | Monetization | Native | Planned | Planned | Planned | Planned | Planned | Planned | Planned | Planned | Planned |
 
 ---

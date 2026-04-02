@@ -45,38 +45,38 @@ class IVXAIProfiler {
   IVXPlayerProfile? get cachedProfile => null;
 
   void initialize(Object? config, String playerId) {
-    throw UnimplementedError('IVXAIProfiler.initialize');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   void trackEvent(String eventName, [Map<String, Object?>? data]) {
-    throw UnimplementedError('IVXAIProfiler.trackEvent');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   void flushEvents() {
-    throw UnimplementedError('IVXAIProfiler.flushEvents');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<IVXPlayerProfile?> getPlayerProfile() async {
-    throw UnimplementedError('IVXAIProfiler.getPlayerProfile');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<List<IVXPersonalizationHint>> getPersonalizationHints() async {
-    throw UnimplementedError('IVXAIProfiler.getPersonalizationHints');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<IVXPlayerCohort> classifyPlayer() async {
-    throw UnimplementedError('IVXAIProfiler.classifyPlayer');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<({double score, List<String> factors})> predictChurn() async {
-    throw UnimplementedError('IVXAIProfiler.predictChurn');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   void startAutoTracking() {
-    throw UnimplementedError('IVXAIProfiler.startAutoTracking');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   void stopAutoTracking() {
-    throw UnimplementedError('IVXAIProfiler.stopAutoTracking');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 }

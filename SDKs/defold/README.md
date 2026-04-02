@@ -110,6 +110,10 @@ local flags = satori.get_feature_flags()
 - Defold 1.6+
 - [Nakama Defold client](https://github.com/heroiclabs/nakama-defold) v3.5+
 
+### Platform Support
+
+- **Defold**: Windows, macOS, Linux, Android, iOS, HTML5
+
 ## Installation
 
 1. Add the Nakama Defold dependency to your `game.project`:
@@ -191,12 +195,14 @@ end
 | Cloud Storage | ✅ Supported |
 | RPC Calls | ✅ Supported |
 | Real-time Socket | ✅ Supported |
-| AI Voice & Host | ✅ New in v5.8.0 |
-| Multiplayer & Game Modes | ✅ New in v5.8.0 |
-| Hiro Live-Ops Systems | ✅ New in v5.8.0 |
+| AI Voice & Host | 🔶 Stub |
+| Multiplayer & Game Modes | 🔶 Stub |
+| Hiro Live-Ops Systems | 🔶 Stub |
 | Analytics | ✅ Supported |
-| Discord Social SDK | ✅ New in v5.8.0 |
-| Satori Analytics | ✅ New in v5.8.0 |
+| Discord Social SDK | 🔶 Stub |
+| Satori Analytics | 🔶 Stub |
+
+> 🔶 **Stub** = Full API surface exists. Methods log warnings and return empty/mock data. Zero code changes needed when backend support ships.
 
 ## Project Structure
 

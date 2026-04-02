@@ -11,43 +11,53 @@ function M.is_enabled()
 end
 
 function M.initialize(_config)
-    error("Not implemented")
+    print("[IVX] ai_moderator.initialize: stub – not yet implemented")
+    return nil
 end
 
 function M.classify_text(_text)
-    error("Not implemented")
+    print("[IVX] ai_moderator.classify_text: stub – not yet implemented")
+    return nil
 end
 
 function M.filter_message(_text)
-    error("Not implemented")
+    print("[IVX] ai_moderator.filter_message: stub – not yet implemented")
+    return nil
 end
 
 function M.scan_batch(_messages)
-    error("Not implemented")
+    print("[IVX] ai_moderator.scan_batch: stub – not yet implemented")
+    return nil
 end
 
 function M.add_custom_rule(_rule)
-    error("Not implemented")
+    print("[IVX] ai_moderator.add_custom_rule: stub – not yet implemented")
+    return nil
 end
 
 function M.remove_custom_rule(_pattern)
-    error("Not implemented")
+    print("[IVX] ai_moderator.remove_custom_rule: stub – not yet implemented")
+    return nil
 end
 
 function M.set_custom_rules(_rules)
-    error("Not implemented")
+    print("[IVX] ai_moderator.set_custom_rules: stub – not yet implemented")
+    return nil
 end
 
 function M.clear_custom_rules()
-    error("Not implemented")
+    print("[IVX] ai_moderator.clear_custom_rules: stub – not yet implemented")
+    return nil
 end
 
 function M.check_local_rules(_text)
-    error("Not implemented")
+    print("[IVX] ai_moderator.check_local_rules: stub – not yet implemented")
+    return nil
 end
 
 function M.get_discord_moderation_metadata(_result)
-    error("Not implemented")
+    print("[IVX] ai_moderator.get_discord_moderation_metadata: stub – not yet implemented")
+    return nil
 end
 
 return M

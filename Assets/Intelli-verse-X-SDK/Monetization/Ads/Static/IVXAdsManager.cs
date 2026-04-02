@@ -227,7 +227,8 @@ namespace IntelliVerseX.Monetization
                 return;
 
             // Destroy old banner object (best practice when changing config)
-            try { _levelPlayBannerAd?.DestroyAd(); } catch { }
+            try { _levelPlayBannerAd?.DestroyAd(); }
+            catch (Exception ex) { Debug.LogWarning($"[IVXAdsManager] Operation failed: {ex.Message}"); }
             _levelPlayBannerAd = null;
             _levelPlayBannerLoaded = false;
 
@@ -262,7 +263,8 @@ namespace IntelliVerseX.Monetization
 
                 if (_levelPlayBannerWantsToBeVisible)
                 {
-                    try { bannerAd.ShowAd(); } catch { }
+                    try { bannerAd.ShowAd(); }
+                    catch (Exception ex) { Debug.LogWarning($"[IVXAdsManager] Operation failed: {ex.Message}"); }
                 }
             };
 
@@ -559,7 +561,8 @@ namespace IntelliVerseX.Monetization
             ad.OnAdRewarded += (LevelPlayAdInfo adInfo, LevelPlayReward reward) =>
             {
                 int amount = 1;
-                try { amount = reward != null ? (int)reward.Amount : 1; } catch { /* ignore */ }
+                try { amount = reward != null ? (int)reward.Amount : 1; }
+                catch (Exception ex) { Debug.LogWarning($"[IVXAdsManager] Operation failed: {ex.Message}"); }
 
                 _levelPlayRewardEarned = true;
                 _levelPlayRewardAmount = amount;
@@ -1001,7 +1004,8 @@ namespace IntelliVerseX.Monetization
 
             // Preload next
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
-        try { Appodeal.Cache(AppodealAdType.RewardedVideo); } catch { }
+            try { Appodeal.Cache(AppodealAdType.RewardedVideo); }
+            catch (Exception ex) { Debug.LogWarning($"[IVXAdsManager] Operation failed: {ex.Message}"); }
 #endif
         }
 
@@ -1049,7 +1053,8 @@ namespace IntelliVerseX.Monetization
             cb?.Invoke(true);
 
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
-        try { Appodeal.Cache(AppodealAdType.Interstitial); } catch { }
+            try { Appodeal.Cache(AppodealAdType.Interstitial); }
+            catch (Exception ex) { Debug.LogWarning($"[IVXAdsManager] Operation failed: {ex.Message}"); }
 #endif
         }
 
@@ -1188,7 +1193,7 @@ namespace IntelliVerseX.Monetization
                 IronSource.Agent.setConsent(_canRequestAds);
                 Debug.Log($"[IVXAdsManager] Applied consent to IronSource: {_canRequestAds}");
             }
-            catch { }
+            catch (Exception ex) { Debug.LogWarning($"[IVXAdsManager] Operation failed: {ex.Message}"); }
 #endif
 
             // Apply consent to Appodeal
@@ -1205,7 +1210,7 @@ namespace IntelliVerseX.Monetization
                 }
                 Debug.Log($"[IVXAdsManager] Applied consent to Appodeal: {_canRequestAds}");
             }
-            catch { }
+            catch (Exception ex) { Debug.LogWarning($"[IVXAdsManager] Operation failed: {ex.Message}"); }
 #endif
         }
 
@@ -1415,7 +1420,8 @@ namespace IntelliVerseX.Monetization
                     if (!Appodeal.IsLoaded(AppodealAdType.RewardedVideo))
                     {
                         Debug.LogWarning("[IVXAdsManager] Appodeal rewarded not loaded, caching now.");
-                        try { Appodeal.Cache(AppodealAdType.RewardedVideo); } catch { }
+                        try { Appodeal.Cache(AppodealAdType.RewardedVideo); }
+                        catch (Exception ex) { Debug.LogWarning($"[IVXAdsManager] Operation failed: {ex.Message}"); }
                         onComplete?.Invoke(false, 0);
                         break;
                     }
@@ -1603,14 +1609,16 @@ namespace IntelliVerseX.Monetization
 #if IRONSOURCE
                 _levelPlayBannerWantsToBeVisible = false;
                 _levelPlayBannerLoaded = false;
-                try { _levelPlayBannerAd?.HideAd(); } catch { }
+                try { _levelPlayBannerAd?.HideAd(); }
+                catch (Exception ex) { Debug.LogWarning($"[IVXAdsManager] Operation failed: {ex.Message}"); }
 #endif
             }
             else if (network == IVXAdNetwork.Appodeal)
             {
 #if APPODEAL
 #if UNITY_ANDROID || UNITY_IOS
-                try { Appodeal.Hide(AppodealAdType.Banner); } catch { }
+                try { Appodeal.Hide(AppodealAdType.Banner); }
+                catch (Exception ex) { Debug.LogWarning($"[IVXAdsManager] Operation failed: {ex.Message}"); }
 #endif
 #endif
             }
@@ -1635,7 +1643,6 @@ namespace IntelliVerseX.Monetization
                 return;
             }
             Debug.Log("[IVXAdsManager] HideBannerAd");
-            // TODO: Implement hide banner logic
 
             if (_primaryNetwork == IVXAdNetwork.AdMob)
             {
@@ -1806,7 +1813,8 @@ namespace IntelliVerseX.Monetization
                     if (!Appodeal.IsLoaded(AppodealAdType.Interstitial))
                     {
                         Debug.LogWarning("[IVXAdsManager] Appodeal interstitial not loaded, caching now.");
-                        try { Appodeal.Cache(AppodealAdType.Interstitial); } catch { }
+                        try { Appodeal.Cache(AppodealAdType.Interstitial); }
+                        catch (Exception ex) { Debug.LogWarning($"[IVXAdsManager] Operation failed: {ex.Message}"); }
                         onComplete?.Invoke(false);
                         break;
                     }
@@ -2248,7 +2256,11 @@ namespace IntelliVerseX.Monetization
                 sb.AppendLine($"  Rewarded Loaded: {Appodeal.IsLoaded(AppodealAdType.RewardedVideo)}");
                 sb.AppendLine($"  Interstitial Loaded: {Appodeal.IsLoaded(AppodealAdType.Interstitial)}");
             }
-            catch { sb.AppendLine("  (Appodeal status check failed)"); }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[IVXAdsManager] Operation failed: {ex.Message}");
+                sb.AppendLine("  (Appodeal status check failed)");
+            }
 #endif
 #endif
 

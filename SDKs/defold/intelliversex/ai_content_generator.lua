@@ -11,31 +11,38 @@ function M.is_generating()
 end
 
 function M.initialize(_config)
-    error("Not implemented")
+    print("[IVX] ai_content_generator.initialize: stub – not yet implemented")
+    return nil
 end
 
 function M.generate_quest(_template, _player_context)
-    error("Not implemented")
+    print("[IVX] ai_content_generator.generate_quest: stub – not yet implemented")
+    return nil
 end
 
 function M.generate_story(_prompt, _genre, _max_words)
-    error("Not implemented")
+    print("[IVX] ai_content_generator.generate_story: stub – not yet implemented")
+    return nil
 end
 
 function M.generate_item_description(_name, _item_type, _rarity)
-    error("Not implemented")
+    print("[IVX] ai_content_generator.generate_item_description: stub – not yet implemented")
+    return nil
 end
 
 function M.generate_dialogue(_scenario, _characters)
-    error("Not implemented")
+    print("[IVX] ai_content_generator.generate_dialogue: stub – not yet implemented")
+    return nil
 end
 
 function M.generate_from_template(_template, _variables)
-    error("Not implemented")
+    print("[IVX] ai_content_generator.generate_from_template: stub – not yet implemented")
+    return nil
 end
 
 function M.cancel_generation()
-    error("Not implemented")
+    print("[IVX] ai_content_generator.cancel_generation: stub – not yet implemented")
+    return nil
 end
 
 return M

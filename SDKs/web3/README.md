@@ -57,7 +57,7 @@ await hiro.claimStreak();
 const offers = await hiro.getOfferwallState();
 ```
 
-## What's New in v5.8.0
+**Also in v5.8.0:**
 
 - Discord Social SDK integration (Rich Presence, friends, lobbies, voice, invites, DMs, moderation)
 - Satori Analytics (events, feature flags, A/B experiments, live events)
@@ -101,6 +101,10 @@ Sensitive or environment-specific values (e.g. `moralisApiKey`, Nakama host/port
 - Node.js 18+ or modern browser with a Web3 wallet (MetaMask, Coinbase Wallet, etc.)
 - [@heroiclabs/nakama-js](https://github.com/heroiclabs/nakama-js) v2.7+
 - [ethers](https://docs.ethers.org/) v6+
+
+### Platform Support
+
+- **Web3**: Browser (with Web3 wallet), Node.js
 
 ## Installation
 
@@ -178,15 +182,17 @@ const records = await ivx.fetchLeaderboard('weekly_leaderboard');
 | Leaderboards | ✅ Supported |
 | Cloud Storage | ✅ Supported |
 | RPC Calls | ✅ Supported |
-| AI Voice & Host | ✅ New in v5.8.0 |
-| Multiplayer & Game Modes | ✅ New in v5.8.0 |
-| Hiro Live-Ops Systems | ✅ New in v5.8.0 |
+| AI Voice & Host | 🔶 Stub |
+| Multiplayer & Game Modes | 🔶 Stub |
+| Hiro Live-Ops Systems | 🔶 Stub |
 | Analytics | ✅ Supported |
-| Discord Social SDK | ✅ New in v5.8.0 |
-| Satori Analytics | ✅ New in v5.8.0 |
+| Discord Social SDK | 🔶 Stub |
+| Satori Analytics | 🔶 Stub |
 | TypeScript Types | ✅ Full Support |
 | Thirdweb Integration | Config Ready |
 | Moralis Integration | Config Ready |
+
+> 🔶 **Stub** = Full API surface exists. Methods log warnings and return empty/mock data. Zero code changes needed when backend support ships.
 
 ## Web3-Specific API
 

@@ -80,45 +80,45 @@ class IVXSatori {
   static final IVXSatori instance = IVXSatori._();
 
   Future<void> initialize(IVXSatoriConfig config) async {
-    throw UnimplementedError('IVXSatori.initialize');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<void> authenticate({
     required String id,
     Map<String, String>? properties,
   }) async {
-    throw UnimplementedError('IVXSatori.authenticate');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<void> updateIdentity(Map<String, String> properties) async {
-    throw UnimplementedError('IVXSatori.updateIdentity');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<void> captureEvents(List<IVXSatoriEvent> events) async {
-    throw UnimplementedError('IVXSatori.captureEvents');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<Map<String, IVXSatoriFlag>> getAllFlags() async {
-    throw UnimplementedError('IVXSatori.getAllFlags');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<IVXSatoriFlag?> getFlag(String name) async {
-    throw UnimplementedError('IVXSatori.getFlag');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<String?> getExperimentVariant(String experimentName) async {
-    throw UnimplementedError('IVXSatori.getExperimentVariant');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<List<IVXSatoriExperiment>> getAllExperiments() async {
-    throw UnimplementedError('IVXSatori.getAllExperiments');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<List<IVXSatoriLiveEvent>> getLiveEvents() async {
-    throw UnimplementedError('IVXSatori.getLiveEvents');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<void> logout() async {
-    throw UnimplementedError('IVXSatori.logout');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 }

@@ -1222,7 +1222,11 @@ Do not include any other top-level keys. Do not include code fences.";
             }
             return items;
         }
-        catch { return null; }
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"[APIManager] Operation failed: {ex.Message}");
+            return null;
+        }
     }
 
     private static AIQuizItem TryParseSingle(string json, string category, string difficulty)
@@ -1368,7 +1372,11 @@ Do not include any other top-level keys. Do not include code fences.";
         _userAccessToken = string.IsNullOrWhiteSpace(access) ? null : access.Trim();
         long expEpoch = DateTimeOffset.UtcNow.ToUnixTimeSeconds() + Math.Max(0, d.expiresIn <= 0 ? 1800 : d.expiresIn);
         try { _userAccessExpiryUtc = DateTimeOffset.FromUnixTimeSeconds(expEpoch).UtcDateTime; }
-        catch { _userAccessExpiryUtc = DateTime.UtcNow.AddMinutes(30); }
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"[APIManager] Operation failed: {ex.Message}");
+            _userAccessExpiryUtc = DateTime.UtcNow.AddMinutes(30);
+        }
 
         _useUserAuthToken = true;
 
@@ -1427,7 +1435,11 @@ Do not include any other top-level keys. Do not include code fences.";
             var expUtc = DateTimeOffset.FromUnixTimeSeconds(exp).UtcDateTime;
             return DateTime.UtcNow < expUtc.AddSeconds(-30);
         }
-        catch { return true; } // On any parse issue, default to usable rather than blocking.
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"[APIManager] Operation failed: {ex.Message}");
+            return true;
+        } // On any parse issue, default to usable rather than blocking.
     }
 
     private static async Task<string> TryResolveUserTokenOnceAsync(string provided, CancellationToken ct)
@@ -1494,7 +1506,11 @@ Do not include any other top-level keys. Do not include code fences.";
             var match = System.Text.RegularExpressions.Regex.Match(json, "\"sub\"\\s*:\\s*\"([^\"]+)\"");
             return match.Success ? match.Groups[1].Value : null;
         }
-        catch { return null; }
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"[APIManager] Operation failed: {ex.Message}");
+            return null;
+        }
     }
     private static string PadBase64(string s) => s.PadRight(s.Length + (4 - s.Length % 4) % 4, '=');
 #endif
@@ -2004,7 +2020,11 @@ Do not include any other top-level keys. Do not include code fences.";
             if (email.Contains(" ")) return false;
             return true;
         }
-        catch { return false; }
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"[APIManager] Operation failed: {ex.Message}");
+            return false;
+        }
     }
 
     private static void ValidatePassword(string password)
@@ -3103,8 +3123,8 @@ Do not include any other top-level keys. Do not include code fences.";
             fromDevice: fromDevice,
             appleKey: appleKey,
             macAddress: macAddress,
-            profilePicture: null,   // TODO: pass avatar URL if/when you have it
-            socialId: null,         // TODO: pass provider userId if/when you have it
+            profilePicture: null,
+            socialId: null,
             password: password      // usually null/empty for social
         );
 
@@ -3200,14 +3220,14 @@ Do not include any other top-level keys. Do not include code fences.";
 
                         // Try direct SocialLoginResponse
                         SocialLoginResponse social = null;
-                        try { social = JsonUtility.FromJson<SocialLoginResponse>(text); } catch { /* ignore */ }
+                        try { social = JsonUtility.FromJson<SocialLoginResponse>(text); } catch (Exception ex) { Debug.LogWarning($"[APIManager] Operation failed: {ex.Message}"); }
 
                         if (social != null && social.data != null)
                             return social;
 
                         // If backend returned normal LoginResponse, normalize into SocialLoginResponse
                         LoginResponse lr = null;
-                        try { lr = JsonUtility.FromJson<LoginResponse>(text); } catch { /* ignore */ }
+                        try { lr = JsonUtility.FromJson<LoginResponse>(text); } catch (Exception ex) { Debug.LogWarning($"[APIManager] Operation failed: {ex.Message}"); }
 
                         if (lr != null && lr.data != null)
                         {
@@ -3451,7 +3471,7 @@ Do not include any other top-level keys. Do not include code fences.";
         {
             // Try normal login shape first
             LoginResponse login = null;
-            try { login = JsonUtility.FromJson<LoginResponse>(responseJson); } catch { /* ignore */ }
+            try { login = JsonUtility.FromJson<LoginResponse>(responseJson); } catch (Exception ex) { Debug.LogWarning($"[APIManager] Operation failed: {ex.Message}"); }
 
             if (login != null && login.data != null && login.data.user != null &&
                 (!string.IsNullOrEmpty(login.data.accessToken) || !string.IsNullOrEmpty(login.data.token)))
@@ -3481,7 +3501,7 @@ Do not include any other top-level keys. Do not include code fences.";
 
             // Try social envelope
             SocialLoginResponse social = null;
-            try { social = JsonUtility.FromJson<SocialLoginResponse>(responseJson); } catch { /* ignore */ }
+            try { social = JsonUtility.FromJson<SocialLoginResponse>(responseJson); } catch (Exception ex) { Debug.LogWarning($"[APIManager] Operation failed: {ex.Message}"); }
 
             if (social != null && social.data != null && social.data.user != null)
             {
@@ -3625,7 +3645,11 @@ Do not include any other top-level keys. Do not include code fences.";
         if (accessTokenExpiresInEpoch.HasValue && accessTokenExpiresInEpoch.Value > 0)
         {
             try { _userAccessExpiryUtc = DateTimeOffset.FromUnixTimeSeconds(accessTokenExpiresInEpoch.Value).UtcDateTime; }
-            catch { _userAccessExpiryUtc = DateTime.UtcNow.AddMinutes(30); }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[APIManager] Operation failed: {ex.Message}");
+                _userAccessExpiryUtc = DateTime.UtcNow.AddMinutes(30);
+            }
         }
         else
         {
@@ -3735,7 +3759,11 @@ Do not include any other top-level keys. Do not include code fences.";
                 _userRefreshToken = resp.data.refreshToken.Trim();
 
             try { _userAccessExpiryUtc = DateTimeOffset.FromUnixTimeSeconds(resp.data.accessTokenExpiresIn).UtcDateTime; }
-            catch { _userAccessExpiryUtc = DateTime.UtcNow.AddMinutes(30); }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[APIManager] Operation failed: {ex.Message}");
+                _userAccessExpiryUtc = DateTime.UtcNow.AddMinutes(30);
+            }
         }
     }
 
@@ -4185,7 +4213,7 @@ Do not include any other top-level keys. Do not include code fences.";
                     // Re-acquire OAuth immediately once if we already were using OAuth
                     if (attempt < MaxRetries)
                     {
-                        try { await EnsureTokenAsync(ct); } catch { /* ignore */ }
+                        try { await EnsureTokenAsync(ct); } catch (Exception ex) { Debug.LogWarning($"[APIManager] Operation failed: {ex.Message}"); }
                         continue;
                     }
                 }
@@ -4287,7 +4315,11 @@ Do not include any other top-level keys. Do not include code fences.";
                 var expUtc = DateTimeOffset.FromUnixTimeSeconds(exp).UtcDateTime;
                 return DateTime.UtcNow < expUtc.AddSeconds(-30);
             }
-            catch { return true; }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[APIManager] Operation failed: {ex.Message}");
+                return true;
+            }
         }
 
         async Task<string> GetBearerTokenResilientlyAsync(string provided, bool forceOAuth, CancellationToken tokenCt)
@@ -4416,7 +4448,7 @@ Do not include any other top-level keys. Do not include code fences.";
                         if (attempt < MaxRetries)
                         {
                             // If we were already on OAuth, reacquire once and retry.
-                            try { await EnsureTokenAsync(ct); } catch { /* ignore */ }
+                            try { await EnsureTokenAsync(ct); } catch (Exception ex) { Debug.LogWarning($"[APIManager] Operation failed: {ex.Message}"); }
                             continue;
                         }
                     }
@@ -5085,7 +5117,11 @@ Do not include any other top-level keys. Do not include code fences.";
                 var expUtc = DateTimeOffset.FromUnixTimeSeconds(exp).UtcDateTime;
                 return DateTime.UtcNow < expUtc.AddSeconds(-30);
             }
-            catch { return true; }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[APIManager] Operation failed: {ex.Message}");
+                return true;
+            }
         }
 
         async Task<string> GetBearerTokenResilientlyAsync(string provided, bool forceOAuth, CancellationToken tokenCt)
@@ -5212,7 +5248,7 @@ Do not include any other top-level keys. Do not include code fences.";
                         if (attempt < MaxRetries)
                         {
                             // If already using OAuth, reacquire once and retry.
-                            try { await EnsureTokenAsync(ct); } catch { /* ignore */ }
+                            try { await EnsureTokenAsync(ct); } catch (Exception ex) { Debug.LogWarning($"[APIManager] Operation failed: {ex.Message}"); }
                             continue;
                         }
                     }
@@ -5408,7 +5444,11 @@ Do not include any other top-level keys. Do not include code fences.";
                 var expUtc = DateTimeOffset.FromUnixTimeSeconds(exp).UtcDateTime;
                 return DateTime.UtcNow < expUtc.AddSeconds(-30);
             }
-            catch { return true; }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[APIManager] Operation failed: {ex.Message}");
+                return true;
+            }
         }
 
         async Task<string> GetBearerTokenResilientlyAsync(string provided, bool forceOAuth, CancellationToken tokenCt)
@@ -6736,7 +6776,11 @@ Do not include any other top-level keys. Do not include code fences.";
                 var expUtc = DateTimeOffset.FromUnixTimeSeconds(exp).UtcDateTime;
                 return DateTime.UtcNow < expUtc.AddSeconds(-30);
             }
-            catch { return true; }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[APIManager] Operation failed: {ex.Message}");
+                return true;
+            }
         }
 
         async Task<string> GetBearerTokenResilientlyAsync(string provided, bool forceOAuth, CancellationToken tokenCt)
@@ -6885,7 +6929,7 @@ Do not include any other top-level keys. Do not include code fences.";
                         forceOAuthNextAttempt = true;
 
                         // If already on OAuth, reacquire once and retry
-                        try { await EnsureTokenAsync(ct); } catch { /* ignore */ }
+                        try { await EnsureTokenAsync(ct); } catch (Exception ex) { Debug.LogWarning($"[APIManager] Operation failed: {ex.Message}"); }
                         continue;
                     }
 
@@ -7052,7 +7096,7 @@ Do not include any other top-level keys. Do not include code fences.";
                     if (!isNetErr && !isHttpErr && code >= 200 && code < 300)
                     {
                         ReferralUrlResponse resp = null;
-                        try { resp = JsonUtility.FromJson<ReferralUrlResponse>(text); } catch { /* tolerate shape drift */ }
+                        try { resp = JsonUtility.FromJson<ReferralUrlResponse>(text); } catch (Exception ex) { Debug.LogWarning($"[APIManager] Operation failed: {ex.Message}"); }
 
                         // Best-effort fallback if server shape changes
                         if (resp == null)
@@ -7264,7 +7308,7 @@ Do not include any other top-level keys. Do not include code fences.";
                     {
                         // Tolerant parse
                         SignupRewardResponse resp = null;
-                        try { resp = JsonUtility.FromJson<SignupRewardResponse>(text); } catch { /* tolerate */ }
+                        try { resp = JsonUtility.FromJson<SignupRewardResponse>(text); } catch (Exception ex) { Debug.LogWarning($"[APIManager] Operation failed: {ex.Message}"); }
 
                         if (resp == null)
                         {

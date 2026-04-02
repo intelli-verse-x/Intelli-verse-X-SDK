@@ -36,6 +36,7 @@ void UIVXSatori::Authenticate(const FString& InIdentityId, const TMap<FString, F
         UE_LOG(LogIVX, Error, TEXT("[IVXSatori] Authenticate called before Initialize."));
         return;
     }
+    UE_LOG(LogIVX, Warning, TEXT("[IVXSatori] Authenticate: stub – not yet implemented"));
     IdentityId = InIdentityId;
 }
 
@@ -47,6 +48,7 @@ void UIVXSatori::UpdateIdentity(const TMap<FString, FString>& DefaultProperties,
         UE_LOG(LogIVX, Error, TEXT("[IVXSatori] UpdateIdentity called before Initialize."));
         return;
     }
+    UE_LOG(LogIVX, Warning, TEXT("[IVXSatori] UpdateIdentity: stub – not yet implemented"));
 }
 
 void UIVXSatori::CaptureEvents(const TArray<FIVXSatoriEvent>& Events)
@@ -56,6 +58,7 @@ void UIVXSatori::CaptureEvents(const TArray<FIVXSatoriEvent>& Events)
         UE_LOG(LogIVX, Error, TEXT("[IVXSatori] CaptureEvents called before Initialize."));
         return;
     }
+    UE_LOG(LogIVX, Warning, TEXT("[IVXSatori] CaptureEvents: stub – not yet implemented"));
 }
 
 TArray<FIVXSatoriFlag> UIVXSatori::GetAllFlags()
@@ -65,6 +68,7 @@ TArray<FIVXSatoriFlag> UIVXSatori::GetAllFlags()
         UE_LOG(LogIVX, Error, TEXT("[IVXSatori] GetAllFlags called before Initialize."));
         return TArray<FIVXSatoriFlag>();
     }
+    UE_LOG(LogIVX, Warning, TEXT("[IVXSatori] GetAllFlags: stub – not yet implemented"));
     return TArray<FIVXSatoriFlag>();
 }
 
@@ -75,6 +79,7 @@ bool UIVXSatori::GetFlag(const FString& Name, FIVXSatoriFlag& OutFlag)
         UE_LOG(LogIVX, Error, TEXT("[IVXSatori] GetFlag called before Initialize."));
         return false;
     }
+    UE_LOG(LogIVX, Warning, TEXT("[IVXSatori] GetFlag: stub – not yet implemented"));
     return false;
 }
 
@@ -85,6 +90,7 @@ FString UIVXSatori::GetExperimentVariant(const FString& ExperimentName)
         UE_LOG(LogIVX, Error, TEXT("[IVXSatori] GetExperimentVariant called before Initialize."));
         return FString();
     }
+    UE_LOG(LogIVX, Warning, TEXT("[IVXSatori] GetExperimentVariant: stub – not yet implemented"));
     return FString();
 }
 
@@ -95,6 +101,7 @@ TArray<FIVXSatoriExperiment> UIVXSatori::GetAllExperiments()
         UE_LOG(LogIVX, Error, TEXT("[IVXSatori] GetAllExperiments called before Initialize."));
         return TArray<FIVXSatoriExperiment>();
     }
+    UE_LOG(LogIVX, Warning, TEXT("[IVXSatori] GetAllExperiments: stub – not yet implemented"));
     return TArray<FIVXSatoriExperiment>();
 }
 
@@ -105,6 +112,7 @@ TArray<FIVXSatoriLiveEvent> UIVXSatori::GetLiveEvents()
         UE_LOG(LogIVX, Error, TEXT("[IVXSatori] GetLiveEvents called before Initialize."));
         return TArray<FIVXSatoriLiveEvent>();
     }
+    UE_LOG(LogIVX, Warning, TEXT("[IVXSatori] GetLiveEvents: stub – not yet implemented"));
     return TArray<FIVXSatoriLiveEvent>();
 }
 
@@ -115,5 +123,6 @@ void UIVXSatori::Logout()
         UE_LOG(LogIVX, Error, TEXT("[IVXSatori] Logout called before Initialize."));
         return;
     }
+    UE_LOG(LogIVX, Warning, TEXT("[IVXSatori] Logout: stub – not yet implemented"));
     IdentityId.Reset();
 }

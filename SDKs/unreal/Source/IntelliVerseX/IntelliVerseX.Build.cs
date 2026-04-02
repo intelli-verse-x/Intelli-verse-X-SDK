@@ -14,6 +14,7 @@ public class IntelliVerseX : ModuleRules
             "Core",
             "CoreUObject",
             "Engine",
+            "HeadMountedDisplay",
             "HTTP",
             "Json",
             "JsonUtilities",

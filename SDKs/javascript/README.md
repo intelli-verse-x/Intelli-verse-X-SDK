@@ -61,7 +61,7 @@ const offers = await hiro.getOfferwallState();
 await hiro.startFriendBattle(friendId, 'quiz_duel');
 ```
 
-## What's New in v5.8.0
+**Also in v5.8.0:**
 
 - Discord Social SDK integration (Rich Presence, friends, lobbies, voice, invites, DMs, moderation)
 - Satori Analytics (events, feature flags, A/B experiments, live events)
@@ -100,6 +100,10 @@ const flags = await satori.getFeatureFlags();
 
 - Node.js 18+ or modern browser
 - [@heroiclabs/nakama-js](https://github.com/heroiclabs/nakama-js) v2.7+
+
+### Platform Support
+
+- **JavaScript**: Node.js, Browser, React Native (experimental), Electron
 
 ## Installation
 
@@ -204,15 +208,17 @@ ivx.initialize({ nakamaHost: 'nakama-rest.intelli-verse-x.ai' });
 | Cloud Storage | ✅ Supported |
 | RPC Calls | ✅ Supported |
 | Real-time Socket | ✅ Supported |
-| AI Voice & Host | ✅ New in v5.8.0 |
-| Multiplayer & Game Modes | ✅ New in v5.8.0 |
-| Hiro Live-Ops Systems | ✅ New in v5.8.0 |
+| AI Voice & Host | 🔶 Stub |
+| Multiplayer & Game Modes | 🔶 Stub |
+| Hiro Live-Ops Systems | 🔶 Stub |
 | Analytics | ✅ Supported |
-| Discord Social SDK | ✅ New in v5.8.0 |
-| Satori Analytics | ✅ New in v5.8.0 |
+| Discord Social SDK | 🔶 Stub |
+| Satori Analytics | 🔶 Stub |
 | TypeScript Types | ✅ Full Support |
 | Node.js | ✅ Supported |
 | Browser | ✅ Supported |
+
+> 🔶 **Stub** = Full API surface exists. Methods log warnings and return empty/mock data. Zero code changes needed when backend support ships.
 
 ## Project Structure
 

@@ -116,7 +116,7 @@ function M.test_module_has_version()
         local ivx = require "intelliversex.ivx"
         assert_not_nil(ivx.SDK_VERSION)
         assert_type(ivx.SDK_VERSION, "string", "SDK_VERSION type")
-        assert_eq(ivx.SDK_VERSION, "5.1.0", "SDK version")
+        assert_eq(ivx.SDK_VERSION, "5.8.0", "SDK version")
     end)
 end
 

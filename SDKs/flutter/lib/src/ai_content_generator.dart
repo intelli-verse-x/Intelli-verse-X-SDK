@@ -36,14 +36,14 @@ class IVXAIContentGenerator {
   bool get isGenerating => false;
 
   void initialize(Object? config) {
-    throw UnimplementedError('IVXAIContentGenerator.initialize');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<IVXGeneratedQuest?> generateQuest(
     IVXQuestTemplate? template, [
     String? playerContext,
   ]) async {
-    throw UnimplementedError('IVXAIContentGenerator.generateQuest');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<IVXGeneratedStory?> generateStory(
@@ -51,7 +51,7 @@ class IVXAIContentGenerator {
     String genre = 'fantasy',
     int maxWords = 500,
   ]) async {
-    throw UnimplementedError('IVXAIContentGenerator.generateStory');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<IVXGeneratedItem?> generateItemDescription(
@@ -59,24 +59,24 @@ class IVXAIContentGenerator {
     String itemType,
     String rarity,
   ) async {
-    throw UnimplementedError('IVXAIContentGenerator.generateItemDescription');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<IVXGeneratedDialogue?> generateDialogue(
     String scenario,
     List<String>? characters,
   ) async {
-    throw UnimplementedError('IVXAIContentGenerator.generateDialogue');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   Future<String?> generateFromTemplate(
     String template,
     Map<String, String>? variables,
   ) async {
-    throw UnimplementedError('IVXAIContentGenerator.generateFromTemplate');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 
   void cancelGeneration() {
-    throw UnimplementedError('IVXAIContentGenerator.cancelGeneration');
+    throw UnimplementedError('Not yet implemented — stub only');
   }
 }

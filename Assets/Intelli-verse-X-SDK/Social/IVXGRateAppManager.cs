@@ -500,7 +500,10 @@ namespace IntelliVerseX.Games.Social
                     var type = assembly.GetType(typeName, false);
                     if (type != null) return type;
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning($"[IVXGRateAppManager] Operation failed: {ex.Message}");
+                }
             }
             return null;
         }

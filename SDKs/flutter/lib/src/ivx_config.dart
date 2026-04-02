@@ -14,10 +14,10 @@ class IVXConfig {
 
   const IVXConfig({
     this.gameId = '',
-    this.nakamaHost = '127.0.0.1',
-    this.nakamaPort = 7350,
+    this.nakamaHost = 'nakama-rest.intelli-verse-x.ai',
+    this.nakamaPort = 443,
     this.nakamaServerKey = 'defaultkey',
-    this.useSSL = false,
+    this.useSSL = true,
     this.enableAnalytics = true,
     this.enableDebugLogs = false,
     this.verboseLogging = false,
