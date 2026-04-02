@@ -78,7 +78,7 @@ Assets/_IntelliVerseXSDK/Editor/
 
 ## 📦 Created Prefabs
 
-The wizard creates the following prefabs in `Assets/_IntelliVerseXSDK/Prefabs/Managers/`:
+The wizard creates the following prefabs in `Assets/Intelli-verse-X-SDK/Prefabs/Managers/`:
 
 | Prefab | Components | Description |
 |--------|------------|-------------|

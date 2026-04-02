@@ -49,7 +49,7 @@ theme:
   icon:
     repo: fontawesome/brands/github
   logo: assets/logo.svg
-  favicon: assets/favicon.ico
+  favicon: assets/logo.svg
 
 nav:
   - Home: index.md

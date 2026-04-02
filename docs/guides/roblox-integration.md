@@ -46,7 +46,7 @@ version = "1.0.0"
 realm = "server"
 
 [dependencies]
-IntelliVerseX = "intelliversex/ivx-roblox@5.9.0"
+IntelliVerseX = "intelliversex/ivx-roblox@5.8.0"
 ```
 
 ```bash

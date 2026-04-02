@@ -18,7 +18,9 @@ public class IntelliVerseX : ModuleRules
             "HTTP",
             "Json",
             "JsonUtilities",
-            "NakamaUnreal"
+            "NakamaUnreal",
+            "OnlineSubsystem",
+            "OnlineSubsystemUtils"
         });
     }
 }

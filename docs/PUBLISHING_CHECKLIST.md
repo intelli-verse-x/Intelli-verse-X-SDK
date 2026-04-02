@@ -2,7 +2,7 @@
 
 > Master checklist of all platforms where the SDK, tools, assets, and studio presence should be published for maximum reach across the gaming ecosystem (170+ countries).
 
-**Last Updated:** 2026-04-01 | **SDK Version:** 5.9.0
+**Last Updated:** 2026-04-01 | **SDK Version:** 5.8.0
 
 ---
 
@@ -198,7 +198,7 @@ Before publishing to any platform:
 
 - [ ] README / description matches platform formatting requirements
 - [ ] Screenshots / media assets prepared (1280x720 minimum)
-- [ ] Version number consistent across all manifests (currently 5.9.0)
+- [ ] Version number consistent across all manifests (currently 5.8.0)
 - [ ] License file included (MIT)
 - [ ] No secrets or API keys in published artifacts
 - [ ] CHANGELOG up to date

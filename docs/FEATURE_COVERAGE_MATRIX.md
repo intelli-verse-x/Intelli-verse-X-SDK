@@ -1,4 +1,4 @@
-# IntelliVerseX SDK v5.9.0 — Feature Coverage Matrix
+# IntelliVerseX SDK v5.8.0 — Feature Coverage Matrix
 
 > Verified, audited feature parity across all 11 supported platforms.
 
@@ -141,7 +141,7 @@
 
 ---
 
-## Nakama Live Service Systems (v5.9.0)
+## Nakama Live Service Systems (v5.8.0)
 
 | Feature | Unity | JS/TS | Web3 | Java | Flutter | Unreal | Godot | Defold | C++ | Cocos |
 |---------|:-----:|:-----:|:----:|:----:|:-------:|:------:|:-----:|:------:|:---:|:-----:|
@@ -205,7 +205,7 @@
 > **API Surface Coverage** (Y + S combined) represents what a developer can code against today.
 > Stubs are zero-code-change upgradeable once backend RPCs are configured.
 
-> **VR/AR/XR support** (v5.9.0): Unity now has real XR subsystem queries via `IVXXRPlatformHelper`
+> **VR/AR/XR support** (v5.8.0): Unity now has real XR subsystem queries via `IVXXRPlatformHelper`
 > and `IVXXRInputAdapter` (Meta Quest, SteamVR upgraded to Y). AR Foundation wrapped by `IVXARHelper`.
 > C++ has real OpenXR detection (Meta Quest, SteamVR upgraded to Y). Unreal and Godot retain stubs.
 > Console adapter interfaces added for Unity (`S`) and Unreal (`S` via `IVXConsoleSubsystem`).
@@ -215,7 +215,7 @@
 ## Key Takeaways
 
 - **Unity** is the reference implementation with the richest feature set (68 features fully implemented, including 13 Nakama live service managers, real XR support, and WebGL).
-- **v5.9.0 adds 13 Nakama-backed engagement systems**: Push Notifications, Daily Rewards (server-authoritative), Daily Missions, 6-Tier Leagues, Fortune Wheel, Achievements, Badges (56), Retention v2 + Winback, Season Pass, Weekly/Monthly Goals, Friend Streaks, Characters, Tournaments.
+- **v5.8.0 adds 13 Nakama-backed engagement systems**: Push Notifications, Daily Rewards (server-authoritative), Daily Missions, 6-Tier Leagues, Fortune Wheel, Achievements, Badges (56), Retention v2 + Winback, Season Pass, Weekly/Monthly Goals, Friend Streaks, Characters, Tournaments.
 - **XR/VR upgraded from stubs to real implementations** — Unity now has real XR subsystem queries (`IVXXRPlatformHelper`, `IVXXRInputAdapter`) for Meta Quest and SteamVR. `IVXARHelper` wraps AR Foundation for ARKit/ARCore. C++ has real OpenXR detection for Meta Quest and SteamVR.
 - **Console support added** — Unity and Unreal now have console adapter interfaces (PS5/Xbox/Switch) marked `S`. Unreal's `IVXConsoleSubsystem` wraps `IOnlineSubsystem` for platform-specific wiring.
 - **WebGL/Web support** — Full implementations for Unity, JS/TS, and Web3. JS/TS gains WebXR support via `IVXWebXRHelper.ts`.
@@ -239,4 +239,4 @@ This means you can:
 
 ---
 
-*IntelliVerseX SDK v5.9.0 — 11 platforms, 96 features, one API.*
+*IntelliVerseX SDK v5.8.0 — 11 platforms, 96 features, one API.*

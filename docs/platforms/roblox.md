@@ -20,7 +20,7 @@ Add to your `wally.toml`:
 
 ```toml
 [dependencies]
-IntelliVerseX = "intelliversex/ivx-roblox@5.9.0"
+IntelliVerseX = "intelliversex/ivx-roblox@5.8.0"
 ```
 
 Then run:

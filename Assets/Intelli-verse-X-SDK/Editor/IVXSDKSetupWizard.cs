@@ -1,6 +1,6 @@
 // File: IVXSDKSetupWizard.cs
 // Purpose: Comprehensive Unified SDK Setup Wizard for IntelliVerseX SDK
-// Version: 5.0.0
+// Version: 5.8.0
 // Author: IntelliVerseX Team
 // Description: Single unified panel for ALL SDK module setup including Auth, Friends, Monetization, Platform Validation, etc.
 // Note: Supports both development (Assets/Intelli-verse-X-SDK) and UPM package (Packages/com.intelliversex.sdk) installations.

@@ -2,7 +2,7 @@
 
 > AI/LLM Stack + Hiro Live-Ops + Cross-Game Identity for Roblox experiences.
 
-**Version:** 5.9.0 | **Language:** Luau | **Runtime:** Roblox Server + Studio Plugin
+**Version:** 5.8.0 | **Language:** Luau | **Runtime:** Roblox Server + Studio Plugin
 
 ## Why This SDK?
 
@@ -22,7 +22,7 @@ Roblox natively handles auth, leaderboards, storage, matchmaking, and monetizati
 ```bash
 # wally.toml
 [dependencies]
-IntelliVerseX = "intelliversex/ivx-roblox@5.9.0"
+IntelliVerseX = "intelliversex/ivx-roblox@5.8.0"
 ```
 
 **Option B: Copy into your project**

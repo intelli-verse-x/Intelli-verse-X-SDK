@@ -1,6 +1,6 @@
 [package]
 name = "intelliversex/ivx-roblox"
-version = "5.9.0"
+version = "5.8.0"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "server"
 description = "IntelliVerseX SDK for Roblox — AI/LLM, Hiro Live-Ops, Cross-Game Identity"

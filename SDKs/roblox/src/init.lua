@@ -15,7 +15,7 @@ local Remotes = require(script.Remotes)
 
 local IVX = {}
 
-IVX.SDK_VERSION = "5.9.0"
+IVX.SDK_VERSION = "5.8.0"
 IVX.Config = Config
 IVX.Auth = Auth
 IVX.Http = HttpClient
