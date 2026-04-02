@@ -6,7 +6,7 @@
 
 ## Prompt
 
-You are integrating the **IntelliVerseX SDK v5.7.0** into my game. The SDK provides a complete backend-as-a-service with AI, social, monetization, and engagement features. Follow every step below precisely.
+You are integrating the **IntelliVerseX SDK v5.8.0** into my game. The SDK provides a complete backend-as-a-service with AI, social, monetization, and engagement features. Follow every step below precisely.
 
 ---
 
@@ -1013,4 +1013,4 @@ Assets/
 
 ---
 
-*IntelliVerseX SDK v5.7.0 — 10 platforms, 70+ features, 1 prompt.*
+*IntelliVerseX SDK v5.8.0 — 10 platforms, 70+ features, 1 prompt.*

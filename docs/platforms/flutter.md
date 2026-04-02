@@ -24,7 +24,7 @@ Or, once published to pub.dev:
 
 ```yaml
 dependencies:
-  intelliversex_sdk: ^5.1.0
+  intelliversex_sdk: ^5.8.0
 ```
 
 ## Quick Start

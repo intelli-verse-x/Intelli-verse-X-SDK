@@ -1,6 +1,6 @@
 {
   "name": "@intelliversex/sdk",
-  "version": "5.5.0",
+  "version": "5.8.0",
   "description": "IntelliVerseX SDK for JavaScript/TypeScript — Auth, Backend (Nakama), Analytics, Social, Monetization, AI, Multiplayer, Hiro Live Ops, and more.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

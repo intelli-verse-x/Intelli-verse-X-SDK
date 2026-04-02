@@ -2,7 +2,7 @@
 
 > Complete modular game development SDK for C/C++ — Auth, Backend (Nakama), Analytics, Social, Monetization, AI, Multiplayer, Hiro Live-Ops, and more.
 
-## What's New in v5.5.0
+## What's New in v5.8.0
 
 ### AI Voice & Host (`ivx::AIClient`)
 
@@ -56,6 +56,41 @@ hiro.getStreakState([](const ivx::StreakState& s) { ... });
 hiro.claimStreak([](const ivx::StreakState& s) { ... });
 ```
 
+## What's New in v5.8.0
+
+- Discord Social SDK integration (Rich Presence, friends, lobbies, voice, invites, DMs, moderation)
+- Satori Analytics (events, feature flags, A/B experiments, live events)
+- Hiro parity: retention, IAP triggers, smart ad timer (Unreal/C++/Cocos/Godot/Defold)
+
+### Discord Social SDK (`ivx::DiscordSocial`)
+
+- Rich Presence, friends list, lobbies, voice chat
+- Game invites, DMs, moderation tools
+
+```cpp
+#include <intelliversex/ivx_discord_social.h>
+
+auto& discord = ivx::DiscordSocial::instance();
+discord.initialize({"YOUR_APP_ID", "YOUR_CLIENT_ID"});
+
+discord.updatePresence("In Match", "Round 3 of 5");
+discord.getFriends([](const std::vector<ivx::Friend>& friends) { /* ... */ });
+```
+
+### Satori Analytics (`ivx::Satori`)
+
+- Event capture, feature flags, A/B experiments, live events
+
+```cpp
+#include <intelliversex/ivx_satori.h>
+
+auto& satori = ivx::Satori::instance();
+satori.initialize({"https://satori.example.com", "your-satori-key"});
+
+satori.captureEvents({{"level_complete", "5"}});
+satori.getFeatureFlags([](const std::vector<ivx::FeatureFlag>& flags) { /* ... */ });
+```
+
 ## Requirements
 
 - C++17 compiler (GCC 8+, Clang 7+, MSVC 2019+)
@@ -86,6 +121,20 @@ target_link_libraries(your_app PRIVATE intelliversex)
 1. Build the Nakama C++ SDK
 2. Copy `include/intelliversex/` and `src/` into your project
 3. Compile and link against Nakama
+
+## Setting Up Nakama Server
+
+The SDK requires a [Nakama](https://heroiclabs.com/nakama/) game server for backend features.
+
+**Quick start with Docker:**
+
+```bash
+docker run -d --name nakama -p 7349:7349 -p 7350:7350 -p 7351:7351 heroiclabs/nakama
+```
+
+**Heroic Labs Cloud:** For production, use [Heroic Labs Cloud](https://heroiclabs.com/) for managed hosting.
+
+See [Nakama documentation](https://heroiclabs.com/docs/nakama/) for full setup instructions.
 
 ## Quick Start
 
@@ -138,10 +187,12 @@ int main() {
 | Leaderboards | ✅ Supported |
 | Cloud Storage | ✅ Supported |
 | RPC Calls | ✅ Supported |
-| AI Voice & Host | ✅ New in v5.5.0 |
-| Multiplayer & Game Modes | ✅ New in v5.5.0 |
-| Hiro Live-Ops Systems | ✅ New in v5.5.0 |
+| AI Voice & Host | ✅ New in v5.8.0 |
+| Multiplayer & Game Modes | ✅ New in v5.8.0 |
+| Hiro Live-Ops Systems | ✅ New in v5.8.0 |
 | Analytics | ✅ Supported |
+| Discord Social SDK | ✅ New in v5.8.0 |
+| Satori Analytics | ✅ New in v5.8.0 |
 | Static Library | ✅ Supported |
 | Shared Library | ✅ Supported |
 
@@ -169,6 +220,17 @@ See the [full documentation](https://intelli-verse-x.github.io/Intelli-verse-X-U
 ## Nakama Client Library
 
 This SDK wraps the official [Nakama C++ Client](https://github.com/heroiclabs/nakama-cpp) (87 stars, 31 forks).
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Connection timeout | Verify Nakama server is running and accessible at the configured host:port |
+| Auth failed | Check server key matches your Nakama configuration |
+| AI features not working | Verify AI API endpoint and key are set in config |
+| Discord not connecting | Ensure application ID and client ID are valid and Discord app is approved |
+| Satori events not captured | Check Satori URL and API key are correctly configured |
+| Linker errors | Ensure Nakama C++ SDK is linked and `intelliversex` target is added to your `target_link_libraries` |
 
 ## License
 

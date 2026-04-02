@@ -3,7 +3,7 @@
 > **Complete modular game development SDK** — Integrate Auth, Identity, Analytics, Backend (Nakama), Social/Referrals, Monetization, and more into your games across **10 platforms**.
 
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-5.5.0-orange.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-5.8.0-orange.svg)](CHANGELOG.md)
 [![Documentation](https://img.shields.io/badge/Docs-Online-blue.svg)](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/)
 [![openupm](https://img.shields.io/npm/v/com.intelliversex.sdk?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.intelliversex.sdk)
 
@@ -52,12 +52,14 @@ Each SDK wraps the official [Nakama client library](https://heroiclabs.com/docs/
 | Hiro Systems | Yes | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC |
 | NFT / Token Queries | -- | -- | -- | -- | -- | -- | -- | -- | -- | Yes |
 | Token Gating | -- | -- | -- | -- | -- | -- | -- | -- | -- | Yes |
-| Satori Analytics | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| Discord Social SDK | Yes | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub |
+| Satori Analytics | Yes | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub |
+| AI Voice / Host | Yes | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub |
+| AI LLM Stack (6 modules) | Yes | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub | Stub |
 | Monetization (Ads/IAP) | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 | Localization | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 | Social / Friends | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 | Quiz System | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
-| AI Voice / Host | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 | Retention / Streaks | Yes | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC |
 | Spin Wheel / Engagement | Yes | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC |
 | Platform Optimizer | Yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
@@ -68,51 +70,52 @@ Each SDK wraps the official [Nakama client library](https://heroiclabs.com/docs/
 
 ## Quick Start (Unity)
 
-### Option A: OpenUPM (recommended)
+### 1. Install
 
-Add the [OpenUPM](https://openupm.com) scoped registry and dependency to `Packages/manifest.json`:
-
-```json
-{
-  "scopedRegistries": [
-    {
-      "name": "package.openupm.com",
-      "url": "https://package.openupm.com",
-      "scopes": ["com.intelliversex"]
-    }
-  ],
-  "dependencies": {
-    "com.intelliversex.sdk": "5.5.0"
-  }
-}
-```
-
-Or use the OpenUPM CLI: `openupm add com.intelliversex.sdk`
-
-### Option B: Git URL
+Add to `Packages/manifest.json`:
 
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/Intelli-verse-X-SDK"
+    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Assets/Intelli-verse-X-SDK#v5.8.0"
   }
 }
 ```
+
+### 2. One-Drop Setup
+
+1. Run **IntelliVerseX > Generate All Prefabs** from the menu bar
+2. Drag `IVX_Bootstrap.prefab` into your first scene
+3. Configure the Bootstrap Config asset with your server details
+
+### 3. Listen for Ready
 
 ```csharp
 using UnityEngine;
-using IntelliVerseX.Core;
-using IntelliVerseX.Identity;
+using IntelliVerseX.Bootstrap;
 
 public class GameInit : MonoBehaviour
 {
     void Start()
     {
-        IntelliVerseXUserIdentity.InitializeDevice();
-        IVXLogger.Log("IntelliVerseX SDK Ready!");
+        IVXBootstrap.OnBootstrapComplete += success =>
+        {
+            Debug.Log($"IntelliVerseX SDK Ready! Auth: {success}");
+            Debug.Log($"User: {IVXBootstrap.Instance.UserId}");
+        };
     }
 }
 ```
+
+> **No server yet?** The SDK works in offline mode with mock data — press Play and explore the 16 built-in demo UIs through the Demo Hub.
+
+### 4. Setting Up Nakama (backend)
+
+```bash
+docker run -d --name nakama -p 7349:7349 -p 7350:7350 -p 7351:7351 heroiclabs/nakama
+```
+
+Or use [Heroic Labs Cloud](https://heroiclabs.com/) for managed hosting.
 
 For other platforms, see the [Getting Started](#client-libraries) links above.
 

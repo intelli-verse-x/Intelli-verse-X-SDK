@@ -13,7 +13,7 @@ namespace IntelliVerseX.Demos
     {
         #region Constants
 
-        private const string VERSION_LABEL = "v5.7.0";
+        private const string VERSION_LABEL = "v5.8.0";
 
         private static readonly Color HubBackground = new Color32(0x1A, 0x1A, 0x2E, 0xFF);
 

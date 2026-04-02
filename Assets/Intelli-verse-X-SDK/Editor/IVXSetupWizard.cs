@@ -35,8 +35,8 @@ namespace IntelliVerseX.Editor
         private Vector2 scrollPosition;
         
         // REMOVED: Duplicate menu item - use "SDK Setup Wizard" instead
-        // [MenuItem("IntelliVerse-X SDK/Setup Wizard", priority = 0)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard
+        // [MenuItem("IntelliVerseX/Setup Wizard", priority = 0)]
+        // Use: IntelliVerseX > SDK Setup Wizard
         public static void ShowWizard()
         {
             var window = GetWindow<IVXSetupWizard>("SDK Setup Wizard");

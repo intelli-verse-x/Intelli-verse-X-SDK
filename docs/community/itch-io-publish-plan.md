@@ -51,7 +51,7 @@ Use **16:9** or itch’s recommended aspect ratio; PNG or JPG.
 From repo root (Windows PowerShell):
 
 ```powershell
-.\tools\scripts\package-itch-bundles.ps1 -Version 5.2.0
+.\tools\scripts\package-itch-bundles.ps1 -Version 5.8.0
 ```
 
 Output: `dist/itch/<version>/*.zip` — upload each zip to the matching itch.io project as the **primary file** (or attach as additional files).
@@ -60,7 +60,7 @@ Output: `dist/itch/<version>/*.zip` — upload each zip to the matching itch.io 
 
 - **Repository:** https://github.com/intelli-verse-x/Intelli-verse-X-SDK  
 - **Docs (MkDocs):** use your live docs URL if published (see root `README.md` badge)  
-- **Release (zips mirror):** https://github.com/intelli-verse-x/Intelli-verse-X-SDK/releases/tag/v5.2.0  
+- **Release (zips mirror):** https://github.com/intelli-verse-x/Intelli-verse-X-SDK/releases/tag/v5.8.0  
 
 ## After publishing
 

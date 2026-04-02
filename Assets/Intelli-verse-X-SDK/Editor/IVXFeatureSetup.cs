@@ -47,8 +47,8 @@ namespace IntelliVerseX.Editor
         #region Menu Items
 
         // REMOVED: Menu items consolidated into SDK Setup Wizard
-        // [MenuItem("IntelliVerse-X SDK/Feature Setup/Leaderboard Setup", false, 200)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Features tab
+        // [MenuItem("IntelliVerseX/Feature Setup/Leaderboard Setup", false, 200)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Features tab
         
         public static void OpenLeaderboardSetup()
         {
@@ -57,8 +57,8 @@ namespace IntelliVerseX.Editor
             window.Show();
         }
 
-        // [MenuItem("IntelliVerse-X SDK/Feature Setup/Friends Setup", false, 201)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Features tab
+        // [MenuItem("IntelliVerseX/Feature Setup/Friends Setup", false, 201)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Features tab
         public static void OpenFriendsSetup()
         {
             var window = GetWindow<IVXFeatureSetup>("Feature Setup");
@@ -66,8 +66,8 @@ namespace IntelliVerseX.Editor
             window.Show();
         }
 
-        // [MenuItem("IntelliVerse-X SDK/Feature Setup/Wallet Setup", false, 202)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Features tab
+        // [MenuItem("IntelliVerseX/Feature Setup/Wallet Setup", false, 202)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Features tab
         public static void OpenWalletSetup()
         {
             var window = GetWindow<IVXFeatureSetup>("Feature Setup");
@@ -75,8 +75,8 @@ namespace IntelliVerseX.Editor
             window.Show();
         }
 
-        // [MenuItem("IntelliVerse-X SDK/Feature Setup/One-Click Leaderboard", false, 250)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Features tab
+        // [MenuItem("IntelliVerseX/Feature Setup/One-Click Leaderboard", false, 250)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Features tab
         public static void QuickSetupLeaderboard()
         {
             SetupLeaderboard(null);
@@ -88,8 +88,8 @@ namespace IntelliVerseX.Editor
                 "OK");
         }
 
-        // [MenuItem("IntelliVerse-X SDK/Feature Setup/One-Click Friends", false, 251)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Features tab
+        // [MenuItem("IntelliVerseX/Feature Setup/One-Click Friends", false, 251)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Features tab
         public static void QuickSetupFriends()
         {
             SetupFriendsSystem(null);

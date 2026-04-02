@@ -13,7 +13,7 @@ Use this for your **8 drafts** on itch.io. Each section is **copy-paste** friend
 | IntelliVerseX C++ SDK | C++ | `SDKs/cpp` |
 | IntelliVerseX Java SDK | Java | `SDKs/java` |
 
-**Version:** 5.2.0 (adjust if you bump releases.)
+**Version:** 5.8.0 (adjust if you bump releases.)
 
 ---
 
@@ -65,7 +65,7 @@ MIT — see `LICENSE` inside the archive.
 
 - **README (this SDK):** included in the zip (`README.md`).
 - **Repo & cross-platform overview:** [github.com/intelli-verse-x/Intelli-verse-X-SDK](https://github.com/intelli-verse-x/Intelli-verse-X-SDK)
-- **Release notes:** [v5.2.0](https://github.com/intelli-verse-x/Intelli-verse-X-SDK/releases/tag/v5.2.0)
+- **Release notes:** [v5.8.0](https://github.com/intelli-verse-x/Intelli-verse-X-SDK/releases/tag/v5.8.0)
 
 ### Server
 
@@ -86,8 +86,8 @@ Replace `{PLATFORM}` with **Unity**, **Unreal**, **Godot**, **Defold**, **Cocos2
 
 ## Uploads
 
-1. Run `.\tools\scripts\package-itch-bundles.ps1 -Version 5.2.0` from the repository root.
-2. Upload the matching zip for this platform from `dist/itch/5.2.0/`.
+1. Run `.\tools\scripts\package-itch-bundles.ps1 -Version 5.8.0` from the repository root.
+2. Upload the matching zip for this platform from `dist/itch/5.8.0/`.
 3. Set visibility, pricing (e.g. **$0** or **Pay what you want**), and publish when ready.
 
 ---

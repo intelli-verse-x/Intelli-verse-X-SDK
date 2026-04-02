@@ -2,7 +2,7 @@
 
 > Complete modular game development SDK for Java and Android — Auth, Backend (Nakama), Analytics, Social, Monetization, AI, Multiplayer, Hiro Live-Ops, and more.
 
-## What's New in v5.5.0
+## What's New in v5.8.0
 
 ### AI Voice & Host (`IVXAIClient`)
 
@@ -56,6 +56,47 @@ hiro.streaks().claim().thenAccept(state -> { ... });
 hiro.offerwall().getState().thenAccept(offers -> { ... });
 ```
 
+## What's New in v5.8.0
+
+- Discord Social SDK integration (Rich Presence, friends, lobbies, voice, invites, DMs, moderation)
+- Satori Analytics (events, feature flags, A/B experiments, live events)
+- Hiro parity: retention, IAP triggers, smart ad timer (Unreal/C++/Cocos/Godot/Defold)
+
+### Discord Social SDK (`IVXDiscordSocial`)
+
+- Rich Presence, friends list, lobbies, voice chat
+- Game invites, DMs, moderation tools
+
+```java
+import com.intelliversex.sdk.social.IVXDiscordSocial;
+
+IVXDiscordSocial discord = IVXDiscordSocial.getInstance();
+discord.initialize(IVXDiscordConfig.builder()
+    .applicationId("YOUR_APP_ID")
+    .clientId("YOUR_CLIENT_ID")
+    .build());
+
+discord.updatePresence("In Match", "Round 3 of 5");
+discord.getFriends().thenAccept(friends -> { /* ... */ });
+```
+
+### Satori Analytics (`IVXSatori`)
+
+- Event capture, feature flags, A/B experiments, live events
+
+```java
+import com.intelliversex.sdk.analytics.IVXSatori;
+
+IVXSatori satori = IVXSatori.getInstance();
+satori.initialize(IVXSatoriConfig.builder()
+    .satoriUrl("https://satori.example.com")
+    .apiKey("your-satori-key")
+    .build());
+
+satori.captureEvents(List.of(new IVXEvent("level_complete", "5")));
+var flags = satori.getFeatureFlags();
+```
+
 ## Requirements
 
 - Java 11+ / Android API 21+
@@ -77,7 +118,7 @@ repositories {
 
 ```groovy
 dependencies {
-    implementation 'ai.intelli-verse-x:sdk:5.5.0'
+    implementation 'ai.intelli-verse-x:sdk:5.8.0'
 }
 ```
 
@@ -87,7 +128,7 @@ dependencies {
 <dependency>
     <groupId>ai.intelli-verse-x</groupId>
     <artifactId>sdk</artifactId>
-    <version>5.5.0</version>
+    <version>5.8.0</version>
 </dependency>
 ```
 
@@ -97,6 +138,20 @@ dependencies {
 cd SDKs/java
 ./gradlew build
 ```
+
+## Setting Up Nakama Server
+
+The SDK requires a [Nakama](https://heroiclabs.com/nakama/) game server for backend features.
+
+**Quick start with Docker:**
+
+```bash
+docker run -d --name nakama -p 7349:7349 -p 7350:7350 -p 7351:7351 heroiclabs/nakama
+```
+
+**Heroic Labs Cloud:** For production, use [Heroic Labs Cloud](https://heroiclabs.com/) for managed hosting.
+
+See [Nakama documentation](https://heroiclabs.com/docs/nakama/) for full setup instructions.
 
 ## Quick Start
 
@@ -179,10 +234,12 @@ public class GameActivity extends AppCompatActivity {
 | Leaderboards | ✅ Supported |
 | Cloud Storage | ✅ Supported |
 | RPC Calls | ✅ Supported |
-| AI Voice & Host | ✅ New in v5.5.0 |
-| Multiplayer & Game Modes | ✅ New in v5.5.0 |
-| Hiro Live-Ops Systems | ✅ New in v5.5.0 |
+| AI Voice & Host | ✅ New in v5.8.0 |
+| Multiplayer & Game Modes | ✅ New in v5.8.0 |
+| Hiro Live-Ops Systems | ✅ New in v5.8.0 |
 | Analytics | ✅ Supported |
+| Discord Social SDK | ✅ New in v5.8.0 |
+| Satori Analytics | ✅ New in v5.8.0 |
 | Android | ✅ Supported |
 | Desktop Java | ✅ Supported |
 
@@ -211,6 +268,16 @@ See the [full documentation](https://intelli-verse-x.github.io/Intelli-verse-X-U
 ## Nakama Client Library
 
 This SDK wraps the official [Nakama Java Client](https://github.com/heroiclabs/nakama-java) (37 stars, 22 forks).
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Connection timeout | Verify Nakama server is running and accessible at the configured host:port |
+| Auth failed | Check server key matches your Nakama configuration |
+| AI features not working | Verify AI API endpoint and key are set in config |
+| Discord not connecting | Ensure `applicationId` and `clientId` are valid and Discord app is approved |
+| Satori events not captured | Check `satoriUrl` and `apiKey` are correctly configured |
 
 ## License
 

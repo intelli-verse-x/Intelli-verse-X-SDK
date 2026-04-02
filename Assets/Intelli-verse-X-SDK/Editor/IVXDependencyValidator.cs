@@ -43,8 +43,8 @@ namespace IntelliVerseX.Editor
         }
         
         // REMOVED: Menu item consolidated into SDK Setup Wizard
-        // [MenuItem("IntelliVerse-X SDK/Validate Dependencies", priority = 4)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Dependencies tab
+        // [MenuItem("IntelliVerseX/Validate Dependencies", priority = 4)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Dependencies tab
         public static void ShowValidator()
         {
             var window = GetWindow<IVXDependencyValidator>("Dependency Validator");

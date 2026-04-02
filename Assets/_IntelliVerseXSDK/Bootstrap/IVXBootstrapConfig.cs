@@ -8,21 +8,22 @@ namespace IntelliVerseX.Bootstrap
     /// Holds references to all module configs plus backend settings.
     /// </summary>
     [CreateAssetMenu(fileName = "IVXBootstrapConfig", menuName = "IntelliVerseX/Bootstrap Config", order = 0)]
+    [HelpURL("https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/getting-started/quickstart/")]
     public sealed class IVXBootstrapConfig : ScriptableObject
     {
         #region Serialized Fields
 
         [Header("Backend (Nakama)")]
-        [Tooltip("Nakama server host (e.g. 127.0.0.1 or your-server.com)")]
+        [Tooltip("Nakama server hostname or IP address. Change from 127.0.0.1 before shipping.")]
         [SerializeField] private string _serverHost = "127.0.0.1";
 
-        [Tooltip("Nakama server port (default 7350)")]
+        [Tooltip("Nakama server gRPC port. Default: 7350")]
         [SerializeField] private int _serverPort = 7350;
 
-        [Tooltip("Nakama server key")]
+        [Tooltip("Nakama server key. Change from 'defaultkey' before shipping.")]
         [SerializeField] private string _serverKey = "defaultkey";
 
-        [Tooltip("Use SSL for Nakama connection")]
+        [Tooltip("Enable HTTPS/WSS for production servers")]
         [SerializeField] private bool _useSSL;
 
         [Tooltip("Automatically authenticate with device ID on startup")]
@@ -32,10 +33,10 @@ namespace IntelliVerseX.Bootstrap
         [SerializeField] private bool _persistSession = true;
 
         [Header("Module Configs")]
-        [Tooltip("AI module configuration (create via IntelliVerseX > AI > Configuration)")]
+        [Tooltip("Reference to IVXAIConfig ScriptableObject for AI features")]
         [SerializeField] private ScriptableObject _aiConfig;
 
-        [Tooltip("Discord module configuration (create via IntelliVerseX > Discord Config)")]
+        [Tooltip("Reference to IVXDiscordConfig ScriptableObject for Discord integration")]
         [SerializeField] private ScriptableObject _discordConfig;
 
         [Header("Feature Toggles")]
@@ -97,5 +98,17 @@ namespace IntelliVerseX.Bootstrap
         public bool DebugLogging => _debugLogging;
 
         #endregion
+
+        #if UNITY_EDITOR
+        private void OnValidate()
+        {
+            if (_serverHost == "127.0.0.1" || _serverHost == "localhost")
+                Debug.LogWarning($"[IVXBootstrapConfig] Server host is '{_serverHost}'. Change this before shipping to production.");
+            if (_serverKey == "defaultkey")
+                Debug.LogWarning("[IVXBootstrapConfig] Using default Nakama server key. Change this before shipping to production.");
+            if (_serverPort <= 0 || _serverPort > 65535)
+                Debug.LogError($"[IVXBootstrapConfig] Invalid server port: {_serverPort}. Must be 1-65535.");
+        }
+        #endif
     }
 }

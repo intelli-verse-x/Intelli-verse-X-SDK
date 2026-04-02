@@ -2,7 +2,7 @@
 
 > Complete modular game development SDK for Godot — Auth, Backend (Nakama), Analytics, Social, Monetization, AI, Multiplayer, Hiro Live-Ops, and more.
 
-## What's New in v5.5.0
+## What's New in v5.8.0
 
 ### AI Voice & Host (`IVXAIClient`)
 
@@ -54,6 +54,45 @@ await hiro.claim_streak()
 var offers = await hiro.get_offerwall_state()
 ```
 
+## What's New in v5.8.0
+
+- Discord Social SDK integration (Rich Presence, friends, lobbies, voice, invites, DMs, moderation)
+- Satori Analytics (events, feature flags, A/B experiments, live events)
+- Hiro parity: retention, IAP triggers, smart ad timer (Unreal/C++/Cocos/Godot/Defold)
+
+### Discord Social SDK (`IVXDiscordSocial`)
+
+- Rich Presence, friends list, lobbies, voice chat
+- Game invites, DMs, moderation tools
+
+```gdscript
+var discord = IVXDiscordSocial.new()
+add_child(discord)
+discord.initialize({
+    "application_id": "YOUR_APP_ID",
+    "client_id": "YOUR_CLIENT_ID",
+})
+
+await discord.update_presence("In Match", "Round 3 of 5")
+var friends = await discord.get_friends()
+```
+
+### Satori Analytics (`IVXSatori`)
+
+- Event capture, feature flags, A/B experiments, live events
+
+```gdscript
+var satori = IVXSatori.new()
+add_child(satori)
+satori.initialize({
+    "satori_url": "https://satori.example.com",
+    "api_key": "your-satori-key",
+})
+
+await satori.capture_events([{"name": "level_complete", "value": "5"}])
+var flags = await satori.get_feature_flags()
+```
+
 ## Requirements
 
 - Godot 4.2+ (tested with 4.6.x)
@@ -71,6 +110,20 @@ You **should** add the **official Nakama Godot addon** (Heroic Labs) for real ba
 | **GitHub (recommended)** | [github.com/heroiclabs/nakama-godot](https://github.com/heroiclabs/nakama-godot) — clone or download, then copy the **`addons/com.heroiclabs.nakama`** folder into your project’s `addons/` folder. Use the default branch for Godot 4. |
 | **Godot Asset Library** | In Godot: **Project → AssetLib** → search **“Nakama”** and pick the **official** one (by Heroic Labs / novabyte, not “Nakama Client in GDScript”). Or use GitHub if the Asset Library only shows Godot 3 or community clients. |
 | **Docs** | [heroiclabs.com/docs/nakama/client-libraries/godot](https://heroiclabs.com/docs/nakama/client-libraries/godot/) |
+
+## Setting Up Nakama Server
+
+The SDK requires a [Nakama](https://heroiclabs.com/nakama/) game server for backend features.
+
+**Quick start with Docker:**
+
+```bash
+docker run -d --name nakama -p 7349:7349 -p 7350:7350 -p 7351:7351 heroiclabs/nakama
+```
+
+**Heroic Labs Cloud:** For production, use [Heroic Labs Cloud](https://heroiclabs.com/) for managed hosting.
+
+See [Nakama documentation](https://heroiclabs.com/docs/nakama/) for full setup instructions.
 
 ## Installation
 
@@ -146,10 +199,12 @@ func _on_error(message: String) -> void:
 | Cloud Storage | ✅ Supported |
 | RPC Calls | ✅ Supported |
 | Real-time Socket | ✅ Supported |
-| AI Voice & Host | ✅ New in v5.5.0 |
-| Multiplayer & Game Modes | ✅ New in v5.5.0 |
-| Hiro Live-Ops Systems | ✅ New in v5.5.0 |
+| AI Voice & Host | ✅ New in v5.8.0 |
+| Multiplayer & Game Modes | ✅ New in v5.8.0 |
+| Hiro Live-Ops Systems | ✅ New in v5.8.0 |
 | Analytics | ✅ Supported |
+| Discord Social SDK | ✅ New in v5.8.0 |
+| Satori Analytics | ✅ New in v5.8.0 |
 | Monetization | ✅ Supported |
 
 ## Troubleshooting
@@ -168,6 +223,15 @@ The upstream nakama-godot repo does not include a `plugin.cfg` or `plugin.gd`. T
 
 **Auth failed: Could not connect to the server at http(s)://…**  
 The game could not reach the Nakama server. Start Nakama (e.g. `docker run -d -p 7350:7350 heroiclabs/nakama`) or set **Server Host** / **Port** in the Inspector to where Nakama runs. For local Nakama, use **Use Ssl** = false (HTTP); use true only if your server has HTTPS.
+
+**Discord not connecting.**  
+Ensure `application_id` and `client_id` are valid and your Discord app is approved. Check that the Discord desktop client is running.
+
+**Satori events not captured.**  
+Check `satori_url` and `api_key` are correctly configured. Verify the Satori server is reachable from your machine.
+
+**AI features not working.**  
+Verify the AI API endpoint and key are set in the config. Check Output for connection error details.
 
 ## Godot MCP (optional — let AI access the project)
 

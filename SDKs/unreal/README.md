@@ -2,7 +2,7 @@
 
 > Complete modular game development SDK for Unreal Engine — Auth, Backend (Nakama), Analytics, Social, Monetization, AI, Multiplayer, Hiro Live-Ops, and more.
 
-## What's New in v5.5.0
+## What's New in v5.8.0
 
 ### AI Voice & Host (`UIVXAIClient`)
 
@@ -59,6 +59,47 @@ Hiro->GetStreakState();
 Hiro->ClaimStreak();
 ```
 
+## What's New in v5.8.0
+
+- Discord Social SDK integration (Rich Presence, friends, lobbies, voice, invites, DMs, moderation)
+- Satori Analytics (events, feature flags, A/B experiments, live events)
+- Hiro parity: retention, IAP triggers, smart ad timer (Unreal/C++/Cocos/Godot/Defold)
+
+### Discord Social SDK (`UIVXDiscordSocial`)
+
+- Rich Presence, friends list, lobbies, voice chat
+- Game invites, DMs, moderation tools
+
+```cpp
+#include "IVXDiscordSocial.h"
+
+UIVXDiscordSocial* Discord = GetGameInstance()->GetSubsystem<UIVXDiscordSocial>();
+FIVXDiscordConfig DiscordConfig;
+DiscordConfig.ApplicationId = TEXT("YOUR_APP_ID");
+DiscordConfig.ClientId = TEXT("YOUR_CLIENT_ID");
+Discord->Initialize(DiscordConfig);
+
+Discord->UpdatePresence(TEXT("In Match"), TEXT("Round 3 of 5"));
+Discord->OnFriendsReceived.AddDynamic(this, &AMyMode::OnFriends);
+```
+
+### Satori Analytics (`UIVXSatori`)
+
+- Event capture, feature flags, A/B experiments, live events
+
+```cpp
+#include "IVXSatori.h"
+
+UIVXSatori* Satori = GetGameInstance()->GetSubsystem<UIVXSatori>();
+FIVXSatoriConfig SatoriConfig;
+SatoriConfig.SatoriUrl = TEXT("https://satori.example.com");
+SatoriConfig.ApiKey = TEXT("your-satori-key");
+Satori->Initialize(SatoriConfig);
+
+Satori->CaptureEvents({FIVXEvent{TEXT("level_complete"), TEXT("5")}});
+auto Flags = Satori->GetFeatureFlags();
+```
+
 ## Requirements
 
 - Unreal Engine 5.3+
@@ -87,6 +128,20 @@ Hiro->ClaimStreak();
 ```csharp
 PublicDependencyModuleNames.Add("IntelliVerseX");
 ```
+
+## Setting Up Nakama Server
+
+The SDK requires a [Nakama](https://heroiclabs.com/nakama/) game server for backend features.
+
+**Quick start with Docker:**
+
+```bash
+docker run -d --name nakama -p 7349:7349 -p 7350:7350 -p 7351:7351 heroiclabs/nakama
+```
+
+**Heroic Labs Cloud:** For production, use [Heroic Labs Cloud](https://heroiclabs.com/) for managed hosting.
+
+See [Nakama documentation](https://heroiclabs.com/docs/nakama/) for full setup instructions.
 
 ### Configuration
 
@@ -142,10 +197,12 @@ void AMyGameMode::OnIVXReady()
 | Leaderboards | ✅ Supported |
 | Cloud Storage | ✅ Supported |
 | RPC Calls | ✅ Supported |
-| AI Voice & Host | ✅ New in v5.5.0 |
-| Real-time Multiplayer & Game Modes | ✅ New in v5.5.0 |
-| Hiro Live-Ops Systems | ✅ New in v5.5.0 |
+| AI Voice & Host | ✅ New in v5.8.0 |
+| Real-time Multiplayer & Game Modes | ✅ New in v5.8.0 |
+| Hiro Live-Ops Systems | ✅ New in v5.8.0 |
 | Analytics | ✅ Supported |
+| Discord Social SDK | ✅ New in v5.8.0 |
+| Satori Analytics | ✅ New in v5.8.0 |
 | Monetization | ✅ Supported |
 
 ## Project Structure
@@ -181,6 +238,17 @@ This SDK wraps the official [Nakama Unreal Client](https://github.com/heroiclabs
 ## Releasing
 
 See **[RELEASE.md](RELEASE.md)** for publishing to GitHub, Unreal Marketplace, and GameDev Market (packaging, versioning, submission).
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Connection timeout | Verify Nakama server is running and accessible at the configured host:port |
+| Auth failed | Check server key matches your Nakama configuration |
+| AI features not working | Verify AI API endpoint and key are set in config |
+| Discord not connecting | Ensure `ApplicationId` and `ClientId` are valid and Discord app is approved |
+| Satori events not captured | Check `SatoriUrl` and `ApiKey` are correctly configured |
+| Plugin not found | Ensure both `NakamaUnreal` and `IntelliVerseX` are enabled in `.uproject` |
 
 ## License
 

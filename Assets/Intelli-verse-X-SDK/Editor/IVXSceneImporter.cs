@@ -232,8 +232,8 @@ namespace IntelliVerseX.Editor
         /// Force re-import of scenes (for testing or manual re-import).
         /// </summary>
         // REMOVED: Menu items consolidated into SDK Setup Wizard
-        // [MenuItem("IntelliVerse-X SDK/Re-import Test Scenes", false, 300)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Test Scenes tab
+        // [MenuItem("IntelliVerseX/Re-import Test Scenes", false, 300)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Test Scenes tab
         
         public static void ForceReimportScenes()
         {
@@ -267,8 +267,8 @@ namespace IntelliVerseX.Editor
         /// <summary>
         /// Opens the IntelliVerseX Scenes folder in the Project window.
         /// </summary>
-        // [MenuItem("IntelliVerse-X SDK/Open Test Scenes Folder", false, 301)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Test Scenes tab
+        // [MenuItem("IntelliVerseX/Open Test Scenes Folder", false, 301)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Test Scenes tab
         public static void OpenScenesFolder()
         {
             string folderPath = CONSUMER_SCENES_FOLDER;

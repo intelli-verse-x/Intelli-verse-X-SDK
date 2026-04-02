@@ -2,7 +2,7 @@
 
 > Complete modular game development SDK for JavaScript/TypeScript — Auth, Backend (Nakama), Analytics, Social, Monetization, AI, Multiplayer, Hiro Live-Ops, and more.
 
-## What's New in v5.5.0
+## What's New in v5.8.0
 
 ### AI Voice & Host (`IVXAIClient`)
 
@@ -61,6 +61,41 @@ const offers = await hiro.getOfferwallState();
 await hiro.startFriendBattle(friendId, 'quiz_duel');
 ```
 
+## What's New in v5.8.0
+
+- Discord Social SDK integration (Rich Presence, friends, lobbies, voice, invites, DMs, moderation)
+- Satori Analytics (events, feature flags, A/B experiments, live events)
+- Hiro parity: retention, IAP triggers, smart ad timer (Unreal/C++/Cocos/Godot/Defold)
+
+### Discord Social SDK (`IVXDiscordSocial`)
+
+- Rich Presence, friends list, lobbies, voice chat
+- Game invites, DMs, moderation tools
+
+```typescript
+import { IVXDiscordSocial } from '@intelliversex/sdk';
+
+const discord = IVXDiscordSocial.getInstance();
+discord.initialize({ applicationId: 'YOUR_APP_ID', clientId: 'YOUR_CLIENT_ID' });
+
+await discord.updatePresence({ state: 'In Match', details: 'Round 3 of 5' });
+const friends = await discord.getFriends();
+```
+
+### Satori Analytics (`IVXSatori`)
+
+- Event capture, feature flags, A/B experiments, live events
+
+```typescript
+import { IVXSatori } from '@intelliversex/sdk';
+
+const satori = IVXSatori.getInstance();
+satori.initialize({ satoriUrl: 'https://satori.example.com', apiKey: 'your-satori-key' });
+
+await satori.captureEvents([{ name: 'level_complete', value: '5' }]);
+const flags = await satori.getFeatureFlags();
+```
+
 ## Requirements
 
 - Node.js 18+ or modern browser
@@ -71,6 +106,20 @@ await hiro.startFriendBattle(friendId, 'quiz_duel');
 ```bash
 npm install @intelliversex/sdk @heroiclabs/nakama-js
 ```
+
+## Setting Up Nakama Server
+
+The SDK requires a [Nakama](https://heroiclabs.com/nakama/) game server for backend features.
+
+**Quick start with Docker:**
+
+```bash
+docker run -d --name nakama -p 7349:7349 -p 7350:7350 -p 7351:7351 heroiclabs/nakama
+```
+
+**Heroic Labs Cloud:** For production, use [Heroic Labs Cloud](https://heroiclabs.com/) for managed hosting.
+
+See [Nakama documentation](https://heroiclabs.com/docs/nakama/) for full setup instructions.
 
 ## Quick Start
 
@@ -155,10 +204,12 @@ ivx.initialize({ nakamaHost: 'nakama-rest.intelli-verse-x.ai' });
 | Cloud Storage | ✅ Supported |
 | RPC Calls | ✅ Supported |
 | Real-time Socket | ✅ Supported |
-| AI Voice & Host | ✅ New in v5.5.0 |
-| Multiplayer & Game Modes | ✅ New in v5.5.0 |
-| Hiro Live-Ops Systems | ✅ New in v5.5.0 |
+| AI Voice & Host | ✅ New in v5.8.0 |
+| Multiplayer & Game Modes | ✅ New in v5.8.0 |
+| Hiro Live-Ops Systems | ✅ New in v5.8.0 |
 | Analytics | ✅ Supported |
+| Discord Social SDK | ✅ New in v5.8.0 |
+| Satori Analytics | ✅ New in v5.8.0 |
 | TypeScript Types | ✅ Full Support |
 | Node.js | ✅ Supported |
 | Browser | ✅ Supported |
@@ -312,6 +363,16 @@ npm publish --access public
 
 - Your package will be at: `https://www.npmjs.com/package/@intelliversex/sdk`
 - Users install with: `npm install @intelliversex/sdk @heroiclabs/nakama-js`
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Connection timeout | Verify Nakama server is running and accessible at the configured host:port |
+| Auth failed | Check server key matches your Nakama configuration |
+| AI features not working | Verify AI API endpoint and key are set in config |
+| Discord not connecting | Ensure `applicationId` and `clientId` are valid and Discord app is approved |
+| Satori events not captured | Check `satoriUrl` and `apiKey` are correctly configured |
 
 ## License
 

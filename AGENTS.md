@@ -221,7 +221,7 @@ A task is complete when:
 | Root Namespace | `IntelliVerseX` |
 | Target Platforms | Unity, Unreal, Godot, Defold, Cocos2d-x, JS, C++, Java, Flutter, Web3 |
 | Min Unity Version | 2021.3 LTS |
-| SDK Version | 5.1.0 |
+| SDK Version | 5.8.0 |
 
 ---
 

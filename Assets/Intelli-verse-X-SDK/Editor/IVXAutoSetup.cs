@@ -235,8 +235,8 @@ namespace IntelliVerseX.Editor
             Debug.Log("      Or GitHub: https://github.com/lupidan/apple-signin-unity/releases");
             Debug.Log("");
             Debug.Log("[QUICK INSTALL]");
-            Debug.Log("   Use: IntelliVerse-X SDK > Open Asset Store Links (menu)");
-            Debug.Log("   Or:  Window > IntelliVerse-X SDK > Dependency Installer");
+            Debug.Log("   Use: IntelliVerseX > Open Asset Store Links (menu)");
+            Debug.Log("   Or:  IntelliVerseX > SDK Setup Wizard > Dependencies tab");
             Debug.Log("===============================================================================\n");
             
             // Show dialog with options
@@ -272,8 +272,8 @@ namespace IntelliVerseX.Editor
         /// Opens Asset Store links for required packages
         /// </summary>
         // REMOVED: Menu items consolidated into SDK Setup Wizard
-        // [MenuItem("IntelliVerse-X SDK/Open Asset Store Links", false, 103)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Dependencies tab
+        // [MenuItem("IntelliVerseX/Open Asset Store Links", false, 103)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Dependencies tab
         
         public static void OpenAssetStoreLinks()
         {
@@ -287,8 +287,8 @@ namespace IntelliVerseX.Editor
         /// <summary>
         /// Force re-run of auto-setup
         /// </summary>
-        // [MenuItem("IntelliVerse-X SDK/Re-run Auto Setup", false, 100)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Dependencies tab
+        // [MenuItem("IntelliVerseX/Re-run Auto Setup", false, 100)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Dependencies tab
         public static void ForceRerunSetup()
         {
             EditorPrefs.DeleteKey(SETUP_COMPLETE_KEY);
@@ -301,8 +301,8 @@ namespace IntelliVerseX.Editor
         /// <summary>
         /// Install optional packages
         /// </summary>
-        // [MenuItem("IntelliVerse-X SDK/Install Optional Packages", false, 101)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Dependencies tab
+        // [MenuItem("IntelliVerseX/Install Optional Packages", false, 101)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Dependencies tab
         public static void InstallOptionalPackages()
         {
             if (isProcessing)
@@ -349,8 +349,8 @@ namespace IntelliVerseX.Editor
         /// <summary>
         /// Check setup status
         /// </summary>
-        // [MenuItem("IntelliVerse-X SDK/Check Setup Status", false, 102)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Dependencies tab
+        // [MenuItem("IntelliVerseX/Check Setup Status", false, 102)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Dependencies tab
         public static void CheckSetupStatus()
         {
             Debug.Log("\n═══════════════════════════════════════════════════════════════");
@@ -407,7 +407,7 @@ namespace IntelliVerseX.Editor
                 foreach (var pkg in missing)
                     Debug.Log($"   • {pkg}");
                 
-                Debug.Log("\n⚠️ Use: IntelliVerse-X SDK > SDK Setup Wizard > Dependencies tab");
+                Debug.Log("\n⚠️ Use: IntelliVerseX > SDK Setup Wizard > Dependencies tab");
             }
             else
             {
@@ -420,11 +420,11 @@ namespace IntelliVerseX.Editor
         /// <summary>
         /// Open dependency installer
         /// </summary>
-        // [MenuItem("IntelliVerse-X SDK/Open Dependency Installer", false, 200)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Dependencies tab
+        // [MenuItem("IntelliVerseX/Open Dependency Installer", false, 200)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Dependencies tab
         public static void OpenDependencyInstaller()
         {
-            EditorApplication.ExecuteMenuItem("Window/IntelliVerse-X SDK/Dependency Installer");
+            EditorApplication.ExecuteMenuItem("IntelliVerseX/SDK Setup Wizard");
         }
     }
 }

@@ -1,7 +1,7 @@
 {
   "FileVersion": 3,
   "Version": 1,
-  "VersionName": "5.5.0",
+  "VersionName": "5.8.0",
   "FriendlyName": "IntelliVerseX SDK",
   "Description": "Complete modular game development SDK — Auth, Backend (Nakama), Analytics, Social, Monetization, and more for Unreal Engine.",
   "Category": "Networking",

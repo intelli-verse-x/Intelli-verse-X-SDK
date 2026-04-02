@@ -9,6 +9,7 @@ namespace IntelliVerseX.AI
     /// Central manager for AI sessions (voice personas and host commentary).
     /// Singleton MonoBehaviour — create once and it persists across scenes.
     /// </summary>
+    [HelpURL("https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/modules/ai/")]
     public sealed class IVXAISessionManager : MonoBehaviour
     {
         #region Singleton

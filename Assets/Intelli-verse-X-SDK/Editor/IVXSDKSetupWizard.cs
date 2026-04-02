@@ -29,7 +29,7 @@ namespace IntelliVerseX.Editor
         #region Constants
 
         private const string WINDOW_TITLE = "IntelliVerseX SDK Setup";
-        private const string SDK_VERSION = "5.0.0";
+        private const string SDK_VERSION = "5.8.0";
         private const string PACKAGE_NAME = "com.intelliversex.sdk";
         
         // Version check URLs
@@ -41,7 +41,6 @@ namespace IntelliVerseX.Editor
         // Paths - These are relative paths within the SDK, resolved at runtime
         private const string SDK_ASSETS_ROOT = "Assets/Intelli-verse-X-SDK";
         private const string SDK_PACKAGE_ROOT = "Packages/com.intelliversex.sdk";
-        private const string QUIZVERSE_ROOT = "Assets/_QuizVerse";
         private const string RESOURCES_PATH = "Assets/Resources/IntelliVerseX";
         
         // Writable output path for UPM installs (prefabs, configs, generated assets)
@@ -365,7 +364,7 @@ namespace IntelliVerseX.Editor
 
         #region Window Management
 
-        [MenuItem("IntelliVerse-X SDK/SDK Setup Wizard", false, 0)]
+        [MenuItem("IntelliVerseX/SDK Setup Wizard", false, 0)]
         public static void ShowWindow()
         {
             var window = GetWindow<IVXSDKSetupWizard>(WINDOW_TITLE);
@@ -2752,7 +2751,7 @@ namespace IntelliVerseX.Editor
             };
             if (!adNetwork.IsValid)
             {
-                adNetwork.FixMessage = "Install Appodeal or LevelPlay SDK for Android ads. Use: IntelliVerse-X SDK > SDK Setup Wizard > Monetization tab";
+                adNetwork.FixMessage = "Install Appodeal or LevelPlay SDK for Android ads. Use: IntelliVerseX > SDK Setup Wizard > Monetization tab";
             }
             requirements.Add(adNetwork);
 
@@ -2820,7 +2819,7 @@ namespace IntelliVerseX.Editor
             };
             if (!iapSupport.IsValid)
             {
-                iapSupport.FixMessage = "Install Unity Purchasing package for IAP support. Use: IntelliVerse-X SDK > SDK Setup Wizard > Monetization tab";
+                iapSupport.FixMessage = "Install Unity Purchasing package for IAP support. Use: IntelliVerseX > SDK Setup Wizard > Monetization tab";
             }
             requirements.Add(iapSupport);
 
@@ -2834,7 +2833,7 @@ namespace IntelliVerseX.Editor
             };
             if (!iosAdNetwork.IsValid)
             {
-                iosAdNetwork.FixMessage = "Install Appodeal or LevelPlay SDK for iOS ads. Use: IntelliVerse-X SDK > SDK Setup Wizard > Monetization tab";
+                iosAdNetwork.FixMessage = "Install Appodeal or LevelPlay SDK for iOS ads. Use: IntelliVerseX > SDK Setup Wizard > Monetization tab";
             }
             requirements.Add(iosAdNetwork);
 

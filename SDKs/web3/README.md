@@ -2,7 +2,7 @@
 
 > Web3 game development SDK — Wallet auth (MetaMask/WalletConnect), NFT rewards, token gating, on-chain leaderboards, AI, Multiplayer, Hiro Live-Ops, backed by Nakama + Hiro.
 
-## What's New in v5.5.0
+## What's New in v5.8.0
 
 ### AI Voice & Host (`IVXAIClient`)
 
@@ -57,6 +57,41 @@ await hiro.claimStreak();
 const offers = await hiro.getOfferwallState();
 ```
 
+## What's New in v5.8.0
+
+- Discord Social SDK integration (Rich Presence, friends, lobbies, voice, invites, DMs, moderation)
+- Satori Analytics (events, feature flags, A/B experiments, live events)
+- Hiro parity: retention, IAP triggers, smart ad timer (Unreal/C++/Cocos/Godot/Defold)
+
+### Discord Social SDK (`IVXDiscordSocial`)
+
+- Rich Presence, friends list, lobbies, voice chat
+- Game invites, DMs, moderation tools
+
+```typescript
+import { IVXDiscordSocial } from '@intelliversex/sdk-web3';
+
+const discord = IVXDiscordSocial.getInstance();
+discord.initialize({ applicationId: 'YOUR_APP_ID', clientId: 'YOUR_CLIENT_ID' });
+
+await discord.updatePresence({ state: 'In Match', details: 'Round 3 of 5' });
+const friends = await discord.getFriends();
+```
+
+### Satori Analytics (`IVXSatori`)
+
+- Event capture, feature flags, A/B experiments, live events
+
+```typescript
+import { IVXSatori } from '@intelliversex/sdk-web3';
+
+const satori = IVXSatori.getInstance();
+satori.initialize({ satoriUrl: 'https://satori.example.com', apiKey: 'your-satori-key' });
+
+await satori.captureEvents([{ name: 'level_complete', value: '5' }]);
+const flags = await satori.getFeatureFlags();
+```
+
 ## Configuration and secrets
 
 Sensitive or environment-specific values (e.g. `moralisApiKey`, Nakama host/port) should not be hardcoded. Use the repo **common config file**: copy `config/keys.example.json` to `config/keys.json` in the repo root, fill in values, and do not commit `config/keys.json`. See [config/README.md](../../config/README.md). When initializing the SDK, set `moralisApiKey` from that file or from the environment (e.g. `process.env.IVX_MORALIS_API_KEY`).
@@ -72,6 +107,20 @@ Sensitive or environment-specific values (e.g. `moralisApiKey`, Nakama host/port
 ```bash
 npm install @intelliversex/sdk-web3 @heroiclabs/nakama-js ethers
 ```
+
+## Setting Up Nakama Server
+
+The SDK requires a [Nakama](https://heroiclabs.com/nakama/) game server for backend features.
+
+**Quick start with Docker:**
+
+```bash
+docker run -d --name nakama -p 7349:7349 -p 7350:7350 -p 7351:7351 heroiclabs/nakama
+```
+
+**Heroic Labs Cloud:** For production, use [Heroic Labs Cloud](https://heroiclabs.com/) for managed hosting.
+
+See [Nakama documentation](https://heroiclabs.com/docs/nakama/) for full setup instructions.
 
 ## Quick Start
 
@@ -129,10 +178,12 @@ const records = await ivx.fetchLeaderboard('weekly_leaderboard');
 | Leaderboards | ✅ Supported |
 | Cloud Storage | ✅ Supported |
 | RPC Calls | ✅ Supported |
-| AI Voice & Host | ✅ New in v5.5.0 |
-| Multiplayer & Game Modes | ✅ New in v5.5.0 |
-| Hiro Live-Ops Systems | ✅ New in v5.5.0 |
+| AI Voice & Host | ✅ New in v5.8.0 |
+| Multiplayer & Game Modes | ✅ New in v5.8.0 |
+| Hiro Live-Ops Systems | ✅ New in v5.8.0 |
 | Analytics | ✅ Supported |
+| Discord Social SDK | ✅ New in v5.8.0 |
+| Satori Analytics | ✅ New in v5.8.0 |
 | TypeScript Types | ✅ Full Support |
 | Thirdweb Integration | Config Ready |
 | Moralis Integration | Config Ready |
@@ -248,6 +299,17 @@ Your Game / dApp
 | + Hiro + Satori  |  | (via RPC nodes)  |
 +------------------+  +------------------+
 ```
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Connection timeout | Verify Nakama server is running and accessible at the configured host:port |
+| Auth failed | Check server key matches your Nakama configuration |
+| AI features not working | Verify AI API endpoint and key are set in config |
+| Wallet connection failed | Ensure MetaMask or compatible Web3 wallet is installed and unlocked |
+| Discord not connecting | Ensure `applicationId` and `clientId` are valid and Discord app is approved |
+| Satori events not captured | Check `satoriUrl` and `apiKey` are correctly configured |
 
 ## License
 

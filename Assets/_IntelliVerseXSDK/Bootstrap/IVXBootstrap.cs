@@ -10,6 +10,8 @@ namespace IntelliVerseX.Bootstrap
     /// and call <see cref="InitializeAsync"/> — or enable <c>AutoInitialize</c>
     /// to start automatically in <c>Start()</c>.
     /// </summary>
+    [DisallowMultipleComponent]
+    [HelpURL("https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/getting-started/quickstart/")]
     public sealed class IVXBootstrap : MonoBehaviour
     {
         #region Serialized Fields
@@ -32,6 +34,10 @@ namespace IntelliVerseX.Bootstrap
         private string _userName;
         private string _authToken;
 
+        #if INTELLIVERSEX_HAS_NAKAMA
+        private Nakama.ISocket _socket;
+        #endif
+
         #endregion
 
         #region Properties
@@ -46,6 +52,10 @@ namespace IntelliVerseX.Bootstrap
         public IVXBootstrapConfig Config => _config;
         /// <summary>The authenticated user ID (after init).</summary>
         public string UserId => _userId;
+        /// <summary>The authenticated user name (after init).</summary>
+        public string UserName => _userName;
+        /// <summary>The authenticated auth token (after init).</summary>
+        public string AuthToken => _authToken;
 
         #endregion
 
@@ -75,9 +85,17 @@ namespace IntelliVerseX.Bootstrap
 
         private async void Start()
         {
-            if (_autoInitialize)
+            try
             {
-                await InitializeAsync();
+                if (_autoInitialize)
+                {
+                    await InitializeAsync();
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[IVXBootstrap] Initialization failed: {e.Message}\n{e.StackTrace}");
+                OnBootstrapComplete?.Invoke(false);
             }
         }
 
@@ -154,6 +172,11 @@ namespace IntelliVerseX.Bootstrap
         /// </summary>
         public void SetAuth(string userId, string userName, string authToken)
         {
+            if (string.IsNullOrEmpty(userId))
+            {
+                Debug.LogWarning("[IVXBootstrap] SetAuth called with null/empty userId.");
+                return;
+            }
             _userId = userId;
             _userName = userName;
             _authToken = authToken;
@@ -171,8 +194,12 @@ namespace IntelliVerseX.Bootstrap
             catch (Exception e) { Debug.LogWarning($"[IVXBootstrap] Discord shutdown: {e.Message}"); }
             #endif
 
+            #if INTELLIVERSEX_HAS_NAKAMA
+            if (_socket != null) { _socket.CloseAsync(); _socket = null; }
+            #endif
+
             _isInitialized = false;
-            Log("SDK shut down.");
+            Debug.Log("[IVXBootstrap] SDK shutdown complete.");
         }
 
         #endregion
@@ -224,7 +251,11 @@ namespace IntelliVerseX.Bootstrap
                                 session = null;
                             }
                         }
-                        catch { session = null; }
+                        catch (System.Exception e)
+                        {
+                            Debug.LogWarning($"[IVXBootstrap] Session restore failed: {e.Message}");
+                            session = null;
+                        }
                     }
                 }
 

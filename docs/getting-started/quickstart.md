@@ -6,14 +6,17 @@ Get IntelliVerseX SDK running in your project in under 5 minutes — zero to all
 
 ## Prerequisites
 
-- Unity 2021.3 LTS+ or Unity 6
+- **Unity 2023.3+** or **Unity 6** (legacy 2021.3/2022.x may work but is not officially supported)
 - TextMeshPro (included in Unity)
 - Newtonsoft JSON (`com.unity.nuget.newtonsoft-json`)
 
-**Optional (for full features):**
+**Optional (for full backend features):**
 
-- Nakama SDK (`com.heroiclabs.nakama-unity`) — backend, leaderboards, economy, auth
+- Nakama SDK (`com.heroiclabs.nakama-unity`) — backend auth, leaderboards, economy, storage
 - Discord Social SDK (`com.discord.social-sdk`) — Discord presence, friends, voice, DMs
+
+!!! tip "No backend yet? No problem."
+    The SDK works in **offline mode** out of the box. All modules gracefully degrade to mock/local data, so you can explore demos and build your game UI immediately. Add the backend when you're ready.
 
 ---
 
@@ -43,9 +46,9 @@ Create these three config assets via the Unity menu:
 
 **Bootstrap Config:**
 
-- **Server Host** — Your Nakama server address (e.g. `127.0.0.1` for local, `your-server.com` for production)
+- **Server Host** — Your Nakama server address (leave as `127.0.0.1` for local development; see [Setting Up Nakama](#setting-up-nakama) below)
 - **Server Port** — Default `7350`
-- **Server Key** — Your Nakama server key (default `defaultkey`)
+- **Server Key** — Your Nakama server key (default `defaultkey` for local dev; change for production)
 - **Auto Device Auth** — Check this for automatic authentication on startup
 - **Enable Hiro / Satori / AI / Discord / Multiplayer** — Toggle each module
 
@@ -96,6 +99,31 @@ That's it. Press Play and check the Console:
 
 !!! success "All Systems Go"
     Every module is initialized. Start using any feature immediately.
+
+!!! tip "No Nakama running?"
+    If Nakama isn't available, you'll see: `[IVXBootstrap] Backend auth failed — continuing in offline mode`. The SDK still works — all modules use mock/local data. Add a backend when ready.
+
+---
+
+## Setting Up Nakama
+
+The SDK uses [Nakama](https://heroiclabs.com/nakama/) as its game server backend. Here's how to get one running:
+
+**Quick start with Docker (recommended for local dev):**
+
+```bash
+docker run -d --name nakama \
+  -p 7349:7349 -p 7350:7350 -p 7351:7351 \
+  heroiclabs/nakama
+```
+
+**Heroic Labs Cloud (recommended for production):**
+
+Use [Heroic Labs Cloud](https://heroiclabs.com/) for managed hosting with automatic scaling, monitoring, and Hiro/Satori integration.
+
+**Full setup guide:** See the [Nakama documentation](https://heroiclabs.com/docs/nakama/getting-started/install/) for Docker Compose, binary installs, and cloud deployment options.
+
+Once running, update your **Bootstrap Config** with the server address and key.
 
 ---
 

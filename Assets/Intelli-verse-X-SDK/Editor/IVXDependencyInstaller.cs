@@ -83,8 +83,8 @@ namespace IntelliVerseX.Editor
         }
         
         // REMOVED: Menu item consolidated into SDK Setup Wizard
-        // [MenuItem("IntelliVerse-X SDK/Install All Dependencies", priority = 3)]
-        // Use: IntelliVerse-X SDK > SDK Setup Wizard > Dependencies tab
+        // [MenuItem("IntelliVerseX/Install All Dependencies", priority = 3)]
+        // Use: IntelliVerseX > SDK Setup Wizard > Dependencies tab
         public static void ShowInstaller()
         {
             var window = GetWindow<IVXDependencyInstaller>("Dependency Installer");

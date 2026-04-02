@@ -14,7 +14,7 @@
 
 ```groovy
 dependencies {
-    implementation 'com.intelliversex:sdk:5.1.0'
+    implementation 'com.intelliversex:sdk:5.8.0'
 }
 ```
 
@@ -24,7 +24,7 @@ dependencies {
 <dependency>
     <groupId>com.intelliversex</groupId>
     <artifactId>sdk</artifactId>
-    <version>5.1.0</version>
+    <version>5.8.0</version>
 </dependency>
 ```
 

@@ -10,6 +10,7 @@ namespace IntelliVerseX.Hiro
     /// Attach to a persistent GameObject and call <see cref="InitializeSystems"/>
     /// after successful Nakama authentication.
     /// </summary>
+    [HelpURL("https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/modules/hiro/")]
     public sealed class IVXHiroCoordinator : MonoBehaviour
     {
         private static IVXHiroCoordinator _instance;
