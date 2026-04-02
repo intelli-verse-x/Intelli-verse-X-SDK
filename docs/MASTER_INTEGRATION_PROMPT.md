@@ -29,6 +29,52 @@ https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Assets/Intelli-v
 
 ---
 
+### Step 0.5 — Register Your Game & Get Your Game ID
+
+Every game needs a **Game ID** (UUID) from the IntelliVerseX platform. This ID links your game to leaderboards, wallets, analytics, ads, and all backend services.
+
+**Option A — Dashboard (recommended):**
+
+1. Sign in at [intelli-verse-x.ai/developers](https://intelli-verse-x.ai/developers)
+2. Create a new project → copy the **Game ID** from the project settings
+
+**Option B — API (programmatic):**
+
+```bash
+# 1. Authenticate — get a bearer token
+TOKEN=$(curl -s -X POST 'https://api.intelli-verse-x.ai/api/admin/auth/login' \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"your-email@example.com","password":"your-password"}' \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('data',{}).get('accessToken',''))")
+
+# 2. Create your game
+curl -s -X POST 'https://msapi.intelli-verse-x.io/api/games/game/info' \
+  -H "Authorization: Bearer $TOKEN" \
+  -H 'Content-Type: application/json' \
+  -d '{"gameTitle": "My Awesome Game"}'
+```
+
+**Response:**
+
+```json
+{
+  "status": true,
+  "message": "Game created successfully",
+  "data": {
+    "gameId": "83e9cbd5-3883-4fec-8344-0d2d3ca35be3"
+  }
+}
+```
+
+Copy the `gameId` UUID — you will paste it into your config in Step 1.
+
+| API | URL | Purpose |
+|-----|-----|---------|
+| **Admin Auth** | `POST https://api.intelli-verse-x.ai/api/admin/auth/login` | Get bearer token |
+| **Create Game** | `POST https://msapi.intelli-verse-x.io/api/games/game/info` | Register a game, returns `gameId` |
+
+---
+
 ### Step 1 — One-Drop Bootstrap (Recommended)
 
 Create a single config asset, attach the bootstrap, and everything initializes automatically.

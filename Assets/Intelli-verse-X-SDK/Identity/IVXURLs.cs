@@ -35,12 +35,30 @@ public static class IVXURLs
     /// <summary>Payment services gateway</summary>
     public const string PaymentBaseUrl = "https://payment.intelli-verse-x.ai/";
     
-    /// <summary>Default game ID (QuizVerse) used when <see cref="GameId"/> is not overridden.</summary>
+    /// <summary>Microservices API gateway (game management)</summary>
+    public const string MsApiBaseUrl = "https://msapi.intelli-verse-x.io/";
+
+    /// <summary>
+    /// Create a new game via POST to <c>msapi.intelli-verse-x.io/api/games/game/info</c>.
+    /// Requires admin bearer token from <see cref="AdminLogin"/>.
+    /// Response: <c>{"status":true,"data":{"gameId":"UUID"}}</c>
+    /// </summary>
+    public const string CreateGame = MsApiBaseUrl + "api/games/game/info";
+
+    /// <summary>Admin login endpoint — returns bearer token for game management APIs.</summary>
+    public const string AdminLogin = BaseUrl + "api/admin/auth/login";
+
+    /// <summary>Fallback game ID used when <see cref="GameId"/> has not been set.
+    /// In production, always set your own Game ID from the IntelliVerseX dashboard or API.</summary>
     public const string DefaultGameId = "a6bde9e8-ebc5-4c7b-9254-02e9c0e02d74";
 
     private static string _gameId = DefaultGameId;
 
-    /// <summary>Configurable game ID for API calls. Set at startup to override the default.</summary>
+    /// <summary>
+    /// Game ID (UUID) for all API calls. Obtain from
+    /// <see href="https://intelli-verse-x.ai/developers">intelli-verse-x.ai/developers</see>
+    /// or via <see cref="CreateGame"/> API. Set this at startup before any backend calls.
+    /// </summary>
     public static string GameId
     {
         get => string.IsNullOrWhiteSpace(_gameId) ? DefaultGameId : _gameId;

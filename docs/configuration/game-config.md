@@ -4,6 +4,45 @@ The `IntelliVerseXConfig` ScriptableObject controls core SDK behavior and game i
 
 ---
 
+## Getting Your Game ID
+
+Every game needs a **Game ID** (UUID) from the IntelliVerseX platform. This ID scopes all backend services — leaderboards, wallets, analytics, ads, and economy — to your specific game.
+
+**Option A — Dashboard (recommended):**
+
+1. Sign in at [intelli-verse-x.ai/developers](https://intelli-verse-x.ai/developers)
+2. Create a new project → copy the **Game ID** from project settings
+
+**Option B — API:**
+
+```bash
+# 1. Get bearer token
+TOKEN=$(curl -s -X POST 'https://api.intelli-verse-x.ai/api/admin/auth/login' \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"you@example.com","password":"your-password"}' \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('data',{}).get('accessToken',''))")
+
+# 2. Create game
+curl -s -X POST 'https://msapi.intelli-verse-x.io/api/games/game/info' \
+  -H "Authorization: Bearer $TOKEN" \
+  -H 'Content-Type: application/json' \
+  -d '{"gameTitle": "My Awesome Game"}'
+```
+
+**Response:**
+
+```json
+{
+  "status": true,
+  "message": "Game created successfully",
+  "data": { "gameId": "83e9cbd5-3883-4fec-8344-0d2d3ca35be3" }
+}
+```
+
+Paste this UUID into the `gameId` field of your config.
+
+---
+
 ## Creating the Config
 
 **Menu:** `Assets → Create → IntelliVerse-X → IntelliVerseX Config`
@@ -236,11 +275,11 @@ void OnValidate()
 
 ## Best Practices
 
-### 1. Use Consistent Game ID
+### 1. Use Your Platform Game ID
 
 ```csharp
-// Use reverse domain notation
-config.gameId = "com.yourstudio.gamename";
+// Paste the UUID from the IntelliVerseX dashboard or API
+config.gameId = "83e9cbd5-3883-4fec-8344-0d2d3ca35be3";
 ```
 
 ### 2. Match Application Version

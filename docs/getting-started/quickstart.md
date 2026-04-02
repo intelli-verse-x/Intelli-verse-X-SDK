@@ -21,7 +21,39 @@ Get IntelliVerseX SDK running in your project in under 5 minutes — zero to all
 
 ---
 
-## Step 1 — Install the SDK
+## Step 1 — Register Your Game
+
+Before writing code, register your game on the IntelliVerseX platform to get a **Game ID** (UUID). This ID connects your game to leaderboards, wallets, analytics, and all backend services.
+
+**Option A — Dashboard (recommended):**
+
+1. Sign in at [intelli-verse-x.ai/developers](https://intelli-verse-x.ai/developers)
+2. Click **New Project** → enter your game title → copy the **Game ID**
+
+**Option B — API:**
+
+```bash
+# Authenticate
+TOKEN=$(curl -s -X POST 'https://api.intelli-verse-x.ai/api/admin/auth/login' \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"you@example.com","password":"your-password"}' \
+  | python3 -c "import sys,json; print(d:=json.load(sys.stdin),d.get('data',{}).get('accessToken',''))")
+
+# Create game
+curl -s -X POST 'https://msapi.intelli-verse-x.io/api/games/game/info' \
+  -H "Authorization: Bearer $TOKEN" \
+  -H 'Content-Type: application/json' \
+  -d '{"gameTitle": "My Awesome Game"}'
+
+# Response → {"status":true,"data":{"gameId":"83e9cbd5-..."}}
+```
+
+!!! warning "Save your Game ID"
+    You will paste this UUID into the **Game Config** in Step 3. Every API call, leaderboard, wallet, and analytics event is scoped to this ID.
+
+---
+
+## Step 2 — Install the SDK
 
 ```
 Window > Package Manager > + > Add package from git URL:
@@ -30,7 +62,7 @@ https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Assets/Intelli-v
 
 ---
 
-## Step 2 — Create Configuration Assets
+## Step 3 — Create Configuration Assets
 
 Create these three config assets via the Unity menu:
 
@@ -47,6 +79,7 @@ Create these three config assets via the Unity menu:
 
 **Bootstrap Config:**
 
+- **Game ID** — Paste the UUID from Step 1 (e.g. `83e9cbd5-3883-4fec-8344-0d2d3ca35be3`)
 - **Server Host** — Your Nakama server address (leave as `127.0.0.1` for local development; see [Setting Up Nakama](#setting-up-nakama) below)
 - **Server Port** — Default `7350`
 - **Server Key** — Your Nakama server key (default `defaultkey` for local dev; change for production)
@@ -66,7 +99,7 @@ Create these three config assets via the Unity menu:
 
 ---
 
-## Step 3 — Add Bootstrap to Your Scene
+## Step 4 — Add Bootstrap to Your Scene
 
 1. Create an empty GameObject in your first scene
 2. Name it `IVXBootstrap`
@@ -80,7 +113,7 @@ Create these three config assets via the Unity menu:
 
 ---
 
-## Step 4 — Press Play
+## Step 5 — Press Play
 
 That's it. Press Play and check the Console:
 
@@ -128,7 +161,7 @@ Once running, update your **Bootstrap Config** with the server address and key.
 
 ---
 
-## Step 5 — Listen for Bootstrap Completion
+## Step 6 — Listen for Bootstrap Completion
 
 In your game script, listen for the bootstrap to finish before using SDK features:
 
@@ -201,7 +234,7 @@ Drop the Demo Hub prefab into any scene to see all 16 features in action:
 
 ---
 
-## Step 7 — Integrate Features Into Your Game
+## Step 8 — Integrate Features Into Your Game
 
 Use the **[Master Integration Prompt](../MASTER_INTEGRATION_PROMPT.md)** — a single document with executable code samples for every SDK feature. Copy it into any AI assistant alongside your game project to integrate everything at once.
 
