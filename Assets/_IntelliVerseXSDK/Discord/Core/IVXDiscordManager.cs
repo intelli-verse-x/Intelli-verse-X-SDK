@@ -33,6 +33,9 @@ namespace IntelliVerseX.Discord
         private string _discordAvatarUrl;
         private string _publisherId;
         private Action _authorizeRequestCallback;
+#if INTELLIVERSEX_HAS_DISCORD
+        private discordpp.Client _discordClient;
+#endif
 
         #endregion
 
@@ -56,6 +59,9 @@ namespace IntelliVerseX.Discord
         public IVXDiscordConfig Config => _config;
         /// <summary>Publisher ID for cross-game shared authentication (Discord Social SDK).</summary>
         public string PublisherId => _publisherId;
+#if INTELLIVERSEX_HAS_DISCORD
+        internal discordpp.Client DiscordClient => _discordClient;
+#endif
 
         #endregion
 
@@ -281,7 +287,6 @@ namespace IntelliVerseX.Discord
             _authorizeRequestCallback = onAuthorizeRequested;
 
 #if INTELLIVERSEX_HAS_DISCORD
-            // Wire to: client->RegisterAuthorizeRequestCallback
             RegisterDiscordAuthorizeCallback(HandleAuthorizeRequestedFromDiscord);
 #else
             Debug.Log($"{LOG_TAG} Discord Social SDK not available; authorize request callback not registered.");
@@ -334,7 +339,6 @@ namespace IntelliVerseX.Discord
             Debug.Log($"{LOG_TAG} Starting mobile OAuth2 (PKCE) flow with redirect scheme: {redirectScheme}");
 
 #if INTELLIVERSEX_HAS_DISCORD
-            // Wire to: mobile OAuth2 + PKCE
             StartMobilePKCEFlow(redirectScheme, onComplete);
 #else
             Debug.Log($"{LOG_TAG} Discord Social SDK not available; mobile OAuth2 flow stubbed.");
@@ -366,7 +370,6 @@ namespace IntelliVerseX.Discord
             Debug.Log($"{LOG_TAG} Starting console OAuth2 (device code) flow.");
 
 #if INTELLIVERSEX_HAS_DISCORD
-            // Wire to: device code flow
             StartDeviceCodeFlow(onDeviceCode, onComplete);
 #else
             Debug.Log($"{LOG_TAG} Discord Social SDK not available; console OAuth2 flow stubbed.");
@@ -391,7 +394,7 @@ namespace IntelliVerseX.Discord
             _publisherId = publisherId;
 
 #if INTELLIVERSEX_HAS_DISCORD
-            // Wire to: client / publisher shared auth configuration
+            _discordClient?.SetPublisherId(_publisherId);
 #else
             Debug.Log($"{LOG_TAG} Discord Social SDK not available; publisher ID stored locally only.");
 #endif
@@ -421,7 +424,6 @@ namespace IntelliVerseX.Discord
             Debug.Log($"{LOG_TAG} Merging provisional account with Discord account.");
 
 #if INTELLIVERSEX_HAS_DISCORD
-            // Wire to: client provisional account merge
             MergeDiscordProvisionalAccount(externalAuthToken, onComplete);
 #else
             Debug.Log($"{LOG_TAG} Discord Social SDK not available; merge provisional account stubbed.");
@@ -450,7 +452,6 @@ namespace IntelliVerseX.Discord
             Debug.Log($"{LOG_TAG} Updating OAuth2 token.");
 
 #if INTELLIVERSEX_HAS_DISCORD
-            // Wire to: client->UpdateToken
             UpdateDiscordToken(newToken);
 #else
             Debug.Log($"{LOG_TAG} Discord Social SDK not available; token not applied.");
@@ -475,7 +476,6 @@ namespace IntelliVerseX.Discord
             Debug.Log($"{LOG_TAG} Opening Connected Games settings in Discord.");
 
 #if INTELLIVERSEX_HAS_DISCORD
-            // Wire to: client->OpenConnectedGamesSettingsInDiscord()
             OpenDiscordSettings();
 #else
             Debug.Log($"{LOG_TAG} Discord Social SDK not available; cannot open Connected Games settings.");
@@ -497,7 +497,6 @@ namespace IntelliVerseX.Discord
             Debug.Log($"{LOG_TAG} Opening Discord profile for user {userId}.");
 
 #if INTELLIVERSEX_HAS_DISCORD
-            // Wire to: open profile
             OpenDiscordProfile(userId);
 #else
             Debug.Log($"{LOG_TAG} Discord Social SDK not available; cannot open profile.");
@@ -518,79 +517,239 @@ namespace IntelliVerseX.Discord
 #if INTELLIVERSEX_HAS_DISCORD
         private void InitializeDiscordClient(long applicationId)
         {
-            // Wire to: discordpp::Client + SetApplicationId + Connect
-            // Set up event listeners for status changes
-            _initialized = true;
-            _connected = true;
-            OnConnected?.Invoke();
+            try
+            {
+                _discordClient = new discordpp.Client();
+                _discordClient.SetApplicationId(applicationId);
+
+                _discordClient.SetStatusChangedCallback((statusCode, errorDetail) =>
+                {
+                    var isReady = statusCode == discordpp.Client.Status.Ready;
+                    Debug.Log($"{LOG_TAG} Status: {statusCode} (error={errorDetail})");
+
+                    if (isReady && !_connected)
+                    {
+                        _connected = true;
+                        _initialized = true;
+                        OnConnected?.Invoke();
+                    }
+                    else if (!isReady && _connected)
+                    {
+                        _connected = false;
+                        OnDisconnected?.Invoke();
+                    }
+                });
+
+                _discordClient.SetErrorCallback((errorCode, message) =>
+                {
+                    Debug.LogError($"{LOG_TAG} Discord error {errorCode}: {message}");
+                    OnError?.Invoke($"{errorCode}: {message}");
+                });
+
+                _discordClient.Connect();
+                _initialized = true;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"{LOG_TAG} Failed to initialize Discord client: {e.Message}");
+                OnError?.Invoke(e.Message);
+                _initialized = true;
+                _connected = false;
+                OnConnected?.Invoke();
+            }
         }
 
         private void RunDiscordCallbacks()
         {
-            // Wire to: client->RunCallbacks()
+            _discordClient?.RunCallbacks();
         }
 
         private void StartOAuth2Flow()
         {
-            // Wire to: client->Authorize() with GetDefaultPresenceScopes + GetDefaultCommunicationScopes
-            // On success: populate _discordUserId, _discordUsername, _discordAvatarUrl
-            // Invoke OnAccountLinked
+            if (_discordClient == null) return;
+            try
+            {
+                var scopes = discordpp.Client.GetDefaultPresenceScopes();
+                var commScopes = discordpp.Client.GetDefaultCommunicationScopes();
+                foreach (var s in commScopes) scopes.Add(s);
+
+                _discordClient.Authorize(scopes, (result) =>
+                {
+                    if (result.AccessToken != null && result.AccessToken.Length > 0)
+                    {
+                        _accountLinked = true;
+                        _discordUserId = result.User?.Id.ToString() ?? "";
+                        _discordUsername = result.User?.Username ?? "";
+                        _discordAvatarUrl = result.User?.AvatarUrl ?? "";
+                        Debug.Log($"{LOG_TAG} OAuth2 linked: {_discordUsername} ({_discordUserId})");
+                        OnAccountLinked?.Invoke(_discordUserId, _discordUsername);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"{LOG_TAG} OAuth2 flow did not yield a token.");
+                        OnError?.Invoke("OAuth2 flow did not yield a token.");
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"{LOG_TAG} StartOAuth2Flow error: {e.Message}");
+                OnError?.Invoke(e.Message);
+            }
         }
 
         private void RevokeOAuth2Token()
         {
-            // Wire to: client->Deauthorize() or token revocation
+            try { _discordClient?.Deauthorize((ok) => Debug.Log($"{LOG_TAG} Token revoked: {ok}")); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} RevokeOAuth2Token error: {e.Message}"); }
         }
 
         private void GetProvisionalToken(Action<bool> onComplete)
         {
-            // Wire to: client->GetProvisionalToken()
-            onComplete?.Invoke(true);
+            if (_discordClient == null) { onComplete?.Invoke(false); return; }
+            try
+            {
+                _discordClient.GetProvisionalToken((result) =>
+                {
+                    bool ok = result.AccessToken != null && result.AccessToken.Length > 0;
+                    if (ok)
+                    {
+                        _accountLinked = true;
+                        _discordUserId = "provisional_" + Guid.NewGuid().ToString("N")[..8];
+                        _discordUsername = "Player";
+                    }
+                    onComplete?.Invoke(ok);
+                });
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"{LOG_TAG} GetProvisionalToken error: {e.Message}");
+                onComplete?.Invoke(false);
+            }
         }
 
         private void DestroyDiscordClient()
         {
-            // Wire to: client disposal
+            try
+            {
+                _discordClient?.Dispose();
+                _discordClient = null;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"{LOG_TAG} DestroyDiscordClient error: {e.Message}");
+            }
         }
 
         private void RegisterDiscordAuthorizeCallback(Action callback)
         {
-            // Wire to: client->RegisterAuthorizeRequestCallback
+            _discordClient?.SetAuthorizeRequestedCallback(() => callback?.Invoke());
         }
 
         private void RemoveDiscordAuthorizeCallback()
         {
-            // Wire to: client->RemoveAuthorizeRequestCallback
+            _discordClient?.SetAuthorizeRequestedCallback(null);
         }
 
         private void StartMobilePKCEFlow(string redirectScheme, Action<bool> onComplete)
         {
-            // Wire to: mobile OAuth2 + PKCE
+            if (_discordClient == null) { onComplete?.Invoke(false); return; }
+            try
+            {
+                var scopes = discordpp.Client.GetDefaultPresenceScopes();
+                var commScopes = discordpp.Client.GetDefaultCommunicationScopes();
+                foreach (var s in commScopes) scopes.Add(s);
+
+                _discordClient.Authorize(scopes, (result) =>
+                {
+                    bool ok = result.AccessToken != null && result.AccessToken.Length > 0;
+                    if (ok)
+                    {
+                        _accountLinked = true;
+                        _discordUserId = result.User?.Id.ToString() ?? "";
+                        _discordUsername = result.User?.Username ?? "";
+                        OnAccountLinked?.Invoke(_discordUserId, _discordUsername);
+                    }
+                    onComplete?.Invoke(ok);
+                });
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"{LOG_TAG} StartMobilePKCEFlow error: {e.Message}");
+                onComplete?.Invoke(false);
+            }
         }
 
         private void StartDeviceCodeFlow(Action<string> onDeviceCode, Action<bool> onComplete)
         {
-            // Wire to: device code flow
+            if (_discordClient == null) { onComplete?.Invoke(false); return; }
+            try
+            {
+                _discordClient.GetDeviceCode((code) =>
+                {
+                    onDeviceCode?.Invoke(code.UserCode);
+
+                    _discordClient.PollDeviceCode(code, (result) =>
+                    {
+                        bool ok = result.AccessToken != null && result.AccessToken.Length > 0;
+                        if (ok)
+                        {
+                            _accountLinked = true;
+                            _discordUserId = result.User?.Id.ToString() ?? "";
+                            _discordUsername = result.User?.Username ?? "";
+                            OnAccountLinked?.Invoke(_discordUserId, _discordUsername);
+                        }
+                        onComplete?.Invoke(ok);
+                    });
+                });
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"{LOG_TAG} StartDeviceCodeFlow error: {e.Message}");
+                onComplete?.Invoke(false);
+            }
         }
 
         private void MergeDiscordProvisionalAccount(string externalAuthToken, Action<bool> onComplete)
         {
-            // Wire to: client provisional account merge
+            if (_discordClient == null) { onComplete?.Invoke(false); return; }
+            try
+            {
+                _discordClient.MergeProvisionalAccount(externalAuthToken, (result) =>
+                {
+                    bool ok = result.AccessToken != null && result.AccessToken.Length > 0;
+                    if (ok)
+                    {
+                        _discordUserId = result.User?.Id.ToString() ?? "";
+                        _discordUsername = result.User?.Username ?? "";
+                        OnAccountLinked?.Invoke(_discordUserId, _discordUsername);
+                    }
+                    onComplete?.Invoke(ok);
+                });
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"{LOG_TAG} MergeProvisionalAccount error: {e.Message}");
+                onComplete?.Invoke(false);
+            }
         }
 
         private void UpdateDiscordToken(string token)
         {
-            // Wire to: client->UpdateToken
+            try { _discordClient?.UpdateToken(token, (ok) => Debug.Log($"{LOG_TAG} Token updated: {ok}")); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} UpdateDiscordToken error: {e.Message}"); }
         }
 
         private void OpenDiscordSettings()
         {
-            // Wire to: client->OpenConnectedGamesSettingsInDiscord()
+            try { _discordClient?.OpenConnectedGamesSettingsInDiscord(); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} OpenDiscordSettings error: {e.Message}"); }
         }
 
         private void OpenDiscordProfile(ulong userId)
         {
-            // Wire to: open profile
+            try { _discordClient?.OpenUserProfileInDiscord(userId); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} OpenDiscordProfile error: {e.Message}"); }
         }
 #endif
 

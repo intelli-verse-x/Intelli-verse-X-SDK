@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace IntelliVerseX.GameModes
@@ -129,6 +130,17 @@ namespace IntelliVerseX.GameModes
                 _searchCoroutine = null;
             }
 
+#if INTELLIVERSEX_HAS_NAKAMA
+            if (!string.IsNullOrEmpty(TicketId))
+            {
+                var backend = IntelliVerseX.Backend.IVXNakamaManager.Instance;
+                if (backend?.Socket != null)
+                {
+                    _ = backend.Socket.RemoveMatchmakerAsync(TicketId);
+                }
+            }
+#endif
+
             IsSearching = false;
             TicketId = null;
 
@@ -167,12 +179,41 @@ namespace IntelliVerseX.GameModes
             OnSearchStarted?.Invoke();
             Debug.Log($"[{nameof(IVXMatchmakingManager)}] Searching... Ticket: {TicketId}");
 
-            // TODO: Wire actual Nakama matchmaker
-            // #if INTELLIVERSEX_HAS_NAKAMA
-            // var ticket = await socket.AddMatchmakerAsync(query, minCount, maxCount, properties);
-            // TicketId = ticket.Ticket;
-            // // Listen for IMatchmakerMatched via socket event
-            // #endif
+#if INTELLIVERSEX_HAS_NAKAMA
+            bool nakamaStarted = false;
+            var backend = IntelliVerseX.Backend.IVXNakamaManager.Instance;
+            if (backend?.Socket != null)
+            {
+                var addTask = StartNakamaMatchmaking(backend);
+                while (!addTask.IsCompleted)
+                {
+                    yield return null;
+                    SearchElapsed += Time.deltaTime;
+                    OnSearchProgress?.Invoke(SearchElapsed);
+                }
+                nakamaStarted = !addTask.IsFaulted;
+            }
+
+            if (nakamaStarted)
+            {
+                while (IsSearching && SearchElapsed < MaxSearchTime)
+                {
+                    yield return null;
+                    SearchElapsed += Time.deltaTime;
+                    OnSearchProgress?.Invoke(SearchElapsed);
+                }
+
+                if (IsSearching)
+                {
+                    IsSearching = false;
+                    _searchCoroutine = null;
+                    TicketId = null;
+                    IVXGameModeManager.Instance.SetPhase(IVXMatchPhase.Lobby);
+                    OnSearchCancelled?.Invoke("Search timed out");
+                }
+                yield break;
+            }
+#endif
 
             float mockMatchTime = UnityEngine.Random.Range(2f, 8f);
 
@@ -205,6 +246,54 @@ namespace IntelliVerseX.GameModes
             OnSearchCancelled?.Invoke("Search timed out");
             Debug.Log($"[{nameof(IVXMatchmakingManager)}] Search timed out.");
         }
+
+#if INTELLIVERSEX_HAS_NAKAMA
+        private async Task StartNakamaMatchmaking(IntelliVerseX.Backend.IVXNakamaManager backend)
+        {
+            var minCount = _searchConfig?.MinPlayers ?? 2;
+            var maxCount = _searchConfig?.MaxPlayers ?? 2;
+            var query = "*";
+
+            var ticket = await backend.Socket.AddMatchmakerAsync(query, minCount, maxCount);
+            TicketId = ticket.Ticket;
+            Debug.Log($"[{nameof(IVXMatchmakingManager)}] Nakama matchmaker ticket: {TicketId}");
+
+            backend.Socket.ReceivedMatchmakerMatched += (matched) =>
+            {
+                if (!IsSearching) return;
+
+                IsSearching = false;
+                _searchCoroutine = null;
+
+                var opponents = matched.Users;
+                string opName = "Opponent";
+                string opId = "";
+                foreach (var u in opponents)
+                {
+                    if (u.Presence.UserId != backend.Session.UserId)
+                    {
+                        opName = u.Presence.Username;
+                        opId = u.Presence.UserId;
+                        break;
+                    }
+                }
+
+                var result = new IVXMatchFoundResult
+                {
+                    MatchId = matched.MatchId ?? matched.Token,
+                    OpponentUserId = opId,
+                    OpponentDisplayName = opName,
+                    Transport = IVXNetworkTransport.NakamaRealtime
+                };
+
+                IVXGameModeManager.Instance.AddRemotePlayer(result.OpponentUserId, result.OpponentDisplayName);
+                IVXGameModeManager.Instance.SetPhase(IVXMatchPhase.Loading);
+
+                OnMatchFound?.Invoke(result);
+                Debug.Log($"[{nameof(IVXMatchmakingManager)}] Nakama match found: {result.OpponentDisplayName}");
+            };
+        }
+#endif
 
         private IVXMatchFoundResult GenerateMockMatch()
         {

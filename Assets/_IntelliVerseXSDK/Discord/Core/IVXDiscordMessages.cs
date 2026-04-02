@@ -362,44 +362,177 @@ namespace IntelliVerseX.Discord
 #endif
 
 #if INTELLIVERSEX_HAS_DISCORD
+        private discordpp.Client Client => IVXDiscordManager.Instance?.DiscordClient;
+
         private void SendDiscordDM(ulong recipientId, string message, Action<ulong> onSuccess, Action<string> onError)
         {
-            // Wire to: client->SendUserMessage
+            var client = Client;
+            if (client == null) { onError?.Invoke("Discord client unavailable."); return; }
+            try
+            {
+                client.SendUserMessage(recipientId, message, (msgId) =>
+                {
+                    var dm = new IVXDirectMessage
+                    {
+                        MessageId = msgId,
+                        AuthorId = 0,
+                        AuthorName = "You",
+                        Content = message,
+                        Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+                    };
+                    _currentConversation.Add(dm);
+                    onSuccess?.Invoke(msgId);
+                });
+            }
+            catch (Exception e) { onError?.Invoke(e.Message); }
         }
 
         private void EditDiscordDM(ulong recipientId, ulong messageId, string newContent, Action onSuccess, Action<string> onError)
         {
-            // Wire to: client->EditUserMessage
+            var client = Client;
+            if (client == null) { onError?.Invoke("Discord client unavailable."); return; }
+            try
+            {
+                client.EditUserMessage(recipientId, messageId, newContent, (result) =>
+                {
+                    for (int i = 0; i < _currentConversation.Count; i++)
+                    {
+                        if (_currentConversation[i].MessageId == messageId)
+                        {
+                            _currentConversation[i].Content = newContent;
+                            OnDMUpdated?.Invoke(_currentConversation[i]);
+                            break;
+                        }
+                    }
+                    onSuccess?.Invoke();
+                });
+            }
+            catch (Exception e) { onError?.Invoke(e.Message); }
         }
 
         private void FetchDiscordDMHistory(ulong recipientId, int limit, Action<List<IVXDirectMessage>> onComplete)
         {
-            // Wire to: client->GetUserMessagesWithLimit
+            var client = Client;
+            if (client == null) { onComplete?.Invoke(new List<IVXDirectMessage>()); return; }
+            try
+            {
+                client.GetUserMessages(recipientId, (messages) =>
+                {
+                    var list = new List<IVXDirectMessage>();
+                    if (messages != null)
+                    {
+                        foreach (var m in messages)
+                        {
+                            list.Add(new IVXDirectMessage
+                            {
+                                MessageId = m.Id,
+                                AuthorId = m.AuthorId,
+                                AuthorName = m.AuthorName ?? m.AuthorId.ToString(),
+                                Content = m.Content,
+                                Timestamp = m.Timestamp,
+                                IsDisclosure = m.IsDisclosure,
+                                HasAdditionalContent = m.HasAdditionalContent,
+                                AdditionalContentDescription = m.AdditionalContentDescription
+                            });
+                        }
+                    }
+                    _currentConversation.Clear();
+                    _currentConversation.AddRange(list);
+                    onComplete?.Invoke(list);
+                });
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} FetchDMHistory error: {e.Message}"); onComplete?.Invoke(new List<IVXDirectMessage>()); }
         }
 
         private void FetchDiscordDMSummaries(Action<List<IVXDMSummary>> onComplete)
         {
-            // Wire to: client->GetUserMessageSummaries
+            var client = Client;
+            if (client == null) { onComplete?.Invoke(new List<IVXDMSummary>()); return; }
+            try
+            {
+                client.GetUserMessageSummaries((summaries) =>
+                {
+                    var list = new List<IVXDMSummary>();
+                    if (summaries != null)
+                    {
+                        foreach (var s in summaries)
+                        {
+                            list.Add(new IVXDMSummary
+                            {
+                                UserId = s.UserId,
+                                DisplayName = s.DisplayName,
+                                LastMessageId = s.LastMessageId,
+                                LastMessageTimestamp = s.LastMessageTimestamp
+                            });
+                        }
+                    }
+                    onComplete?.Invoke(list);
+                });
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} FetchDMSummaries error: {e.Message}"); onComplete?.Invoke(new List<IVXDMSummary>()); }
         }
 
         private void RegisterDiscordMessageCallbacks()
         {
-            // Wire to: client->SetMessageCreatedCallback, SetMessageUpdatedCallback, SetMessageDeletedCallback
+            var client = Client;
+            if (client == null) return;
+            try
+            {
+                client.SetUserMessageCreatedCallback((msg) =>
+                {
+                    var dm = new IVXDirectMessage
+                    {
+                        MessageId = msg.Id,
+                        AuthorId = msg.AuthorId,
+                        AuthorName = msg.AuthorName ?? msg.AuthorId.ToString(),
+                        Content = msg.Content,
+                        Timestamp = msg.Timestamp,
+                        IsDisclosure = msg.IsDisclosure,
+                        HasAdditionalContent = msg.HasAdditionalContent,
+                        AdditionalContentDescription = msg.AdditionalContentDescription
+                    };
+                    _currentConversation.Add(dm);
+                    OnDMReceived?.Invoke(dm);
+                });
+
+                client.SetUserMessageUpdatedCallback((msg) =>
+                {
+                    for (int i = 0; i < _currentConversation.Count; i++)
+                    {
+                        if (_currentConversation[i].MessageId == msg.Id)
+                        {
+                            _currentConversation[i].Content = msg.Content;
+                            OnDMUpdated?.Invoke(_currentConversation[i]);
+                            break;
+                        }
+                    }
+                });
+
+                client.SetUserMessageDeletedCallback((msgId) =>
+                {
+                    _currentConversation.RemoveAll(m => m.MessageId == msgId);
+                    OnDMDeleted?.Invoke(msgId);
+                });
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} RegisterMessageCallbacks error: {e.Message}"); }
         }
 
         private void SetDiscordShowingChat(bool showing)
         {
-            // Wire to: client->SetShowingChat(showing)
+            try { Client?.SetShowingChat(showing); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} SetShowingChat error: {e.Message}"); }
         }
 
         private void OpenDiscordMessageInDiscord(ulong messageId)
         {
-            // Wire to: client->OpenMessageInDiscord(messageId)
+            try { Client?.OpenMessageInDiscord(messageId); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} OpenMessageInDiscord error: {e.Message}"); }
         }
 
         private void OpenDiscordConnectedGamesSettings()
         {
-            // Wire to: client->OpenConnectedGamesSettingsInDiscord()
+            try { Client?.OpenConnectedGamesSettingsInDiscord(); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} OpenConnectedGamesSettings error: {e.Message}"); }
         }
 #endif
 

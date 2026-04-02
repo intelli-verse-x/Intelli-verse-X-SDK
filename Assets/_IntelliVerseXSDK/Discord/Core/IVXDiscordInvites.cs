@@ -200,36 +200,105 @@ namespace IntelliVerseX.Discord
         #region Private Methods
 
 #if INTELLIVERSEX_HAS_DISCORD
+        private discordpp.Client Client => IVXDiscordManager.Instance?.DiscordClient;
+
         private void SendDiscordInvite(string userId, string message)
         {
-            // Wire to: client->SendGameInvite(userId, callback)
-            // Or use Rich Presence party/join secret for passive invites
+            var client = Client;
+            if (client == null) return;
+            try
+            {
+                if (ulong.TryParse(userId, out var uid))
+                    client.SendGameInvite(uid, (result) => Debug.Log($"{LOG_TAG} Invite sent to {userId}: {result}"));
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} SendDiscordInvite error: {e.Message}"); }
         }
 
         private void JoinViaSecret(string joinSecret)
         {
-            // Use the join secret to:
-            // 1. Join the Discord lobby: client->CreateOrJoinLobby(joinSecret)
-            // 2. Bridge to IVX lobby: IVXLobbyManager.Instance.JoinRoom(roomId)
-            // 3. Optionally auto-join voice
+            var client = Client;
+            if (client == null) return;
+            try
+            {
+                client.CreateOrJoinLobby(joinSecret, (lobbyId) =>
+                {
+                    Debug.Log($"{LOG_TAG} Joined lobby {lobbyId} via invite secret.");
+                    var discordLobby = IVXDiscordLobby.Instance;
+                    if (discordLobby != null)
+                        discordLobby.CreateOrJoinLobby(joinSecret);
+
+                    var ivxLobby = IntelliVerseX.GameModes.IVXLobbyManager.Instance;
+                    if (ivxLobby != null)
+                        ivxLobby.JoinRoom(new IntelliVerseX.GameModes.IVXJoinRoomRequest { RoomId = joinSecret });
+
+                    OnInviteAccepted?.Invoke(joinSecret);
+                });
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} JoinViaSecret error: {e.Message}"); }
         }
 
         private void ApproveDiscordJoinRequest(string requesterId)
         {
-            // Wire to: client->AcceptGameInvite or respond to ActivityJoinRequest
+            var client = Client;
+            if (client == null) return;
+            try
+            {
+                if (ulong.TryParse(requesterId, out var uid))
+                    client.AcceptGameInvite(uid, (result) => Debug.Log($"{LOG_TAG} Approved join: {result}"));
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} ApproveJoinRequest error: {e.Message}"); }
         }
 
         private void DenyDiscordJoinRequest(string requesterId)
         {
-            // Wire to: client->RejectGameInvite or respond to ActivityJoinRequest
+            var client = Client;
+            if (client == null) return;
+            try
+            {
+                if (ulong.TryParse(requesterId, out var uid))
+                    client.RejectGameInvite(uid, (result) => Debug.Log($"{LOG_TAG} Denied join: {result}"));
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} DenyJoinRequest error: {e.Message}"); }
         }
 
         private void RegisterDiscordCallbacks()
         {
-            // Wire to:
-            // client->SetActivityJoinCallback → OnInviteAccepted
-            // client->SetActivityInviteCallback → OnInviteReceived
-            // client->SetActivityJoinRequestCallback → OnJoinRequested
+            var client = Client;
+            if (client == null) return;
+            try
+            {
+                client.SetActivityJoinCallback((secret) =>
+                {
+                    Debug.Log($"{LOG_TAG} Activity join callback: {secret}");
+                    OnInviteAccepted?.Invoke(secret);
+                    JoinViaSecret(secret);
+                });
+
+                client.SetActivityInviteCallback((userId, activityDetails) =>
+                {
+                    Debug.Log($"{LOG_TAG} Activity invite from {userId}");
+                    var invite = new IVXGameInvite
+                    {
+                        InviterUserId = userId.ToString(),
+                        InviterName = userId.ToString(),
+                        JoinSecret = activityDetails,
+                        ActivityDetails = activityDetails
+                    };
+                    OnInviteReceived?.Invoke(invite);
+                });
+
+                client.SetActivityJoinRequestCallback((userId) =>
+                {
+                    Debug.Log($"{LOG_TAG} Join request from {userId}");
+                    var invite = new IVXGameInvite
+                    {
+                        InviterUserId = userId.ToString(),
+                        InviterName = userId.ToString()
+                    };
+                    OnJoinRequested?.Invoke(invite);
+                });
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} RegisterDiscordCallbacks error: {e.Message}"); }
         }
 #endif
 

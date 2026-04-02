@@ -312,10 +312,12 @@ namespace IntelliVerseX.Editor
         private ModuleSetupState quizModule = new ModuleSetupState();
         private ModuleSetupState localizationModule = new ModuleSetupState();
 
+        // Discord Social SDK
+        private ModuleSetupState discordModule = new ModuleSetupState();
+
         // Monetization Modules
         private ModuleSetupState adsModule = new ModuleSetupState();
         private ModuleSetupState iapModule = new ModuleSetupState();
-        // Note: Retention features removed - QuizVerse-specific
 
         #endregion
 
@@ -2094,6 +2096,10 @@ namespace IntelliVerseX.Editor
             DrawModuleSection("🌍 Localization", localizationModule, CheckLocalizationModule,
                 "Multi-language support with RTL");
 
+            DrawExpandedModuleSection("🎮 Discord Social SDK", discordModule, CheckDiscordModule,
+                "Discord integration: Rich Presence, friends, lobbies, voice, DMs, invites",
+                DrawDiscordModuleActions);
+
             EditorGUILayout.Space(10);
 
             // Feature Actions
@@ -3651,7 +3657,81 @@ namespace IntelliVerseX.Editor
                 : "IAP components missing";
         }
 
-        // Note: CheckRetentionModule removed - QuizVerse-specific feature
+        private void CheckDiscordModule()
+        {
+            if (discordModule.setupSteps == null || discordModule.setupSteps.Count == 0)
+            {
+                discordModule.setupSteps = new List<string>
+                {
+                    "Install com.discord.social-sdk UPM package",
+                    "Create IVXDiscordConfig asset",
+                    "Add IVXDiscordManager to scene"
+                };
+                discordModule.stepCompleted = new List<bool> { false, false, false };
+            }
+
+            discordModule.stepCompleted[0] = CheckAssemblyExists("Discord.Social") ||
+                TypeExists("discordpp.Client");
+
+            var configType = GetTypeByName("IntelliVerseX.Discord.IVXDiscordConfig");
+            discordModule.stepCompleted[1] = configType != null &&
+                AssetDatabase.LoadAssetAtPath<ScriptableObject>("Assets/_IntelliVerseXSDK/Discord/Config/IVXDiscordConfig.asset") != null;
+
+            var mgrType = GetTypeByName("IntelliVerseX.Discord.IVXDiscordManager");
+            discordModule.stepCompleted[2] = mgrType != null &&
+                Object.FindFirstObjectByType(mgrType) != null;
+
+            discordModule.isSetupComplete = discordModule.stepCompleted.TrueForAll(x => x);
+            discordModule.statusMessage = discordModule.isSetupComplete
+                ? "Discord Social SDK is configured"
+                : "Discord SDK components missing — see steps below";
+        }
+
+        private void DrawDiscordModuleActions()
+        {
+            EditorGUILayout.Space(5);
+            EditorGUILayout.BeginHorizontal();
+
+            if (GUILayout.Button("Create Discord Config", GUILayout.Height(25)))
+            {
+                var existing = AssetDatabase.LoadAssetAtPath<ScriptableObject>(
+                    "Assets/_IntelliVerseXSDK/Discord/Config/IVXDiscordConfig.asset");
+                if (existing != null)
+                {
+                    EditorGUIUtility.PingObject(existing);
+                    Selection.activeObject = existing;
+                }
+                else
+                {
+                    var cfgType = GetTypeByName("IntelliVerseX.Discord.IVXDiscordConfig");
+                    if (cfgType != null)
+                    {
+                        var cfg = ScriptableObject.CreateInstance(cfgType);
+                        if (!AssetDatabase.IsValidFolder("Assets/_IntelliVerseXSDK/Discord"))
+                            AssetDatabase.CreateFolder("Assets/_IntelliVerseXSDK", "Discord");
+                        if (!AssetDatabase.IsValidFolder("Assets/_IntelliVerseXSDK/Discord/Config"))
+                            AssetDatabase.CreateFolder("Assets/_IntelliVerseXSDK/Discord", "Config");
+                        AssetDatabase.CreateAsset(cfg, "Assets/_IntelliVerseXSDK/Discord/Config/IVXDiscordConfig.asset");
+                        AssetDatabase.SaveAssets();
+                        EditorGUIUtility.PingObject(cfg);
+                        Selection.activeObject = cfg;
+                    }
+                }
+            }
+
+            if (GUILayout.Button("Add Discord Manager", GUILayout.Height(25)))
+            {
+                var discordType = GetTypeByName("IntelliVerseX.Discord.IVXDiscordManager");
+                if (discordType != null && Object.FindFirstObjectByType(discordType) == null)
+                {
+                    var go = new GameObject("[IVXDiscordManager]");
+                    go.AddComponent(discordType);
+                    Undo.RegisterCreatedObjectUndo(go, "Add Discord Manager");
+                }
+            }
+
+            EditorGUILayout.EndHorizontal();
+        }
 
         /// <summary>
         /// Checks if DOTween is installed in the project.

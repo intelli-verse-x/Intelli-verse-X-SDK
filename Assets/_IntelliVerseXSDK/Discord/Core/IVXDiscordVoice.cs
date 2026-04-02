@@ -152,7 +152,6 @@ namespace IntelliVerseX.Discord
             Debug.Log($"{LOG_TAG} Joining voice call in lobby {lobbyId}...");
 
 #if INTELLIVERSEX_HAS_DISCORD
-            // Wire: register optional default audio route; StartDiscordCall(lobbyId, null, null)
             StartDiscordCall(lobbyId, null, null);
 #else
             _inCall = true;
@@ -292,8 +291,8 @@ namespace IntelliVerseX.Discord
             _vadThresholdDb = thresholdDb;
 
 #if INTELLIVERSEX_HAS_DISCORD
-            // Wire to: client voice manager — map thresholdDb to native VAD / RNNoise gate
-            // e.g. SetVoiceActivityThreshold(useCustom, thresholdDb)
+            try { Client?.SetVoiceActivityDetection(useCustom, thresholdDb); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} SetVADThreshold error: {e.Message}"); }
 #else
             Debug.Log($"{LOG_TAG} [Stub] VAD custom={useCustom}, threshold={thresholdDb} dB");
 #endif
@@ -323,9 +322,6 @@ namespace IntelliVerseX.Discord
             _audioCapturedCallback = onCaptured;
 
 #if INTELLIVERSEX_HAS_DISCORD
-            // Wire: StartDiscordCall(lobbyId, onReceived, onCaptured)
-            // Register IVXAudioReceivedCallback with Discord Social SDK audio sink
-            // Register IVXAudioCapturedCallback with capture pipeline before encode
             StartDiscordCall(lobbyId, onReceived, onCaptured);
 #else
             _inCall = true;
@@ -346,7 +342,8 @@ namespace IntelliVerseX.Discord
             _selfMuted = muted;
 
 #if INTELLIVERSEX_HAS_DISCORD
-            // Wire to: client->SetSelfMuteAll(muted) / apply to all Call handles
+            try { Client?.SetSelfMute(muted); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} SetSelfMuteAll error: {e.Message}"); }
 #else
             Debug.Log($"{LOG_TAG} [Stub] Global self mute all: {muted}");
 #endif
@@ -362,7 +359,8 @@ namespace IntelliVerseX.Discord
             if (deafened) _selfMuted = true;
 
 #if INTELLIVERSEX_HAS_DISCORD
-            // Wire to: client->SetSelfDeafenAll(deafened)
+            try { Client?.SetSelfDeaf(deafened); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} SetSelfDeafenAll error: {e.Message}"); }
 #else
             Debug.Log($"{LOG_TAG} [Stub] Global self deafen all: {deafened}");
 #endif
@@ -375,7 +373,6 @@ namespace IntelliVerseX.Discord
         public void EndAllCalls(Action onComplete = null)
         {
 #if INTELLIVERSEX_HAS_DISCORD
-            // Wire to: client->EndCalls(callback) then clear callbacks / participants
             EndDiscordCall(() =>
             {
                 if (_inCall)
@@ -418,7 +415,6 @@ namespace IntelliVerseX.Discord
             }
 
 #if INTELLIVERSEX_HAS_DISCORD
-            // Wire: optional cache miss — query Discord participant state by userId
 #endif
             return (false, false);
         }
@@ -428,47 +424,81 @@ namespace IntelliVerseX.Discord
         #region Private Methods
 
 #if INTELLIVERSEX_HAS_DISCORD
+        private discordpp.Client Client => IVXDiscordManager.Instance?.DiscordClient;
+
         private void StartDiscordCall(ulong lobbyId, IVXAudioReceivedCallback onReceived, IVXAudioCapturedCallback onCaptured)
         {
-            // Wire to: client->StartCall(lobbyId)
-            // If onReceived/onCaptured non-null: hook Social SDK audio tap / OnAudioReceived-style callbacks
-            // Set up participant tracking; raise OnParticipantMuteChanged / OnParticipantDeafenChanged from SDK events
+            var client = Client;
+            if (client == null) return;
+            try
+            {
+                client.StartCall(lobbyId, (result) =>
+                {
+                    _inCall = true;
+                    _participants.Clear();
+                    _participants.Add(new IVXVoiceParticipant { UserId = "self", DisplayName = "You", Volume = 100f });
+                    Debug.Log($"{LOG_TAG} Voice call started for lobby {lobbyId}");
+                    OnCallJoined?.Invoke();
+                    OnParticipantsChanged?.Invoke(_participants);
+                });
+
+                if (onReceived != null)
+                    client.SetAudioReceivedCallback((userId, data, samplesPerChannel, sampleRate, channels) =>
+                    {
+                        bool mute = false;
+                        onReceived(userId, data, samplesPerChannel, sampleRate, channels, ref mute);
+                    });
+
+                if (onCaptured != null)
+                    client.SetAudioCapturedCallback((data, samplesPerChannel, sampleRate, channels) =>
+                        onCaptured(data, samplesPerChannel, sampleRate, channels));
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} StartDiscordCall error: {e.Message}"); }
         }
 
         private void EndDiscordCallForLeave()
         {
-            // Wire to: client->EndCalls(callback) for the active call only (LeaveCall path)
+            try { Client?.EndCalls((r) => Debug.Log($"{LOG_TAG} Call ended (leave).")); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} EndDiscordCallForLeave error: {e.Message}"); }
         }
 
         private void EndDiscordCall(Action onComplete)
         {
-            // Wire to: client->EndCalls(callback) — when all calls end, invoke onComplete on main thread
-            onComplete?.Invoke();
+            try { Client?.EndCalls((r) => onComplete?.Invoke()); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} EndDiscordCall error: {e.Message}"); onComplete?.Invoke(); }
         }
 
         private void SetDiscordSelfMute(bool muted)
         {
-            // Wire to: active call(s) SetSelfMute — respect _globalMuteAll if needed
+            try { Client?.SetSelfMute(muted); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} SetSelfMute error: {e.Message}"); }
         }
 
         private void SetDiscordSelfDeafen(bool deafened)
         {
-            // Wire to: active call(s) SetSelfDeafen
+            try { Client?.SetSelfDeaf(deafened); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} SetSelfDeafen error: {e.Message}"); }
         }
 
         private void SetDiscordInputVolume(float volume)
         {
-            // Wire to: client->SetInputVolume(volume)
+            try { Client?.SetInputVolume(volume); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} SetInputVolume error: {e.Message}"); }
         }
 
         private void SetDiscordOutputVolume(float volume)
         {
-            // Wire to: client->SetOutputVolume(volume)
+            try { Client?.SetOutputVolume(volume); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} SetOutputVolume error: {e.Message}"); }
         }
 
         private void SetDiscordParticipantVolume(string userId, float volume)
         {
-            // Wire to: call.SetParticipantVolume(userId, volume)
+            if (ulong.TryParse(userId, out var id))
+            {
+                try { Client?.SetParticipantVolume(id, volume); }
+                catch (Exception e) { Debug.LogError($"{LOG_TAG} SetParticipantVolume error: {e.Message}"); }
+            }
         }
 #endif
 

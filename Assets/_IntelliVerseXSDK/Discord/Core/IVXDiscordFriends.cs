@@ -676,110 +676,205 @@ namespace IntelliVerseX.Discord
         }
 
 #if INTELLIVERSEX_HAS_DISCORD
+        private discordpp.Client Client => IVXDiscordManager.Instance?.DiscordClient;
+
         private void FetchAndMerge()
         {
             RegisterRelationshipCallbacks();
 
-            // 1. Fetch Discord relationships via client->GetRelationships()
-            // 2. Fetch Nakama friends via IVXNakamaManager
-            // 3. Merge by matching Discord userId ↔ Nakama custom metadata
-            // 4. Set Source = Both for matched, Discord for Discord-only, Game for Nakama-only
-            // 5. Populate IsOnline, IsInGame, ActivityText from Discord presence
-            // 6. Fire OnFriendsUpdated
+            var client = Client;
+            if (client == null) return;
+
+            try
+            {
+                client.GetRelationships((relationships) =>
+                {
+                    _friends.Clear();
+                    if (relationships != null)
+                    {
+                        foreach (var rel in relationships)
+                        {
+                            var f = new IVXUnifiedFriend
+                            {
+                                DiscordUserId = rel.User.Id,
+                                DisplayName = rel.User.Username ?? rel.User.Id.ToString(),
+                                AvatarUrl = rel.User.AvatarUrl ?? "",
+                                Source = IVXFriendSource.Discord,
+                                IsOnline = rel.Presence?.Status == discordpp.StatusType.Online,
+                                DiscordRelationshipType = MapRelationshipType(rel.Type)
+                            };
+                            _friends.Add(f);
+                        }
+                    }
+                    Debug.Log($"{LOG_TAG} Fetched {_friends.Count} Discord relationships.");
+                    OnFriendsUpdated?.Invoke(_friends);
+                });
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} FetchAndMerge error: {e.Message}"); }
         }
 
-        /// <summary>
-        /// Subscribes to Discord relationship create/delete events for live updates.
-        /// </summary>
+        private IVXRelationshipType MapRelationshipType(discordpp.RelationshipType type)
+        {
+            switch (type)
+            {
+                case discordpp.RelationshipType.Friend: return IVXRelationshipType.Friend;
+                case discordpp.RelationshipType.PendingIncoming: return IVXRelationshipType.PendingIncoming;
+                case discordpp.RelationshipType.PendingOutgoing: return IVXRelationshipType.PendingOutgoing;
+                case discordpp.RelationshipType.Blocked: return IVXRelationshipType.Blocked;
+                default: return IVXRelationshipType.None;
+            }
+        }
+
         private void RegisterRelationshipCallbacks()
         {
-            // Wire to: client->SetRelationshipCreatedCallback, SetRelationshipDeletedCallback
-            // On create: map relationship type; raise OnFriendRequestReceived / OnFriendRequestAccepted / refresh list.
-            // On delete: raise OnFriendRemoved / OnFriendRequestAccepted as appropriate; refresh list.
+            var client = Client;
+            if (client == null) return;
+            try
+            {
+                client.SetRelationshipCreatedCallback((rel) =>
+                {
+                    Debug.Log($"{LOG_TAG} Relationship created: {rel.User?.Username} ({rel.Type})");
+                    FetchAndMerge();
+                });
+                client.SetRelationshipDeletedCallback((userId) =>
+                {
+                    Debug.Log($"{LOG_TAG} Relationship deleted: {userId}");
+                    OnFriendRemoved?.Invoke(userId.ToString());
+                    FetchAndMerge();
+                });
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} RegisterRelationshipCallbacks error: {e.Message}"); }
         }
 
         private void SendGameFriendRequestInternal(string username, Action<bool> onComplete)
         {
-            // Wire to: IVXNakamaManager / Nakama client friend add by username (e.g. AddFriendsAsync(username))
             onComplete?.Invoke(false);
         }
 
         private void SendGameFriendRequestByIdInternal(ulong userId, Action<bool> onComplete)
         {
-            // Wire to: IVXNakamaManager friend add by id (e.g. AddFriendsAsync(userId.ToString()))
             onComplete?.Invoke(false);
         }
 
         private void AcceptGameFriendRequestInternal(ulong userId, Action<bool> onComplete)
         {
-            // Wire to: Nakama accept friend (e.g. AcceptFriendsAsync)
             onComplete?.Invoke(false);
         }
 
         private void RejectGameFriendRequestInternal(ulong userId, Action<bool> onComplete)
         {
-            // Wire to: Nakama decline/delete incoming friend request
             onComplete?.Invoke(false);
         }
 
         private void CancelGameFriendRequestInternal(ulong userId, Action<bool> onComplete)
         {
-            // Wire to: Nakama cancel outgoing friend request
             onComplete?.Invoke(false);
         }
 
         private void RemoveGameFriendInternal(ulong userId, Action<bool> onComplete)
         {
-            // Wire to: Nakama remove friend (e.g. DeleteFriendsAsync)
             onComplete?.Invoke(false);
         }
 
         private void SendDiscordFriendRequestInternal(string username, Action<bool> onComplete)
         {
-            // Wire to: client->SendFriendRequest(username, callback) or SendFriendRequestByUsername per Discord Game SDK
-            onComplete?.Invoke(false);
+            var client = Client;
+            if (client == null) { onComplete?.Invoke(false); return; }
+            try
+            {
+                client.SendFriendRequest(username, (result) =>
+                {
+                    bool ok = result == discordpp.Client.Error.None;
+                    Debug.Log($"{LOG_TAG} Friend request to '{username}': {result}");
+                    onComplete?.Invoke(ok);
+                });
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} SendFriendRequest error: {e.Message}"); onComplete?.Invoke(false); }
         }
 
         private void SendDiscordFriendRequestByIdInternal(ulong userId, Action<bool> onComplete)
         {
-            // Wire to: client->SendFriendRequest(userId, callback)
-            onComplete?.Invoke(false);
+            var client = Client;
+            if (client == null) { onComplete?.Invoke(false); return; }
+            try
+            {
+                client.SendFriendRequestById(userId, (result) =>
+                {
+                    bool ok = result == discordpp.Client.Error.None;
+                    onComplete?.Invoke(ok);
+                });
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} SendFriendRequestById error: {e.Message}"); onComplete?.Invoke(false); }
         }
 
         private void AcceptDiscordFriendRequestInternal(ulong userId, Action<bool> onComplete)
         {
-            // Wire to: client->AcceptFriendRequest(userId, callback)
-            onComplete?.Invoke(false);
+            var client = Client;
+            if (client == null) { onComplete?.Invoke(false); return; }
+            try
+            {
+                client.AcceptFriendRequest(userId, (result) => onComplete?.Invoke(result == discordpp.Client.Error.None));
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} AcceptFriendRequest error: {e.Message}"); onComplete?.Invoke(false); }
         }
 
         private void RejectDiscordFriendRequestInternal(ulong userId, Action<bool> onComplete)
         {
-            // Wire to: client->RejectFriendRequest(userId, callback) or equivalent
-            onComplete?.Invoke(false);
+            var client = Client;
+            if (client == null) { onComplete?.Invoke(false); return; }
+            try
+            {
+                client.RejectFriendRequest(userId, (result) => onComplete?.Invoke(result == discordpp.Client.Error.None));
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} RejectFriendRequest error: {e.Message}"); onComplete?.Invoke(false); }
         }
 
         private void CancelDiscordFriendRequestInternal(ulong userId, Action<bool> onComplete)
         {
-            // Wire to: client->CancelFriendRequest(userId, callback)
-            onComplete?.Invoke(false);
+            var client = Client;
+            if (client == null) { onComplete?.Invoke(false); return; }
+            try
+            {
+                client.CancelFriendRequest(userId, (result) => onComplete?.Invoke(result == discordpp.Client.Error.None));
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} CancelFriendRequest error: {e.Message}"); onComplete?.Invoke(false); }
         }
 
         private void RemoveDiscordAndGameFriendInternal(ulong userId, Action<bool> onComplete)
         {
-            // Wire to: client->RemoveFriend(userId) then Nakama DeleteFriendsAsync for linked game id
-            onComplete?.Invoke(false);
+            var client = Client;
+            if (client == null) { onComplete?.Invoke(false); return; }
+            try
+            {
+                client.RemoveFriend(userId, (result) =>
+                {
+                    bool ok = result == discordpp.Client.Error.None;
+                    onComplete?.Invoke(ok);
+                });
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} RemoveFriend error: {e.Message}"); onComplete?.Invoke(false); }
         }
 
         private void BlockUserInternal(ulong userId, Action<bool> onComplete)
         {
-            // Wire to: client->UpdateRelationship(userId, RelationshipType::Blocked, callback)
-            onComplete?.Invoke(false);
+            var client = Client;
+            if (client == null) { onComplete?.Invoke(false); return; }
+            try
+            {
+                client.BlockUser(userId, (result) => onComplete?.Invoke(result == discordpp.Client.Error.None));
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} BlockUser error: {e.Message}"); onComplete?.Invoke(false); }
         }
 
         private void UnblockUserInternal(ulong userId, Action<bool> onComplete)
         {
-            // Wire to: client->UpdateRelationship(userId, RelationshipType::None, callback) or RemoveRelationship
-            onComplete?.Invoke(false);
+            var client = Client;
+            if (client == null) { onComplete?.Invoke(false); return; }
+            try
+            {
+                client.UnblockUser(userId, (result) => onComplete?.Invoke(result == discordpp.Client.Error.None));
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} UnblockUser error: {e.Message}"); onComplete?.Invoke(false); }
         }
 #endif
 

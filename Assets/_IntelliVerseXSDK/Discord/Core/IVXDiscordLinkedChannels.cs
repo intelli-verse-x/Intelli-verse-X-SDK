@@ -135,15 +135,43 @@ namespace IntelliVerseX.Discord
         #region Private Methods
 
 #if INTELLIVERSEX_HAS_DISCORD
+        private discordpp.Client Client => IVXDiscordManager.Instance?.DiscordClient;
+
         private void LinkDiscordChannel(ulong lobbyId, ulong guildId, ulong channelId)
         {
-            // Wire to: Discord HTTP API POST /lobbies/{lobbyId}/channel-linking
-            // or client-side equivalent when available
+            var client = Client;
+            if (client == null) return;
+            try
+            {
+                client.LinkChannelToLobby(lobbyId, channelId, (result) =>
+                {
+                    if (result == discordpp.Client.Error.None)
+                    {
+                        _linkedLobbyId = lobbyId;
+                        _linkedChannelId = channelId;
+                        _isLinked = true;
+                        Debug.Log($"{LOG_TAG} Channel {channelId} linked to lobby {lobbyId}.");
+                        OnChannelLinked?.Invoke(lobbyId, channelId);
+                    }
+                    else
+                    {
+                        Debug.LogError($"{LOG_TAG} LinkChannel failed: {result}");
+                    }
+                });
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} LinkDiscordChannel error: {e.Message}"); }
         }
 
         private void UnlinkDiscordChannel(ulong lobbyId)
         {
-            // Wire to: Discord HTTP API DELETE /lobbies/{lobbyId}/channel-linking
+            var client = Client;
+            if (client == null) return;
+            try
+            {
+                client.UnlinkChannelFromLobby(lobbyId, (result) =>
+                    Debug.Log($"{LOG_TAG} Channel unlinked from lobby {lobbyId}: {result}"));
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} UnlinkDiscordChannel error: {e.Message}"); }
         }
 #endif
 

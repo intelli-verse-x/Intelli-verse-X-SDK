@@ -355,24 +355,54 @@ namespace IntelliVerseX.Discord
         }
 
 #if INTELLIVERSEX_HAS_DISCORD
+        private discordpp.Client Client => IVXDiscordManager.Instance?.DiscordClient;
+
         private void RegisterModerationCallbacks()
         {
-            // Wire to: client->SetMessageUpdatedCallback — inspect message.ModerationMetadata and call ProcessModerationMetadata.
+            var client = Client;
+            if (client == null) return;
+            try
+            {
+                client.SetUserMessageUpdatedCallback((msg) =>
+                {
+                    if (msg.ModerationMetadata != null && msg.ModerationMetadata.Count > 0)
+                    {
+                        var metadata = new Dictionary<string, string>();
+                        foreach (var kv in msg.ModerationMetadata)
+                            metadata[kv.Key] = kv.Value;
+                        ProcessModerationMetadata(msg.Id, metadata);
+                    }
+                });
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} RegisterModerationCallbacks error: {e.Message}"); }
         }
 
         private void StartDiscordVoiceCapture(ulong lobbyId)
         {
-            // Wire to: client->StartCallWithAudioCallbacks — in capturedCallback, copy PCM and invoke OnVoiceDataCaptured(lobbyId, pcm, sampleRate, channels).
+            var client = Client;
+            if (client == null) return;
+            try
+            {
+                client.SetAudioCapturedCallback((data, samplesPerChannel, sampleRate, channels) =>
+                {
+                    byte[] pcm = new byte[data.Length * 2];
+                    Buffer.BlockCopy(data, 0, pcm, 0, pcm.Length);
+                    OnVoiceDataCaptured?.Invoke(lobbyId, pcm, sampleRate, channels);
+                });
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} StartVoiceCapture error: {e.Message}"); }
         }
 
         private void StopDiscordVoiceCapture()
         {
-            // Wire to: end audio callback / stop capture for moderation tap.
+            try { Client?.SetAudioCapturedCallback(null); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} StopVoiceCapture error: {e.Message}"); }
         }
 
         private void OpenDiscordReportDialog(ulong userId)
         {
-            // Wire to: platform report mechanism for the Discord Social SDK.
+            try { Client?.OpenUserProfileInDiscord(userId); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} OpenReportDialog error: {e.Message}"); }
         }
 #endif
 

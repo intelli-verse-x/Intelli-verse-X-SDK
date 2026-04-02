@@ -185,8 +185,33 @@ All demos build UI with code using `RectTransform` anchors and `LayoutGroup` com
 
 ---
 
+## Demo Hub
+
+`IVXDemoHub` is a master navigation scene containing cards for all 16+ demos. Drop the `IVX_DemoHub.prefab` (or the `IVXDemoHub` MonoBehaviour) onto a Canvas to get a clickable grid of every module demo. Each card opens its respective demo and provides a "Back to Hub" button.
+
+### Discord Social Demo
+
+`IVXDiscordSocialDemo` provides a 7-tab programmatic UI covering:
+
+| Tab | Features |
+|-----|----------|
+| Account | Link / unlink, OAuth2, provisional accounts, PKCE mobile flow |
+| Presence | Rich presence, party info, buttons, URLs, RPC-only mode |
+| Friends | Unified friend list (Discord + Game), block/unblock |
+| DMs | Send, edit, history, summaries, chat visibility toggle |
+| Lobby & Voice | Create/join, lobby chat, voice calls, mute/deafen, VAD slider |
+| Invites | Send/accept/decline game invites |
+| Moderation | Metadata processing, voice capture, user reporting |
+
+### Prefabs for All Demos
+
+Every demo has a corresponding prefab under `Assets/_IntelliVerseXSDK/Prefabs/`. Generate or refresh them via **IntelliVerseX > Generate All Prefabs**.
+
+---
+
 ## Related Documentation
 
 - [Core Module](core.md) -- Foundation utilities used by all demos
+- [Discord Social SDK](discord.md) -- Discord integration reference
 - [Monetization Module](monetization.md) -- Production spin-wheel and offerwall APIs
 - [Backend Module](backend.md) -- Server connectivity for live demo modes

@@ -437,6 +437,35 @@ Native Discord Social SDK does not target **WebGL**; IVX falls back to stub mode
 
 ---
 
+## Prefabs
+
+The SDK provides ready-made prefabs under `Assets/_IntelliVerseXSDK/Prefabs/`:
+
+| Prefab | Components |
+|--------|-----------|
+| `IVX_DiscordManager.prefab` | All 10 Discord managers on one GameObject |
+| `IVX_AllManagers.prefab` | Discord + AI + Multiplayer + Bootstrap combined |
+| `IVX_DiscordSocialDemo.prefab` | 7-tab Discord demo UI |
+| `IVX_DemoHub.prefab` | Master hub linking all 16+ demos |
+
+Generate or regenerate prefabs: **IntelliVerseX > Generate All Prefabs** in the Unity menu.
+
+### Quick setup via prefab
+
+1. Drag `IVX_DiscordManager.prefab` into your first scene.
+2. Assign your `IVXDiscordConfig` asset to the `IVXDiscordManager` component.
+3. The prefab persists via `DontDestroyOnLoad`.
+
+### Setup Wizard
+
+The Setup Wizard (**IntelliVerseX > SDK Setup Wizard**) now includes a Discord section under the Features tab with:
+
+- Package detection (`com.discord.social-sdk`)
+- One-click **Create Discord Config** asset generation
+- One-click **Add Discord Manager** to the scene
+
+---
+
 ## Related links
 
 - [Social module](social.md) — Nakama friends

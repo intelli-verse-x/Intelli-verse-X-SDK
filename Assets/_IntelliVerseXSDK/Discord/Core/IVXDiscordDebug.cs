@@ -174,14 +174,49 @@ namespace IntelliVerseX.Discord
         }
 
 #if INTELLIVERSEX_HAS_DISCORD
+        private discordpp.Client Client => IVXDiscordManager.Instance?.DiscordClient;
+
         private void ApplyDiscordLogLevel()
         {
-            // Wire to: discordpp / Social SDK log level configuration matching _currentLogLevel.
+            var client = Client;
+            if (client == null) return;
+            try
+            {
+                var nativeLevel = _currentLogLevel switch
+                {
+                    IVXDiscordLogLevel.Verbose => discordpp.LoggingSeverity.Verbose,
+                    IVXDiscordLogLevel.Debug => discordpp.LoggingSeverity.Debug,
+                    IVXDiscordLogLevel.Info => discordpp.LoggingSeverity.Info,
+                    IVXDiscordLogLevel.Warning => discordpp.LoggingSeverity.Warning,
+                    IVXDiscordLogLevel.Error => discordpp.LoggingSeverity.Error,
+                    _ => discordpp.LoggingSeverity.Info
+                };
+                client.SetLogLevel(nativeLevel);
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} ApplyDiscordLogLevel error: {e.Message}"); }
         }
 
         private void RegisterDiscordLogCallback()
         {
-            // Wire to: client->SetLogCallback — forward lines to RouteLog after ShouldLog filter.
+            var client = Client;
+            if (client == null) return;
+            try
+            {
+                client.SetLogCallback((severity, message) =>
+                {
+                    var level = severity switch
+                    {
+                        discordpp.LoggingSeverity.Verbose => IVXDiscordLogLevel.Verbose,
+                        discordpp.LoggingSeverity.Debug => IVXDiscordLogLevel.Debug,
+                        discordpp.LoggingSeverity.Info => IVXDiscordLogLevel.Info,
+                        discordpp.LoggingSeverity.Warning => IVXDiscordLogLevel.Warning,
+                        discordpp.LoggingSeverity.Error => IVXDiscordLogLevel.Error,
+                        _ => IVXDiscordLogLevel.Info
+                    };
+                    RouteLog(level, message);
+                });
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} RegisterDiscordLogCallback error: {e.Message}"); }
         }
 #endif
 

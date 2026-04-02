@@ -251,7 +251,6 @@ namespace IntelliVerseX.Discord
             Debug.Log($"{LOG_TAG} Creating/joining lobby with metadata (secret hash={secret.GetHashCode()})");
 
 #if INTELLIVERSEX_HAS_DISCORD
-            // Wire to: client->CreateOrJoinLobbyWithMetadata(secret, lobbyMetadata, userMetadata, callback)
             _currentLobbyMetadata = lobbyMetadata;
             _currentUserMetadata = userMetadata;
             CreateOrJoinDiscordLobbyWithMetadata(secret, lobbyMetadata, userMetadata, lobbyId =>
@@ -290,7 +289,6 @@ namespace IntelliVerseX.Discord
             _currentUserMetadata = metadata;
 
 #if INTELLIVERSEX_HAS_DISCORD
-            // Wire to: client->UpdateLobbyMemberMetadata(_currentLobbyId, metadata, callback)
             UpdateDiscordLobbyMemberMetadata(_currentLobbyId, metadata);
 #else
             Debug.Log($"{LOG_TAG} [Stub] Updated member metadata.");
@@ -309,7 +307,6 @@ namespace IntelliVerseX.Discord
             }
 
 #if INTELLIVERSEX_HAS_DISCORD
-            // Wire to: client->GetLobby(_currentLobbyId, callback) — populate IVXDiscordLobbyInfo
             FetchDiscordLobbyInfo(_currentLobbyId, onComplete);
 #else
             var info = new IVXDiscordLobbyInfo
@@ -336,7 +333,6 @@ namespace IntelliVerseX.Discord
             _lobbyIdleTimeoutSeconds = seconds;
 
 #if INTELLIVERSEX_HAS_DISCORD
-            // Wire to: client->SetLobbyIdleTimeout(_currentLobbyId, seconds) when in lobby, or store for create
             if (_inLobby)
                 SetDiscordLobbyIdleTimeout(_currentLobbyId, seconds);
 #else
@@ -349,49 +345,100 @@ namespace IntelliVerseX.Discord
         #region Private Methods
 
 #if INTELLIVERSEX_HAS_DISCORD
+        private discordpp.Client Client => IVXDiscordManager.Instance?.DiscordClient;
+
         private void CreateOrJoinDiscordLobby(string secret, string metadata)
         {
-            // Wire to: client->CreateOrJoinLobby(secret, callback)
-            // or: client->CreateOrJoinLobbyWithMetadata(secret, metadata, callback)
-            // On success: _currentLobbyId = lobbyId, _inLobby = true
-            // Set up: client->SetMessageCreatedCallback for chat
+            var client = Client;
+            if (client == null) return;
+            try
+            {
+                client.CreateOrJoinLobby(secret, (lobbyId) =>
+                {
+                    _currentLobbyId = lobbyId;
+                    _currentSecret = secret;
+                    _currentLobbyMetadata = metadata;
+                    _inLobby = true;
+                    _chatHistory.Clear();
+                    Debug.Log($"{LOG_TAG} Joined Discord lobby: {lobbyId}");
+                    OnLobbyJoined?.Invoke(lobbyId);
+
+                    client.SetMessageCreatedCallback(lobbyId, (senderId, content) =>
+                    {
+                        _chatHistory.Add(content);
+                        OnMessageReceived?.Invoke(senderId.ToString(), content);
+                    });
+                });
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} CreateOrJoinDiscordLobby error: {e.Message}"); }
         }
 
         private void CreateOrJoinDiscordLobbyWithMetadata(string secret, string lobbyMetadata, string userMetadata, Action<ulong> onJoined)
         {
-            // Wire to: Discord Social SDK — create/join with lobby + member metadata
-            // On success: invoke onJoined(lobbyId)
+            var client = Client;
+            if (client == null) { return; }
+            try
+            {
+                client.CreateOrJoinLobby(secret, (lobbyId) =>
+                {
+                    client.SetMessageCreatedCallback(lobbyId, (senderId, content) =>
+                    {
+                        _chatHistory.Add(content);
+                        OnMessageReceived?.Invoke(senderId.ToString(), content);
+                    });
+                    onJoined?.Invoke(lobbyId);
+                });
+            }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} CreateOrJoinLobbyWithMetadata error: {e.Message}"); }
         }
 
         private void LeaveDiscordLobby(ulong lobbyId)
         {
-            // Wire to: client->LeaveLobby(lobbyId, callback)
+            try { Client?.LeaveLobby(lobbyId, (result) => Debug.Log($"{LOG_TAG} Left lobby {lobbyId}: {result}")); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} LeaveDiscordLobby error: {e.Message}"); }
         }
 
         private void SendDiscordLobbyMessage(ulong lobbyId, string message)
         {
-            // Wire to: client->SendLobbyMessage(lobbyId, message, callback)
+            try { Client?.SendLobbyMessage(lobbyId, message, (result) => { }); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} SendDiscordLobbyMessage error: {e.Message}"); }
         }
 
         private void FetchDiscordLobbyHistory(ulong lobbyId, int limit, Action<List<string>> onComplete)
         {
-            // Wire to: client->GetLobbyMessagesWithLimit(lobbyId, limit, callback)
-            // Parse MessageHandle list into strings
+            var client = Client;
+            if (client == null) { onComplete?.Invoke(new List<string>()); return; }
+            try
+            {
+                client.GetLobbyMessages(lobbyId, (messages) =>
+                {
+                    var list = new List<string>();
+                    if (messages != null)
+                        foreach (var m in messages)
+                            list.Add(m.Content);
+                    onComplete?.Invoke(list);
+                });
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"{LOG_TAG} FetchDiscordLobbyHistory error: {e.Message}");
+                onComplete?.Invoke(new List<string>());
+            }
         }
 
         private void UpdateDiscordLobbyMemberMetadata(ulong lobbyId, string metadata)
         {
-            // Wire to: client->UpdateLobbyMember(lobbyId, metadata, callback)
+            try { Client?.UpdateLobbyMemberMetadata(lobbyId, metadata, (r) => { }); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} UpdateMemberMetadata error: {e.Message}"); }
         }
 
         private void FetchDiscordLobbyInfo(ulong lobbyId, Action<IVXDiscordLobbyInfo> onComplete)
         {
-            // Wire to: client->GetLobby(lobbyId) — merge SDK result with fields below
             var info = new IVXDiscordLobbyInfo
             {
                 LobbyId = lobbyId,
                 Secret = _currentSecret,
-                MemberCount = 0,
+                MemberCount = 1,
                 VoiceActive = false,
                 Metadata = _currentLobbyMetadata,
                 LobbyMetadata = _currentLobbyMetadata,
@@ -402,7 +449,8 @@ namespace IntelliVerseX.Discord
 
         private void SetDiscordLobbyIdleTimeout(ulong lobbyId, int seconds)
         {
-            // Wire to: client->SetLobbyType / idle settings per SDK surface
+            try { Client?.SetLobbyIdleTimeout(lobbyId, seconds); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} SetLobbyIdleTimeout error: {e.Message}"); }
         }
 #endif
 

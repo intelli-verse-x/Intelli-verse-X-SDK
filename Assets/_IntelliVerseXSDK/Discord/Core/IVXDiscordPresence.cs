@@ -425,78 +425,117 @@ namespace IntelliVerseX.Discord
 #if INTELLIVERSEX_HAS_DISCORD
         private void UpdateDiscordActivity(IVXDiscordConfig config)
         {
-            // Wire to: discordpp::Activity
-            // activity.SetType(ActivityTypes::Playing)
-            // activity.SetDetails(_currentDetails)
-            // activity.SetState(_currentState)
-            // activity.SetStateUrl(_stateUrl)
-            // activity.SetDetailsUrl(_detailsUrl)
-            //
-            // if (_startTimestamp > 0):
-            //   timestamps.SetStart(_startTimestamp)
-            //   activity.SetTimestamps(timestamps)
-            //
-            // if (_partyId != null):
-            //   party.SetId(_partyId)
-            //   party.SetCurrentSize(_partySize)
-            //   party.SetMaxSize(_partyMax)
-            //   activity.SetParty(party)
-            //
-            // if (_joinSecret != null):
-            //   secrets.SetJoin(_joinSecret)
-            //   activity.SetSecrets(secrets)
-            //
-            // assets.SetLargeImage(config.LargeImageAssetKey)
-            // assets.SetLargeText(config.LargeImageText)
-            // assets.SetLargeUrl(_largeUrl)
-            // assets.SetSmallUrl(_smallUrl)
-            // assets.SetSmallImage(_smallImageAssetKey)
-            // assets.SetSmallText(_smallImageText)
-            // assets.SetInviteCoverImage(_inviteCoverImage)
-            // activity.SetAssets(assets)
-            //
-            // activity.SetStatusDisplayType(...) // map _statusDisplayType to SDK enum (Name / State / Details)
-            // activity.SetSupportedPlatforms(...) // map _supportedPlatforms bitmask to SDK flags
-            //
-            // if (!string.IsNullOrEmpty(_button1Label) && !string.IsNullOrEmpty(_button1Url)):
-            //   customButton1.SetLabel(_button1Label)
-            //   customButton1.SetUrl(_button1Url)
-            //   activity.AddButton(customButton1)
-            // if (!string.IsNullOrEmpty(_button2Label) && !string.IsNullOrEmpty(_button2Url)):
-            //   customButton2.SetLabel(_button2Label)
-            //   customButton2.SetUrl(_button2Url)
-            //   activity.AddButton(customButton2)
-            //
-            // if (!string.IsNullOrEmpty(config.StorePageUrl)):
-            //   button1.SetLabel("Play Now")
-            //   button1.SetUrl(config.StorePageUrl)
-            //   activity.AddButton(button1)
-            //
-            // if (!string.IsNullOrEmpty(config.CommunityInviteUrl)):
-            //   button2.SetLabel("Join Community")
-            //   button2.SetUrl(config.CommunityInviteUrl)
-            //   activity.AddButton(button2)
-            //
-            // client->UpdateRichPresence(activity, callback)
+            var mgr = IVXDiscordManager.Instance;
+            var client = mgr?.DiscordClient;
+            if (client == null) return;
+
+            try
+            {
+                var activity = new discordpp.Activity();
+                activity.SetType(discordpp.ActivityTypes.Playing);
+
+                if (!string.IsNullOrEmpty(_currentDetails)) activity.SetDetails(_currentDetails);
+                if (!string.IsNullOrEmpty(_currentState)) activity.SetState(_currentState);
+                if (!string.IsNullOrEmpty(_stateUrl)) activity.SetStateUrl(_stateUrl);
+                if (!string.IsNullOrEmpty(_detailsUrl)) activity.SetDetailsUrl(_detailsUrl);
+
+                if (_startTimestamp > 0)
+                {
+                    var ts = new discordpp.ActivityTimestamps();
+                    ts.SetStart(_startTimestamp);
+                    activity.SetTimestamps(ts);
+                }
+
+                if (!string.IsNullOrEmpty(_partyId))
+                {
+                    var party = new discordpp.ActivityParty();
+                    party.SetId(_partyId);
+                    party.SetCurrentSize(_partySize);
+                    party.SetMaxSize(_partyMax);
+                    activity.SetParty(party);
+                }
+
+                if (!string.IsNullOrEmpty(_joinSecret))
+                {
+                    var secrets = new discordpp.ActivitySecrets();
+                    secrets.SetJoin(_joinSecret);
+                    activity.SetSecrets(secrets);
+                }
+
+                var assets = new discordpp.ActivityAssets();
+                if (config != null)
+                {
+                    if (!string.IsNullOrEmpty(config.LargeImageAssetKey)) assets.SetLargeImage(config.LargeImageAssetKey);
+                    if (!string.IsNullOrEmpty(config.LargeImageText)) assets.SetLargeText(config.LargeImageText);
+                }
+                if (!string.IsNullOrEmpty(_largeUrl)) assets.SetLargeUrl(_largeUrl);
+                if (!string.IsNullOrEmpty(_smallUrl)) assets.SetSmallUrl(_smallUrl);
+                if (!string.IsNullOrEmpty(_smallImageAssetKey)) assets.SetSmallImage(_smallImageAssetKey);
+                if (!string.IsNullOrEmpty(_smallImageText)) assets.SetSmallText(_smallImageText);
+                if (!string.IsNullOrEmpty(_inviteCoverImage)) assets.SetInviteCoverImage(_inviteCoverImage);
+                activity.SetAssets(assets);
+
+                activity.SetSupportedPlatforms((uint)_supportedPlatforms);
+
+                if (!string.IsNullOrEmpty(_button1Label) && !string.IsNullOrEmpty(_button1Url))
+                {
+                    var btn = new discordpp.ActivityButton();
+                    btn.SetLabel(_button1Label);
+                    btn.SetUrl(_button1Url);
+                    activity.GetButtons().Add(btn);
+                }
+                if (!string.IsNullOrEmpty(_button2Label) && !string.IsNullOrEmpty(_button2Url))
+                {
+                    var btn = new discordpp.ActivityButton();
+                    btn.SetLabel(_button2Label);
+                    btn.SetUrl(_button2Url);
+                    activity.GetButtons().Add(btn);
+                }
+
+                client.UpdateRichPresence(activity, (result) =>
+                {
+                    Debug.Log($"{LOG_TAG} Rich Presence updated: {result}");
+                });
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"{LOG_TAG} UpdateDiscordActivity error: {e.Message}");
+            }
         }
 
         private void InitializeRPCOnlyMode(long applicationId)
         {
-            // Wire to: client->SetApplicationId(applicationId) without Connect(), then UpdateRichPresence
-            // (same activity assembly as UpdateDiscordActivity; RPC-only / desktop path)
+            var mgr = IVXDiscordManager.Instance;
+            var client = mgr?.DiscordClient;
+            if (client != null)
+            {
+                client.SetApplicationId(applicationId);
+            }
         }
 
         private void ClearDiscordPresence()
         {
-            // Wire to: client->ClearRichPresence()
+            var client = IVXDiscordManager.Instance?.DiscordClient;
+            try { client?.ClearRichPresence((r) => Debug.Log($"{LOG_TAG} Presence cleared.")); }
+            catch (Exception e) { Debug.LogError($"{LOG_TAG} ClearDiscordPresence error: {e.Message}"); }
         }
 
         private void SyncFromIVXSystems()
         {
-            // Read IVXGameModeManager.Instance for current mode + phase
-            // Read IVXLobbyManager.Instance for room info (party)
-            // Read IVXHiroCoordinator.Instance for streak/spin state
-            // Call SetActivity / SetParty accordingly
+            var gm = IntelliVerseX.GameModes.IVXGameModeManager.Instance;
+            if (gm != null && gm.CurrentConfig != null)
+            {
+                var mode = gm.CurrentMode;
+                var phase = gm.Phase;
+                SetActivity($"Playing {mode}", phase.ToString());
+
+                var lobby = IntelliVerseX.GameModes.IVXLobbyManager.Instance;
+                if (lobby != null && lobby.IsInRoom && lobby.CurrentRoom != null)
+                {
+                    SetParty(lobby.CurrentRoom.RoomId, lobby.CurrentRoom.PlayerCount,
+                        lobby.CurrentRoom.MaxPlayers);
+                }
+            }
         }
 #endif
 
