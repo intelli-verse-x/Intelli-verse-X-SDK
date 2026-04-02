@@ -1,6 +1,6 @@
 [project]
 title = IntelliVerseX SDK
-version = 5.2.0
+version = 5.8.0
 
 [library]
 include_dirs = intelliversex

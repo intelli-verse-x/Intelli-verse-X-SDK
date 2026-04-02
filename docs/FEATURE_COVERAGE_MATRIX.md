@@ -82,13 +82,13 @@
 | Feature | Unity | JS/TS | Web3 | Java | Flutter | Unreal | Godot | Defold | C++ | Cocos |
 |---------|:-----:|:-----:|:----:|:----:|:-------:|:------:|:-----:|:------:|:---:|:-----:|
 | Spin Wheel (get/spin) | Y | Y | Y | Y | Y | Y | Y | Y | S | Y |
-| Streaks (get/update/claim) | Y | Y | S | S | S | Y | S | S | S | S |
-| Offerwall (get/complete/claim) | Y | Y | S | S | S | Y | S | S | S | S |
-| Friend Quests | Y | Y | - | S | Y | Y | Y | Y | S | - |
-| Friend Battles | Y | Y | - | S | Y | Y | Y | Y | S | - |
-| IAP Trigger | Y | Y | - | - | Y | Y | Y | Y | Y | Y |
-| Smart Ad Timer | Y | Y | - | - | Y | Y | Y | Y | Y | Y |
-| Retention (get/update) | Y | Y | - | S | S | Y | Y | Y | Y | Y |
+| Streaks (get/update/claim) | Y | Y | S | Y | S | Y | S | S | S | S |
+| Offerwall (get/complete/claim) | Y | Y | S | Y | S | Y | S | S | S | S |
+| Friend Quests | Y | Y | Y | Y | Y | Y | Y | Y | S | - |
+| Friend Battles | Y | Y | Y | Y | Y | Y | Y | Y | S | - |
+| IAP Trigger | Y | Y | Y | Y | Y | Y | Y | Y | Y | Y |
+| Smart Ad Timer | Y | Y | Y | Y | Y | Y | Y | Y | Y | Y |
+| Retention (get/update) | Y | Y | Y | Y | S | Y | Y | Y | Y | Y |
 
 ---
 
@@ -107,6 +107,7 @@
 | Moderation | Y | S | S | S | S | S | S | S | S | S |
 | Linked Channels | Y | S | S | S | S | S | S | S | S | S |
 | Debug / Logging | Y | S | S | S | S | S | S | S | S | S |
+| Social Settings | Y | S | S | S | S | S | S | S | S | S |
 
 ---
 
@@ -141,16 +142,16 @@
 
 | Platform | Fully Implemented | Stubs | Not Present | Coverage % |
 |----------|:-----------------:|:-----:|:-----------:|:----------:|
-| **Unity** | **62** | 3 | 3 | **91%** |
-| **JavaScript/TS** | **35** | 26 | 7 | **52% → 90%** |
-| **Flutter/Dart** | **29** | 30 | 9 | **43% → 87%** |
-| **Web3** | **23** | 29 | 16 | **34% → 76%** |
-| **Java/Android** | **28** | 27 | 13 | **41% → 81%** |
-| **Unreal Engine 5** | **30** | 28 | 10 | **44% → 85%** |
-| **Godot 4** | **30** | 28 | 10 | **44% → 85%** |
-| **Defold** | **30** | 28 | 10 | **44% → 85%** |
-| **Cocos2d-x** | **25** | 29 | 14 | **37% → 79%** |
-| **C++ (CMake)** | **22** | 33 | 13 | **32% → 81%** |
+| **Unity** | **63** | 3 | 3 | **91%** |
+| **JavaScript/TS** | **35** | 27 | 7 | **51% → 90%** |
+| **Flutter/Dart** | **29** | 31 | 9 | **42% → 87%** |
+| **Web3** | **26** | 30 | 13 | **38% → 81%** |
+| **Java/Android** | **31** | 27 | 11 | **45% → 84%** |
+| **Unreal Engine 5** | **30** | 29 | 10 | **43% → 86%** |
+| **Godot 4** | **30** | 29 | 10 | **43% → 86%** |
+| **Defold** | **30** | 29 | 10 | **43% → 86%** |
+| **Cocos2d-x** | **25** | 30 | 14 | **36% → 80%** |
+| **C++ (CMake)** | **22** | 34 | 13 | **32% → 81%** |
 
 > **API Surface Coverage** (Y + S combined) represents what a developer can code against today.
 > Stubs are zero-code-change upgradeable once backend RPCs are configured.
@@ -159,8 +160,8 @@
 
 ## Key Takeaways
 
-- **Unity** is the reference implementation with the richest feature set (62 features fully wired).
-- **All 10 platforms** now have full API surface coverage for **Discord Social SDK** (11 modules), **AI LLM Stack** (6 modules), **Satori Analytics** (6 features), and all **Hiro Live-Ops** systems.
+- **Unity** is the reference implementation with the richest feature set (63 features fully wired).
+- **All 10 platforms** now have full API surface coverage for **Discord Social SDK** (12 modules incl. Settings), **AI LLM Stack** (6 modules), **Satori Analytics** (6 features), and all **Hiro Live-Ops** systems.
 - **JavaScript/TypeScript** remains the strongest non-Unity SDK with real Nakama RPC-backed Hiro systems.
 - **Hiro parity** (retention, IAP trigger, smart ad timer) has been added to Unreal, C++, Cocos2d-x, Godot, and Defold.
 - **GameModes/Lobby/Matchmaking** are local-state stubs across non-Unity SDKs — API shape exists for zero-code-change upgrade.
@@ -179,4 +180,4 @@ This means you can:
 
 ---
 
-*IntelliVerseX SDK v5.8.0 — 10 platforms, 68 features, one API.*
+*IntelliVerseX SDK v5.8.0 — 10 platforms, 69 features, one API.*

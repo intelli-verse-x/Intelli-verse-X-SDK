@@ -57,6 +57,7 @@ export { IVXDiscordMessages } from './discord-messages';
 export type { IVXDirectMessage, IVXDMSummary } from './discord-messages';
 export { IVXDiscordModeration, IVXModerationAction } from './discord-moderation';
 export type { IVXModerationDecision } from './discord-moderation';
+export { IVXDiscordSettings, type IVXDiscordSettingsState } from './discord-settings';
 
 // AI LLM stack
 export { IVXAINPCDialogManager } from './ai-npc';

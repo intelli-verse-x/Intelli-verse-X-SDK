@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(IntelliVerseX VERSION 5.2.0 LANGUAGES CXX)
+project(IntelliVerseX VERSION 5.8.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -11,11 +11,16 @@ find_package(nakama-sdk REQUIRED)
 set(IVX_SOURCES
     Classes/IntelliVerseX/IVXManager.cpp
     Classes/IntelliVerseX/IVXConfig.cpp
+    Classes/IntelliVerseX/IVXAIClient.cpp
+    Classes/IntelliVerseX/IVXDiscordSocial.cpp
     Classes/IntelliVerseX/IVXDiscordMessages.cpp
     Classes/IntelliVerseX/IVXDiscordModeration.cpp
     Classes/IntelliVerseX/IVXDiscordLinkedChannels.cpp
     Classes/IntelliVerseX/IVXDiscordDebug.cpp
+    Classes/IntelliVerseX/IVXDiscordSettings.cpp
     Classes/IntelliVerseX/IVXSatori.cpp
+    Classes/IntelliVerseX/IVXHiroSystems.cpp
+    Classes/IntelliVerseX/IVXGameModes.cpp
     Classes/IntelliVerseX/IVXAINPCDialogManager.cpp
     Classes/IntelliVerseX/IVXAIAssistant.cpp
     Classes/IntelliVerseX/IVXAIModerator.cpp

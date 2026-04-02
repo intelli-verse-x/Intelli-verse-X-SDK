@@ -42,6 +42,8 @@ public class IVXHiroSystems {
     private final Retention retention;
     private final FriendQuests friendQuests;
     private final FriendBattles friendBattles;
+    private final IapTrigger iapTrigger;
+    private final SmartAdTimer smartAdTimer;
 
     /**
      * Creates a new Hiro systems wrapper.
@@ -59,6 +61,8 @@ public class IVXHiroSystems {
         this.retention = new Retention();
         this.friendQuests = new FriendQuests();
         this.friendBattles = new FriendBattles();
+        this.iapTrigger = new IapTrigger();
+        this.smartAdTimer = new SmartAdTimer();
     }
 
     /**
@@ -87,6 +91,12 @@ public class IVXHiroSystems {
 
     /** Returns the Friend Battles subsystem. */
     public FriendBattles friendBattles() { return friendBattles; }
+
+    /** Returns the IAP Trigger subsystem. */
+    public IapTrigger iapTrigger() { return iapTrigger; }
+
+    /** Returns the Smart Ad Timer subsystem. */
+    public SmartAdTimer smartAdTimer() { return smartAdTimer; }
 
     // ──────────────────────────────────────────────
     //  Data Models
@@ -248,6 +258,71 @@ public class IVXHiroSystems {
         @Override
         public String toString() {
             return "IVXFriendQuest{questId='" + questId + "', progress=" + progress + '/' + goal + '}';
+        }
+    }
+
+    // ──────────────────────────────────────────────
+    //  Data Models: IAP Trigger / Smart Ad Timer
+    // ──────────────────────────────────────────────
+
+    /** Result of an IAP trigger check. */
+    public static final class IVXIapTriggerResult {
+        @SerializedName("should_show")
+        private final boolean shouldShow;
+
+        @SerializedName("offer_id")
+        private final String offerId;
+
+        @SerializedName("discount")
+        private final double discount;
+
+        @SerializedName("expires_at")
+        private final long expiresAt;
+
+        public IVXIapTriggerResult(boolean shouldShow, String offerId, double discount, long expiresAt) {
+            this.shouldShow = shouldShow;
+            this.offerId = offerId != null ? offerId : "";
+            this.discount = discount;
+            this.expiresAt = expiresAt;
+        }
+
+        public boolean isShouldShow() { return shouldShow; }
+        public String getOfferId() { return offerId; }
+        public double getDiscount() { return discount; }
+        public long getExpiresAt() { return expiresAt; }
+
+        @Override
+        public String toString() {
+            return "IVXIapTriggerResult{show=" + shouldShow + ", offerId='" + offerId
+                    + "', discount=" + discount + '}';
+        }
+    }
+
+    /** Result of a smart-ad availability check. */
+    public static final class IVXSmartAdResult {
+        @SerializedName("can_show")
+        private final boolean canShow;
+
+        @SerializedName("next_available_at")
+        private final long nextAvailableAt;
+
+        @SerializedName("reason")
+        private final String reason;
+
+        public IVXSmartAdResult(boolean canShow, long nextAvailableAt, String reason) {
+            this.canShow = canShow;
+            this.nextAvailableAt = nextAvailableAt;
+            this.reason = reason != null ? reason : "";
+        }
+
+        public boolean isCanShow() { return canShow; }
+        public long getNextAvailableAt() { return nextAvailableAt; }
+        public String getReason() { return reason; }
+
+        @Override
+        public String toString() {
+            return "IVXSmartAdResult{canShow=" + canShow + ", nextAt=" + nextAvailableAt
+                    + ", reason='" + reason + "'}";
         }
     }
 
@@ -469,6 +544,50 @@ public class IVXHiroSystems {
          */
         public CompletableFuture<String> getResult(String challengeId) {
             return rpc(RPC_RESULT, "{\"challenge_id\":\"" + challengeId + "\"}");
+        }
+    }
+
+    // ──────────────────────────────────────────────
+    //  Subsystem: IAP Trigger
+    // ──────────────────────────────────────────────
+
+    /**
+     * IAP Trigger subsystem — context-sensitive purchase prompts.
+     */
+    public class IapTrigger {
+        private static final String RPC_CHECK = "hiro_iap_trigger_check";
+
+        /**
+         * Checks whether an IAP offer should be shown for the given event.
+         *
+         * @param eventType the triggering event (e.g. "level_fail", "session_end")
+         * @return a future resolving to the trigger result
+         */
+        public CompletableFuture<IVXIapTriggerResult> check(String eventType) {
+            return rpc(RPC_CHECK, "{\"event_type\":\"" + eventType + "\"}")
+                    .thenApply(p -> gson.fromJson(p, IVXIapTriggerResult.class));
+        }
+    }
+
+    // ──────────────────────────────────────────────
+    //  Subsystem: Smart Ad Timer
+    // ──────────────────────────────────────────────
+
+    /**
+     * Smart Ad Timer subsystem — ad-frequency management.
+     */
+    public class SmartAdTimer {
+        private static final String RPC_CAN_SHOW = "hiro_smart_ad_can_show";
+
+        /**
+         * Checks if an ad can be shown for the given placement.
+         *
+         * @param placement the ad placement identifier
+         * @return a future resolving to the ad availability result
+         */
+        public CompletableFuture<IVXSmartAdResult> canShowAd(String placement) {
+            return rpc(RPC_CAN_SHOW, "{\"placement\":\"" + placement + "\"}")
+                    .thenApply(p -> gson.fromJson(p, IVXSmartAdResult.class));
         }
     }
 

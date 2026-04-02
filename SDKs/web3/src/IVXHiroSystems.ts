@@ -40,12 +40,54 @@ export interface IVXFriendInfo {
   state: number;
 }
 
+export interface IVXRetentionState {
+  day: number;
+  lastLoginAt: number;
+  rewards: { day: number; claimed: boolean }[];
+}
+
+export interface IVXFriendQuest {
+  questId: string;
+  title: string;
+  description: string;
+  targetProgress: number;
+  currentProgress: number;
+  completed: boolean;
+  expiresAt: number;
+}
+
+export interface IVXFriendBattle {
+  battleId: string;
+  friendId: string;
+  friendName: string;
+  challengerScore: number;
+  friendScore: number;
+  status: 'pending' | 'active' | 'completed';
+  expiresAt: number;
+}
+
+export interface IVXIapTriggerResult {
+  shouldShow: boolean;
+  offerId?: string;
+  discount?: number;
+  expiresAt?: number;
+}
+
+export interface IVXSmartAdResult {
+  canShow: boolean;
+  nextAvailableAt: number;
+  reason?: string;
+}
+
 export interface IVXHiroEventMap {
   wheelSpun: [reward: IVXSpinWheelReward];
   streakClaimed: [info: IVXStreakInfo];
   offerClaimed: [offerId: string];
   friendAdded: [userId: string];
   friendRemoved: [userId: string];
+  retentionUpdated: [state: IVXRetentionState];
+  iapTriggerChecked: [result: IVXIapTriggerResult];
+  adTimerChecked: [result: IVXSmartAdResult];
   error: [error: { code: number; message: string }];
 }
 
@@ -219,6 +261,121 @@ export class IVXHiroSystems {
   async blockUser(userId: string): Promise<void> {
     await this.callRpc('hiro_friends_block', JSON.stringify({ user_id: userId }));
     this.log(`User blocked: ${userId}`);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Retention
+  // ---------------------------------------------------------------------------
+
+  /** Get the player's retention / daily-login state. */
+  async getRetentionState(): Promise<IVXRetentionState> {
+    const result = await this.callRpc('hiro_retention_get', '{}');
+    return {
+      day: Number(result.day ?? 0),
+      lastLoginAt: Number(result.last_login_at ?? 0),
+      rewards: Array.isArray(result.rewards)
+        ? result.rewards.map((r: Record<string, unknown>) => ({
+            day: Number(r.day ?? 0),
+            claimed: Boolean(r.claimed ?? false),
+          }))
+        : [],
+    };
+  }
+
+  /** Record today's login for retention tracking. */
+  async updateRetention(): Promise<IVXRetentionState> {
+    const result = await this.callRpc('hiro_retention_update', '{}');
+    return {
+      day: Number(result.day ?? 0),
+      lastLoginAt: Number(result.last_login_at ?? 0),
+      rewards: Array.isArray(result.rewards)
+        ? result.rewards.map((r: Record<string, unknown>) => ({
+            day: Number(r.day ?? 0),
+            claimed: Boolean(r.claimed ?? false),
+          }))
+        : [],
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Friend Quests
+  // ---------------------------------------------------------------------------
+
+  /** Get all active friend quests. */
+  async getActiveFriendQuests(): Promise<IVXFriendQuest[]> {
+    const result = await this.callRpc('hiro_friend_quests_get_active', '{}');
+    return Array.isArray(result.quests)
+      ? result.quests.map((q: Record<string, unknown>) => ({
+          questId: String(q.quest_id ?? ''),
+          title: String(q.title ?? ''),
+          description: String(q.description ?? ''),
+          targetProgress: Number(q.target_progress ?? 0),
+          currentProgress: Number(q.current_progress ?? 0),
+          completed: Boolean(q.completed ?? false),
+          expiresAt: Number(q.expires_at ?? 0),
+        }))
+      : [];
+  }
+
+  /** Contribute progress to a friend quest. */
+  async contributeFriendQuest(questId: string, progress: number): Promise<void> {
+    await this.callRpc('hiro_friend_quests_contribute', JSON.stringify({ quest_id: questId, progress }));
+    this.log(`Friend quest progress: ${questId} +${progress}`);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Friend Battles
+  // ---------------------------------------------------------------------------
+
+  /** Challenge a friend with your score. */
+  async challengeFriend(friendId: string, score: number): Promise<void> {
+    await this.callRpc('hiro_friend_battles_challenge', JSON.stringify({ friend_id: friendId, score }));
+    this.log(`Friend battle challenge sent to ${friendId}`);
+  }
+
+  /** Get all active friend battles. */
+  async getActiveFriendBattles(): Promise<IVXFriendBattle[]> {
+    const result = await this.callRpc('hiro_friend_battles_get_active', '{}');
+    return Array.isArray(result.battles)
+      ? result.battles.map((b: Record<string, unknown>) => ({
+          battleId: String(b.battle_id ?? ''),
+          friendId: String(b.friend_id ?? ''),
+          friendName: String(b.friend_name ?? ''),
+          challengerScore: Number(b.challenger_score ?? 0),
+          friendScore: Number(b.friend_score ?? 0),
+          status: String(b.status ?? 'pending') as 'pending' | 'active' | 'completed',
+          expiresAt: Number(b.expires_at ?? 0),
+        }))
+      : [];
+  }
+
+  // ---------------------------------------------------------------------------
+  // IAP Trigger
+  // ---------------------------------------------------------------------------
+
+  /** Check whether an IAP offer should be shown for the given event. */
+  async checkIapTrigger(eventType: string): Promise<IVXIapTriggerResult> {
+    const result = await this.callRpc('hiro_iap_trigger_check', JSON.stringify({ event_type: eventType }));
+    return {
+      shouldShow: Boolean(result.should_show ?? false),
+      offerId: result.offer_id != null ? String(result.offer_id) : undefined,
+      discount: result.discount != null ? Number(result.discount) : undefined,
+      expiresAt: result.expires_at != null ? Number(result.expires_at) : undefined,
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Smart Ad Timer
+  // ---------------------------------------------------------------------------
+
+  /** Check if an ad can be shown for the given placement. */
+  async canShowAd(placement: string): Promise<IVXSmartAdResult> {
+    const result = await this.callRpc('hiro_smart_ad_can_show', JSON.stringify({ placement }));
+    return {
+      canShow: Boolean(result.can_show ?? false),
+      nextAvailableAt: Number(result.next_available_at ?? 0),
+      reason: result.reason != null ? String(result.reason) : undefined,
+    };
   }
 
   // ---------------------------------------------------------------------------

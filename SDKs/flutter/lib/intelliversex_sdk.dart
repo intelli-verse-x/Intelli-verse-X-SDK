@@ -16,6 +16,7 @@ export 'src/discord_debug.dart';
 export 'src/discord_linked_channels.dart';
 export 'src/discord_messages.dart';
 export 'src/discord_moderation.dart';
+export 'src/discord_settings.dart';
 export 'src/ivx_ai_client.dart';
 export 'src/ivx_config.dart';
 export 'src/ivx_discord_social.dart';
