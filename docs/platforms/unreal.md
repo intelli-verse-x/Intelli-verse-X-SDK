@@ -312,4 +312,4 @@ Built on [nakama-unreal](https://github.com/heroiclabs/nakama-unreal) (249 stars
 
 ## Source
 
-[SDKs/unreal/](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/tree/main/SDKs/unreal)
+[SDKs/unreal/](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/tree/main/SDKs/unreal)

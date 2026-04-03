@@ -43,7 +43,7 @@ This document explains how the **IntelliVerseX** repo is organized for multi-SDK
 
 - **Push** each branch from your machine (where you’re logged into GitHub) to your fork.  
   See **docs/PUSH-TO-FORK-INSTRUCTIONS.md** for the exact `git push` commands.
-- **Open (or update) PRs** from your fork’s branch into the org repo’s `main` (e.g. `hasanraza31/Intelli-verse-X-Unity-SDK` → `intelli-verse-x/Intelli-verse-X-Unity-SDK`).
+- **Open (or update) PRs** from your fork’s branch into the org repo’s `main` (e.g. `hasanraza31/Intelli-verse-X-SDK` → `intelli-verse-x/Intelli-verse-X-SDK`).
 
 ## Summary
 

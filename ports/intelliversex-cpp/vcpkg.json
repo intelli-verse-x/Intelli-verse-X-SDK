@@ -3,7 +3,7 @@
   "version": "5.8.0",
   "port-version": 0,
   "description": "IntelliVerseX C/C++ SDK — Auth, Backend (Nakama), Analytics, Social, Monetization for game development",
-  "homepage": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK",
+  "homepage": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK",
   "documentation": "https://intelli-verse-x.github.io/Intelli-verse-X-SDK/platforms/cpp/",
   "license": "MIT",
   "dependencies": [

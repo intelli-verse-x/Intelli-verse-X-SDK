@@ -173,7 +173,7 @@ This document defines how AI agents (and humans) work in this repository.
 ## Repository Structure
 
 ```
-Intelli-verse-X-Unity-SDK/
+Intelli-verse-X-SDK/
 |-- .cursor/                    # Context authority system
 |-- Assets/                     # Unity assets
 |   +-- _IntelliVerseXSDK/      # Unity SDK (UPM Package)

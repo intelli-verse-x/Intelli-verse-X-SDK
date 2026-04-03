@@ -66,7 +66,7 @@ Full-featured clan/group management powered by Nakama Groups.
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-Unity-SDK.git?path=Assets/Intelli-verse-X-SDK#v5.2.0"
+    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Assets/Intelli-verse-X-SDK#v5.2.0"
   }
 }
 ```
@@ -112,7 +112,7 @@ Fast, reliable geolocation without requiring GPS permissions.
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v5.1.0"
+    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Assets/_IntelliVerseXSDK#v5.1.0"
   }
 }
 ```
@@ -199,7 +199,7 @@ Complete production-ready release with enhanced authentication, ads integration,
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v4.0.0"
+    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Assets/_IntelliVerseXSDK#v4.0.0"
   }
 }
 ```
@@ -254,7 +254,7 @@ Production-ready release with improved platform support, version management, and
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v3.0.0"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Assets/_IntelliVerseXSDK#v3.0.0"
   }
 }
 ```
@@ -318,7 +318,7 @@ Updated manifest with proper dependency order:
   "dependencies": {
     "com.google.external-dependency-manager": "file:../com.google.external-dependency-manager-1.2.186.tgz",
     "com.appodeal.mediation": "https://github.com/appodeal/appodeal-unity-plugin-upm.git#v3.12.0",
-    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v2.5.0"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Assets/_IntelliVerseXSDK#v2.5.0"
   }
 }
 ```
@@ -382,7 +382,7 @@ Complete restructuring as a world-class Unity Package Manager (UPM) package for 
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v2.0.0"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Assets/_IntelliVerseXSDK#v2.0.0"
   }
 }
 ```
@@ -476,7 +476,7 @@ Complete SDK extraction from QuizVerse with 12 modular packages.
 2. **Remove old SDK**: Delete `Assets/_IntelliVerseXSDK` folder
 3. **Install via UPM**: Add to `Packages/manifest.json`:
    ```json
-   "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v2.0.0"
+   "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Assets/_IntelliVerseXSDK#v2.0.0"
    ```
 4. **Run Project Setup**: `IntelliVerseX > Project Setup & Validation`
 5. **Import Samples**: Via Package Manager if needed

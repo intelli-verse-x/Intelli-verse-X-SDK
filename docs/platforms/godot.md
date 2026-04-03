@@ -16,7 +16,7 @@
 ## Installation
 
 1. Install the [Nakama Godot addon](https://heroiclabs.com/docs/nakama/client-libraries/godot/) from Heroic Labs.
-2. Copy `addons/intelliversex/` from [SDKs/godot/](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/tree/main/SDKs/godot) into your project’s `addons/` folder.
+2. Copy `addons/intelliversex/` from [SDKs/godot/](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/tree/main/SDKs/godot) into your project’s `addons/` folder.
 3. Enable **both** plugins under **Project → Project Settings → Plugins** (Nakama + IntelliVerseX).
 
 The IntelliVerseX editor plugin registers an autoload singleton named **`IntelliVerseX`** pointing at `res://addons/intelliversex/core/ivx_manager.gd`.
@@ -377,8 +377,8 @@ Built on **[nakama-godot](https://github.com/heroiclabs/nakama-godot)** (officia
 
 ## Source
 
-- Addon and examples: [SDKs/godot/](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/tree/main/SDKs/godot)
-- Broader SDK repo: [Intelli-verse-X-Unity-SDK](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK)
+- Addon and examples: [SDKs/godot/](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/tree/main/SDKs/godot)
+- Broader SDK repo: [Intelli-verse-X-SDK](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK)
 
 ---
 

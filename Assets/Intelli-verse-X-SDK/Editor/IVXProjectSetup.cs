@@ -285,12 +285,12 @@ namespace IntelliVerseX.Editor
             
             if (GUILayout.Button("Documentation", GUILayout.Height(25)))
             {
-                Application.OpenURL("https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK#readme");
+                Application.OpenURL("https://github.com/Intelli-verse-X/Intelli-verse-X-SDK#readme");
             }
             
             if (GUILayout.Button("Report Issue", GUILayout.Height(25)))
             {
-                Application.OpenURL("https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues");
+                Application.OpenURL("https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/issues");
             }
             
             EditorGUILayout.EndHorizontal();

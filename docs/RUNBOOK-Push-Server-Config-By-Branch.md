@@ -2,7 +2,7 @@
 
 **Goal:** Update default server (host, port, key, SSL) and set version 5.2.0 on each SDK **only on its own branch**, so existing PRs get the right changes and future devs use the same branch names.
 
-**Your setup:** Fork = `hasanraza31/Intelli-verse-X-Unity-SDK`, PRs into `intelli-verse-x/Intelli-verse-X-Unity-SDK`. You (or senior) merge after review.
+**Your setup:** Fork = `hasanraza31/Intelli-verse-X-SDK`, PRs into `intelli-verse-x/Intelli-verse-X-SDK`. You (or senior) merge after review.
 
 **Reminder (do later):** After all branches are merged, do “Option 1” publish steps on each site where SDKs are published (npm, Maven Central, Godot Asset Library, etc.). Skipped for now.
 
@@ -11,7 +11,7 @@
 ## Prerequisites
 
 - All server-config and 5.2.0 changes are in your **current working tree** (SDKs + ports).
-- Remote `origin` = your fork (`https://github.com/hasanraza31/Intelli-verse-X-Unity-SDK.git`). If `origin` points to the org repo, add your fork as a remote, e.g. `git remote add fork https://github.com/hasanraza31/Intelli-verse-X-Unity-SDK.git` and use `fork` instead of `origin` below.
+- Remote `origin` = your fork (`https://github.com/hasanraza31/Intelli-verse-X-SDK.git`). If `origin` points to the org repo, add your fork as a remote, e.g. `git remote add fork https://github.com/hasanraza31/Intelli-verse-X-SDK.git` and use `fork` instead of `origin` below.
 - You are on branch `add-java-sdk` with uncommitted changes.
 
 ---
@@ -21,7 +21,7 @@
 We need one commit that contains every server-config and 5.2.0 change, so we can “pluck” only the right files onto each branch.
 
 ```powershell
-cd "d:\work\Unityprojects\Intelli-verse-X-Unity-SDK"
+cd "d:\work\Unityprojects\Intelli-verse-X-SDK"
 
 # Create a temporary branch from current and commit everything (server config + 5.2.0)
 git checkout -b wip-server-config-5.2.0

@@ -325,7 +325,7 @@ all SDK features pre-wired and ready to run.
 
 ### SDK Documentation
 
-- [IntelliVerseX SDK](https://github.com/intelli-verse-x/Intelli-verse-X-Unity-SDK)
+- [IntelliVerseX SDK](https://github.com/intelli-verse-x/Intelli-verse-X-SDK)
 - [Hiro Live-Ops](https://heroiclabs.com/docs/hiro/)
 - [Satori Analytics](https://heroiclabs.com/docs/satori/)
 - [Nakama Server](https://heroiclabs.com/docs/nakama/)

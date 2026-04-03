@@ -39,11 +39,11 @@
   "homepage": "https://intelli-verse-x.github.io/Intelli-verse-X-SDK/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git",
+    "url": "git+https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git",
     "directory": "SDKs/javascript"
   },
   "bugs": {
-    "url": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues"
+    "url": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/issues"
   },
   "peerDependencies": {
     "@heroiclabs/nakama-js": ">=2.7.0"

@@ -56,7 +56,7 @@ Until `nakama-sdk` is in Conan Center, document in any PR that **intelliversex-c
 **1. Create nakama-sdk (local pre-built recipe; run once):**
 
 ```powershell
-cd D:\work\Unityprojects\Intelli-verse-X-Unity-SDK
+cd D:\work\Unityprojects\Intelli-verse-X-SDK
 conan create SDKs/cpp/recipes/nakama-sdk --version=2.9.0 -s build_type=Release
 ```
 

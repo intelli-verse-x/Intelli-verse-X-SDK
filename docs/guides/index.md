@@ -264,5 +264,5 @@ Need help with integration?
 
 - 📖 [Documentation](../index.md)
 - 💬 [Discord Community](https://discord.gg/YVPxPFftMQ)
-- 🐛 [Report Issues](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues)
+- 🐛 [Report Issues](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/issues)
 - 📧 [Email Support](mailto:support@intelli-verse-x.ai)

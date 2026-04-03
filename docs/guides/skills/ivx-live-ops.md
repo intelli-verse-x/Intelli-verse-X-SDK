@@ -35,6 +35,45 @@ Both are coordinated client-side through `IVXHiroCoordinator` and `IVXSatoriClie
 
 ---
 
+## When to Use
+
+Ask your AI agent any of these:
+
+- "Add daily rewards with a 7-day calendar"
+- "Set up a fortune wheel with weighted rewards"
+- "Add achievements and a badge system"
+- "Configure A/B testing for the onboarding flow"
+- "Set up a 6-tier league system"
+- "Add a season pass with free and premium tracks"
+- "Set up daily missions that rotate every 24 hours"
+- "Add login streaks with escalating rewards"
+- "Enable feature flags for gradual rollout"
+
+---
+
+## What the Agent Does
+
+```mermaid
+flowchart TD
+    A[You: "Add daily rewards"] --> B[Agent loads ivx-live-ops skill]
+    B --> C[Verifies Hiro + Satori enabled]
+    C --> D{Which system?}
+    D -->|Engagement| E[Daily Rewards / Missions / Fortune Wheel / Streaks]
+    D -->|Retention| F[Season Pass / Goals / Friend Streaks]
+    D -->|Competition| G[Leagues / Tournaments / Leaderboards]
+    D -->|Economy| H[Currency / Energy / Inventory / Store]
+    D -->|Analytics| I[Events / Flags / A/B / Live Events]
+    E --> J[Configures via IVXHiroCoordinator]
+    F --> J
+    G --> J
+    H --> J
+    I --> K[Configures via IVXSatoriClient]
+```
+
+---
+
+
+
 ## 1. Hiro Systems
 
 ### IVXHiroCoordinator

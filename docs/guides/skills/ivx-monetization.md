@@ -30,6 +30,45 @@ The SDK supports three monetization pillars: **Ads**, **In-App Purchases (IAP)**
 
 ---
 
+## When to Use
+
+Ask your AI agent any of these:
+
+- "Monetize my casual puzzle game"
+- "Set up LevelPlay ads with rewarded video"
+- "Add Pubscale offerwall and wire it to the wallet"
+- "Configure IAP for a coins pack"
+- "Add server-side reward validation for rewarded ads"
+- "Set up AdMob banner and interstitial ads"
+- "Configure ad waterfall priority"
+
+---
+
+## What the Agent Does
+
+```mermaid
+flowchart TD
+    A[You: "Monetize my game"] --> B[Agent loads ivx-monetization skill]
+    B --> C{What type of game?}
+    C -->|Hypercasual| D[Interstitials + Rewarded]
+    C -->|Casual| E[Rewarded + IAP + Banner]
+    C -->|Midcore| F[IAP + Season Pass]
+    C -->|Hardcore| G[Subscription + IAP]
+    D --> H[Configure ad provider]
+    E --> H
+    F --> I[Configure IAP products]
+    G --> I
+    H --> J[Set up IVXAdsConfig]
+    I --> K[Set up IVXIAPConfig]
+    J --> L[Wire reward callbacks]
+    K --> L
+    L --> M[Enable server validation]
+```
+
+---
+
+
+
 ## 1. Ad Providers
 
 ### Supported Networks

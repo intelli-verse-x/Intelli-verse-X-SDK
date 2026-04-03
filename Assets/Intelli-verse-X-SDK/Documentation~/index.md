@@ -17,8 +17,8 @@ Welcome to the IntelliVerseX SDK documentation. This guide will help you get sta
 
 ## Quick Links
 
-- **GitHub Repository**: [Intelli-verse-X-Unity-SDK](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK)
-- **Issue Tracker**: [Report Issues](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues)
+- **GitHub Repository**: [Intelli-verse-X-SDK](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK)
+- **Issue Tracker**: [Report Issues](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/issues)
 - **Changelog**: [CHANGELOG.md](../CHANGELOG.md)
 
 ## SDK Overview
@@ -53,8 +53,8 @@ IntelliVerseX SDK is a comprehensive, modular game development toolkit for Unity
 
 For support, please:
 1. Check the [Troubleshooting Guide](troubleshooting.md)
-2. Search [existing issues](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues)
-3. Create a [new issue](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues/new) if needed
+2. Search [existing issues](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/issues)
+3. Create a [new issue](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/issues/new) if needed
 
 ## License
 

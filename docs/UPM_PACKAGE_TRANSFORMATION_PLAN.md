@@ -39,7 +39,7 @@
 ### Option A: Package at Repository Root (RECOMMENDED)
 
 ```
-Intelli-verse-X-Unity-SDK/           # Repository root = Package root
+Intelli-verse-X-SDK/           # Repository root = Package root
 ├── package.json                      # UPM package manifest
 ├── README.md                         # Package documentation
 ├── CHANGELOG.md                      # Version history
@@ -83,7 +83,7 @@ Intelli-verse-X-Unity-SDK/           # Repository root = Package root
 ### Option B: Package in Subdirectory (Current Approach)
 
 ```
-Intelli-verse-X-Unity-SDK/           # Repository root
+Intelli-verse-X-SDK/           # Repository root
 ├── Assets/
 │   └── _IntelliVerseXSDK/           # Package root
 │       ├── package.json
@@ -292,7 +292,7 @@ Assets/_IntelliVerseXSDK/
 // Packages/manifest.json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/YOUR_ORG/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK"
+    "com.intelliversex.sdk": "https://github.com/YOUR_ORG/Intelli-verse-X-SDK.git?path=Assets/_IntelliVerseXSDK"
   }
 }
 ```

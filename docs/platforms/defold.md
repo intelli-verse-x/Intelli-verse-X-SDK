@@ -240,7 +240,7 @@ Built on [nakama-defold](https://github.com/heroiclabs/nakama-defold). Engine id
 
 ## Source
 
-- [SDKs/defold/](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/tree/main/SDKs/defold)
+- [SDKs/defold/](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/tree/main/SDKs/defold)
 - [Feature Coverage Matrix](../FEATURE_COVERAGE_MATRIX.md)
 
 ## Further Reading

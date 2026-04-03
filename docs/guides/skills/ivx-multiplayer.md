@@ -29,6 +29,40 @@ The SDK provides a unified multiplayer layer over Nakama real-time sockets. It c
 
 ---
 
+## When to Use
+
+Ask your AI agent any of these:
+
+- "Add online multiplayer to my trivia game"
+- "Create a lobby system where players can invite friends"
+- "Set up ranked matchmaking with ELO rating"
+- "Add real-time score syncing between 4 players"
+- "Handle player disconnection and reconnection"
+- "Set up local split-screen multiplayer"
+
+---
+
+## What the Agent Does
+
+```mermaid
+flowchart TD
+    A[You: "Add multiplayer"] --> B[Agent loads ivx-multiplayer skill]
+    B --> C[Enables multiplayer in IVXBootstrapConfig]
+    C --> D{Which mode?}
+    D -->|Lobby| E[Creates lobby system]
+    D -->|Quick Match| F[Configures matchmaker]
+    D -->|Ranked| G[Adds skill-based matching]
+    D -->|Local| H[Sets up same-device play]
+    E --> I[Wires real-time networking]
+    F --> I
+    G --> I
+    I --> J[Implements match lifecycle]
+```
+
+---
+
+
+
 ## 1. Game Modes
 
 ### Supported Modes

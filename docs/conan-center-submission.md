@@ -75,7 +75,7 @@ The Conan Center–ready recipe is in this repository:
 **Or on Windows (PowerShell), from this repo root:**
 
 ```powershell
-$src = "D:\work\Unityprojects\Intelli-verse-X-Unity-SDK\docs\conan-center-recipe\all"
+$src = "D:\work\Unityprojects\Intelli-verse-X-SDK\docs\conan-center-recipe\all"
 $dst = "D:\path\to\conan-center-index\recipes\intelliversex-cpp\all"
 New-Item -ItemType Directory -Force -Path $dst
 Copy-Item "$src\conanfile.py" "$dst\"
@@ -93,14 +93,14 @@ The tarball checksum is required. After the tag **v1.5.0** is on GitHub:
 **Linux/macOS:**
 
 ```bash
-curl -sL -o v1.5.0.tar.gz "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/archive/refs/tags/v1.5.0.tar.gz"
+curl -sL -o v1.5.0.tar.gz "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/archive/refs/tags/v1.5.0.tar.gz"
 sha256sum v1.5.0.tar.gz
 ```
 
 **Windows (PowerShell):**
 
 ```powershell
-Invoke-WebRequest -Uri "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/archive/refs/tags/v1.5.0.tar.gz" -OutFile "v1.5.0.tar.gz" -UseBasicParsing
+Invoke-WebRequest -Uri "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/archive/refs/tags/v1.5.0.tar.gz" -OutFile "v1.5.0.tar.gz" -UseBasicParsing
 Get-FileHash -Path "v1.5.0.tar.gz" -Algorithm SHA256 | Select-Object -ExpandProperty Hash
 ```
 
@@ -127,7 +127,7 @@ git push -u origin add-intelliversex-cpp
    - Body:
      - This adds the **IntelliVerseX C/C++ SDK** (auth, backend, analytics for games).
      - **Dependency:** It requires **nakama-sdk**, which is not yet in Conan Center. [Choose one: "We are submitting nakama-sdk in a separate PR." / "We request consideration to add intelliversex-cpp; we can submit nakama-sdk in a follow-up PR."]
-     - Repository: https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK
+     - Repository: https://github.com/Intelli-verse-X/Intelli-verse-X-SDK
 4. Submit (or create as Draft). Conan Center CI will run; if nakama-sdk is missing, the build will fail until it is added.
 
 ---

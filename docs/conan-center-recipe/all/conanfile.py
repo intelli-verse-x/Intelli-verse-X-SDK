@@ -13,8 +13,8 @@ class IntelliversexCppConan(ConanFile):
     version = "5.1.0"
     description = "IntelliVerseX C/C++ SDK — Auth, Backend (Nakama), Analytics, Social, Monetization for game development"
     license = "MIT"
-    url = "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK"
-    homepage = "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK"
+    url = "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK"
+    homepage = "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK"
     topics = ("game", "sdk", "nakama", "backend", "auth")
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False], "fPIC": [True, False]}

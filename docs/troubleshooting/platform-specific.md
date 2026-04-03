@@ -413,5 +413,5 @@ switch (Application.platform)
 
 ## Still Stuck?
 
-- Check [GitHub Issues](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues) for platform-specific bugs
-- Post on [GitHub Discussions](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/discussions) with platform tag
+- Check [GitHub Issues](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/issues) for platform-specific bugs
+- Post on [GitHub Discussions](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/discussions) with platform tag

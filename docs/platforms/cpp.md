@@ -20,7 +20,7 @@ Optional:
 ### CMake (add_subdirectory)
 
 ```cmake
-add_subdirectory(path/to/Intelli-verse-X-Unity-SDK/SDKs/cpp)
+add_subdirectory(path/to/Intelli-verse-X-SDK/SDKs/cpp)
 target_link_libraries(your_app PRIVATE intelliversex)
 ```
 
@@ -31,7 +31,7 @@ Ensure your project already satisfies **CURL** (or install via vcpkg/Conan/syste
 ```cmake
 include(FetchContent)
 FetchContent_Declare(intelliversex
-    GIT_REPOSITORY https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git
+    GIT_REPOSITORY https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git
     SOURCE_SUBDIR SDKs/cpp
 )
 FetchContent_MakeAvailable(intelliversex)
@@ -237,7 +237,7 @@ The C++ SDK is built on **[nakama-cpp](https://github.com/heroiclabs/nakama-cpp)
 
 ## Source
 
-- **[SDKs/cpp/](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/tree/main/SDKs/cpp)** — CMake project, headers under `include/intelliversex/`, implementations under `src/`.
+- **[SDKs/cpp/](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/tree/main/SDKs/cpp)** — CMake project, headers under `include/intelliversex/`, implementations under `src/`.
 
 ## Further Reading
 

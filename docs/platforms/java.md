@@ -32,7 +32,7 @@ From a monorepo checkout:
 
 ```groovy
 include ':intelliversex-sdk'
-project(':intelliversex-sdk').projectDir = new File(settingsDir, '../Intelli-verse-X-Unity-SDK/SDKs/java')
+project(':intelliversex-sdk').projectDir = new File(settingsDir, '../Intelli-verse-X-SDK/SDKs/java')
 ```
 
 Then:
@@ -260,7 +260,7 @@ Built on **[nakama-java](https://github.com/heroiclabs/nakama-java)**. Use **`IV
 
 ## Source
 
-- **[SDKs/java/](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/tree/main/SDKs/java)** — Gradle library project, sources under `src/main/java/com/intelliversex/sdk/`.
+- **[SDKs/java/](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/tree/main/SDKs/java)** — Gradle library project, sources under `src/main/java/com/intelliversex/sdk/`.
 
 ## Further reading
 

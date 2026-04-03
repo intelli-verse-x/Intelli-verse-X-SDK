@@ -28,6 +28,37 @@ The IntelliVerseX SDK supports 10 platforms. Unity is the reference implementati
 
 ---
 
+## When to Use
+
+Ask your AI agent any of these:
+
+- "Port my game from Unity to Godot"
+- "Which features work on Unreal Engine?"
+- "Convert the Hiro economy stub to a real implementation on Flutter"
+- "What's the JavaScript equivalent of IVXLobbyManager?"
+- "Add leaderboard support to the C++ SDK"
+- "What's the coverage for the Defold SDK?"
+
+---
+
+## What the Agent Does
+
+```mermaid
+flowchart TD
+    A[You: "Port to Godot"] --> B[Agent loads ivx-cross-platform skill]
+    B --> C[Shows Godot feature coverage]
+    C --> D[Maps Unity classes to Godot equivalents]
+    D --> E[Identifies RPC contract from Unity reference]
+    E --> F[Creates typed RPC wrapper in GDScript]
+    F --> G[Builds manager with caching + signals]
+    G --> H[Replaces stub with real implementation]
+    H --> I[Updates coverage matrix]
+```
+
+---
+
+
+
 ## 1. Supported Platforms
 
 | # | Platform | Language | Package Format | Min Version |

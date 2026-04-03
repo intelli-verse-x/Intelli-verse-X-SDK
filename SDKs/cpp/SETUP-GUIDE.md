@@ -17,9 +17,9 @@
 
 | What | Path |
 |------|------|
-| **Your repo** | `D:\work\Unityprojects\Intelli-verse-X-Unity-SDK` |
-| **Pre-built nakama (you extract here)** | `D:\work\Unityprojects\Intelli-verse-X-Unity-SDK\SDKs\nakama-cpp-install` |
-| **IntelliVerseX C++ SDK** | `D:\work\Unityprojects\Intelli-verse-X-Unity-SDK\SDKs\cpp` |
+| **Your repo** | `D:\work\Unityprojects\Intelli-verse-X-SDK` |
+| **Pre-built nakama (you extract here)** | `D:\work\Unityprojects\Intelli-verse-X-SDK\SDKs\nakama-cpp-install` |
+| **IntelliVerseX C++ SDK** | `D:\work\Unityprojects\Intelli-verse-X-SDK\SDKs\cpp` |
 
 ---
 
@@ -41,12 +41,12 @@ Do **not** use MSYS2 or VS Code terminal. Use **Developer PowerShell** only.
 3. Extract the zip. You get a folder (e.g. `win-x64-MinSizeRel`).
 4. Rename or move that folder to:
    ```
-   D:\work\Unityprojects\Intelli-verse-X-Unity-SDK\SDKs\nakama-cpp-install
+   D:\work\Unityprojects\Intelli-verse-X-SDK\SDKs\nakama-cpp-install
    ```
 5. Check that this path exists:
    ```
-   D:\work\Unityprojects\Intelli-verse-X-Unity-SDK\SDKs\nakama-cpp-install\lib
-   D:\work\Unityprojects\Intelli-verse-X-Unity-SDK\SDKs\nakama-cpp-install\include\nakama-cpp
+   D:\work\Unityprojects\Intelli-verse-X-SDK\SDKs\nakama-cpp-install\lib
+   D:\work\Unityprojects\Intelli-verse-X-SDK\SDKs\nakama-cpp-install\include\nakama-cpp
    ```
 
 ---
@@ -57,11 +57,11 @@ Do **not** use MSYS2 or VS Code terminal. Use **Developer PowerShell** only.
 2. Run these commands one by one:
 
 ```powershell
-cd D:\work\Unityprojects\Intelli-verse-X-Unity-SDK\SDKs\cpp
+cd D:\work\Unityprojects\Intelli-verse-X-SDK\SDKs\cpp
 ```
 
 ```powershell
-cmake -B build -DCMAKE_BUILD_TYPE=Release -DIVX_NAKAMA_DIR="D:\work\Unityprojects\Intelli-verse-X-Unity-SDK\SDKs\nakama-cpp-install"
+cmake -B build -DCMAKE_BUILD_TYPE=Release -DIVX_NAKAMA_DIR="D:\work\Unityprojects\Intelli-verse-X-SDK\SDKs\nakama-cpp-install"
 ```
 
 ```powershell
@@ -75,7 +75,7 @@ Done. If there are no errors, the SDK compiled correctly.
 ## Single-line (copy-paste in Developer PowerShell)
 
 ```powershell
-cd D:\work\Unityprojects\Intelli-verse-X-Unity-SDK\SDKs\cpp; cmake -B build -DCMAKE_BUILD_TYPE=Release -DIVX_NAKAMA_DIR="D:\work\Unityprojects\Intelli-verse-X-Unity-SDK\SDKs\nakama-cpp-install"; cmake --build build --config Release
+cd D:\work\Unityprojects\Intelli-verse-X-SDK\SDKs\cpp; cmake -B build -DCMAKE_BUILD_TYPE=Release -DIVX_NAKAMA_DIR="D:\work\Unityprojects\Intelli-verse-X-SDK\SDKs\nakama-cpp-install"; cmake --build build --config Release
 ```
 
 ---
@@ -86,7 +86,7 @@ Some nakama zips extract to a folder like `win-x64-MinSizeRel`. If yours does:
 
 - Put the **contents** of that folder (the `lib` and `include` folders) directly into:
   ```
-  D:\work\Unityprojects\Intelli-verse-X-Unity-SDK\SDKs\nakama-cpp-install\
+  D:\work\Unityprojects\Intelli-verse-X-SDK\SDKs\nakama-cpp-install\
   ```
 - So you have `nakama-cpp-install\lib\` and `nakama-cpp-install\include\nakama-cpp\`.
 

@@ -1081,8 +1081,8 @@ MIT License — see [LICENSE](LICENSE)
 
 ## Support
 
-- [Issues](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues)
-- [Discussions](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/discussions)
+- [Issues](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/issues)
+- [Discussions](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/discussions)
 - [Discord](https://discord.gg/YVPxPFftMQ)
 - Email: support@intelli-verse-x.ai
 

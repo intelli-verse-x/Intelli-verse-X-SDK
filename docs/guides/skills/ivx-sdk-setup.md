@@ -29,6 +29,45 @@ This skill walks through the complete setup of the IntelliVerseX Game SDK, from 
 
 ---
 
+## When to Use
+
+Ask your AI agent any of these:
+
+- "Set up IntelliVerseX in my Unity project"
+- "Add IntelliVerseX to my Node.js game server"
+- "Bootstrap the SDK for Godot 4"
+- "Configure my game ID and Nakama connection"
+- "Add IntelliVerseX to my Flutter app"
+- "Integrate the SDK into my Unreal project"
+
+---
+
+## What the Agent Does
+
+```mermaid
+flowchart LR
+    A[You: "Set up IntelliVerseX"] --> B[Agent loads ivx-sdk-setup skill]
+    B --> C[Detects your platform]
+    C --> D[Installs the package]
+    D --> E[Creates bootstrap config]
+    E --> F[Fills in server credentials]
+    F --> G[Enables feature modules]
+    G --> H[Verifies initialization]
+```
+
+### Step-by-step:
+
+1. **Package installation** -- UPM for Unity, npm for JS, Gradle for Java, pub.dev for Flutter, CMake for C++, addon for Godot, etc.
+2. **Bootstrap config creation** -- ScriptableObject in Unity, config object in other platforms.
+3. **Credential setup** -- GameId, ServerHost, ServerPort, ServerKey from the developer dashboard.
+4. **Feature toggles** -- Enable only the modules you need (Hiro, Satori, Discord, AI, Multiplayer, Platform).
+5. **Initialization verification** -- Ensures `OnBootstrapComplete` fires without warnings.
+6. **Troubleshooting** -- Handles missing assembly references, empty GameId, connection timeouts, and Nakama not found.
+
+---
+
+
+
 ## Unity Installation (UPM)
 
 ### Step 1 — Add the UPM Package
@@ -36,7 +75,7 @@ This skill walks through the complete setup of the IntelliVerseX Game SDK, from 
 Open **Window > Package Manager > + > Add package from git URL** and paste:
 
 ```
-https://github.com/intelli-verse-x/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK
+https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Assets/_IntelliVerseXSDK
 ```
 
 Alternatively, add directly to `Packages/manifest.json`:
@@ -44,7 +83,7 @@ Alternatively, add directly to `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK"
+    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Assets/_IntelliVerseXSDK"
   }
 }
 ```

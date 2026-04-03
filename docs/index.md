@@ -74,7 +74,7 @@ Add to your `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/Intelli-verse-X-SDK"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Assets/Intelli-verse-X-SDK"
   }
 }
 ```
@@ -84,7 +84,7 @@ Or with a specific version:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/Intelli-verse-X-SDK#v5.8.0"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Assets/Intelli-verse-X-SDK#v5.8.0"
   }
 }
 ```
@@ -182,7 +182,7 @@ graph TB
 
 ## Support
 
-- :material-github: [GitHub Issues](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues) - Bug reports and feature requests
+- :material-github: [GitHub Issues](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/issues) - Bug reports and feature requests
 - :material-file-document: [Troubleshooting Guide](troubleshooting/index.md) - Common issues and solutions  
 - :material-frequently-asked-questions: [FAQ](troubleshooting/faq.md) - Frequently asked questions
 
@@ -190,7 +190,7 @@ graph TB
 
 ## License
 
-IntelliVerseX SDK is licensed under the [MIT License](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/blob/main/LICENSE).
+IntelliVerseX SDK is licensed under the [MIT License](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/blob/main/LICENSE).
 
 ---
 

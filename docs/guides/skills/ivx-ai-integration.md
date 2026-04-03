@@ -29,6 +29,39 @@ The SDK's AI module provides seven subsystems for adding intelligence to games â
 
 ---
 
+## When to Use
+
+Ask your AI agent any of these:
+
+* "Add an AI voice host for my trivia game"
+* "Set up NPC dialog with GPT-4o"
+* "Generate trivia questions using AI"
+* "Add content moderation to player chat"
+* "Configure Ollama as a self-hosted LLM provider"
+* "Set up AI player profiling"
+* "Add AI hints to my puzzle game"
+
+---
+
+## What the Agent Does
+
+```mermaid
+flowchart TD
+    A[You: "Add AI to my game"] --> B[Agent loads ivx-ai-integration skill]
+    B --> C[Creates IVXAIConfig]
+    C --> D[Configures provider + model]
+    D --> E{Which subsystem?}
+    E -->|Voice Host| F[IVXAIVoiceServices]
+    E -->|NPC Dialog| G[IVXAINPCDialogManager]
+    E -->|Content Gen| H[IVXAIContentGenerator]
+    E -->|Moderation| I[IVXAIModerator]
+    E -->|Profiling| J[IVXAIProfiler]
+    E -->|Assistant| K[IVXAIAssistant]
+    E -->|Sessions| L[IVXAISessionManager]
+```
+
+---
+
 ## 1. Configuration
 
 ### IVXAIConfig ScriptableObject
@@ -46,7 +79,7 @@ Create via **Create > IntelliVerseX > AI Configuration**.
 | `VoiceId` | TTS voice identifier |
 | `EnableMockMode` | Return canned responses without API calls (for testing) |
 
-### API Key Injection
+### API Key Injection (Secure)
 
 **Never** hardcode API keys in config assets or source code.
 
@@ -69,7 +102,7 @@ For the **IntelliVerseX** managed provider, the SDK uses your `GameId` for authe
 | **Anthropic** | Claude Opus, Sonnet, Haiku | No (text only) | Your Anthropic billing |
 | **Custom** | Any OpenAI-compatible endpoint (Ollama, vLLM, LiteLLM) | Varies | Self-hosted |
 
-### Custom Provider Setup
+### Self-Hosted Example (Ollama)
 
 ```csharp
 IVXAIConfig.Instance.Provider = AIProvider.Custom;

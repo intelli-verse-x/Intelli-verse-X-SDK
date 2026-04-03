@@ -28,6 +28,36 @@ The SDK provides a pluggable quiz content system that can source questions from 
 
 ---
 
+## When to Use
+
+Ask your AI agent any of these:
+
+- "Set up a daily quiz system with S3"
+- "Generate trivia questions using GPT-4o and upload to S3"
+- "Create a GitHub Action that generates fresh quiz content daily"
+- "Add offline fallback for quiz content"
+- "Set up weekly themed quizzes"
+- "Add a custom quiz provider backed by my own database"
+
+---
+
+## What the Agent Does
+
+```mermaid
+flowchart LR
+    A[You: "Set up daily quiz"] --> B[Agent loads ivx-quiz-content skill]
+    B --> C[Designs S3 bucket structure]
+    C --> D[Defines JSON schemas]
+    D --> E[Configures IVXS3QuizProvider]
+    E --> F[Sets up hybrid fallback]
+    F --> G[Creates LLM generation script]
+    G --> H[Writes GitHub Action for CI/CD]
+```
+
+---
+
+
+
 ## 1. S3 Bucket Structure
 
 ```
