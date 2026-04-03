@@ -1,0 +1,28 @@
+mouse_trigger {
+  input: MOUSE_BUTTON_LEFT
+  action: "touch"
+}
+key_trigger {
+  input: KEY_1
+  action: "tab_1"
+}
+key_trigger {
+  input: KEY_2
+  action: "tab_2"
+}
+key_trigger {
+  input: KEY_3
+  action: "tab_3"
+}
+key_trigger {
+  input: KEY_4
+  action: "tab_4"
+}
+key_trigger {
+  input: KEY_5
+  action: "tab_5"
+}
+key_trigger {
+  input: KEY_6
+  action: "tab_6"
+}

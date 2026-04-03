@@ -1,0 +1,47 @@
+{
+  "format": "ivx_skeleton_v1",
+  "root": "Hips",
+  "bone_count": 1,
+  "humanoid_mapping": {
+    "hips": "Hips",
+    "spine": "Spine",
+    "chest": "Spine1",
+    "upper_chest": "Spine2",
+    "neck": "Neck",
+    "head": "Head",
+    "left_shoulder": "LeftShoulder",
+    "left_upper_arm": "LeftUpperArm",
+    "left_lower_arm": "LeftLowerArm",
+    "left_hand": "LeftHand",
+    "right_shoulder": "RightShoulder",
+    "right_upper_arm": "RightUpperArm",
+    "right_lower_arm": "RightLowerArm",
+    "right_hand": "RightHand",
+    "left_upper_leg": "LeftUpperLeg",
+    "left_lower_leg": "LeftLowerLeg",
+    "left_foot": "LeftFoot",
+    "left_toes": "LeftToeBase",
+    "right_upper_leg": "RightUpperLeg",
+    "right_lower_leg": "RightLowerLeg",
+    "right_foot": "RightFoot",
+    "right_toes": "RightToeBase"
+  },
+  "finger_mapping": {
+    "left_thumb":  ["LeftHandThumb1", "LeftHandThumb2", "LeftHandThumb3"],
+    "left_index":  ["LeftHandIndex1", "LeftHandIndex2", "LeftHandIndex3"],
+    "left_middle": ["LeftHandMiddle1", "LeftHandMiddle2", "LeftHandMiddle3"],
+    "left_ring":   ["LeftHandRing1", "LeftHandRing2", "LeftHandRing3"],
+    "left_pinky":  ["LeftHandPinky1", "LeftHandPinky2", "LeftHandPinky3"],
+    "right_thumb":  ["RightHandThumb1", "RightHandThumb2", "RightHandThumb3"],
+    "right_index":  ["RightHandIndex1", "RightHandIndex2", "RightHandIndex3"],
+    "right_middle": ["RightHandMiddle1", "RightHandMiddle2", "RightHandMiddle3"],
+    "right_ring":   ["RightHandRing1", "RightHandRing2", "RightHandRing3"],
+    "right_pinky":  ["RightHandPinky1", "RightHandPinky2", "RightHandPinky3"]
+  },
+  "extra_bones": [
+    { "name": "RightHandSocket", "parent": "RightHand", "type": "socket" },
+    { "name": "LeftHandSocket",  "parent": "LeftHand",  "type": "socket" },
+    { "name": "HeadSocket",      "parent": "Head",      "type": "socket" },
+    { "name": "SpineSocket",     "parent": "Spine2",    "type": "socket" }
+  ]
+}

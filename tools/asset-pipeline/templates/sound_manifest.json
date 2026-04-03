@@ -1,0 +1,64 @@
+{
+  "version": "2.1",
+  "base_url": "https://cdn.example.com/RemoteAssets/Sounds/",
+  "categories": {
+    "ui": {
+      "ui_button_click":  { "url": "SFX/ui_button_click.wav",  "format": "wav", "duration_ms": 120, "volume": 0.5 },
+      "ui_button_hover":  { "url": "SFX/ui_button_hover.wav",  "format": "wav", "duration_ms": 80,  "volume": 0.3 },
+      "ui_card_flip":     { "url": "SFX/ui_card_flip.wav",     "format": "wav", "duration_ms": 200, "volume": 0.5 },
+      "ui_menu_open":     { "url": "SFX/ui_menu_open.wav",     "format": "wav", "duration_ms": 300, "volume": 0.5 },
+      "ui_menu_close":    { "url": "SFX/ui_menu_close.wav",    "format": "wav", "duration_ms": 250, "volume": 0.5 },
+      "ui_page_turn":     { "url": "SFX/ui_page_turn.wav",     "format": "wav", "duration_ms": 180, "volume": 0.4 }
+    },
+    "sfx": {
+      "sfx_correct_answer":   { "url": "SFX/sfx_correct_answer.wav",   "format": "wav", "duration_ms": 500,  "volume": 0.7 },
+      "sfx_wrong_answer":     { "url": "SFX/sfx_wrong_answer.wav",     "format": "wav", "duration_ms": 400,  "volume": 0.7 },
+      "sfx_countdown_start":  { "url": "SFX/sfx_countdown_start.wav",  "format": "wav", "duration_ms": 1000, "volume": 0.6 },
+      "sfx_level_complete":   { "url": "SFX/sfx_level_complete.wav",   "format": "wav", "duration_ms": 1500, "volume": 0.8 },
+      "sfx_coin_collect":     { "url": "SFX/sfx_coin_collect.wav",     "format": "wav", "duration_ms": 300,  "volume": 0.6 },
+      "sfx_character_select": { "url": "SFX/sfx_character_select.wav", "format": "wav", "duration_ms": 400,  "volume": 0.5 },
+      "sfx_character_hurt":   { "url": "SFX/sfx_character_hurt.wav",   "format": "wav", "duration_ms": 350,  "volume": 0.6 },
+      "sfx_jump":             { "url": "SFX/sfx_jump.wav",             "format": "wav", "duration_ms": 250,  "volume": 0.5 },
+      "sfx_land":             { "url": "SFX/sfx_land.wav",             "format": "wav", "duration_ms": 200,  "volume": 0.4 },
+      "sfx_footstep":         { "url": "SFX/sfx_footstep.wav",         "format": "wav", "duration_ms": 150,  "volume": 0.3 },
+      "sfx_swing":            { "url": "SFX/sfx_swing.wav",            "format": "wav", "duration_ms": 200,  "volume": 0.6 },
+      "sfx_impact":           { "url": "SFX/sfx_impact.wav",           "format": "wav", "duration_ms": 300,  "volume": 0.7 }
+    },
+    "stinger": {
+      "stinger_victory": { "url": "SFX/stinger_victory.wav", "format": "wav", "duration_ms": 2500, "volume": 0.8 },
+      "stinger_defeat":  { "url": "SFX/stinger_defeat.wav",  "format": "wav", "duration_ms": 2000, "volume": 0.7 },
+      "stinger_combo":   { "url": "SFX/stinger_combo.wav",   "format": "wav", "duration_ms": 1500, "volume": 0.8 }
+    },
+    "music": {
+      "music_menu": {
+        "url": "Music/music_menu.mp3",
+        "format": "mp3",
+        "duration_ms": 180000,
+        "loop": true,
+        "loop_start_ms": 4000,
+        "loop_end_ms": 176000,
+        "volume": 0.4,
+        "bpm": 120
+      },
+      "music_gameplay": {
+        "url": "Music/music_gameplay.mp3",
+        "format": "mp3",
+        "duration_ms": 240000,
+        "loop": true,
+        "volume": 0.35,
+        "bpm": 130
+      }
+    },
+    "ambient": {
+      "ambient_default": { "url": "Ambient/ambient_default.wav", "format": "wav", "duration_ms": 60000, "loop": true, "volume": 0.15 }
+    }
+  },
+  "mixer_groups": {
+    "Master":  { "default_volume": 1.0 },
+    "Music":   { "default_volume": 0.4, "parent": "Master" },
+    "SFX":     { "default_volume": 0.7, "parent": "Master" },
+    "UI":      { "default_volume": 0.5, "parent": "Master" },
+    "Ambient": { "default_volume": 0.2, "parent": "Master" },
+    "Voice":   { "default_volume": 0.9, "parent": "Master" }
+  }
+}

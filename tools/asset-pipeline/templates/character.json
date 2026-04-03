@@ -1,0 +1,28 @@
+{
+  "id": "TemplateName",
+  "display_name": "Template Character",
+  "description": "Replace this with your character's description.",
+  "rarity": "common",
+  "unlock_method": "default",
+  "unlock_cost": {},
+  "tier": 1,
+  "tags": ["template"],
+  "views": {
+    "front": "front.png",
+    "back": "back.png",
+    "thumbnail": "thumbnail.png"
+  },
+  "animations": {
+    "idle":   { "tier": "mandatory", "frames": 6, "fps": 10 },
+    "jump":   { "tier": "mandatory", "frames": 4, "fps": 12 },
+    "hurt":   { "tier": "mandatory", "frames": 4, "fps": 10 },
+    "walk":   { "tier": "standard",  "frames": 8, "fps": 10 },
+    "run":    { "tier": "standard",  "frames": 6, "fps": 14 },
+    "attack": { "tier": "standard",  "frames": 5, "fps": 14 }
+  },
+  "sounds": {
+    "on_select": "sfx_character_select",
+    "on_hurt": "sfx_character_hurt",
+    "on_victory": "stinger_victory"
+  }
+}

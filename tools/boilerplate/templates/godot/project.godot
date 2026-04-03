@@ -1,0 +1,24 @@
+; Engine configuration file — Godot 4.x (config_version=5).
+; Template: {{game_name}} | id={{game_id}} | nakama={{server_host}}:{{server_port}} | key={{server_key}}
+; Requires addons/intelliversex (IntelliVerseX autoload below).
+
+config_version=5
+
+[application]
+config/name="{{game_name}}"
+config/description="{{tagline}}"
+run/main_scene="res://scenes/bootstrap.tscn"
+config/features=PackedStringArray("4.2")
+
+[autoload]
+IntelliVerseX="*res://addons/intelliversex/core/ivx_manager.gd"
+IVXBootstrap="*res://scripts/autoload/ivx_bootstrap.gd"
+Analytics="*res://scripts/autoload/analytics.gd"
+
+[display]
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+
+[rendering]
+renderer/rendering_method="forward_plus"

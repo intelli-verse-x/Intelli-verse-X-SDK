@@ -1,0 +1,27 @@
+{
+  "action": "attack",
+  "frames": 5,
+  "cell_size": 512,
+  "fps": 14,
+  "loop": false,
+  "ping_pong": false,
+  "layout": {
+    "columns": 3,
+    "rows": 2
+  },
+  "hitbox": {
+    "x": 256,
+    "y": 128,
+    "width": 256,
+    "height": 256
+  },
+  "events": [
+    { "frame": 2, "name": "hitbox_active" },
+    { "frame": 4, "name": "hitbox_inactive" }
+  ],
+  "sound_sync": {
+    "1": "sfx_swing",
+    "3": "sfx_impact"
+  },
+  "tags": ["combat", "melee"]
+}

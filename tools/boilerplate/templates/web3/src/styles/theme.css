@@ -1,0 +1,123 @@
+:root {
+  --primary: {{primary_color}};
+  --secondary: {{secondary_color}};
+  --bg: {{background_color}};
+  --text: #e8edf7;
+  --muted: #9aa3b5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.ivx-app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.25rem;
+}
+
+.ivx-app-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.ivx-btn {
+  margin: 0.25rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.ivx-btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+.ivx-btn-secondary {
+  background: var(--secondary);
+  color: #fff;
+}
+
+.ivx-btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--muted);
+}
+
+.ivx-panel {
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.ivx-login .ivx-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.ivx-input {
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--muted);
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--text);
+}
+
+.ivx-toast-error {
+  color: #ffb4b4;
+}
+
+.ivx-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ivx-wallet-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.ivx-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.ivx-tab {
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.ivx-tab-active {
+  border-color: var(--primary);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.ivx-wallet-connect .ivx-btn {
+  margin-top: 0.5rem;
+}
+
+.ivx-wallet-status {
+  margin: 0.5rem 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}

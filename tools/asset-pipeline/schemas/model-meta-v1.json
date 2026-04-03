@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://intelliversex.com/schemas/model-meta-v1.json",
+  "title": "IntelliVerseX 3D Static Model Metadata",
+  "description": "Describes a static 3D prop/environment model: mesh, LODs, textures, materials, collision.",
+  "type": "object",
+  "required": ["id", "name", "type", "format", "poly_count", "textures"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+    "name": { "type": "string" },
+    "type": { "type": "string", "enum": ["static_prop", "environment", "destructible", "interactive"] },
+    "version": { "type": "string" },
+    "format": { "type": "string", "enum": ["glb", "gltf", "fbx"] },
+    "poly_count": { "type": "integer", "minimum": 1 },
+    "vertex_count": { "type": "integer", "minimum": 1 },
+    "material_count": { "type": "integer", "minimum": 1 },
+
+    "lod_levels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["level", "file", "poly_count"],
+        "properties": {
+          "level": { "type": "integer", "minimum": 0 },
+          "file": { "type": "string" },
+          "poly_count": { "type": "integer", "minimum": 1 }
+        }
+      }
+    },
+
+    "textures": {
+      "type": "object",
+      "patternProperties": {
+        "^(albedo|normal|arm|metallic|roughness|ao|emissive|height|mask|opacity)$": {
+          "type": "object",
+          "required": ["file"],
+          "properties": {
+            "file": { "type": "string" },
+            "size": { "type": "array", "items": { "type": "integer" }, "minItems": 2, "maxItems": 2 }
+          }
+        }
+      }
+    },
+
+    "materials": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "shader"],
+        "properties": {
+          "name": { "type": "string" },
+          "shader": { "type": "string" },
+          "textures": { "type": "array", "items": { "type": "string" } },
+          "properties": { "type": "object" }
+        }
+      }
+    },
+
+    "bounds": {
+      "type": "object",
+      "properties": {
+        "center": { "type": "array", "items": { "type": "number" }, "minItems": 3, "maxItems": 3 },
+        "size": { "type": "array", "items": { "type": "number" }, "minItems": 3, "maxItems": 3 }
+      }
+    },
+    "collision": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "enum": ["box", "sphere", "capsule", "convex", "mesh"] },
+        "file": { "type": "string" }
+      }
+    },
+    "pivot": { "type": "string", "enum": ["bottom_center", "center", "origin"] },
+    "tags": { "type": "array", "items": { "type": "string" } }
+  }
+}

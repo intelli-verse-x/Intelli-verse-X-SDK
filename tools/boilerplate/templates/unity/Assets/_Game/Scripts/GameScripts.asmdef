@@ -1,0 +1,17 @@
+{
+    "name": "GameScripts",
+    "rootNamespace": "{{game_name}}",
+    "references": [
+        "Unity.TextMeshPro",
+        "IntelliVerseX"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,24 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "0.1.0",
+  "FriendlyName": "{{game_name}}",
+  "Description": "IntelliVerseX starter integration for {{game_name}}",
+  "Category": "IntelliVerseX",
+  "CreatedBy": "{{company_name}}",
+  "CreatedByURL": "",
+  "DocsURL": "",
+  "MarketplaceURL": "",
+  "SupportURL": "",
+  "CanContainContent": true,
+  "IsBetaVersion": false,
+  "IsExperimentalVersion": false,
+  "Installed": false,
+  "Modules": [
+    {
+      "Name": "IntelliVerseXStarter",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ]
+}

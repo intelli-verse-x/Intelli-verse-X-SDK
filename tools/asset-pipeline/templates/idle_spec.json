@@ -1,0 +1,15 @@
+{
+  "action": "idle",
+  "frames": 6,
+  "cell_size": 512,
+  "fps": 10,
+  "loop": true,
+  "ping_pong": false,
+  "layout": {
+    "columns": 3,
+    "rows": 2
+  },
+  "events": [],
+  "sound_sync": {},
+  "tags": ["core", "resting"]
+}

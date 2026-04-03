@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://intelliversex.com/schemas/skeleton-v1.json",
+  "title": "IntelliVerseX Skeleton Definition",
+  "description": "Bone hierarchy, humanoid mapping, IK chains, physics bones, and attachment sockets for a 3D rigged character.",
+  "type": "object",
+  "required": ["format", "root", "bone_count"],
+  "properties": {
+    "format": { "type": "string", "const": "ivx_skeleton_v1" },
+    "root": { "type": "string", "description": "Root bone name." },
+    "bone_count": { "type": "integer", "minimum": 1, "maximum": 300 },
+
+    "humanoid_mapping": {
+      "type": "object",
+      "description": "Standard humanoid bone names mapped to this skeleton's bone names.",
+      "properties": {
+        "hips": { "type": "string" },
+        "spine": { "type": "string" }, "chest": { "type": "string" }, "upper_chest": { "type": "string" },
+        "neck": { "type": "string" }, "head": { "type": "string" },
+        "left_shoulder": { "type": "string" }, "left_upper_arm": { "type": "string" },
+        "left_lower_arm": { "type": "string" }, "left_hand": { "type": "string" },
+        "right_shoulder": { "type": "string" }, "right_upper_arm": { "type": "string" },
+        "right_lower_arm": { "type": "string" }, "right_hand": { "type": "string" },
+        "left_upper_leg": { "type": "string" }, "left_lower_leg": { "type": "string" },
+        "left_foot": { "type": "string" }, "left_toes": { "type": "string" },
+        "right_upper_leg": { "type": "string" }, "right_lower_leg": { "type": "string" },
+        "right_foot": { "type": "string" }, "right_toes": { "type": "string" }
+      }
+    },
+
+    "finger_mapping": {
+      "type": "object",
+      "description": "Finger bone chains (3 bones per finger: proximal, intermediate, distal).",
+      "patternProperties": {
+        "^(left|right)_(thumb|index|middle|ring|pinky)$": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 2,
+          "maxItems": 4
+        }
+      }
+    },
+
+    "extra_bones": {
+      "type": "array",
+      "description": "Non-humanoid bones: dynamic (cloth/hair), sockets (attachment points), twist (helper).",
+      "items": {
+        "type": "object",
+        "required": ["name", "parent", "type"],
+        "properties": {
+          "name": { "type": "string" },
+          "parent": { "type": "string" },
+          "type": { "type": "string", "enum": ["dynamic", "socket", "twist", "helper", "ik_target"] }
+        }
+      }
+    }
+  }
+}

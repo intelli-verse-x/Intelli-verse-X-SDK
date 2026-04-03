@@ -1,0 +1,178 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://intelliversex.com/schemas/character-3d-meta-v1.json",
+  "title": "IntelliVerseX 3D Rigged Character Metadata",
+  "description": "Describes a 3D rigged character: mesh, skeleton, blend shapes, textures, materials, animations, and state machine.",
+  "type": "object",
+  "required": ["id", "display_name", "type", "mesh", "skeleton", "textures", "animations"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[A-Z][A-Za-z0-9_]+$" },
+    "display_name": { "type": "string" },
+    "type": { "type": "string", "const": "3d_rigged" },
+    "rarity": { "type": "string", "enum": ["common", "uncommon", "rare", "epic", "legendary"] },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+
+    "mesh": {
+      "type": "object",
+      "required": ["file", "poly_count"],
+      "properties": {
+        "file": { "type": "string" },
+        "poly_count": { "type": "integer", "minimum": 1 },
+        "vertex_count": { "type": "integer", "minimum": 1 },
+        "material_count": { "type": "integer", "minimum": 1 },
+        "submeshes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "lods": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["level", "file", "poly_count"],
+        "properties": {
+          "level": { "type": "integer", "minimum": 0 },
+          "file": { "type": "string" },
+          "poly_count": { "type": "integer", "minimum": 1 },
+          "screen_pct": { "type": "number", "minimum": 0, "maximum": 1 }
+        }
+      }
+    },
+
+    "skeleton": {
+      "type": "object",
+      "required": ["file", "bone_count", "root_bone"],
+      "properties": {
+        "file": { "type": "string" },
+        "bone_count": { "type": "integer", "minimum": 1, "maximum": 300 },
+        "root_bone": { "type": "string" },
+        "humanoid_mapped": { "type": "boolean" },
+        "ik_chains": {
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "type": "object",
+              "required": ["root", "tip"],
+              "properties": {
+                "root": { "type": "string" },
+                "tip": { "type": "string" },
+                "pole": { "type": "string" }
+              }
+            }
+          }
+        },
+        "physics_bones": { "type": "array", "items": { "type": "string" } },
+        "attachment_points": {
+          "type": "object",
+          "patternProperties": { ".*": { "type": "string" } }
+        }
+      }
+    },
+
+    "blend_shapes": {
+      "type": "object",
+      "properties": {
+        "file": { "type": "string" },
+        "groups": {
+          "type": "object",
+          "properties": {
+            "visemes": { "type": "array", "items": { "type": "string" } },
+            "expressions": { "type": "array", "items": { "type": "string" } },
+            "correctives": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    },
+
+    "textures": {
+      "type": "object",
+      "patternProperties": {
+        "^(albedo|normal|arm|metallic|roughness|ao|emissive|height|mask|opacity|subsurface|thickness|curvature)$": {
+          "type": "object",
+          "required": ["file"],
+          "properties": {
+            "file": { "type": "string" },
+            "size": { "type": "array", "items": { "type": "integer" }, "minItems": 2, "maxItems": 2 },
+            "srgb": { "type": "boolean" },
+            "channels": {
+              "type": "object",
+              "patternProperties": { "^[RGBA]$": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+
+    "materials": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "shader"],
+        "properties": {
+          "name": { "type": "string" },
+          "shader": { "type": "string" },
+          "submesh": { "type": "string" },
+          "textures": { "type": "array", "items": { "type": "string" } },
+          "properties": { "type": "object" }
+        }
+      }
+    },
+
+    "animations": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z][a-z0-9_]*$": {
+          "type": "object",
+          "required": ["file", "duration_sec"],
+          "properties": {
+            "file": { "type": "string" },
+            "duration_sec": { "type": "number", "minimum": 0 },
+            "loop": { "type": "boolean" },
+            "layer": { "type": "string", "enum": ["base", "additive", "override"] },
+            "root_motion": { "type": "boolean" },
+            "additive": { "type": "boolean" },
+            "weight": { "type": "number", "minimum": 0, "maximum": 1 },
+            "speed_curve": { "type": "boolean" },
+            "events": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["time_sec", "name"],
+                "properties": {
+                  "time_sec": { "type": "number", "minimum": 0 },
+                  "name": { "type": "string" },
+                  "data": { "type": "object" }
+                }
+              }
+            },
+            "sections": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["name", "start_sec", "end_sec"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "start_sec": { "type": "number" },
+                  "end_sec": { "type": "number" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "state_machine": { "type": "string" },
+    "bounds": {
+      "type": "object",
+      "properties": {
+        "center": { "type": "array", "items": { "type": "number" }, "minItems": 3, "maxItems": 3 },
+        "size": { "type": "array", "items": { "type": "number" }, "minItems": 3, "maxItems": 3 }
+      }
+    },
+    "sounds": {
+      "type": "object",
+      "patternProperties": { "^on_[a-z][a-z0-9_]*$": { "type": "string" } }
+    },
+    "tags": { "type": "array", "items": { "type": "string" } }
+  }
+}

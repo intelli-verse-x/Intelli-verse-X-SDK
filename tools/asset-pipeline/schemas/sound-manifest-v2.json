@@ -1,0 +1,118 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://intelliversex.com/schemas/sound-manifest-v2.json",
+  "title": "IntelliVerseX Sound Manifest",
+  "description": "Maps sound IDs to CDN URLs with playback metadata. Used by all IVX game audio systems.",
+  "type": "object",
+  "required": ["version", "categories"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$",
+      "description": "Manifest schema version (e.g. '2.1')."
+    },
+    "base_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Base URL prefix for relative paths in sound entries."
+    },
+    "categories": {
+      "type": "object",
+      "description": "Sound entries grouped by category prefix.",
+      "patternProperties": {
+        "^(ui|sfx|music|stinger|ambient|notif|voice|reward|streak)$": {
+          "$ref": "#/definitions/soundCategory"
+        }
+      },
+      "additionalProperties": false
+    },
+    "mixer_groups": {
+      "type": "object",
+      "description": "Audio mixer group definitions with default volumes.",
+      "patternProperties": {
+        "^[A-Za-z][A-Za-z0-9_]*$": {
+          "type": "object",
+          "required": ["default_volume"],
+          "properties": {
+            "default_volume": { "type": "number", "minimum": 0, "maximum": 1 },
+            "parent": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      }
+    }
+  },
+  "definitions": {
+    "soundCategory": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z][a-z0-9_]*$": {
+          "$ref": "#/definitions/soundEntry"
+        }
+      },
+      "additionalProperties": false
+    },
+    "soundEntry": {
+      "type": "object",
+      "required": ["url", "format"],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Path relative to base_url, or absolute URL."
+        },
+        "format": {
+          "type": "string",
+          "enum": ["wav", "mp3", "ogg"],
+          "description": "Audio file format."
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Duration in milliseconds."
+        },
+        "volume": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Suggested playback volume."
+        },
+        "loop": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the sound loops."
+        },
+        "loop_start_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Loop region start for intro+loop music."
+        },
+        "loop_end_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Loop region end."
+        },
+        "bpm": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Beats per minute for rhythm sync."
+        },
+        "variations": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of random variations available."
+        },
+        "variation_urls": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Explicit variation file URLs."
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Searchable tags."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

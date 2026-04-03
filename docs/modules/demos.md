@@ -205,7 +205,7 @@ All demos build UI with code using `RectTransform` anchors and `LayoutGroup` com
 
 ### Prefabs for All Demos
 
-Every demo has a corresponding prefab under `Assets/_IntelliVerseXSDK/Prefabs/`. Generate or refresh them via **IntelliVerseX > Generate All Prefabs**.
+Every demo has a corresponding prefab under `Assets/Intelli-verse-X-SDK/Prefabs/`. Generate or refresh them via **IntelliVerseX > Generate All Prefabs**.
 
 ---
 

@@ -1,0 +1,10 @@
+name: intelliversex_sdk
+description: "IntelliVerseX SDK Stub"
+version: 5.8.0
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter

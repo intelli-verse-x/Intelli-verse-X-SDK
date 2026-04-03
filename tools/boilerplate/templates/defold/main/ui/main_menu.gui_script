@@ -1,0 +1,48 @@
+-- Main menu tabs + wallet header (template starter)
+local config = require("main.config")
+
+local TABS = {
+	"Home", "Store", "Achievements", "Daily Rewards", "Leaderboard", "Settings",
+}
+
+local function bind_wallet(self)
+	local wallet = gui.get_node("wallet_text")
+	if wallet then
+		gui.set_text(wallet, string.format("coins %d · gems %d", config.initial_coins, config.initial_gems))
+	end
+end
+
+local function show_panel(self, index)
+	for i = 1, #TABS do
+		local n = gui.get_node("panel_" .. i)
+		if n then
+			gui.set_enabled(n, i == index)
+		end
+	end
+end
+
+function init(self)
+	bind_wallet(self)
+	show_panel(self, 1)
+	for i = 1, #TABS do
+		local btn = gui.get_node("tab_" .. i)
+		if btn then
+			gui.set_color(btn, vmath.vector4(1, 1, 1, 1))
+		end
+	end
+end
+
+function on_message(self, message_id, message, sender)
+end
+
+function on_input(self, action_id, action)
+	if action.released then
+		for i = 1, #TABS do
+			if action_id == hash("tab_" .. i) then
+				show_panel(self, i)
+				return true
+			end
+		end
+	end
+	return false
+end

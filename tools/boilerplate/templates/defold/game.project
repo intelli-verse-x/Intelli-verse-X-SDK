@@ -1,0 +1,26 @@
+[project]
+title = "{{game_name}}"
+version = 0.1
+custom_resources =
+
+[bootstrap]
+main_collection = /main/bootstrap.collectionc
+render = /builtins/render/default.renderc
+
+[graphics]
+default_texture_min_filter = linear
+default_texture_mag_filter = linear
+
+[input]
+game_binding = /input/game.input_bindingc
+gamepads = /builtins/input/default.gamepadsc
+
+[script]
+shared_state = 1
+
+[android]
+package = "{{package_name}}"
+app_icon = /assets/appicons/icon_192.png
+
+[ios]
+bundle_identifier = "{{bundle_id}}"

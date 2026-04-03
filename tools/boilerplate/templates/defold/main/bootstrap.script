@@ -1,0 +1,40 @@
+-- IntelliVerseX bootstrap: configure client, auth, Hiro, analytics
+local config = require("main.config")
+
+local function init_ivx()
+	if not ivx or not ivx.configure then
+		print("[IVX] SDK not loaded — add IntelliVerseX native extension")
+		return
+	end
+	ivx.configure({
+		game_id = config.game_id,
+		server_host = config.server_host,
+		server_port = config.server_port,
+		server_key = config.server_key,
+	})
+	ivx.authenticate_guest(function(ok)
+		if not ok then
+			print("[IVX] auth failed")
+			return
+		end
+		ivx.load_hiro()
+		ivx.track("session_start", { game_id = config.game_id })
+	end)
+end
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	init_ivx()
+end
+
+function final(self)
+end
+
+function update(self, dt)
+end
+
+function on_message(self, message_id, message, sender)
+end
+
+function on_input(self, action_id, action)
+end

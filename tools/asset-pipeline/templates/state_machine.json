@@ -1,0 +1,60 @@
+{
+  "format": "ivx_state_machine_v1",
+  "layers": [
+    {
+      "name": "base",
+      "type": "override",
+      "default_state": "idle",
+      "states": {
+        "idle": {
+          "clip": "idle",
+          "transitions": [
+            { "to": "walk",      "condition": "speed > 0.1" },
+            { "to": "hit_react", "trigger": "hit" },
+            { "to": "death",     "trigger": "die" }
+          ]
+        },
+        "walk": {
+          "clip": "walk",
+          "transitions": [
+            { "to": "idle", "condition": "speed < 0.1" },
+            { "to": "run",  "condition": "speed > 3.0" }
+          ]
+        },
+        "run": {
+          "clip": "run",
+          "transitions": [
+            { "to": "walk", "condition": "speed < 3.0" },
+            { "to": "idle", "condition": "speed < 0.1" }
+          ]
+        },
+        "hit_react": {
+          "clip": "hit_react",
+          "transitions": [
+            { "to": "idle", "on_complete": true }
+          ]
+        },
+        "death": {
+          "clip": "death",
+          "transitions": []
+        }
+      },
+      "blend_trees": {
+        "locomotion": {
+          "parameter": "speed",
+          "type": "1d",
+          "clips": [
+            { "clip": "idle", "threshold": 0.0 },
+            { "clip": "walk", "threshold": 1.5 },
+            { "clip": "run",  "threshold": 5.0 }
+          ]
+        }
+      }
+    }
+  ],
+  "parameters": {
+    "speed": { "type": "float", "default": 0.0 },
+    "hit":   { "type": "trigger" },
+    "die":   { "type": "trigger" }
+  }
+}

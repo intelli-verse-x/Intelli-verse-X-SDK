@@ -144,7 +144,7 @@ IVXConfig.builder().enableDebugLogs(false).build();
 - Web3 wallet signature authentication (EIP-191)
 - Secure device ID caching in Flutter SDK
 
-### v5.0.0 (2025-01-13)
+### v5.0.0 (2026-02-27)
 - Upgraded encryption to AES-256
 - Added SSL certificate pinning
 - Improved token storage security

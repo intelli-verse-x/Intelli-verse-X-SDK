@@ -439,7 +439,7 @@ Native Discord Social SDK does not target **WebGL**; IVX falls back to stub mode
 
 ## Prefabs
 
-The SDK provides ready-made prefabs under `Assets/_IntelliVerseXSDK/Prefabs/`:
+The SDK provides ready-made prefabs under `Assets/Intelli-verse-X-SDK/Prefabs/`:
 
 | Prefab | Components |
 |--------|-----------|

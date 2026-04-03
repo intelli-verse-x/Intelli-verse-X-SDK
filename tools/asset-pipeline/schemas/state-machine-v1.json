@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://intelliversex.com/schemas/state-machine-v1.json",
+  "title": "IntelliVerseX Animation State Machine",
+  "description": "Engine-agnostic animation state graph: layers, states, transitions, blend trees, and parameters.",
+  "type": "object",
+  "required": ["format", "layers", "parameters"],
+  "properties": {
+    "format": { "type": "string", "const": "ivx_state_machine_v1" },
+
+    "layers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string", "enum": ["override", "additive"] },
+          "default_state": { "type": "string" },
+          "mask": { "type": "string", "description": "Body region mask: upper_body, lower_body, full_body, left_arm, right_arm." },
+          "states": {
+            "type": "object",
+            "patternProperties": {
+              ".*": {
+                "type": "object",
+                "required": ["clip"],
+                "properties": {
+                  "clip": { "type": "string" },
+                  "speed": { "type": "number" },
+                  "weight": { "type": "number", "minimum": 0, "maximum": 1 },
+                  "weight_param": { "type": "string" },
+                  "always_on": { "type": "boolean" },
+                  "mirror": { "type": "boolean" },
+                  "transitions": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "to": { "type": ["string", "null"] },
+                        "condition": { "type": "string", "description": "Boolean expression: speed > 0.1" },
+                        "trigger": { "type": "string" },
+                        "on_complete": { "type": "boolean" },
+                        "blend_sec": { "type": "number", "minimum": 0 },
+                        "window_sec": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "blend_trees": {
+            "type": "object",
+            "patternProperties": {
+              ".*": {
+                "type": "object",
+                "required": ["parameter", "clips"],
+                "properties": {
+                  "parameter": { "type": "string" },
+                  "type": { "type": "string", "enum": ["1d", "2d_freeform", "2d_cartesian"], "default": "1d" },
+                  "clips": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["clip", "threshold"],
+                      "properties": {
+                        "clip": { "type": "string" },
+                        "threshold": { "type": "number" },
+                        "position": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "parameters": {
+      "type": "object",
+      "patternProperties": {
+        ".*": {
+          "type": "object",
+          "required": ["type"],
+          "properties": {
+            "type": { "type": "string", "enum": ["float", "int", "bool", "trigger"] },
+            "default": {}
+          }
+        }
+      }
+    }
+  }
+}

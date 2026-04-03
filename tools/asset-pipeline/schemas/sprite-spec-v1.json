@@ -1,0 +1,112 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://intelliversex.com/schemas/sprite-spec-v1.json",
+  "title": "IntelliVerseX Sprite Sheet Spec",
+  "description": "Defines a 2D sprite-sheet animation for runtime playback across all IVX engines.",
+  "type": "object",
+  "required": ["action", "frames", "cell_size"],
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "type": "string",
+      "description": "Animation name — must match the sheet filename (without extension).",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "examples": ["idle", "jump", "run_fast", "attack_special"]
+    },
+    "frames": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 256,
+      "description": "Total number of frames in the sheet."
+    },
+    "cell_size": {
+      "type": "integer",
+      "minimum": 16,
+      "maximum": 4096,
+      "description": "Width and height of each frame cell in pixels (square)."
+    },
+    "fps": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 60,
+      "default": 10,
+      "description": "Playback frames per second. 0 = use animator default."
+    },
+    "loop": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the animation loops after the last frame."
+    },
+    "ping_pong": {
+      "type": "boolean",
+      "default": false,
+      "description": "Forward-then-backward looping (breathing style)."
+    },
+    "layout": {
+      "type": "object",
+      "description": "Grid layout of frames in the sheet.",
+      "properties": {
+        "columns": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of columns in the grid."
+        },
+        "rows": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of rows in the grid."
+        }
+      },
+      "additionalProperties": false
+    },
+    "hitbox": {
+      "type": "object",
+      "description": "Per-frame collision rectangle in pixel coordinates.",
+      "required": ["x", "y", "width", "height"],
+      "properties": {
+        "x": { "type": "integer" },
+        "y": { "type": "integer" },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "events": {
+      "type": "array",
+      "description": "Frame-triggered events for VFX, SFX, or game logic.",
+      "items": {
+        "type": "object",
+        "required": ["frame", "name"],
+        "properties": {
+          "frame": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Zero-based frame index."
+          },
+          "name": {
+            "type": "string",
+            "description": "Event name dispatched to listeners."
+          },
+          "data": {
+            "type": "object",
+            "description": "Optional key-value payload for the event."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "sound_sync": {
+      "type": "object",
+      "description": "Frame index → sound manifest ID mapping for synchronized audio.",
+      "patternProperties": {
+        "^[0-9]+$": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "tags": {
+      "type": "array",
+      "description": "Searchable tags for filtering animations.",
+      "items": { "type": "string" }
+    }
+  }
+}

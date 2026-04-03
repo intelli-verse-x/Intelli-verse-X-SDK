@@ -1,0 +1,87 @@
+{
+  "id": "TemplateName",
+  "display_name": "Template 3D Character",
+  "type": "3d_rigged",
+  "rarity": "common",
+  "version": "1.0.0",
+
+  "mesh": {
+    "file": "model.glb",
+    "poly_count": 1,
+    "vertex_count": 1,
+    "material_count": 1,
+    "submeshes": ["body"]
+  },
+
+  "lods": [
+    { "level": 0, "file": "model.glb",      "poly_count": 1, "screen_pct": 0.5 },
+    { "level": 1, "file": "model_lod1.glb",  "poly_count": 1, "screen_pct": 0.2 },
+    { "level": 2, "file": "model_lod2.glb",  "poly_count": 1, "screen_pct": 0.05 }
+  ],
+
+  "skeleton": {
+    "file": "skeleton.json",
+    "bone_count": 1,
+    "root_bone": "Hips",
+    "humanoid_mapped": true,
+    "ik_chains": {
+      "left_foot":  { "root": "LeftUpperLeg",  "tip": "LeftFoot",  "pole": "LeftKnee" },
+      "right_foot": { "root": "RightUpperLeg", "tip": "RightFoot", "pole": "RightKnee" },
+      "left_hand":  { "root": "LeftUpperArm",  "tip": "LeftHand",  "pole": "LeftElbow" },
+      "right_hand": { "root": "RightUpperArm", "tip": "RightHand", "pole": "RightElbow" }
+    },
+    "physics_bones": [],
+    "attachment_points": {
+      "right_hand_weapon": "RightHandSocket",
+      "left_hand_shield": "LeftHandSocket",
+      "head_helmet": "HeadSocket",
+      "back_mount": "SpineSocket"
+    }
+  },
+
+  "blend_shapes": {
+    "file": "blend_shapes/face_shapes.json",
+    "groups": {
+      "visemes": ["Viseme_AA", "Viseme_E", "Viseme_I", "Viseme_O", "Viseme_U",
+                   "Viseme_CH", "Viseme_FF", "Viseme_TH", "Viseme_PP", "Viseme_SS"],
+      "expressions": ["Brow_Up", "Brow_Down", "Eye_Blink_L", "Eye_Blink_R",
+                       "Mouth_Smile", "Mouth_Frown", "Mouth_Open", "Jaw_Open"],
+      "correctives": []
+    }
+  },
+
+  "textures": {
+    "albedo":   { "file": "textures/T_TemplateName_Albedo.png",   "size": [2048, 2048], "srgb": true },
+    "normal":   { "file": "textures/T_TemplateName_Normal.png",   "size": [2048, 2048], "srgb": false },
+    "arm":      { "file": "textures/T_TemplateName_ARM.png",      "size": [2048, 2048], "srgb": false,
+                  "channels": { "R": "ambient_occlusion", "G": "roughness", "B": "metallic" } }
+  },
+
+  "materials": [
+    {
+      "name": "M_TemplateName_Body",
+      "shader": "pbr_standard",
+      "submesh": "body",
+      "textures": ["albedo", "normal", "arm"],
+      "properties": { "tint_color": [1,1,1,1], "roughness_scale": 1.0 }
+    }
+  ],
+
+  "animations": {
+    "idle":       { "file": "animations/idle.glb",       "duration_sec": 2.0,  "loop": true,  "layer": "base" },
+    "walk":       { "file": "animations/walk.glb",       "duration_sec": 1.0,  "loop": true,  "layer": "base", "root_motion": true },
+    "hit_react":  { "file": "animations/hit_react.glb",  "duration_sec": 0.5,  "loop": false, "layer": "base" },
+    "death":      { "file": "animations/death.glb",      "duration_sec": 1.8,  "loop": false, "layer": "base" }
+  },
+
+  "state_machine": "state_machine.json",
+
+  "bounds": { "center": [0, 1.0, 0], "size": [1.0, 2.0, 1.0] },
+  "sounds": {
+    "on_select": "sfx_character_select",
+    "on_hurt": "sfx_character_hurt",
+    "on_death": "sfx_character_death",
+    "on_footstep": "sfx_footstep"
+  },
+  "tags": ["humanoid"]
+}

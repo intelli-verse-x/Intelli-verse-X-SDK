@@ -210,7 +210,7 @@ public class MyGame : MonoBehaviour
 Drop the Demo Hub prefab into any scene to see all 16 features in action:
 
 1. Run `IntelliVerseX > Generate All Prefabs`
-2. Drag `Assets/_IntelliVerseXSDK/Prefabs/IVX_DemoHub.prefab` into your scene
+2. Drag `Assets/Intelli-verse-X-SDK/Prefabs/IVX_DemoHub.prefab` into your scene
 3. Press Play — browse and launch any demo
 
 | Demo | What You'll See |

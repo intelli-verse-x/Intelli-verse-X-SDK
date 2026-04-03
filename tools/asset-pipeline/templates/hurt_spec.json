@@ -1,0 +1,19 @@
+{
+  "action": "hurt",
+  "frames": 4,
+  "cell_size": 512,
+  "fps": 10,
+  "loop": false,
+  "ping_pong": false,
+  "layout": {
+    "columns": 2,
+    "rows": 2
+  },
+  "events": [
+    { "frame": 0, "name": "hit_flash" }
+  ],
+  "sound_sync": {
+    "0": "sfx_character_hurt"
+  },
+  "tags": ["core", "damage"]
+}

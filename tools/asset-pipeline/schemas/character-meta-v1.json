@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://intelliversex.com/schemas/character-meta-v1.json",
+  "title": "IntelliVerseX Character Metadata",
+  "description": "Describes a playable character: identity, rarity, animations, sound bindings, and views.",
+  "type": "object",
+  "required": ["id", "display_name", "rarity", "animations", "views"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique character identifier (PascalCase).",
+      "pattern": "^[A-Z][A-Za-z0-9]+$"
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Localized display name."
+    },
+    "description": {
+      "type": "string",
+      "description": "Short flavor text."
+    },
+    "rarity": {
+      "type": "string",
+      "enum": ["common", "uncommon", "rare", "epic", "legendary"],
+      "description": "Character rarity tier."
+    },
+    "unlock_method": {
+      "type": "string",
+      "enum": ["default", "purchase", "achievement", "event", "gacha", "season_pass"],
+      "description": "How the player obtains this character."
+    },
+    "unlock_cost": {
+      "type": "object",
+      "description": "Currency costs for purchase unlock (e.g. {\"gems\": 500})."
+    },
+    "tier": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Numeric tier for sorting/display."
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Searchable tags."
+    },
+    "views": {
+      "type": "object",
+      "required": ["front", "thumbnail"],
+      "properties": {
+        "front": { "type": "string", "description": "512×512 front portrait filename." },
+        "back": { "type": "string", "description": "Optional rear view filename." },
+        "thumbnail": { "type": "string", "description": "128×128 icon filename." }
+      },
+      "additionalProperties": { "type": "string" }
+    },
+    "animations": {
+      "type": "object",
+      "description": "Animation catalog: key = anim name, value = metadata.",
+      "patternProperties": {
+        "^[a-z][a-z0-9_]*$": {
+          "type": "object",
+          "required": ["tier", "frames"],
+          "properties": {
+            "tier": {
+              "type": "string",
+              "enum": ["mandatory", "standard", "extended"],
+              "description": "Animation tier from the asset standard."
+            },
+            "frames": { "type": "integer", "minimum": 1 },
+            "fps": { "type": "number", "minimum": 0 }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "sounds": {
+      "type": "object",
+      "description": "Event → sound manifest ID bindings.",
+      "patternProperties": {
+        "^on_[a-z][a-z0-9_]*$": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

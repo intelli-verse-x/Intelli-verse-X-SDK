@@ -1,0 +1,6 @@
+{
+	"bindings": [
+		{"action": "ui_accept", "events": [{"type": "InputEventKey", "keycode": 4194309}]},
+		{"action": "ui_cancel", "events": [{"type": "InputEventKey", "keycode": 4194305}]}
+	]
+}
