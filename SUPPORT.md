@@ -25,12 +25,12 @@ Need help with IntelliVerseX SDK? Here's how to get support.
 
 **Start here:** Most questions are answered in our documentation.
 
-- [Full Documentation](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/)
-- [Platform SDKs](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/platforms/)
-- [Getting Started Guide](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/getting-started/)
-- [API Reference](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/api/)
-- [Troubleshooting](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/troubleshooting/)
-- [FAQ](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/troubleshooting/faq/)
+- [Full Documentation](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/)
+- [Platform SDKs](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/platforms/)
+- [Getting Started Guide](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/getting-started/)
+- [API Reference](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/api/)
+- [Troubleshooting](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/troubleshooting/)
+- [FAQ](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/troubleshooting/faq/)
 
 ---
 
@@ -63,7 +63,7 @@ Best for:
 - Quick questions
 - Community interaction
 
-[Join Discord](https://discord.gg/intelliversex)
+[Join Discord](https://discord.gg/YVPxPFftMQ)
 
 ---
 
@@ -121,7 +121,7 @@ Contact: enterprise@intelli-verse-x.ai
 
 Before reaching out, please:
 
-- [ ] Check the [documentation](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/)
+- [ ] Check the [documentation](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/)
 - [ ] Search [existing issues](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues)
 - [ ] Search [discussions](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/discussions)
 - [ ] Collect relevant information (version, platform, logs)
@@ -147,11 +147,11 @@ We recommend always using the latest version.
 
 | Resource | Link |
 |----------|------|
-| Documentation | [intelli-verse-x.github.io](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/) |
+| Documentation | [intelli-verse-x.github.io](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/) |
 | GitHub Repository | [Intelli-verse-X/Intelli-verse-X-Unity-SDK](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK) |
 | Release Notes | [Releases](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/releases) |
 | Changelog | [CHANGELOG.md](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/blob/main/CHANGELOG.md) |
-| Discord | [discord.gg/intelliversex](https://discord.gg/intelliversex) |
+| Discord | [discord.gg/YVPxPFftMQ](https://discord.gg/YVPxPFftMQ) |
 
 ---
 

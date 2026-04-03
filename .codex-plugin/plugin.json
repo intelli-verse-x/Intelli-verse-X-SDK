@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "IntelliVerseX Game SDK integration — 7 skills for 10 game engines, 50+ MCP tools for Nakama backend",
   "author": "IntelliVerse-X",
-  "homepage": "https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/",
+  "homepage": "https://intelli-verse-x.github.io/Intelli-verse-X-SDK/",
   "repository": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK",
   "license": "MIT",
   "skills": [

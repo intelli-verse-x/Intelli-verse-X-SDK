@@ -225,7 +225,7 @@ src/
 
 ## API Reference
 
-See the [full documentation](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/platforms/cpp/).
+See the [full documentation](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/platforms/cpp/).
 
 ## Nakama Client Library
 

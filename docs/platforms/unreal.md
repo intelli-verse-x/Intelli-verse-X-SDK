@@ -306,7 +306,7 @@ Built on [nakama-unreal](https://github.com/heroiclabs/nakama-unreal) (249 stars
 - [Nakama concepts](https://heroiclabs.com/docs/nakama/concepts/) — accounts, storage, leaderboards, multiplayer.
 - [Hiro documentation](https://heroiclabs.com/docs/hiro/) — economy, live-ops, and RPC conventions (align server RPC ids with `UIVXHiroSystems` / `CallRpc` usage).
 - [Satori documentation](https://heroiclabs.com/docs/satori/) — analytics and experimentation (for completing `UIVXSatori` stubs).
-- [IntelliVerseX SDK documentation](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/) — cross-platform overview and module guides.
+- [IntelliVerseX SDK documentation](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/) — cross-platform overview and module guides.
 - [Console platforms](console.md) — PS5, Xbox Series X and S, Switch adapter notes.
 - [XR / VR / AR](xr-vr-ar.md) — headset detection and platform matrix (Unity-first; Unreal `UIVXXRHelper` follows the same intent).
 

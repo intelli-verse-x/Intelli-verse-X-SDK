@@ -8,7 +8,7 @@ namespace IntelliVerseX.Discord
     /// Handles initialization, authentication, and account linking.
     /// Attach to a persistent GameObject (DontDestroyOnLoad).
     /// </summary>
-    [HelpURL("https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/modules/discord/")]
+    [HelpURL("https://intelli-verse-x.github.io/Intelli-verse-X-SDK/modules/discord/")]
     public sealed class IVXDiscordManager : MonoBehaviour
     {
         #region Constants

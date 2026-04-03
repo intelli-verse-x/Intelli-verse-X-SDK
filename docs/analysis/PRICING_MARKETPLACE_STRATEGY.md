@@ -339,7 +339,7 @@ FREE (Open Source)              PAID (Managed + Premium)
 | **Reach** | Targeted — developers who actively use the SDK |
 | **What to list** | Support channels, showcase, feedback, announcements |
 | **Strategic value** | Retention + feedback loop. Reduces support burden. Community-generated content. |
-| **Action** | Already exists (discord.gg/intelliversex). Activate with regular updates. |
+| **Action** | Already exists (discord.gg/YVPxPFftMQ). Activate with regular updates. |
 | **Verdict** | **FREE — essential community infrastructure** |
 
 ---
@@ -1162,7 +1162,7 @@ MIT is compatible with virtually every game engine license:
 
 #### 2.5 Discord Community Activation (Week 3)
 
-- [ ] **IntelliVerseX Discord** (`discord.gg/intelliversex`):
+- [ ] **IntelliVerseX Discord** (`discord.gg/YVPxPFftMQ`):
   - [ ] Create channels: `#welcome`, `#showcase`, `#sdk-support`, `#skills-help`, `#feature-requests`, `#announcements`
   - [ ] Post launch announcement
   - [ ] Pin getting-started guide

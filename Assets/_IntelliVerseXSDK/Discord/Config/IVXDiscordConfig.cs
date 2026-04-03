@@ -7,7 +7,7 @@ namespace IntelliVerseX.Discord
     /// Create via Assets → Create → IntelliVerseX → Discord Config.
     /// </summary>
     [CreateAssetMenu(fileName = "IVXDiscordConfig", menuName = "IntelliVerseX/Discord Config")]
-    [HelpURL("https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/modules/discord/")]
+    [HelpURL("https://intelli-verse-x.github.io/Intelli-verse-X-SDK/modules/discord/")]
     public sealed class IVXDiscordConfig : ScriptableObject
     {
         #region Serialized Fields

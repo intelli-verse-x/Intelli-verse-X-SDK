@@ -3,7 +3,7 @@ description: >-
   IntelliVerseX SDK for Flutter/Dart — Auth, Backend (Nakama), Analytics,
   Economy, Leaderboards, Storage, RPC, and more.
 version: 5.8.0
-homepage: https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/
+homepage: https://intelli-verse-x.github.io/Intelli-verse-X-SDK/
 repository: https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/tree/main/SDKs/flutter
 issue_tracker: https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues
 topics:

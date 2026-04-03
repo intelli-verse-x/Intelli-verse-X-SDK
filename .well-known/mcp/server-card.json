@@ -6,7 +6,7 @@
     "name": "IntelliVerse-X",
     "url": "https://intelli-verse-x.ai"
   },
-  "documentation_url": "https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/",
+  "documentation_url": "https://intelli-verse-x.github.io/Intelli-verse-X-SDK/",
   "repository": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK",
   "transport": [
     "streamable-http",

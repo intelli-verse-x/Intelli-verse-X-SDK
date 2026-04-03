@@ -203,7 +203,7 @@ Classes/IntelliVerseX/
 
 ## API Reference
 
-See the [full documentation](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/platforms/cocos2dx/).
+See the [full documentation](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/platforms/cocos2dx/).
 
 ## Nakama Client Library
 

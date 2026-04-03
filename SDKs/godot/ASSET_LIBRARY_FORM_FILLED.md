@@ -73,7 +73,7 @@ Enable the IntelliVerseX plugin in Project → Project Settings → Plugins, the
 If the form has a **Support URL** or **Documentation URL**:
 
 - `https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK#readme`  
-  or your docs site if you have one (e.g. `https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/platforms/godot/`).
+  or your docs site if you have one (e.g. `https://intelli-verse-x.github.io/Intelli-verse-X-SDK/platforms/godot/`).
 
 ---
 
