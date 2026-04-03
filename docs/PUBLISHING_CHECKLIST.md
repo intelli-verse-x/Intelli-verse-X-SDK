@@ -34,6 +34,9 @@
 | 15 | **Wally** (wally.run) | Roblox/Luau | Pending | P0 | `SDKs/roblox/wally.toml` — `wally publish` |
 | 16 | **crates.io** | Rust bindings | Pending | P2 | Future — if Rust SDK is added |
 | 17 | **CocoaPods / SPM** | iOS native | Pending | P2 | Future — for iOS-native wrappers |
+| 18 | **OpenUPM** (openupm.com) | Unity UPM | Pending | P0 | `docs/openupm-submission.md` — submit to OpenUPM registry |
+| 19 | **Conan Center** (conan.io) | C/C++ SDK | Pending | P1 | `docs/conan-center-submission.md` — submit Conan recipe |
+| 20 | **vcpkg** (vcpkg.io) | C/C++ SDK | Pending | P1 | `docs/vcpkg-PR-description.md` — submit vcpkg port |
 
 ---
 
@@ -41,14 +44,14 @@
 
 | # | Platform | Engine | Status | Priority | Notes |
 |---|----------|--------|--------|----------|-------|
-| 18 | **Unity Asset Store** | Unity | Pending | P0 | UPM package; requires Asset Store publisher account |
-| 19 | **Unreal Marketplace** | Unreal | Pending | P0 | `SDKs/unreal/` — Submit as Code Plugin |
-| 20 | **Godot Asset Library** | Godot | Pending | P0 | `SDKs/godot/` — assetlib.godotengine.org |
-| 21 | **Defold Asset Portal** | Defold | Pending | P1 | `SDKs/defold/` — defold.com/assets |
-| 22 | **Roblox Creator Store** | Roblox | Pending | P0 | Studio Plugin from `SDKs/roblox/plugin/` |
-| 23 | **Cocos Store** | Cocos | Pending | P2 | `SDKs/cocos2dx/` |
-| 24 | **GameMaker Marketplace** | GameMaker | Pending | P2 | Future — if GameMaker SDK is added |
-| 25 | **Construct Addon Store** | Construct | Pending | P2 | Future |
+| 21 | **Unity Asset Store** | Unity | Pending | P0 | UPM package; requires Asset Store publisher account |
+| 22 | **Unreal Marketplace** | Unreal | Pending | P0 | `SDKs/unreal/` — Submit as Code Plugin |
+| 23 | **Godot Asset Library** | Godot | Pending | P0 | `SDKs/godot/` — assetlib.godotengine.org |
+| 24 | **Defold Asset Portal** | Defold | Pending | P1 | `SDKs/defold/` — defold.com/assets |
+| 25 | **Roblox Creator Store** | Roblox | Pending | P0 | Studio Plugin from `SDKs/roblox/plugin/` |
+| 26 | **Cocos Store** | Cocos | Pending | P2 | `SDKs/cocos2dx/` |
+| 27 | **GameMaker Marketplace** | GameMaker | Pending | P2 | Future — if GameMaker SDK is added |
+| 28 | **Construct Addon Store** | Construct | Pending | P2 | Future |
 
 ---
 
@@ -56,17 +59,17 @@
 
 | # | Platform | Reach | Status | Priority | Notes |
 |---|----------|-------|--------|----------|-------|
-| 26 | **Apple App Store** | iOS, macOS, tvOS, visionOS | Planning | P0 | For games built with SDK |
-| 27 | **Google Play Store** | Android | Planning | P0 | For games built with SDK |
-| 28 | **Steam** | PC, Mac, Linux, SteamOS, Steam Deck | Planning | P0 | Steamworks integration |
-| 29 | **Microsoft Store / Xbox** | Windows, Xbox | Planning | P1 | Xbox GDK required |
-| 30 | **PlayStation Store** | PS5, PS4 | Planning | P1 | Sony PS Partners required |
-| 31 | **Nintendo eShop** | Switch | Planning | P1 | Nintendo Developer Portal |
-| 32 | **Epic Games Store** | PC, Mac | Planning | P1 | Epic publishing tools |
-| 33 | **Meta Quest Store** | Quest 2/3/Pro | Planning | P1 | Meta Developer Hub |
-| 34 | **Samsung Galaxy Store** | Samsung devices | Planning | P2 | Samsung Developer portal |
-| 35 | **Huawei AppGallery** | Huawei devices (China, SEA) | Planning | P2 | Huawei Developer Console |
-| 36 | **Amazon Appstore** | Fire tablets, Fire TV | Planning | P2 | Amazon Developer portal |
+| 29 | **Apple App Store** | iOS, macOS, tvOS, visionOS | Planning | P0 | For games built with SDK |
+| 30 | **Google Play Store** | Android | Planning | P0 | For games built with SDK |
+| 31 | **Steam** | PC, Mac, Linux, SteamOS, Steam Deck | Planning | P0 | Steamworks integration |
+| 32 | **Microsoft Store / Xbox** | Windows, Xbox | Planning | P1 | Xbox GDK required |
+| 33 | **PlayStation Store** | PS5, PS4 | Planning | P1 | Sony PS Partners required |
+| 34 | **Nintendo eShop** | Switch | Planning | P1 | Nintendo Developer Portal |
+| 35 | **Epic Games Store** | PC, Mac | Planning | P1 | Epic publishing tools |
+| 36 | **Meta Quest Store** | Quest 2/3/Pro | Planning | P1 | Meta Developer Hub |
+| 37 | **Samsung Galaxy Store** | Samsung devices | Planning | P2 | Samsung Developer portal |
+| 38 | **Huawei AppGallery** | Huawei devices (China, SEA) | Planning | P2 | Huawei Developer Console |
+| 39 | **Amazon Appstore** | Fire tablets, Fire TV | Planning | P2 | Amazon Developer portal |
 
 ---
 
@@ -74,15 +77,15 @@
 
 | # | Platform | Reach | Status | Priority | Notes |
 |---|----------|-------|--------|----------|-------|
-| 37 | **Roblox** | 70M+ DAU, 170+ countries | **SDK Ready** | P0 | `SDKs/roblox/` published |
-| 38 | **itch.io** | Indie focused | Pending | P0 | WebGL builds; high indie visibility |
-| 39 | **Newgrounds** | Web games | Pending | P1 | WebGL/HTML5 exports |
-| 40 | **CrazyGames** | 30M+ monthly | Pending | P1 | HTML5/WebGL; rev-share model |
-| 41 | **Poki** | 50M+ monthly | Pending | P1 | HTML5/WebGL; partnership model |
-| 42 | **Kongregate** | Web/mobile | Pending | P2 | If still accepting submissions |
-| 43 | **GameJolt** | Indie community | Pending | P2 | WebGL + desktop builds |
-| 44 | **Y8** | Casual web games | Pending | P2 | HTML5/WebGL |
-| 45 | **Miniclip** | Mobile/web | Pending | P2 | Partnership model |
+| 40 | **Roblox** | 70M+ DAU, 170+ countries | **SDK Ready** | P0 | `SDKs/roblox/` published |
+| 41 | **itch.io** | Indie focused | Pending | P0 | WebGL builds; high indie visibility |
+| 42 | **Newgrounds** | Web games | Pending | P1 | WebGL/HTML5 exports |
+| 43 | **CrazyGames** | 30M+ monthly | Pending | P1 | HTML5/WebGL; rev-share model |
+| 44 | **Poki** | 50M+ monthly | Pending | P1 | HTML5/WebGL; partnership model |
+| 45 | **Kongregate** | Web/mobile | Pending | P2 | If still accepting submissions |
+| 46 | **GameJolt** | Indie community | Pending | P2 | WebGL + desktop builds |
+| 47 | **Y8** | Casual web games | Pending | P2 | HTML5/WebGL |
+| 48 | **Miniclip** | Mobile/web | Pending | P2 | Partnership model |
 
 ---
 
@@ -90,13 +93,13 @@
 
 | # | Platform | Reach | Status | Priority | Notes |
 |---|----------|-------|--------|----------|-------|
-| 46 | **Discord Activities** | 150M+ monthly | Pending | P0 | Embedded apps via Discord SDK |
-| 47 | **Telegram Mini Apps** | 800M+ users | Pending | P0 | WebApp/WebGL; huge growth |
-| 48 | **Facebook Instant Games** | 2.9B users | Pending | P1 | HTML5; FB Gaming platform |
-| 49 | **Snapchat Minis** | 750M+ monthly | Pending | P1 | HTML5 mini-games |
-| 50 | **WeChat Mini Games** | 1.2B users (China) | Pending | P2 | Requires China entity |
-| 51 | **LINE Games** | Japan, SEA | Pending | P2 | LINE Developer Console |
-| 52 | **Viber Games** | Europe, SEA | Pending | P2 | Viber Developer platform |
+| 49 | **Discord Activities** | 150M+ monthly | Pending | P0 | Embedded apps via Discord SDK |
+| 50 | **Telegram Mini Apps** | 800M+ users | Pending | P0 | WebApp/WebGL; huge growth |
+| 51 | **Facebook Instant Games** | 2.9B users | Pending | P1 | HTML5; FB Gaming platform |
+| 52 | **Snapchat Minis** | 750M+ monthly | Pending | P1 | HTML5 mini-games |
+| 53 | **WeChat Mini Games** | 1.2B users (China) | Pending | P2 | Requires China entity |
+| 54 | **LINE Games** | Japan, SEA | Pending | P2 | LINE Developer Console |
+| 55 | **Viber Games** | Europe, SEA | Pending | P2 | Viber Developer platform |
 
 ---
 
@@ -104,17 +107,17 @@
 
 | # | Platform | Asset Types | Status | Priority | Notes |
 |---|----------|------------|--------|----------|-------|
-| 53 | **itch.io** (assets) | Sprites, sounds, tools | Pending | P0 | Free/paid asset pages |
-| 54 | **Unity Asset Store** | Sprites, sounds, prefabs | Pending | P0 | Unity-specific asset bundles |
-| 55 | **Roblox Creator Store** (models) | Models, plugins, audio | Pending | P0 | Publish SDK + example models |
-| 56 | **OpenGameArt** | Sprites, sounds, music | Pending | P1 | Free/CC licensed community |
-| 57 | **Kenney.nl** | Game assets | Pending | P2 | Partnership/cross-promotion |
-| 58 | **GameDev Market** | All asset types | Pending | P1 | Curated marketplace |
-| 59 | **Humble Bundle** (asset packs) | Bundles | Pending | P2 | Partnership for visibility |
-| 60 | **Turbosquid / Sketchfab** | 3D models | Pending | P2 | If publishing 3D assets |
-| 61 | **Freesound** | Sound effects | Pending | P2 | Community audio |
-| 62 | **Unreal Marketplace** (assets) | UE5 assets | Pending | P1 | Unreal-specific packs |
-| 63 | **Godot Asset Library** (assets) | Godot projects | Pending | P1 | Example projects + assets |
+| 56 | **itch.io** (assets) | Sprites, sounds, tools | Pending | P0 | Free/paid asset pages |
+| 57 | **Unity Asset Store** | Sprites, sounds, prefabs | Pending | P0 | Unity-specific asset bundles |
+| 58 | **Roblox Creator Store** (models) | Models, plugins, audio | Pending | P0 | Publish SDK + example models |
+| 59 | **OpenGameArt** | Sprites, sounds, music | Pending | P1 | Free/CC licensed community |
+| 60 | **Kenney.nl** | Game assets | Pending | P2 | Partnership/cross-promotion |
+| 61 | **GameDev Market** | All asset types | Pending | P1 | Curated marketplace |
+| 62 | **Humble Bundle** (asset packs) | Bundles | Pending | P2 | Partnership for visibility |
+| 63 | **Turbosquid / Sketchfab** | 3D models | Pending | P2 | If publishing 3D assets |
+| 64 | **Freesound** | Sound effects | Pending | P2 | Community audio |
+| 65 | **Unreal Marketplace** (assets) | UE5 assets | Pending | P1 | Unreal-specific packs |
+| 66 | **Godot Asset Library** (assets) | Godot projects | Pending | P1 | Example projects + assets |
 
 ---
 
@@ -122,16 +125,16 @@
 
 | # | Platform | Purpose | Status | Priority | Notes |
 |---|----------|---------|--------|----------|-------|
-| 64 | **GitHub** | Source, releases, Actions | Published | P0 | Main repo |
-| 65 | **GitHub Marketplace** | Actions/Apps | Pending | P1 | CI/CD action for SDK integration |
-| 66 | **Product Hunt** | Launch visibility | Pending | P0 | For SDK launch campaign |
-| 67 | **Hacker News** | Developer reach | Pending | P0 | Show HN post |
-| 68 | **Dev.to** | Technical articles | Pending | P0 | Integration tutorials |
-| 69 | **Medium** | Thought leadership | Pending | P1 | Game dev AI articles |
-| 70 | **Roblox DevForum** | Roblox developers | Pending | P0 | Community resource thread |
-| 71 | **Roblox Creator Hub** | Official Roblox docs | Pending | P0 | Submit as featured resource |
-| 72 | **IndieDB** | Indie game discovery | Pending | P1 | SDK tool listing |
-| 73 | **AlternativeTo** | Software discovery | Pending | P2 | List as alternative to PlayFab/GameSparks |
+| 67 | **GitHub** | Source, releases, Actions | Published | P0 | Main repo |
+| 68 | **GitHub Marketplace** | Actions/Apps | Pending | P1 | CI/CD action for SDK integration |
+| 69 | **Product Hunt** | Launch visibility | Pending | P0 | For SDK launch campaign |
+| 70 | **Hacker News** | Developer reach | Pending | P0 | Show HN post |
+| 71 | **Dev.to** | Technical articles | Pending | P0 | Integration tutorials |
+| 72 | **Medium** | Thought leadership | Pending | P1 | Game dev AI articles |
+| 73 | **Roblox DevForum** | Roblox developers | Pending | P0 | Community resource thread |
+| 74 | **Roblox Creator Hub** | Official Roblox docs | Pending | P0 | Submit as featured resource |
+| 75 | **IndieDB** | Indie game discovery | Pending | P1 | SDK tool listing |
+| 76 | **AlternativeTo** | Software discovery | Pending | P2 | List as alternative to PlayFab/GameSparks |
 
 ---
 
@@ -139,11 +142,11 @@
 
 | # | Platform | Type | Status | Priority | Notes |
 |---|----------|------|--------|----------|-------|
-| 74 | **Heroic Labs / Nakama** | Backend ecosystem | Published | P0 | Core dependency; listed in Nakama community |
-| 75 | **Hiro by Heroic Labs** | Live-ops | Published | P0 | Tight integration |
-| 76 | **Roblox Open Cloud** | Roblox API | Pending | P1 | For cross-experience data sync marketing |
-| 77 | **AWS for Games** | Cloud partner | Pending | P2 | Partner program listing |
-| 78 | **Google Cloud for Games** | Cloud partner | Pending | P2 | Partner program listing |
+| 77 | **Heroic Labs / Nakama** | Backend ecosystem | Published | P0 | Core dependency; listed in Nakama community |
+| 78 | **Hiro by Heroic Labs** | Live-ops | Published | P0 | Tight integration |
+| 79 | **Roblox Open Cloud** | Roblox API | Pending | P1 | For cross-experience data sync marketing |
+| 80 | **AWS for Games** | Cloud partner | Pending | P2 | Partner program listing |
+| 81 | **Google Cloud for Games** | Cloud partner | Pending | P2 | Partner program listing |
 
 ---
 
@@ -151,14 +154,14 @@
 
 | # | Platform | Purpose | Status | Priority | Notes |
 |---|----------|---------|--------|----------|-------|
-| 79 | **intelli-verse-x.ai** | Official website | Published | P0 | Landing page, docs, dashboard |
-| 80 | **LinkedIn** (company page) | B2B visibility | Pending | P0 | Company page + showcase |
-| 81 | **Twitter/X** | Community | Pending | P0 | Dev updates, SDK releases |
-| 82 | **Discord** (community server) | Developer community | Pending | P0 | Support, showcase, feedback |
-| 83 | **YouTube** | Tutorials | Pending | P0 | Integration walkthroughs |
-| 84 | **Roblox Group** | Roblox community | Pending | P0 | Official Roblox developer group |
-| 85 | **GDC Vault / Talks** | Industry presence | Pending | P2 | Conference submissions |
-| 86 | **Game Dev Directories** | Discovery | Pending | P1 | gamedev.net, game-development.com, etc. |
+| 82 | **intelli-verse-x.ai** | Official website | Published | P0 | Landing page, docs, dashboard |
+| 83 | **LinkedIn** (company page) | B2B visibility | Pending | P0 | Company page + showcase |
+| 84 | **Twitter/X** | Community | Pending | P0 | Dev updates, SDK releases |
+| 85 | **Discord** (community server) | Developer community | Pending | P0 | Support, showcase, feedback |
+| 86 | **YouTube** | Tutorials | Pending | P0 | Integration walkthroughs |
+| 87 | **Roblox Group** | Roblox community | Pending | P0 | Official Roblox developer group |
+| 88 | **GDC Vault / Talks** | Industry presence | Pending | P2 | Conference submissions |
+| 89 | **Game Dev Directories** | Discovery | Pending | P1 | gamedev.net, game-development.com, etc. |
 
 ---
 
@@ -185,10 +188,10 @@ Platforms specific to the Roblox ecosystem that need separate attention:
 
 | Priority | Count | Description |
 |----------|-------|-------------|
-| **P0** | 32 | Must-publish for launch. Includes npm, Wally, Unity Asset Store, Roblox Creator Store, Smithery, major web/social platforms |
-| **P1** | 28 | High-value, publish within first quarter. Console stores, secondary marketplaces, developer communities |
-| **P2** | 26 | Nice-to-have. Regional stores, niche platforms, future partnerships |
-| **Total** | **86** | Across 10 categories |
+| **P0** | 41 | Must-publish for launch. Includes npm, Wally, Unity Asset Store, Roblox Creator Store, Smithery, major web/social platforms |
+| **P1** | 30 | High-value, publish within first quarter. Console stores, secondary marketplaces, developer communities |
+| **P2** | 28 | Nice-to-have. Regional stores, niche platforms, future partnerships |
+| **Total** | **99** | Across 10 categories |
 
 ---
 
