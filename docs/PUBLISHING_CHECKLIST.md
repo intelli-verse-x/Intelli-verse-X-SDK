@@ -11,12 +11,12 @@
 | # | Platform | Type | Status | Priority | Notes |
 |---|----------|------|--------|----------|-------|
 | 1 | **Smithery** (smithery.ai) | MCP Registry | Ready | P0 | `smithery.yaml` in repo. MCP at `https://mcp.intelli-verse-x.ai/api/mcp` |
-| 2 | **Cursor Skills** | Agent Skill | Published | P0 | 7 skills in `.cursor/skills/` + Roblox skill |
+| 2 | **Cursor Skills** | Agent Skill | Published | P0 | 35 skills in `.cursor/skills/` |
 | 3 | **Windsurf / Codeium Skills** | Agent Skill | Ready | P0 | Same SKILL.md format; submit via Codeium marketplace |
 | 4 | **OpenAI Codex Plugins** | Plugin | Ready | P0 | `.codex-plugin/plugin.json` in repo |
 | 5 | **Claude Code Skills** | Skill | Ready | P1 | YAML frontmatter in SKILL.md files |
 | 6 | **Gemini Code Assist** | MCP | Ready | P1 | MCP-based; same endpoint |
-| 7 | **SkillsGate** | Aggregator | Pending | P1 | CLI-based publish for all 8 skills |
+| 7 | **SkillsGate** | Aggregator | Pending | P1 | CLI-based publish for all 35 skills |
 | 8 | **Killer Skills** | Directory | Pending | P1 | Submit repo link to directory |
 | 9 | **PolySkill** | Aggregator | Pending | P2 | Claude Code skill hub |
 
