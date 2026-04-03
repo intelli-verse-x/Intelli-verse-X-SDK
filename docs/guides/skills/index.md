@@ -1,6 +1,6 @@
 # AI Agent Skills
 
-7 purpose-built skills that turn your AI coding assistant into an IntelliVerseX integration expert. Each skill teaches the agent how to set up, configure, and troubleshoot a specific part of the SDK.
+35+ purpose-built skills that turn your AI coding assistant into an IntelliVerseX integration expert. Each skill teaches the agent how to set up, configure, and troubleshoot a specific part of the SDK.
 
 ---
 
@@ -14,15 +14,43 @@ Skills are structured markdown guides (`SKILL.md`) that AI coding agents read to
 
 ## Available Skills
 
-| Skill | File | Trigger Phrases |
+| Skill | Folder | Example Trigger Phrases |
 |-------|------|----------------|
-| [SDK Setup](sdk-setup.md) | `ivx-sdk-setup` | "set up IntelliVerseX", "integrate SDK", "bootstrap" |
-| [Monetization](monetization.md) | `ivx-monetization` | "monetize my game", "add ads", "set up offerwall" |
-| [Multiplayer](multiplayer.md) | `ivx-multiplayer` | "add multiplayer", "create lobby", "matchmaking" |
-| [AI Integration](ai-integration.md) | `ivx-ai-integration` | "add AI host", "AI NPC", "AI voice chat" |
-| [Live Operations](live-ops.md) | `ivx-live-ops` | "daily rewards", "season pass", "leagues" |
-| [Quiz Content](quiz-content.md) | `ivx-quiz-content` | "add quiz", "daily quiz", "generate trivia" |
-| [Cross-Platform](cross-platform.md) | `ivx-cross-platform` | "port to Unreal", "port to Godot", "feature parity" |
+| [3D Character Pipeline](ivx-3d-character-pipeline.md) | `ivx-3d-character-pipeline` | "3D character", "generate 3D model", |
+| [AI Integration](ivx-ai-integration.md) | `ivx-ai-integration` | "add AI host", |
+| [Accessibility](ivx-accessibility.md) | `ivx-accessibility` | "accessibility", "color blind mode", "screen reader", |
+| [Analytics Pipeline](ivx-analytics-pipeline.md) | `ivx-analytics-pipeline` | "add analytics", "track events", |
+| [Asset Manager](ivx-asset-manager.md) | `ivx-asset-manager` | "add asset", |
+| [Asset Pipeline](ivx-asset-pipeline.md) | `ivx-asset-pipeline` | Various phrases |
+| [Avatar Studio](ivx-avatar-studio.md) | `ivx-avatar-studio` | "create |
+| [Character Factory](ivx-character-factory.md) | `ivx-character-factory` | "generate character", "create sprites", |
+| [Competitor Intelligence Skill](ivx-competitor-intel.md) | `ivx-competitor-intel` | Various phrases |
+| [Crashlytics](ivx-crashlytics.md) | `ivx-crashlytics` | "crash reporting", "error tracking", "add crashlytics", |
+| [Cross-Platform SDK](ivx-cross-platform.md) | `ivx-cross-platform` | Various phrases |
+| [DevOps & CI/CD](ivx-devops-cicd.md) | `ivx-devops-cicd` | "CI/CD", |
+| [Economy Simulator](ivx-economy-simulator.md) | `ivx-economy-simulator` | "economy design", "currency flow", "balance economy", |
+| [Environment Generator](ivx-environment-generator.md) | `ivx-environment-generator` |  |
+| [Game Audio Factory](ivx-game-audio-factory.md) | `ivx-game-audio-factory` | "generate game audio", "create sound |
+| [Game Design Studio](ivx-game-design-studio.md) | `ivx-game-design-studio` | "create GDD", |
+| [Landing Page Generator](ivx-landing-page.md) | `ivx-landing-page` | "landing page", "game website", "pricing page", "coming soon page", |
+| [Legal Compliance Skill](ivx-legal-compliance.md) | `ivx-legal-compliance` | Various phrases |
+| [Live Operations](ivx-live-ops.md) | `ivx-live-ops` | "add live ops", "set up daily rewards", "add season pass", |
+| [Localization](ivx-localization.md) | `ivx-localization` | "localize my game", "translate store listing", |
+| [Marketing Kit Skill](ivx-marketing-kit.md) | `ivx-marketing-kit` | Various phrases |
+| [Monetization](ivx-monetization.md) | `ivx-monetization` | "monetize my game", "add ads", |
+| [Multiplayer](ivx-multiplayer.md) | `ivx-multiplayer` | "add multiplayer", |
+| [Narrative Engine](ivx-narrative-engine.md) | `ivx-narrative-engine` | "dialog system", "branching dialog", |
+| [Notification Orchestration](ivx-notification-orchestration.md) | `ivx-notification-orchestration` | "push notifications", "notification scheduling", |
+| [Procedural AI](ivx-procedural-ai.md) | `ivx-procedural-ai` | "procedural generation", |
+| [Quality Gates](ivx-quality-gates.md) | `ivx-quality-gates` | "quality gates", "CI validation", |
+| [Quiz Content Pipeline](ivx-quiz-content.md) | `ivx-quiz-content` | "add quiz", |
+| [Remote Config](ivx-remote-config.md) | `ivx-remote-config` | "remote config", "server config", "feature flags", |
+| [Roblox SDK](ivx-roblox.md) | `ivx-roblox` | Various phrases |
+| [SDK Setup & Configuration](ivx-sdk-setup.md) | `ivx-sdk-setup` | "set up IntelliVerseX", "integrate SDK", "bootstrap SDK", |
+| [Security & Anti-Cheat](ivx-security-anticheat.md) | `ivx-security-anticheat` | "anti-cheat", "prevent cheating", "server validation", |
+| [Store Launcher](ivx-store-launcher.md) | `ivx-store-launcher` | "store assets", "app icon", "screenshots", |
+| [UA & Marketing Strategy](ivx-ua-marketing-strategy.md) | `ivx-ua-marketing-strategy` | Various phrases |
+| [UGC Pipeline](ivx-ugc-pipeline.md) | `ivx-ugc-pipeline` |  |
 
 ---
 
@@ -32,21 +60,11 @@ Skills are structured markdown guides (`SKILL.md`) that AI coding agents read to
 
     Skills auto-activate when you open the repository. No install needed.
 
-    ```
-    .cursor/skills/
-    ├── ivx-sdk-setup/SKILL.md
-    ├── ivx-monetization/SKILL.md
-    ├── ivx-multiplayer/SKILL.md
-    ├── ivx-ai-integration/SKILL.md
-    ├── ivx-live-ops/SKILL.md
-    ├── ivx-quiz-content/SKILL.md
-    └── ivx-cross-platform/SKILL.md
-    ```
-
 === "Claude Code"
 
     ```bash
-    /plugin marketplace add https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK
+    /plugin marketplace add https://github.com/intelli-verse-x/Intelli-verse-X-SDK
+    # Install specific skills as needed:
     /plugin install ivx-sdk-setup
     ```
 
@@ -54,6 +72,4 @@ Skills are structured markdown guides (`SKILL.md`) that AI coding agents read to
 
     ```bash
     skillsgate add @intelliversex/ivx-sdk-setup
-    # or install all:
-    skillsgate add @intelliversex/ivx-sdk-setup @intelliversex/ivx-monetization @intelliversex/ivx-multiplayer @intelliversex/ivx-ai-integration @intelliversex/ivx-live-ops @intelliversex/ivx-quiz-content @intelliversex/ivx-cross-platform
     ```
