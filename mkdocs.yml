@@ -4,10 +4,10 @@
 site_name: IntelliVerseX SDK
 site_description: Complete modular game development SDK for Unity, Unreal, Godot, Defold, Cocos2d-x, JavaScript, C++, Java, Flutter, and Web3
 site_author: IntelliVerse-X Team
-site_url: https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/
+site_url: https://intelli-verse-x.github.io/Intelli-verse-X-SDK/
 
-repo_name: Intelli-verse-X/Intelli-verse-X-Unity-SDK
-repo_url: https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK
+repo_name: Intelli-verse-X/Intelli-verse-X-SDK
+repo_url: https://github.com/intelli-verse-x/Intelli-verse-X-SDK
 edit_uri: edit/main/docs/
 
 copyright: Copyright &copy; 2026 IntelliVerse-X
@@ -223,8 +223,8 @@ markdown_extensions:
   - pymdownx.keys
   - pymdownx.magiclink:
       repo_url_shorthand: true
-      user: Intelli-verse-X
-      repo: Intelli-verse-X-Unity-SDK
+      user: intelli-verse-x
+      repo: Intelli-verse-X-SDK
   - pymdownx.mark
   - pymdownx.smartsymbols
   - pymdownx.superfences:
