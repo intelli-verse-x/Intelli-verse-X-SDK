@@ -224,7 +224,7 @@ public static class APIManager
     /// <summary>
     /// Enable general debug logs. Set to false in production for better performance.
     /// </summary>
-    public static bool DebugLogs = true;
+    public static bool DebugLogs = false;
     
     /// <summary>
     /// Enable verbose API request/response logging. Shows full payloads and responses.
@@ -235,7 +235,7 @@ public static class APIManager
     /// <summary>
     /// Enable CURL command logging for easy debugging and replication.
     /// </summary>
-    public static bool EnableCurlLogging = true;
+    public static bool EnableCurlLogging = false;
     
     /// <summary>
     /// Maximum length of payload/response to log. Longer values are truncated.
@@ -2595,6 +2595,14 @@ Do not include any other top-level keys. Do not include code fences.";
         public string password;
         public string fromDevice;   // e.g. "unity" | "machine" | "android" | "ios" | "web"
         public string macAddress;   // optional
+        /// <summary>IntelliVerseX game UUID for multi-tenant auth routing. Defaults from IVXURLs.GameId when omitted.</summary>
+        public string gameId;
+    }
+
+    /// <summary>Non-retryable HTTP failure from <see cref="LoginAsync"/>; must not be swallowed by generic retry logic.</summary>
+    private sealed class LoginHttpFailureException : Exception
+    {
+        public LoginHttpFailureException(string message) : base(message) { }
     }
 
     [Serializable]
@@ -2666,6 +2674,9 @@ Do not include any other top-level keys. Do not include code fences.";
             if (!System.Text.RegularExpressions.Regex.IsMatch(req.macAddress.Trim(), @"^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$"))
                 throw new ArgumentException("macAddress must be in format 00:11:22:33:44:55.", nameof(req.macAddress));
         }
+
+        if (string.IsNullOrWhiteSpace(req.gameId))
+            req.gameId = IVXURLs.GameId;
 
         string bodyJson = JsonUtility.ToJson(req);
         string maskedJson = MaskSensitiveFields(bodyJson, new[] { "password", "email" });
@@ -2800,8 +2811,9 @@ Do not include any other top-level keys. Do not include code fences.";
 
                     // Log error for failed requests
                     LogAPIError(LoginUrl, "POST", $"Login failed: HTTP {code}", null);
-                    throw new Exception($"Login failed: HTTP {code} - {(string.IsNullOrWhiteSpace(text) ? uwr.error : text)}");
+                    throw new LoginHttpFailureException($"Login failed: HTTP {code} - {(string.IsNullOrWhiteSpace(text) ? uwr.error : text)}");
                 }
+                catch (LoginHttpFailureException) { throw; }
                 catch (OperationCanceledException) { LogError("[HTTP] Login cancelled."); throw; }
                 catch (TimeoutException tex) { lastErr = tex; LogAPIError(LoginUrl, "POST", $"Timeout: {tex.Message}", tex); if (attempt >= MaxRetries) throw; }
                 catch (Exception ex) { lastErr = ex; LogAPIError(LoginUrl, "POST", $"Attempt #{attempt} failed: {ex.Message}", ex); if (attempt >= MaxRetries) throw; }

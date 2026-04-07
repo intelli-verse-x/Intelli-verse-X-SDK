@@ -107,4 +107,34 @@ namespace IntelliVerseX.Hiro
             return response.success;
         }
     }
+
+    /// <summary>
+    /// Unwraps <see cref="HiroRpcResponse{T}"/> from <see cref="IVXHiroRpcClient.CallAsync{T}"/> for gameplay code.
+    /// </summary>
+    public static class HiroRpcResponseUtility
+    {
+        /// <summary>
+        /// Returns true when the RPC succeeded; assigns <paramref name="data"/> from the envelope (may be null if the server sent null payload).
+        /// Logs a warning on failure or null envelope.
+        /// </summary>
+        public static bool TryGetData<T>(HiroRpcResponse<T> response, out T data, string context)
+        {
+            data = default;
+            if (response == null)
+            {
+                Debug.LogWarning($"[Hiro RPC] {context}: null response");
+                return false;
+            }
+
+            if (!response.success)
+            {
+                if (!string.IsNullOrEmpty(response.error))
+                    Debug.LogWarning($"[Hiro RPC] {context}: {response.error}");
+                return false;
+            }
+
+            data = response.data;
+            return true;
+        }
+    }
 }

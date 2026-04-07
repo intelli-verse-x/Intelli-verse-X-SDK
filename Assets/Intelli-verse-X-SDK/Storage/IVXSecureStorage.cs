@@ -64,8 +64,12 @@ namespace IntelliVerseX.Storage
             }
             catch (Exception ex)
             {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.LogError($"[IVXSecureStorage] Encryption failed: {ex.Message}\n{ex.StackTrace}");
-                return plainText;
+#else
+                Debug.LogError("[IVXSecureStorage] Encryption failed; value was not written.");
+#endif
+                throw;
             }
         }
 
@@ -73,6 +77,8 @@ namespace IntelliVerseX.Storage
         /// Decrypts AES-256-CBC ciphertext. Falls back to legacy XOR if AES fails
         /// (auto-migration from v1 data).
         /// </summary>
+        /// <returns>Plaintext, legacy-decrypted text, or legacy/plain passthrough for migration.
+        /// Returns <c>null</c> if ciphertext is corrupt or integrity cannot be verified (caller must drop the key).</returns>
         private static string Decrypt(string cipherText)
         {
             if (string.IsNullOrEmpty(cipherText))
@@ -106,13 +112,17 @@ namespace IntelliVerseX.Storage
             }
             catch (FormatException)
             {
-                Debug.LogWarning("[IVXSecureStorage] Data not encrypted, returning plain text");
+                Debug.LogWarning("[IVXSecureStorage] Value is not Base64; treating as legacy plain text.");
                 return cipherText;
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[IVXSecureStorage] Decryption failed: {ex.Message}\n{ex.StackTrace}");
-                return cipherText;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                Debug.LogWarning($"[IVXSecureStorage] Decryption failed (corrupt or wrong key): {ex.GetType().Name}: {ex.Message}");
+#else
+                Debug.LogWarning("[IVXSecureStorage] Decryption failed — stored value was removed (corrupt or incompatible data).");
+#endif
+                return null;
             }
         }
 
@@ -187,11 +197,23 @@ namespace IntelliVerseX.Storage
                 if (string.IsNullOrEmpty(encrypted))
                     return defaultValue;
 
-                return Decrypt(encrypted);
+                string decrypted = Decrypt(encrypted);
+                if (decrypted == null)
+                {
+                    PlayerPrefs.DeleteKey(key);
+                    PlayerPrefs.Save();
+                    return defaultValue;
+                }
+
+                return decrypted;
             }
             catch (Exception ex)
             {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.LogWarning($"[IVXSecureStorage] GetString failed for key '{key}': {ex.Message}");
+#else
+                Debug.LogWarning("[IVXSecureStorage] GetString failed — key removed.");
+#endif
                 PlayerPrefs.DeleteKey(key);
                 PlayerPrefs.Save();
                 return defaultValue;

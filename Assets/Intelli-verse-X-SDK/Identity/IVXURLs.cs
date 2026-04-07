@@ -7,6 +7,7 @@
 // Single source of truth - no duplicates, no hardcoded URLs elsewhere.
 // ============================================================================
 
+using UnityEngine;
 using UnityEngine.Networking;
 
 namespace IntelliVerseX.Identity

@@ -331,6 +331,11 @@ namespace IntelliVerseX.Games.Leaderboard
 
                 return result;
             }
+            catch (ApiResponseException apiEx) when (apiEx.StatusCode == 404 || apiEx.GrpcStatusCode == 5)
+            {
+                LogError($"GetAllLeaderboardsAsync: Server RPC '{RPC_GET_ALL_LEADERBOARDS}' not found (HTTP {apiEx.StatusCode}). Ensure backend RPCs are deployed.");
+                return null;
+            }
             catch (Exception ex)
             {
                 Log($"GetAllLeaderboardsAsync aggregate RPC exception: {ex.Message}. Trying fallback RPCs.");

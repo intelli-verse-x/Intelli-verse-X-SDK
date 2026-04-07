@@ -343,15 +343,59 @@ public static class UserSessionManager
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(json)) return null;
-            return JsonUtility.FromJson<UserSession>(json);
+            if (string.IsNullOrWhiteSpace(json))
+                return null;
+
+            UserSession session = JsonUtility.FromJson<UserSession>(json);
+            if (!IsPlausiblePersistedSession(session))
+            {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                Debug.LogWarning("[UserSession] Persisted session rejected (empty or invalid shape); clearing.");
+#else
+                Debug.LogWarning("[UserSession] Saved login state was invalid and was cleared.");
+#endif
+                Clear();
+                return null;
+            }
+
+            return session;
         }
         catch (Exception e)
         {
-#if UNITY_EDITOR
-            Debug.LogError("[UserSession] Load failed: " + e.Message);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.LogWarning("[UserSession] Load failed (corrupt JSON); clearing session. " + e.Message);
+#else
+            Debug.LogWarning("[UserSession] Load failed; saved session cleared.");
 #endif
+            Clear();
             return null;
         }
+    }
+
+    /// <summary>
+    /// Rejects deserialized blobs that are empty or clearly not a real persisted auth session
+    /// (avoids treating decrypt garbage or partial JSON as logged-in).
+    /// </summary>
+    private static bool IsPlausiblePersistedSession(UserSession s)
+    {
+        if (s == null)
+            return false;
+
+        if (!string.IsNullOrWhiteSpace(s.accessToken))
+            return true;
+        if (!string.IsNullOrWhiteSpace(s.idToken))
+            return true;
+        if (!string.IsNullOrWhiteSpace(s.refreshToken))
+            return true;
+        if (!string.IsNullOrWhiteSpace(s.userId))
+            return true;
+        if (!string.IsNullOrWhiteSpace(s.email))
+            return true;
+        if (!string.IsNullOrWhiteSpace(s.userName))
+            return true;
+        if (!string.IsNullOrWhiteSpace(s.idpUsername))
+            return true;
+
+        return false;
     }
 }

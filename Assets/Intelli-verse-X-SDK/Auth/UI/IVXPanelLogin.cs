@@ -997,7 +997,10 @@ namespace IntelliVerseX.Auth.UI
         private static string FriendlyLoginFail(string hint = null)
         {
             var h = (hint ?? string.Empty).ToLowerInvariant();
-            
+
+            if (h.Contains("security token") || h.Contains("authenticationerror"))
+                return "Sign-in could not be completed. Confirm your account is registered for this game, then try again. If it continues, contact support.";
+
             if (h.Contains("incorrect") || h.Contains("invalid") || h.Contains("credential") || 
                 h.Contains("wrong password") || h.Contains("mismatch") || h.Contains("401"))
                 return "Incorrect email or password.";

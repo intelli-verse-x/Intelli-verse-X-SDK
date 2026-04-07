@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using IntelliVerseX.Backend;
+using IntelliVerseX.Hiro;
 using Nakama;
 using UnityEngine;
 
@@ -96,8 +97,11 @@ namespace IntelliVerseX.Progression
         /// <returns>A list of badges.</returns>
         public async Task<List<IVXBadge>> GetAllBadgesAsync()
         {
-            var response = await _rpcClient.CallAsync<IVXBadgeListResponse>("badges_get_all");
-            return response?.badges ?? new List<IVXBadge>();
+            if (!_isInitialized) { Debug.LogError($"[{nameof(IVXBadgeManager)}] Not initialized. Call Initialize() first."); return new List<IVXBadge>(); }
+            var rpc = await _rpcClient.CallAsync<IVXBadgeListResponse>("badges_get_all");
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "badges_get_all"))
+                return new List<IVXBadge>();
+            return envelope?.badges ?? new List<IVXBadge>();
         }
 
         /// <summary>
@@ -107,8 +111,11 @@ namespace IntelliVerseX.Progression
         /// <returns>The badge if unlocked.</returns>
         public async Task<IVXBadge> CheckUnlockAsync(string badgeId)
         {
+            if (!_isInitialized) { Debug.LogError($"[{nameof(IVXBadgeManager)}] Not initialized. Call Initialize() first."); return null; }
             var payload = new IVXBadgeRequest { badgeId = badgeId };
-            var badge = await _rpcClient.CallAsync<IVXBadge>("badges_check_unlock", payload);
+            var rpc = await _rpcClient.CallAsync<IVXBadge>("badges_check_unlock", payload);
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var badge, "badges_check_unlock"))
+                return null;
             if (badge != null && badge.unlocked)
                 OnBadgeUnlocked?.Invoke(badge);
             return badge;
@@ -121,8 +128,11 @@ namespace IntelliVerseX.Progression
         /// <returns>The equipped badge.</returns>
         public async Task<IVXBadge> EquipBadgeAsync(string badgeId)
         {
+            if (!_isInitialized) { Debug.LogError($"[{nameof(IVXBadgeManager)}] Not initialized. Call Initialize() first."); return null; }
             var payload = new IVXBadgeRequest { badgeId = badgeId };
-            var badge = await _rpcClient.CallAsync<IVXBadge>("badges_equip", payload);
+            var rpc = await _rpcClient.CallAsync<IVXBadge>("badges_equip", payload);
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var badge, "badges_equip"))
+                return null;
             if (badge != null)
                 OnBadgeEquipped?.Invoke(badge);
             return badge;

@@ -117,6 +117,12 @@ namespace IntelliVerseX.AI
             _initialized = true;
         }
 
+        /// <summary>Sets the bearer token applied to content generation HTTP requests (<c>Authorization</c> header).</summary>
+        public void SetAuthToken(string token)
+        {
+            _authToken = token;
+        }
+
         #endregion
 
         #region Public API — Generation
