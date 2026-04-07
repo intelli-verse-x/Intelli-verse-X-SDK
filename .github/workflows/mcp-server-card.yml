@@ -1,0 +1,43 @@
+# Validates MCP static server card vs smithery.yaml (Smithery publish prerequisite)
+
+name: MCP Server Card
+
+on:
+  push:
+    branches: [main, develop, unity-feature]
+    paths:
+      - '.well-known/mcp/server-card.json'
+      - 'smithery.yaml'
+      - 'tools/mcp/validate_server_card.py'
+      - '.github/workflows/mcp-server-card.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - '.well-known/mcp/server-card.json'
+      - 'smithery.yaml'
+      - 'tools/mcp/validate_server_card.py'
+      - '.github/workflows/mcp-server-card.yml'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Validate server-card.json
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate JSON + smithery parity
+        run: python3 tools/mcp/validate_server_card.py
+
+      - name: Optional — probe production URL (informational)
+        continue-on-error: true
+        run: |
+          code=$(curl -sS -o /tmp/sc.json -w "%{http_code}" \
+            https://mcp.intelli-verse-x.ai/.well-known/mcp/server-card.json || echo "000")
+          echo "Production GET /.well-known/mcp/server-card.json => HTTP $code"
+          if [ "$code" = "200" ]; then
+            python3 -c "import json; json.load(open('/tmp/sc.json')); print('Production JSON: OK')"
+          else
+            echo "::notice::Production still returns non-200; deploy per infra/mcp-well-known/README.md"
+          fi

@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- Smithery-format MCP static server card at [`.well-known/mcp/server-card.json`](.well-known/mcp/server-card.json) and deployment notes in [`docs/platforms/mcp-smithery-publish.md`](docs/platforms/mcp-smithery-publish.md) (RFC 9728 sample: [`.well-known/oauth-protected-resource.sample.json`](.well-known/oauth-protected-resource.sample.json))
+- MCP server card validation: [`tools/mcp/validate_server_card.py`](tools/mcp/validate_server_card.py), GitHub Actions workflow [`.github/workflows/mcp-server-card.yml`](.github/workflows/mcp-server-card.yml), and production deploy runbook [`infra/mcp-well-known/README.md`](infra/mcp-well-known/README.md) (nginx, ALB, S3, app route; public `GET` contract for discovery)
+
+---
+
 ## [5.8.0] — 2026-04-01
 
 ### Added

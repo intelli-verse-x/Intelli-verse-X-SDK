@@ -2,7 +2,7 @@
 
 > Master checklist of all platforms where the SDK, tools, assets, and studio presence should be published for maximum reach across the gaming ecosystem (170+ countries).
 
-**Last Updated:** 2026-04-03 | **SDK Version:** 5.8.0 (see [`Assets/Intelli-verse-X-SDK/package.json`](../Assets/Intelli-verse-X-SDK/package.json))
+**Last Updated:** 2026-04-03 | **SDK Version:** 5.8.0 (see [`Assets/Intelli-verse-X-SDK/package.json`](../Assets/Intelli-verse-X-SDK/package.json)) | **MCP server-card:** repo validated; **production URL** still requires ops deploy ([`infra/mcp-well-known/README.md`](../infra/mcp-well-known/README.md))
 
 ---
 
@@ -10,7 +10,7 @@
 
 | # | Platform | Type | Status | Priority | Notes |
 |---|----------|------|--------|----------|-------|
-| 1 | **Smithery** (smithery.ai) | MCP Registry | Ready | P0 | [`smithery.yaml`](../smithery.yaml) in repo. MCP at `https://mcp.intelli-verse-x.ai/api/mcp`. Publish flow + OAuth/static card: [`docs/platforms/mcp-smithery-publish.md`](platforms/mcp-smithery-publish.md) |
+| 1 | **Smithery** (smithery.ai) | MCP Registry | Ready | P0 | [`smithery.yaml`](../smithery.yaml); CI validates [`.well-known/mcp/server-card.json`](../.well-known/mcp/server-card.json) vs `smithery.yaml` ([`tools/mcp/validate_server_card.py`](../tools/mcp/validate_server_card.py)). Deploy static card on MCP origin: [`infra/mcp-well-known/README.md`](../infra/mcp-well-known/README.md). Details: [`docs/platforms/mcp-smithery-publish.md`](platforms/mcp-smithery-publish.md) |
 | 2 | **Cursor Skills** | Agent Skill | Ready | P0 | [`.gitignore`](../.gitignore) allows **`.cursor/skills/`** (see [`.cursor/skills/README.md`](../.cursor/skills/README.md)). Shipped in-repo: [`skills/intelliversex-game-sdk/SKILL.md`](../skills/intelliversex-game-sdk/SKILL.md) (MCP skill) + [`skills/platforms/`](../skills/platforms/README.md) + narrative guides in [`docs/guides/skills/`](guides/skills/index.md) (35+ topics; not all are separate `SKILL.md` packs). |
 | 3 | **Windsurf / Codeium Skills** | Agent Skill | Ready | P0 | Same `SKILL.md` pattern; submit via Codeium marketplace using repo URL + [`skills/intelliversex-game-sdk/SKILL.md`](../skills/intelliversex-game-sdk/SKILL.md) as sample |
 | 4 | **OpenAI Codex Plugins** | Plugin | Ready | P0 | [`.codex-plugin/plugin.json`](../.codex-plugin/plugin.json) — 7 skill IDs + MCP block |
@@ -29,7 +29,7 @@ Complete these outside the repo (accounts, dashboards, infra). Track dates in yo
 | Step | Owner action |
 |------|----------------|
 | Version / branch | Use **`main`** (or your release branch) for public links. Listing copy should match **5.8.0** unless you bump [`package.json`](../Assets/Intelli-verse-X-SDK/package.json). |
-| MCP ops | **Verified (repo):** `HEAD https://mcp.intelli-verse-x.ai/api/mcp` → **401 Unauthorized** (expects `Authorization` / `X-API-Key` per CORS headers). **Still needed:** deploy [`.well-known/mcp/server-card.json`](../.well-known/mcp/server-card.json) at `https://mcp.intelli-verse-x.ai/.well-known/mcp/server-card.json` (currently **404**). See [`docs/platforms/mcp-smithery-publish.md`](platforms/mcp-smithery-publish.md). |
+| MCP ops | **Verified:** `GET /api/mcp` without auth → **401** (OK). **Prod deploy (ops):** serve [`.well-known/mcp/server-card.json`](../.well-known/mcp/server-card.json) at `https://mcp.intelli-verse-x.ai/.well-known/mcp/server-card.json` — runbook [`infra/mcp-well-known/README.md`](../infra/mcp-well-known/README.md) (nginx, ALB, S3, or app route). **Repo cannot push to your AWS account.** After deploy, expect **200** on that URL; CI workflow [`mcp-server-card.yml`](../.github/workflows/mcp-server-card.yml) logs an informational probe. |
 | Smithery | Log in, connect GitHub repo, publish MCP from `smithery.yaml`; add skill path `skills/intelliversex-game-sdk/` if the UI requests a Skill package. |
 | Codex | Install plugin from repo via `.codex-plugin/plugin.json`; smoke-test skill **`ivx-sdk-setup`**. |
 | Cursor policy | **Done in repo:** `.gitignore` allows `.cursor/skills/`; [`.cursor/skills/README.md`](../.cursor/skills/README.md) documents usage. |
@@ -222,6 +222,7 @@ Done in-repo (documentation only; no change to runtime SDK code):
 - **`skills/README.md`** adds a **Codex skill ID → guide** table linking to `docs/guides/skills/`.
 - **`.gitignore`:** `.cursor/*` is ignored except **`.cursor/skills/**`**; [`.cursor/skills/README.md`](../.cursor/skills/README.md) explains usage.
 - **`skills/platforms/`:** Per-engine **`SKILL.md`** stubs map each `SDKs/<engine>/` (plus `unity-upm` → `Assets/Intelli-verse-X-SDK/`) to [`docs/platforms/`](../docs/platforms/index.md).
+- **MCP static server card:** [`tools/mcp/validate_server_card.py`](../tools/mcp/validate_server_card.py) + [`.github/workflows/mcp-server-card.yml`](../.github/workflows/mcp-server-card.yml); production deployment steps [`infra/mcp-well-known/README.md`](../infra/mcp-well-known/README.md); [`docs/platforms/mcp-smithery-publish.md`](platforms/mcp-smithery-publish.md) updated with response contract and verification table.
 
 ---
 
@@ -231,7 +232,7 @@ Done in-repo (documentation only; no change to runtime SDK code):
 
 | Item | Status in table | Your action |
 |------|-----------------|-------------|
-| Smithery MCP publish + static `server-card` on origin | Ready (not “Published” in row) | Complete [Flash sprint — owner actions](#flash-sprint--owner-actions-human-checklist); fix infra per [`mcp-smithery-publish.md`](platforms/mcp-smithery-publish.md) if discovery fails |
+| Smithery MCP publish + static `server-card` on origin | Ready (repo); **prod URL** pending ops | Apply [`infra/mcp-well-known/README.md`](../infra/mcp-well-known/README.md) on `mcp.intelli-verse-x.ai`; then Smithery UI + [`mcp-smithery-publish.md`](platforms/mcp-smithery-publish.md) verification table |
 | Cursor row | **Ready** (row 2) | Optional: add more per-topic `SKILL.md` under [`.cursor/skills/`](../.cursor/skills/README.md) |
 | Windsurf / Codeium | Ready | Submit marketplace entry (human) |
 | OpenAI Codex | Ready | Install plugin in product; smoke-test |
