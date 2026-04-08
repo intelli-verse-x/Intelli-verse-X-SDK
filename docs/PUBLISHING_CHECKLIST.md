@@ -2,7 +2,7 @@
 
 > Master checklist of all platforms where the SDK, tools, assets, and studio presence should be published for maximum reach across the gaming ecosystem (170+ countries).
 
-**Last Updated:** 2026-04-01 | **SDK Version:** 5.8.0
+**Last Updated:** 2026-04-03 | **SDK Version:** 5.8.0 (see [`Assets/Intelli-verse-X-SDK/package.json`](../Assets/Intelli-verse-X-SDK/package.json)) | **MCP server-card:** repo validated; **production URL** still requires ops deploy ([`infra/mcp-well-known/README.md`](../infra/mcp-well-known/README.md))
 
 ---
 
@@ -10,15 +10,33 @@
 
 | # | Platform | Type | Status | Priority | Notes |
 |---|----------|------|--------|----------|-------|
-| 1 | **Smithery** (smithery.ai) | MCP Registry | Ready | P0 | `smithery.yaml` in repo. MCP at `https://mcp.intelli-verse-x.ai/api/mcp` |
-| 2 | **Cursor Skills** | Agent Skill | Published | P0 | 35 skills in `.cursor/skills/` |
-| 3 | **Windsurf / Codeium Skills** | Agent Skill | Ready | P0 | Same SKILL.md format; submit via Codeium marketplace |
-| 4 | **OpenAI Codex Plugins** | Plugin | Ready | P0 | `.codex-plugin/plugin.json` in repo |
-| 5 | **Claude Code Skills** | Skill | Ready | P1 | YAML frontmatter in SKILL.md files |
-| 6 | **Gemini Code Assist** | MCP | Ready | P1 | MCP-based; same endpoint |
-| 7 | **SkillsGate** | Aggregator | Pending | P1 | CLI-based publish for all 35 skills |
-| 8 | **Killer Skills** | Directory | Pending | P1 | Submit repo link to directory |
-| 9 | **PolySkill** | Aggregator | Pending | P2 | Claude Code skill hub |
+| 1 | **Smithery** (smithery.ai) | MCP Registry | Ready | P0 | [`smithery.yaml`](../smithery.yaml); CI validates [`.well-known/mcp/server-card.json`](../.well-known/mcp/server-card.json) vs `smithery.yaml` ([`tools/mcp/validate_server_card.py`](../tools/mcp/validate_server_card.py)). Deploy static card on MCP origin: [`infra/mcp-well-known/README.md`](../infra/mcp-well-known/README.md). Details: [`docs/platforms/mcp-smithery-publish.md`](platforms/mcp-smithery-publish.md) |
+| 2 | **Cursor Skills** | Agent Skill | Ready | P0 | [`.gitignore`](../.gitignore) allows **`.cursor/skills/`** (see [`.cursor/skills/README.md`](../.cursor/skills/README.md)). Shipped in-repo: [`skills/intelliversex-game-sdk/SKILL.md`](../skills/intelliversex-game-sdk/SKILL.md) (MCP skill) + [`skills/platforms/`](../skills/platforms/README.md) + narrative guides in [`docs/guides/skills/`](guides/skills/index.md) (35+ topics; not all are separate `SKILL.md` packs). |
+| 3 | **Windsurf / Codeium Skills** | Agent Skill | Ready | P0 | Same `SKILL.md` pattern; submit via Codeium marketplace using repo URL + [`skills/intelliversex-game-sdk/SKILL.md`](../skills/intelliversex-game-sdk/SKILL.md) as sample |
+| 4 | **OpenAI Codex Plugins** | Plugin | Ready | P0 | [`.codex-plugin/plugin.json`](../.codex-plugin/plugin.json) — 7 skill IDs + MCP block |
+| 5 | **Claude Code Skills** | Skill | Ready | P1 | YAML frontmatter in [`skills/intelliversex-game-sdk/SKILL.md`](../skills/intelliversex-game-sdk/SKILL.md); marketplace install per [`docs/guides/skills/index.md`](guides/skills/index.md) |
+| 6 | **Gemini Code Assist** | MCP | Ready | P1 | Add MCP URL from `smithery.yaml` in IDE settings; same endpoint as row 1 |
+| 7 | **SkillsGate** | Aggregator | Pending | P1 | CLI-based publish; confirm live CLI/package names before scripting |
+| 8 | **Killer Skills** | Directory | Pending | P1 | Submit repo link when directory accepts listings |
+| 9 | **PolySkill** | Aggregator | Pending | P2 | Claude Code skill hub — submit when form is available |
+
+**Skill documentation map:** Narrative guides live under [`docs/guides/skills/`](guides/skills/index.md). The **Codex plugin** lists seven skill IDs in [`.codex-plugin/plugin.json`](../.codex-plugin/plugin.json). **Smithery-oriented MCP skill** package: [`skills/intelliversex-game-sdk/SKILL.md`](../skills/intelliversex-game-sdk/SKILL.md). For Cursor auto-discovery, add per-topic `SKILL.md` under [`.cursor/skills/`](../.cursor/skills/README.md) or extend [`skills/`](../skills/README.md).
+
+### Flash sprint — owner actions (human checklist)
+
+Complete these outside the repo (accounts, dashboards, infra). Track dates in your team calendar.
+
+| Step | Owner action |
+|------|----------------|
+| Version / branch | Use **`main`** (or your release branch) for public links. Listing copy should match **5.8.0** unless you bump [`package.json`](../Assets/Intelli-verse-X-SDK/package.json). |
+| MCP ops | **Verified:** `GET /api/mcp` without auth → **401** (OK). **Prod deploy (ops):** serve [`.well-known/mcp/server-card.json`](../.well-known/mcp/server-card.json) at `https://mcp.intelli-verse-x.ai/.well-known/mcp/server-card.json` — runbook [`infra/mcp-well-known/README.md`](../infra/mcp-well-known/README.md) (nginx, ALB, S3, or app route). **Repo cannot push to your AWS account.** After deploy, expect **200** on that URL; CI workflow [`mcp-server-card.yml`](../.github/workflows/mcp-server-card.yml) logs an informational probe. |
+| Smithery | Log in, connect GitHub repo, publish MCP from `smithery.yaml`; add skill path `skills/intelliversex-game-sdk/` if the UI requests a Skill package. |
+| Codex | Install plugin from repo via `.codex-plugin/plugin.json`; smoke-test skill **`ivx-sdk-setup`**. |
+| Cursor policy | **Done in repo:** `.gitignore` allows `.cursor/skills/`; [`.cursor/skills/README.md`](../.cursor/skills/README.md) documents usage. |
+| Windsurf / Codeium | Marketplace submission with repo URL + `skills/intelliversex-game-sdk/SKILL.md`. |
+| Claude Code | `/plugin marketplace add` + install; verify against current Anthropic docs. |
+| Gemini | MCP URL in Code Assist settings; verify tools or health. |
+| Aggregators | SkillsGate, Killer Skills, PolySkill — submit when each platform is ready; set rows 7–9 to **Published** when live. |
 
 ---
 
@@ -192,6 +210,39 @@ Platforms specific to the Roblox ecosystem that need separate attention:
 | **P1** | 30 | High-value, publish within first quarter. Console stores, secondary marketplaces, developer communities |
 | **P2** | 28 | Nice-to-have. Regional stores, niche platforms, future partnerships |
 | **Total** | **99** | Across 10 categories |
+
+---
+
+## Repository updates (agent / MCP / skills) — 2026-04-03
+
+Done in-repo (documentation only; no change to runtime SDK code):
+
+- **Broken links fixed:** Platform docs under `docs/platforms/` no longer pointed to `.cursor/skills/.../SKILL.md` (paths not on GitHub). They now reference **`docs/guides/skills/ivx-*.md`** for the seven Codex-aligned topics.
+- **`docs/guides/ai-agent-skills.md`** and **`docs/guides/skills/index.md`** updated to state that **canonical guides** live under `docs/guides/skills/`, MCP skill under `skills/intelliversex-game-sdk/SKILL.md`, and **`.cursor/skills/`** may be committed (see [`.gitignore`](../.gitignore)).
+- **`skills/README.md`** adds a **Codex skill ID → guide** table linking to `docs/guides/skills/`.
+- **`.gitignore`:** `.cursor/*` is ignored except **`.cursor/skills/**`**; [`.cursor/skills/README.md`](../.cursor/skills/README.md) explains usage.
+- **`skills/platforms/`:** Per-engine **`SKILL.md`** stubs map each `SDKs/<engine>/` (plus `unity-upm` → `Assets/Intelli-verse-X-SDK/`) to [`docs/platforms/`](../docs/platforms/index.md).
+- **MCP static server card:** [`tools/mcp/validate_server_card.py`](../tools/mcp/validate_server_card.py) + [`.github/workflows/mcp-server-card.yml`](../.github/workflows/mcp-server-card.yml); production deployment steps [`infra/mcp-well-known/README.md`](../infra/mcp-well-known/README.md); [`docs/platforms/mcp-smithery-publish.md`](platforms/mcp-smithery-publish.md) updated with response contract and verification table.
+
+---
+
+## Remaining tasks for you (cannot be completed inside the repo)
+
+### Section 1 — AI agent / MCP / skills (platform skills)
+
+| Item | Status in table | Your action |
+|------|-----------------|-------------|
+| Smithery MCP publish + static `server-card` on origin | Ready (repo); **prod URL** pending ops | Apply [`infra/mcp-well-known/README.md`](../infra/mcp-well-known/README.md) on `mcp.intelli-verse-x.ai`; then Smithery UI + [`mcp-smithery-publish.md`](platforms/mcp-smithery-publish.md) verification table |
+| Cursor row | **Ready** (row 2) | Optional: add more per-topic `SKILL.md` under [`.cursor/skills/`](../.cursor/skills/README.md) |
+| Windsurf / Codeium | Ready | Submit marketplace entry (human) |
+| OpenAI Codex | Ready | Install plugin in product; smoke-test |
+| Claude Code | Ready | Marketplace + install |
+| Gemini Code Assist | Ready | MCP URL in IDE |
+| SkillsGate, Killer Skills, PolySkill | Pending | Submit when each service accepts listings |
+
+### Sections 2–10 — package registries, stores, social, etc.
+
+Almost all rows are still **Pending** or **Planning**. Publishing requires **accounts, credentials, builds, fees, and store review** — track each row in the tables above; nothing here is auto-completed by doc edits.
 
 ---
 
