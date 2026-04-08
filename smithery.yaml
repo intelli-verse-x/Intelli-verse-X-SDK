@@ -22,6 +22,29 @@ tags:
   - godot
 transport: streamable-http
 url: https://mcp.intelli-verse-x.ai/api/mcp
+
+# Smithery Connect: prompts users for secrets and forwards them to your upstream MCP URL.
+# See https://smithery.ai/docs/build/session-config — max ~1KB, flat properties only.
+# Matches CORS on the MCP host (X-API-Key).
+configSchema:
+  type: object
+  description: Credentials for the hosted IntelliVerseX MCP server.
+  properties:
+    apiKey:
+      type: string
+      title: MCP API key
+      description: API key for your IntelliVerseX backend; forwarded to the server as X-API-Key.
+      x-from:
+        header: x-api-key
+      x-to:
+        header: X-API-Key
+  required:
+    - apiKey
+
+# Optional: shown as sample in Smithery UI / docs (not a real secret).
+exampleConfig:
+  apiKey: replace-with-your-mcp-api-key
+
 tools:
   - nakama_health
   - nakama_auth

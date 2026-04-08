@@ -18,6 +18,23 @@ Probed from the public internet (re-run after infra changes):
 
 Smithery’s publish flow performs OAuth / Protected Resource metadata discovery. Non-conforming responses (404 on metadata URLs, or unexpected status on the metadata document) produce errors such as `auth_required` and `Resource Server Metadata response (unexpected HTTP status code)`.
 
+## Smithery UI: common release errors
+
+### Warning: “No config schema provided”
+
+Smithery warns when users will not be prompted for API keys or other session settings. **Fix:** add a `configSchema` to [`smithery.yaml`](../../smithery.yaml) (JSON Schema with [`x-from` / `x-to`](https://smithery.ai/docs/build/session-config) for headers). Merge to your default branch and **start a new release** so Smithery picks up the file.
+
+### “Initialization failed with status **503**” / “advertise `/.well-known/mcp/server-card.json`”
+
+This usually means **automatic scanning** of `https://mcp.intelli-verse-x.ai/api/mcp` failed (auth wall, overload, WAF, or upstream **503**). Smithery then asks you to serve a **static server card** on the **same origin** so metadata does not depend on a live MCP handshake during publish.
+
+**Do both:**
+
+1. Deploy [`.well-known/mcp/server-card.json`](../../.well-known/mcp/server-card.json) at `https://mcp.intelli-verse-x.ai/.well-known/mcp/server-card.json` (**200**, public, no API key) — see [Fix 1](#fix-1-static-server-card-recommended-for-publish) and [`infra/mcp-well-known/README.md`](../../infra/mcp-well-known/README.md).
+2. Ensure Smithery’s scanner is not blocked: allow User-Agent `SmitheryBot/1.0`, prefer **401** not **403** on the MCP route when unauthenticated, and confirm your origin is not returning **503** to Cloudflare Workers during the release job.
+
+If 503 persists **after** the server card returns 200, inspect MCP service health and load balancer/backend capacity for requests from Smithery’s network.
+
 ## Fix 1: Static server card (recommended for publish)
 
 Serve the repository file [`.well-known/mcp/server-card.json`](../../.well-known/mcp/server-card.json) at the **same origin** as the MCP URL:
