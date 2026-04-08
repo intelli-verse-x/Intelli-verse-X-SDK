@@ -1,23 +1,424 @@
 {
-  "name": "IntelliVerseX Game SDK",
-  "description": "MCP server for managing Nakama game backends with 50+ tools for Hiro live-ops, Satori analytics, economy, player management, and server administration",
-  "version": "1.0.0",
-  "author": {
-    "name": "IntelliVerse-X",
-    "url": "https://intelli-verse-x.ai"
+  "serverInfo": {
+    "name": "IntelliVerseX Game SDK",
+    "version": "1.0.0"
   },
-  "documentation_url": "https://intelli-verse-x.github.io/Intelli-verse-X-SDK/",
-  "repository": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK",
-  "transport": [
-    "streamable-http",
-    "stdio"
+  "authentication": {
+    "required": true,
+    "schemes": [
+      "oauth2"
+    ]
+  },
+  "tools": [
+    {
+      "name": "nakama_health",
+      "description": "MCP tool: nakama health",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "nakama_auth",
+      "description": "MCP tool: nakama auth",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "nakama_rpc",
+      "description": "MCP tool: nakama rpc",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "nakama_systems_status",
+      "description": "MCP tool: nakama systems status",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "nakama_build",
+      "description": "MCP tool: nakama build",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "nakama_restart",
+      "description": "MCP tool: nakama restart",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "hiro_config_get",
+      "description": "MCP tool: hiro config get",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "hiro_config_set",
+      "description": "MCP tool: hiro config set",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "satori_config_get",
+      "description": "MCP tool: satori config get",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "satori_config_set",
+      "description": "MCP tool: satori config set",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "player_inspect",
+      "description": "MCP tool: player inspect",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "player_search",
+      "description": "MCP tool: player search",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "wallet_view",
+      "description": "MCP tool: wallet view",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "wallet_grant",
+      "description": "MCP tool: wallet grant",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "wallet_reset",
+      "description": "MCP tool: wallet reset",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "inventory_grant",
+      "description": "MCP tool: inventory grant",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "mailbox_send",
+      "description": "MCP tool: mailbox send",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "flag_toggle",
+      "description": "MCP tool: flag toggle",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "live_event_schedule",
+      "description": "MCP tool: live event schedule",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "experiment_setup",
+      "description": "MCP tool: experiment setup",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "events_timeline",
+      "description": "MCP tool: events timeline",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "storage_list",
+      "description": "MCP tool: storage list",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "storage_read",
+      "description": "MCP tool: storage read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "storage_write",
+      "description": "MCP tool: storage write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "config_export",
+      "description": "MCP tool: config export",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "config_import",
+      "description": "MCP tool: config import",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "cache_invalidate",
+      "description": "MCP tool: cache invalidate",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "nakama_rpc_list",
+      "description": "MCP tool: nakama rpc list",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "nakama_account",
+      "description": "MCP tool: nakama account",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "nakama_build_deploy",
+      "description": "MCP tool: nakama build deploy",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "reward_bucket_progress",
+      "description": "MCP tool: reward bucket progress",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "personalizer_preview",
+      "description": "MCP tool: personalizer preview",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "personalizer_set_override",
+      "description": "MCP tool: personalizer set override",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "message_broadcast",
+      "description": "MCP tool: message broadcast",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "metrics_prometheus",
+      "description": "MCP tool: metrics prometheus",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "metrics_set_alert",
+      "description": "MCP tool: metrics set alert",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "webhooks_list",
+      "description": "MCP tool: webhooks list",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "webhooks_upsert",
+      "description": "MCP tool: webhooks upsert",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "webhooks_delete",
+      "description": "MCP tool: webhooks delete",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "webhooks_test",
+      "description": "MCP tool: webhooks test",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "taxonomy_schemas",
+      "description": "MCP tool: taxonomy schemas",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "taxonomy_upsert",
+      "description": "MCP tool: taxonomy upsert",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "taxonomy_delete",
+      "description": "MCP tool: taxonomy delete",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "taxonomy_validate",
+      "description": "MCP tool: taxonomy validate",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "taxonomy_strict_mode",
+      "description": "MCP tool: taxonomy strict mode",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "datalake_config",
+      "description": "MCP tool: datalake config",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "datalake_upsert_target",
+      "description": "MCP tool: datalake upsert target",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "datalake_delete_target",
+      "description": "MCP tool: datalake delete target",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "datalake_toggle",
+      "description": "MCP tool: datalake toggle",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "datalake_set_retention",
+      "description": "MCP tool: datalake set retention",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "datalake_manual_export",
+      "description": "MCP tool: datalake manual export",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    }
   ],
-  "tools_count": 50,
-  "categories": [
-    "game-development",
-    "backend",
-    "analytics",
-    "live-ops"
-  ],
-  "url": "https://mcp.intelli-verse-x.ai/api/mcp"
+  "resources": [],
+  "prompts": []
 }
