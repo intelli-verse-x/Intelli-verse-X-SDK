@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using IntelliVerseX.Backend;
+using IntelliVerseX.Hiro;
 using Nakama;
 using UnityEngine;
 
@@ -101,8 +102,10 @@ namespace IntelliVerseX.Retention
         /// <returns>The player's retention state.</returns>
         public async Task<IVXRetentionState> GetStateAsync()
         {
-            var response = await _rpcClient.CallAsync<IVXRetentionStateResponse>("retention_get_state");
-            var state = response?.state;
+            var rpc = await _rpcClient.CallAsync<IVXRetentionStateResponse>("retention_get_state");
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "retention_get_state"))
+                return null;
+            var state = envelope?.state;
             if (state != null)
                 OnRetentionStateUpdated?.Invoke(state);
             return state;
@@ -114,7 +117,9 @@ namespace IntelliVerseX.Retention
         /// <returns>The updated retention state.</returns>
         public async Task<IVXRetentionState> CheckInAsync()
         {
-            var state = await _rpcClient.CallAsync<IVXRetentionState>("retention_check_in");
+            var rpc = await _rpcClient.CallAsync<IVXRetentionState>("retention_check_in");
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var state, "retention_check_in"))
+                return null;
             if (state != null)
                 OnCheckInCompleted?.Invoke(state);
             return state;
@@ -126,7 +131,9 @@ namespace IntelliVerseX.Retention
         /// <returns>The winback offer, or null if none available.</returns>
         public async Task<IVXWinbackOffer> GetWinbackOfferAsync()
         {
-            var offer = await _rpcClient.CallAsync<IVXWinbackOffer>("winback_get_offer");
+            var rpc = await _rpcClient.CallAsync<IVXWinbackOffer>("winback_get_offer");
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var offer, "winback_get_offer"))
+                return null;
             if (offer != null)
                 OnWinbackOfferAvailable?.Invoke(offer);
             return offer;
@@ -140,7 +147,9 @@ namespace IntelliVerseX.Retention
         public async Task<IVXWinbackOffer> ClaimWinbackAsync(string offerId)
         {
             var payload = new IVXWinbackClaimRequest { offerId = offerId };
-            var offer = await _rpcClient.CallAsync<IVXWinbackOffer>("winback_claim_offer", payload);
+            var rpc = await _rpcClient.CallAsync<IVXWinbackOffer>("winback_claim_offer", payload);
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var offer, "winback_claim_offer"))
+                return null;
             if (offer != null)
                 OnWinbackClaimed?.Invoke(offer);
             return offer;

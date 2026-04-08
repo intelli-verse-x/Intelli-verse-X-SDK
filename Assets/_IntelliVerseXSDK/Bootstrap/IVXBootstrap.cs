@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using IntelliVerseX.Identity;
 using UnityEngine;
 
 namespace IntelliVerseX.Bootstrap
@@ -139,7 +140,7 @@ namespace IntelliVerseX.Bootstrap
 
             if (!string.IsNullOrWhiteSpace(_config.GameId))
             {
-                IntelliVerseX.Identity.IVXURLs.GameId = _config.GameId;
+                IVXURLs.GameId = _config.GameId;
                 Log($"Game ID set: {_config.GameId}");
             }
             else

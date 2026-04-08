@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using IntelliVerseX.Backend;
+using IntelliVerseX.Hiro;
 using Nakama;
 using UnityEngine;
 
@@ -98,8 +99,11 @@ namespace IntelliVerseX.Characters
         /// <returns>The character state.</returns>
         public async Task<IVXCharacterState> GetStateAsync()
         {
-            var response = await _rpcClient.CallAsync<IVXCharacterStateResponse>("character_get_state");
-            var state = response?.state;
+            if (!_isInitialized) { Debug.LogError($"[{nameof(IVXCharacterManager)}] Not initialized. Call Initialize() first."); return null; }
+            var rpc = await _rpcClient.CallAsync<IVXCharacterStateResponse>("character_get_state");
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "character_get_state"))
+                return null;
+            var state = envelope?.state;
             if (state != null)
                 OnCharacterStateUpdated?.Invoke(state);
             return state;
@@ -112,8 +116,11 @@ namespace IntelliVerseX.Characters
         /// <returns>The unlocked character.</returns>
         public async Task<IVXCharacter> UnlockCharacterAsync(string characterId)
         {
+            if (!_isInitialized) { Debug.LogError($"[{nameof(IVXCharacterManager)}] Not initialized. Call Initialize() first."); return null; }
             var payload = new IVXCharacterRequest { characterId = characterId };
-            var character = await _rpcClient.CallAsync<IVXCharacter>("character_unlock", payload);
+            var rpc = await _rpcClient.CallAsync<IVXCharacter>("character_unlock", payload);
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var character, "character_unlock"))
+                return null;
             if (character != null)
                 OnCharacterUnlocked?.Invoke(character);
             return character;
@@ -126,8 +133,11 @@ namespace IntelliVerseX.Characters
         /// <returns>The updated character state.</returns>
         public async Task<IVXCharacterState> SetActiveAsync(string characterId)
         {
+            if (!_isInitialized) { Debug.LogError($"[{nameof(IVXCharacterManager)}] Not initialized. Call Initialize() first."); return null; }
             var payload = new IVXCharacterRequest { characterId = characterId };
-            var state = await _rpcClient.CallAsync<IVXCharacterState>("character_set_active", payload);
+            var rpc = await _rpcClient.CallAsync<IVXCharacterState>("character_set_active", payload);
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var state, "character_set_active"))
+                return null;
             if (state != null)
                 OnActiveCharacterChanged?.Invoke(state);
             return state;

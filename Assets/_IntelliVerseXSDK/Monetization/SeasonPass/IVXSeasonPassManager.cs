@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using IntelliVerseX.Backend;
+using IntelliVerseX.Hiro;
 using Nakama;
 using UnityEngine;
 
@@ -102,8 +103,10 @@ namespace IntelliVerseX.Monetization
         /// <returns>The season pass state.</returns>
         public async Task<IVXSeasonPassState> GetStateAsync()
         {
-            var response = await _rpcClient.CallAsync<IVXSeasonPassStateResponse>("season_pass_get_state");
-            return response?.state;
+            var rpc = await _rpcClient.CallAsync<IVXSeasonPassStateResponse>("season_pass_get_state");
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "season_pass_get_state"))
+                return null;
+            return envelope?.state;
         }
 
         /// <summary>
@@ -119,7 +122,9 @@ namespace IntelliVerseX.Monetization
                 level = level,
                 isPremiumTrack = isPremiumTrack
             };
-            var reward = await _rpcClient.CallAsync<IVXSeasonPassReward>("season_pass_claim_reward", payload);
+            var rpc = await _rpcClient.CallAsync<IVXSeasonPassReward>("season_pass_claim_reward", payload);
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var reward, "season_pass_claim_reward"))
+                return null;
             if (reward != null)
                 OnRewardClaimed?.Invoke(reward);
             return reward;
@@ -131,7 +136,9 @@ namespace IntelliVerseX.Monetization
         /// <returns>The updated season pass state.</returns>
         public async Task<IVXSeasonPassState> PurchasePremiumAsync()
         {
-            var state = await _rpcClient.CallAsync<IVXSeasonPassState>("season_pass_purchase_premium");
+            var rpc = await _rpcClient.CallAsync<IVXSeasonPassState>("season_pass_purchase_premium");
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var state, "season_pass_purchase_premium"))
+                return null;
             if (state != null)
                 OnPremiumPurchased?.Invoke(state);
             return state;
@@ -145,7 +152,9 @@ namespace IntelliVerseX.Monetization
         public async Task<IVXSeasonPassState> AddXpAsync(int amount)
         {
             var payload = new IVXSeasonPassXpRequest { amount = amount };
-            var state = await _rpcClient.CallAsync<IVXSeasonPassState>("season_pass_add_xp", payload);
+            var rpc = await _rpcClient.CallAsync<IVXSeasonPassState>("season_pass_add_xp", payload);
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var state, "season_pass_add_xp"))
+                return null;
             if (state != null && state.currentLevel > _previousLevel)
             {
                 OnLevelUp?.Invoke(state);

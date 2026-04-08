@@ -1,5 +1,6 @@
 using IntelliVerseX.Backend;
 using IntelliVerseX.Core;
+using IntelliVerseX.Storage;
 using Nakama;
 using Newtonsoft.Json;
 #if SYCH_SHARE_ASSETS
@@ -19,6 +20,13 @@ namespace IntelliVerseX.Backend.Nakama
         #region Configuration
         public static IVXNManager Instance { get; private set; }
         private static bool _isQuitting;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
+        {
+            _isQuitting = false;
+            Instance = null;
+        }
 
         [Header("SDK Configuration")]
         [SerializeField] private IntelliVerseXConfig sdkConfig;
@@ -52,6 +60,7 @@ namespace IntelliVerseX.Backend.Nakama
         private ISocket _socket;
         private bool _isInitialized;
         private bool _isInitializing;
+        private bool _identitySyncSucceeded;
 
         private const string PREF_NAKAMA_AUTH_TOKEN = "ivxn.nakama.auth_token";
         private const string PREF_NAKAMA_REFRESH_TOKEN = "ivxn.nakama.refresh_token";
@@ -63,6 +72,8 @@ namespace IntelliVerseX.Backend.Nakama
         public ISocket Socket => _socket;
         public bool IsInitialized => _isInitialized;
         public bool IsInitializing => _isInitializing;
+        /// <summary>True after create_or_sync_user RPC succeeds. Wallet/leaderboard RPCs require this.</summary>
+        public bool IsIdentitySynced => _identitySyncSucceeded;
         public string GameId => _gameId;
         public string NakamaUserId => _session?.UserId;
         public string NakamaUsername => _session?.Username;
@@ -470,10 +481,9 @@ private void CreateClientIfNeeded()
 
             try
             {
-                PlayerPrefs.DeleteKey(PREF_NAKAMA_AUTH_TOKEN);
-                PlayerPrefs.DeleteKey(PREF_NAKAMA_REFRESH_TOKEN);
-                PlayerPrefs.Save();
-                Log("Nakama session cleared from PlayerPrefs.");
+                IVXSecureStorage.DeleteKey(PREF_NAKAMA_AUTH_TOKEN);
+                IVXSecureStorage.DeleteKey(PREF_NAKAMA_REFRESH_TOKEN);
+                Log("Nakama session cleared from secure storage.");
             }
             catch (Exception ex)
             {
@@ -691,12 +701,14 @@ private void CreateClientIfNeeded()
 
                 if (!syncResult.success)
                 {
+                    _identitySyncSucceeded = false;
                     var errorMsg = $"Identity sync failed: {syncResult.error} (Code: {syncResult.errorCode})";
                     Log($"[Sync] ✗ {errorMsg}", isError: true);
                     OnMetadataSyncFailed?.Invoke(errorMsg);
                     return;
                 }
 
+                _identitySyncSucceeded = true;
                 Log($"[Sync] ✓ Identity: Created={syncResult.created}, UserId={syncResult.userId}");
                 LogVerbose($"[Sync]   Wallet: {syncResult.wallet_id}");
                 LogVerbose($"[Sync]   GameBalance: {syncResult.gameWalletBalance}, GlobalBalance: {syncResult.globalWalletBalance}");
@@ -1229,6 +1241,9 @@ private void CreateClientIfNeeded()
         {
             if (string.IsNullOrEmpty(errorCode)) return false;
 
+            if (errorCode.Contains("404") || errorCode.Contains("GRPC_5"))
+                return true;
+
             var nonRetryableCodes = new[]
             {
                 "VALIDATION_ERROR",
@@ -1300,6 +1315,9 @@ private void CreateClientIfNeeded()
 
         private async Task<IVXNWalletManager.WalletSnapshot> RefreshWalletFromServerAsync(CancellationToken ct)
         {
+            if (!_identitySyncSucceeded)
+                throw new Exception("Identity sync required before wallet operations. Ensure create_or_sync_user succeeded.");
+
             bool ok = await EnsureValidSessionAsync();
             if (!ok || _client == null || _session == null)
                 throw new Exception("Nakama session not ready for wallet refresh.");
@@ -1358,6 +1376,9 @@ private void CreateClientIfNeeded()
         private async Task<IVXNWalletManager.WalletSnapshot> ApplyWalletOperationOnServerAsync(
             IVXNWalletManager.WalletOperation op, CancellationToken ct)
         {
+            if (!_identitySyncSucceeded)
+                throw new Exception("Identity sync required before wallet operations. Ensure create_or_sync_user succeeded.");
+
             bool ok = await EnsureValidSessionAsync();
             if (!ok || _client == null || _session == null)
                 throw new Exception("Nakama session not ready for wallet operation.");
@@ -1542,21 +1563,40 @@ private void CreateClientIfNeeded()
 
             try
             {
-                var token = PlayerPrefs.GetString(PREF_NAKAMA_AUTH_TOKEN, string.Empty);
-                var refreshToken = PlayerPrefs.GetString(PREF_NAKAMA_REFRESH_TOKEN, string.Empty);
+                var token = IVXSecureStorage.GetString(PREF_NAKAMA_AUTH_TOKEN, string.Empty);
+                var refreshToken = IVXSecureStorage.GetString(PREF_NAKAMA_REFRESH_TOKEN, string.Empty);
 
-                // Migrate legacy key (common accidental space) — keeps backward compatibility
+                // Migrate from plain PlayerPrefs to secure storage
                 if (string.IsNullOrWhiteSpace(token))
                 {
-                    const string legacyKey = "ivxn. nakama.auth_token";
-                    var legacyToken = PlayerPrefs.GetString(legacyKey, string.Empty);
-                    if (!string.IsNullOrWhiteSpace(legacyToken))
+                    var plainToken = PlayerPrefs.GetString(PREF_NAKAMA_AUTH_TOKEN, string.Empty);
+                    if (!string.IsNullOrWhiteSpace(plainToken))
                     {
-                        PlayerPrefs.SetString(PREF_NAKAMA_AUTH_TOKEN, legacyToken);
-                        PlayerPrefs.DeleteKey(legacyKey);
+                        IVXSecureStorage.SetString(PREF_NAKAMA_AUTH_TOKEN, plainToken);
+                        var plainRefresh = PlayerPrefs.GetString(PREF_NAKAMA_REFRESH_TOKEN, string.Empty);
+                        if (!string.IsNullOrWhiteSpace(plainRefresh))
+                            IVXSecureStorage.SetString(PREF_NAKAMA_REFRESH_TOKEN, plainRefresh);
+                        PlayerPrefs.DeleteKey(PREF_NAKAMA_AUTH_TOKEN);
+                        PlayerPrefs.DeleteKey(PREF_NAKAMA_REFRESH_TOKEN);
                         PlayerPrefs.Save();
-                        token = legacyToken;
-                        Log("Migrated legacy Nakama auth token key to new key.", isWarning: true);
+                        token = plainToken;
+                        refreshToken = plainRefresh;
+                        Log("Migrated Nakama tokens from PlayerPrefs to IVXSecureStorage.", isWarning: true);
+                    }
+
+                    // Also check the legacy key with accidental space
+                    if (string.IsNullOrWhiteSpace(token))
+                    {
+                        const string legacyKey = "ivxn. nakama.auth_token";
+                        var legacyToken = PlayerPrefs.GetString(legacyKey, string.Empty);
+                        if (!string.IsNullOrWhiteSpace(legacyToken))
+                        {
+                            IVXSecureStorage.SetString(PREF_NAKAMA_AUTH_TOKEN, legacyToken);
+                            PlayerPrefs.DeleteKey(legacyKey);
+                            PlayerPrefs.Save();
+                            token = legacyToken;
+                            Log("Migrated legacy Nakama auth token to IVXSecureStorage.", isWarning: true);
+                        }
                     }
                 }
 
@@ -1601,13 +1641,12 @@ private void CreateClientIfNeeded()
             {
                 try
                 {
-                    PlayerPrefs.DeleteKey(PREF_NAKAMA_AUTH_TOKEN);
-                    PlayerPrefs.DeleteKey(PREF_NAKAMA_REFRESH_TOKEN);
-                    PlayerPrefs.Save();
+                    IVXSecureStorage.DeleteKey(PREF_NAKAMA_AUTH_TOKEN);
+                    IVXSecureStorage.DeleteKey(PREF_NAKAMA_REFRESH_TOKEN);
                 }
                 catch (Exception ex)
                 {
-                    Log($"SaveSession (Remember=OFF cleanup) PlayerPrefs error: {ex}", isWarning: true);
+                    Log($"SaveSession (Remember=OFF cleanup) error: {ex}", isWarning: true);
                 }
 
                 Log("Remember=OFF, not persisting Nakama tokens. In-memory session remains active.");
@@ -1616,9 +1655,8 @@ private void CreateClientIfNeeded()
 
             try
             {
-                PlayerPrefs.SetString(PREF_NAKAMA_AUTH_TOKEN, session.AuthToken);
-                PlayerPrefs.SetString(PREF_NAKAMA_REFRESH_TOKEN, session.RefreshToken ?? string.Empty);
-                PlayerPrefs.Save();
+                IVXSecureStorage.SetString(PREF_NAKAMA_AUTH_TOKEN, session.AuthToken);
+                IVXSecureStorage.SetString(PREF_NAKAMA_REFRESH_TOKEN, session.RefreshToken ?? string.Empty);
 
                 var expireAtUtc = UnixToUtcSafe(session.ExpireTime);
                 var masked = session.AuthToken != null ? $"len={session.AuthToken.Length}" : "null";
@@ -2722,13 +2760,16 @@ private void CreateClientIfNeeded()
         {
             if (string.IsNullOrEmpty(errorCode)) return false;
 
+            if (errorCode.Contains("404") || errorCode.Contains("GRPC_5"))
+                return true;
+
             var nonRetryableCodes = new[]
             {
-        "CLIENT_NOT_INITIALIZED",
-        "INVALID_JSON",
-        "VALIDATION_ERROR",
-        "AUTH_REQUIRED"
-    };
+                "CLIENT_NOT_INITIALIZED",
+                "INVALID_JSON",
+                "VALIDATION_ERROR",
+                "AUTH_REQUIRED"
+            };
 
             return Array.IndexOf(nonRetryableCodes, errorCode) >= 0;
         }

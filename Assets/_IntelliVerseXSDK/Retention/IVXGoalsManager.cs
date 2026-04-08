@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using IntelliVerseX.Backend;
+using IntelliVerseX.Hiro;
 using Nakama;
 using UnityEngine;
 
@@ -99,9 +100,11 @@ namespace IntelliVerseX.Retention
         /// <returns>A list of weekly goals.</returns>
         public async Task<List<IVXWeeklyGoal>> GetWeeklyGoalsAsync()
         {
-            var response = await _rpcClient.CallAsync<IVXWeeklyGoalsResponse>("weekly_goals_get");
+            var rpc = await _rpcClient.CallAsync<IVXWeeklyGoalsResponse>("weekly_goals_get");
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "weekly_goals_get"))
+                return new List<IVXWeeklyGoal>();
             OnGoalsRefreshed?.Invoke();
-            return response?.goals ?? new List<IVXWeeklyGoal>();
+            return envelope?.goals ?? new List<IVXWeeklyGoal>();
         }
 
         /// <summary>
@@ -117,7 +120,9 @@ namespace IntelliVerseX.Retention
                 goalId = goalId,
                 progress = progress
             };
-            var goal = await _rpcClient.CallAsync<IVXWeeklyGoal>("weekly_goals_update_progress", payload);
+            var rpc = await _rpcClient.CallAsync<IVXWeeklyGoal>("weekly_goals_update_progress", payload);
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var goal, "weekly_goals_update_progress"))
+                return null;
             if (goal != null && goal.completed)
                 OnGoalCompleted?.Invoke(goal);
             return goal;
@@ -129,8 +134,10 @@ namespace IntelliVerseX.Retention
         /// <returns>A list of monthly milestones.</returns>
         public async Task<List<IVXMonthlyMilestone>> GetMonthlyMilestonesAsync()
         {
-            var response = await _rpcClient.CallAsync<IVXMonthlyMilestonesResponse>("monthly_milestones_get");
-            return response?.milestones ?? new List<IVXMonthlyMilestone>();
+            var rpc = await _rpcClient.CallAsync<IVXMonthlyMilestonesResponse>("monthly_milestones_get");
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "monthly_milestones_get"))
+                return new List<IVXMonthlyMilestone>();
+            return envelope?.milestones ?? new List<IVXMonthlyMilestone>();
         }
 
         /// <summary>
@@ -146,7 +153,9 @@ namespace IntelliVerseX.Retention
                 milestoneId = milestoneId,
                 progress = progress
             };
-            var milestone = await _rpcClient.CallAsync<IVXMonthlyMilestone>("monthly_milestones_update_progress", payload);
+            var rpc = await _rpcClient.CallAsync<IVXMonthlyMilestone>("monthly_milestones_update_progress", payload);
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var milestone, "monthly_milestones_update_progress"))
+                return null;
             if (milestone != null && milestone.completed)
                 OnMilestoneReached?.Invoke(milestone);
             return milestone;

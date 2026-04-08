@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using IntelliVerseX.Backend;
+using IntelliVerseX.Hiro;
 using Nakama;
 using UnityEngine;
 
@@ -99,8 +100,11 @@ namespace IntelliVerseX.Progression
         /// <returns>A list of achievements.</returns>
         public async Task<List<IVXAchievement>> GetAllAsync()
         {
-            var response = await _rpcClient.CallAsync<IVXAchievementListResponse>("achievements_get_all");
-            return response?.achievements ?? new List<IVXAchievement>();
+            if (!_isInitialized) { Debug.LogError($"[{nameof(IVXAchievementManager)}] Not initialized. Call Initialize() first."); return new List<IVXAchievement>(); }
+            var rpc = await _rpcClient.CallAsync<IVXAchievementListResponse>("achievements_get_all");
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "achievements_get_all"))
+                return new List<IVXAchievement>();
+            return envelope?.achievements ?? new List<IVXAchievement>();
         }
 
         /// <summary>
@@ -111,12 +115,15 @@ namespace IntelliVerseX.Progression
         /// <returns>The updated achievement.</returns>
         public async Task<IVXAchievement> TrackProgressAsync(string achievementId, int progress)
         {
+            if (!_isInitialized) { Debug.LogError($"[{nameof(IVXAchievementManager)}] Not initialized. Call Initialize() first."); return null; }
             var payload = new IVXAchievementProgressRequest
             {
                 achievementId = achievementId,
                 progress = progress
             };
-            var achievement = await _rpcClient.CallAsync<IVXAchievement>("achievements_track_progress", payload);
+            var rpc = await _rpcClient.CallAsync<IVXAchievement>("achievements_track_progress", payload);
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var achievement, "achievements_track_progress"))
+                return null;
             if (achievement != null)
             {
                 OnProgressUpdated?.Invoke(achievement);
@@ -133,8 +140,11 @@ namespace IntelliVerseX.Progression
         /// <returns>The updated achievement.</returns>
         public async Task<IVXAchievement> ClaimRewardAsync(string achievementId)
         {
+            if (!_isInitialized) { Debug.LogError($"[{nameof(IVXAchievementManager)}] Not initialized. Call Initialize() first."); return null; }
             var payload = new IVXAchievementClaimRequest { achievementId = achievementId };
-            var achievement = await _rpcClient.CallAsync<IVXAchievement>("achievements_claim_reward", payload);
+            var rpc = await _rpcClient.CallAsync<IVXAchievement>("achievements_claim_reward", payload);
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var achievement, "achievements_claim_reward"))
+                return null;
             if (achievement != null)
                 OnRewardClaimed?.Invoke(achievement);
             return achievement;

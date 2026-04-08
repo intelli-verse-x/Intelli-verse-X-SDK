@@ -105,14 +105,15 @@ public class GameBootstrap : MonoBehaviour
         Debug.Log("================================");
     }
 
-    // Example: Submit score to leaderboard
+    // Example: Submit score to leaderboard (replace leaderboard id with your Hiro leaderboard id)
     public async void SubmitScore(long score)
     {
         var hiro = IVXHiroCoordinator.Instance;
         if (hiro == null || !hiro.IsInitialized) return;
-        var result = await hiro.Leaderboards.SubmitScoreAsync((int)score);
-        if (result != null && result.success)
-            Debug.Log($"Score {score} submitted!");
+        string gameId = string.IsNullOrEmpty(IVXBootstrap.Instance.GameId) ? null : IVXBootstrap.Instance.GameId;
+        var result = await hiro.Leaderboards.SubmitScoreAsync("default", score, 0, null, null, gameId);
+        if (result != null)
+            Debug.Log($"Score {score} submitted! (rank {result.rank})");
     }
 
     // Example: Moderate chat before sending

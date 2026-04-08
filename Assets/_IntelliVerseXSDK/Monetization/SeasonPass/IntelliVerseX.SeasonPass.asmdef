@@ -1,9 +1,10 @@
 {
-    "name": "IntelliVerseX.Social",
-    "rootNamespace": "IntelliVerseX.Social",
+    "name": "IntelliVerseX.SeasonPass",
+    "rootNamespace": "IntelliVerseX.Monetization",
     "references": [
         "IntelliVerseX.Core",
         "IntelliVerseX.Backend",
+        "IntelliVerseX.Hiro",
         "NakamaRuntime",
         "Newtonsoft.Json"
     ],

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using IntelliVerseX.Backend;
+using IntelliVerseX.Hiro;
 using Nakama;
 using UnityEngine;
 
@@ -102,8 +103,10 @@ namespace IntelliVerseX.Social
         /// <returns>A list of friend streaks.</returns>
         public async Task<List<IVXFriendStreak>> GetStreaksAsync()
         {
-            var response = await _rpcClient.CallAsync<IVXFriendStreakListResponse>("friend_streaks_get");
-            return response?.streaks ?? new List<IVXFriendStreak>();
+            var rpc = await _rpcClient.CallAsync<IVXFriendStreakListResponse>("friend_streaks_get");
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "friend_streaks_get"))
+                return new List<IVXFriendStreak>();
+            return envelope?.streaks ?? new List<IVXFriendStreak>();
         }
 
         /// <summary>
@@ -114,7 +117,9 @@ namespace IntelliVerseX.Social
         public async Task<IVXFriendStreak> RecordInteractionAsync(string friendId)
         {
             var payload = new IVXFriendInteractionRequest { friendId = friendId };
-            var streak = await _rpcClient.CallAsync<IVXFriendStreak>("friend_streaks_interact", payload);
+            var rpc = await _rpcClient.CallAsync<IVXFriendStreak>("friend_streaks_interact", payload);
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var streak, "friend_streaks_interact"))
+                return null;
             if (streak != null)
             {
                 if (streak.currentStreak == 0)
@@ -131,8 +136,10 @@ namespace IntelliVerseX.Social
         /// <returns>A list of active friend quests.</returns>
         public async Task<List<IVXFriendQuest>> GetActiveQuestsAsync()
         {
-            var response = await _rpcClient.CallAsync<IVXFriendQuestListResponse>("friend_quests_get_active");
-            return response?.quests ?? new List<IVXFriendQuest>();
+            var rpc = await _rpcClient.CallAsync<IVXFriendQuestListResponse>("friend_quests_get_active");
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "friend_quests_get_active"))
+                return new List<IVXFriendQuest>();
+            return envelope?.quests ?? new List<IVXFriendQuest>();
         }
 
         /// <summary>
@@ -148,7 +155,9 @@ namespace IntelliVerseX.Social
                 questId = questId,
                 progress = progress
             };
-            var quest = await _rpcClient.CallAsync<IVXFriendQuest>("friend_quests_contribute", payload);
+            var rpc = await _rpcClient.CallAsync<IVXFriendQuest>("friend_quests_contribute", payload);
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var quest, "friend_quests_contribute"))
+                return null;
             if (quest != null)
             {
                 OnQuestProgress?.Invoke(quest);

@@ -4,6 +4,7 @@
     "references": [
         "IntelliVerseX.Core",
         "IntelliVerseX.Backend",
+        "IntelliVerseX.Hiro",
         "NakamaRuntime",
         "Newtonsoft.Json"
     ],
