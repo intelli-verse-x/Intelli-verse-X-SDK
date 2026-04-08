@@ -18,7 +18,16 @@ import re
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+def _repo_root() -> Path:
+    """Resolve repo root by finding smithery.yaml (robust if cwd or script layout changes)."""
+    here = Path(__file__).resolve()
+    for d in [here.parent, *here.parents]:
+        if (d / "smithery.yaml").is_file():
+            return d
+    return here.parents[2]
+
+
+REPO_ROOT = _repo_root()
 SERVER_CARD = REPO_ROOT / ".well-known" / "mcp" / "server-card.json"
 SMITHERY = REPO_ROOT / "smithery.yaml"
 
@@ -93,7 +102,19 @@ def main() -> int:
 
     si = data.get("serverInfo")
     if not isinstance(si, dict):
-        errors.append("serverInfo must be an object")
+        keys_preview = list(data.keys())[:20]
+        print(
+            f"validate_server_card: {SERVER_CARD} ({len(raw)} bytes), top-level keys={keys_preview}",
+            file=sys.stderr,
+        )
+        hint = (
+            " Expected an object like {\"name\": \"...\", \"version\": \"...\"}. "
+            "Common mistakes: wrong file checked in, empty {}, null serverInfo, or "
+            "PascalCase keys (JSON must use serverInfo and tools)."
+        )
+        errors.append(
+            f"serverInfo must be an object (got {type(si).__name__}).{hint}"
+        )
     else:
         if not si.get("name"):
             errors.append("serverInfo.name is required")
@@ -102,7 +123,18 @@ def main() -> int:
 
     tools = data.get("tools")
     if not isinstance(tools, list):
-        errors.append("tools must be an array")
+        keys_preview = list(data.keys())[:20]
+        print(
+            f"validate_server_card: {SERVER_CARD} ({len(raw)} bytes), top-level keys={keys_preview}",
+            file=sys.stderr,
+        )
+        hint = (
+            " Expected a JSON array of tool definitions. "
+            "Common mistakes: tools missing, null, or an object instead of an array."
+        )
+        errors.append(
+            f"tools must be an array (got {type(tools).__name__}).{hint}"
+        )
         _emit(errors)
         return 1
 
