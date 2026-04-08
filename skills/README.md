@@ -33,6 +33,10 @@ To expose **literal `SKILL.md`** files for marketplaces, add `skills/<skill-id>/
 | [`.well-known/mcp/server-card.json`](../.well-known/mcp/server-card.json) | Static server card JSON — must be deployed at the MCP origin for Smithery (see [`docs/platforms/mcp-smithery-publish.md`](../docs/platforms/mcp-smithery-publish.md)). |
 | [`.codex-plugin/plugin.json`](../.codex-plugin/plugin.json) | OpenAI Codex plugin manifest: seven skill IDs + MCP server block. |
 
+## `.agents/skills/` (generic agent discovery)
+
+Some clients scan **`<project>/.agents/skills/`** or **`~/.agents/skills/`**. This repo includes a mirrored tree at [`.agents/skills/`](../.agents/skills/README.md) (same skill packs as here, paths adjusted). Install scripts: [`tools/scripts/install-agents-skills.ps1`](../tools/scripts/install-agents-skills.ps1), [`tools/scripts/install-agents-skills.sh`](../tools/scripts/install-agents-skills.sh).
+
 ## Cursor / `.cursor/skills/`
 
 The [`.gitignore`](../.gitignore) ignores **`.cursor/*`** except **`.cursor/skills/`**, so teams can commit optional Cursor skill trees. See [`.cursor/skills/README.md`](../.cursor/skills/README.md). Narrative guides for many topics live under [`docs/guides/skills/`](../docs/guides/skills/index.md).
