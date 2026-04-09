@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Examples / GameBootstrap UPM compile** — `Examples/GameBootstrap.cs` no longer references **`IntelliVerseX.AI`** or **`IntelliVerseX.Bootstrap`** (those assemblies are not published in the Git UPM subtree; they remain in the monorepo under `Assets/_IntelliVerseXSDK`). The sample now initializes via **`IntelliVerseX.Core`** (`IntelliVerseXManager` + `IntelliVerseXConfig`) and keeps optional **Hiro** examples (`IVXHiroCoordinator`).
 - **IntelliVerseX.Examples.asmdef** — Removed invalid assembly references to **`IntelliVerseX.AI`**, **`IntelliVerseX.Bootstrap`**, and **`IntelliVerseX.Discord`** (not present as runtime assemblies in the UPM package).
+- **Reported SDK version vs `package.json`** — **`IntelliVerseXManager.SDKVersion`** and related constants were still **4.0.0**; **`IntelliVerseXConfig.version`**, editor wizards, and several UI labels still showed **5.8.0**. These now match **`5.8.2`** so the Console, Package Manager, and **IntelliVerseX →** menus agree with **`com.intelliversex.sdk` / `package.json`**.
 
 ---
 

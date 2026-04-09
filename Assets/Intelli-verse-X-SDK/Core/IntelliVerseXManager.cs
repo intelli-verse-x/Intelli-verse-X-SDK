@@ -17,7 +17,7 @@ namespace IntelliVerseX.Core
     /// </summary>
     public class IntelliVerseXManager : MonoBehaviour
     {
-        public const string SDKVersion = "4.0.0";
+        public const string SDKVersion = "5.8.2";
 
         private static IntelliVerseXManager _instance;
         private static IntelliVerseXConfig _config;

@@ -20,7 +20,7 @@ namespace IntelliVerseX.Editor
     {
         #region Constants
         
-        private const string SDK_VERSION = "5.8.0";
+        private const string SDK_VERSION = "5.8.2";
         private const string PREFS_SETUP_COMPLETE = "IVX_ProjectSetupComplete";
         private const string PREFS_SETUP_VERSION = "IVX_ProjectSetupVersion";
         
