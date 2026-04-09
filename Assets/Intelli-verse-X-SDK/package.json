@@ -1,6 +1,6 @@
 {
   "name": "com.intelliversex.sdk",
-  "version": "5.8.0",
+  "version": "5.8.1",
   "displayName": "IntelliVerseX SDK",
   "description": "Complete game SDK: Bootstrap (one-drop init), 33 Hiro live-ops systems, 7 AI/LLM subsystems (NPC dialog, assistant, moderation, content gen, profiling, voice services, personas), 11 Discord Social subsystems, multiplayer, analytics, 16 demo UIs. 10-platform support. Battle-tested in production.",
   "unity": "2023.3",

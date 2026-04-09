@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.8.1] - 2026-04-09
+
+### Fixed
+
+- **UPM self-contained Hiro + Satori** — The Git UPM path `Assets/Intelli-verse-X-SDK` now includes **`IntelliVerseX.Hiro`** and **`IntelliVerseX.Satori`** assemblies (`Hiro/`, `Satori/` with `.asmdef` files). This resolves **CS0234 / CS0246** when `IntelliVerseX.V2`, **Social** (e.g. Friend Streak), and other modules reference `IVXHiroRpcClient`, `IVXHiroCoordinator`, `IVXSatoriClient`, etc., but those assemblies were previously missing from the published package subtree.
+
+### Changed
+
+- **Canonical Hiro/Satori location for consumers** — Hiro and Satori sources were moved from `Assets/_IntelliVerseXSDK/` into **`Assets/Intelli-verse-X-SDK/`** so a single Unity project does not register duplicate `IntelliVerseX.Hiro` / `IntelliVerseX.Satori` assemblies. Monorepo modules under `_IntelliVerseXSDK` still reference the same assembly **names**; resolution uses the copy inside the UPM root.
+
+---
+
 ## [5.2.0] - 2026-04-01
 
 ### 🏰 New Feature: Clan System
