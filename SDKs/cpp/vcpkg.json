@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "builtin-baseline": "b4f29c54450ddfc7efd2989cb9d32158ae291b40",
+  "dependencies": [
+    "protobuf",
+    {
+      "name": "rapidjson",
+      "version>=": "2020-09-14#2"
+    },
+    "optional-lite"
+  ],
+  "overrides": [
+    { "name": "curl", "version": "8.0.1" }
+  ]
+}

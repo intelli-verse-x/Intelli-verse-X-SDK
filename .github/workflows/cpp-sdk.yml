@@ -24,6 +24,14 @@ jobs:
       - name: Install CMake
         uses: lukka/get-cmake@latest
 
+      # nakama-cpp v2.8+ resolves deps via vcpkg (optional-lite, protobuf, …)
+      - name: Install vcpkg dependencies (Nakama C++)
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgGitCommitId: 'b4f29c54450ddfc7efd2989cb9d32158ae291b40'
+          runVcpkgInstall: true
+          vcpkgJsonGlob: 'SDKs/cpp/vcpkg.json'
+
       - name: Install system dependencies
         shell: bash
         run: |
