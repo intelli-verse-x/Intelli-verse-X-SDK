@@ -1,138 +1,113 @@
 using UnityEngine;
-using IntelliVerseX.AI;
-using IntelliVerseX.Bootstrap;
+using IntelliVerseX.Core;
 using IntelliVerseX.Hiro;
 
 /// <summary>
-/// Example game bootstrap for IntelliVerseX SDK integration.
-/// Shows the minimal code needed to integrate any game with the SDK.
-///
-/// Steps to integrate your game:
-/// 1. Add the IVX_Bootstrap.prefab to your first scene (Assets → _IntelliVerseXSDK → Bootstrap)
-/// 2. Configure IVXBootstrapConfig with your Nakama server details
-/// 3. (Optional) Create an IVXAIConfig asset for AI features
-/// 4. Attach this script to a GameObject in your first scene
-/// 5. Implement your game logic in StartGame()
-///
-/// That's it! Your game now has:
-/// - Unified identity (Nakama + optional Cognito)
-/// - Hiro economy, leaderboards, and inventory
-/// - AI NPC Dialog, Moderation, Content Generation
-/// - Discord Social SDK integration
-/// - Analytics via Satori
-/// - Multiplayer via Game Modes
+/// Example scene bootstrap for the Git UPM package (<c>com.intelliversex.sdk</c>).
+/// Uses modules that ship under <c>Assets/Intelli-verse-X-SDK</c> (Core + Hiro, etc.).
 /// </summary>
+/// <remarks>
+/// AI and legacy <c>IVXBootstrap</c> live in the monorepo under <c>Assets/_IntelliVerseXSDK</c>;
+/// they are not part of the UPM subtree. For the same flow with AI, open the full SDK project
+/// or copy those assemblies into your game explicitly.
+///
+/// Setup:
+/// 1. Create <see cref="IntelliVerseXConfig"/> (Assets → Create → IntelliVerse-X → Game Configuration).
+/// 2. Assign it on this component.
+/// 3. Optionally add <see cref="IVXHiroCoordinator"/> to the scene and initialize Hiro after auth.
+/// </remarks>
 public class GameBootstrap : MonoBehaviour
 {
-    [Header("AI Configuration (Optional)")]
-    [Tooltip("Assign your IVXAIConfig asset to enable AI features")]
-    [SerializeField] private IVXAIConfig aiConfig;
+    [Header("SDK Configuration")]
+    [SerializeField]
+    [Tooltip("Create via: Assets → Create → IntelliVerse-X → Game Configuration")]
+    private IntelliVerseXConfig _sdkConfig;
 
     [Header("Debug")]
-    [SerializeField] private bool showSDKInfo = true;
+    [SerializeField] private bool _showSdkInfo = true;
 
-    private void OnEnable()
+    private void Awake()
     {
-        IVXBootstrap.Instance.OnBootstrapComplete += OnSDKReady;
-    }
-
-    private void OnDisable()
-    {
-        if (IVXBootstrap.Instance != null)
-            IVXBootstrap.Instance.OnBootstrapComplete -= OnSDKReady;
-    }
-
-    private void OnSDKReady(bool success)
-    {
-        Debug.Log("[GameBootstrap] SDK Ready!");
-
-        if (showSDKInfo)
-            PrintSDKInfo();
-
-        if (aiConfig != null)
-            InitializeAI();
-
-        StartGame();
-    }
-
-    private void InitializeAI()
-    {
-        string token = IVXBootstrap.Instance.AuthToken;
-        string userId = IVXBootstrap.Instance.UserId;
-
-        IVXAINPCDialogManager.Instance?.Initialize(aiConfig);
-        IVXAINPCDialogManager.Instance?.SetAuthToken(token);
-
-        IVXAIAssistant.Instance?.Initialize(aiConfig);
-        IVXAIAssistant.Instance?.SetAuthToken(token);
-
-        IVXAIModerator.Instance?.Initialize(aiConfig);
-        IVXAIModerator.Instance?.SetAuthToken(token);
-
-        IVXAIContentGenerator.Instance?.Initialize(aiConfig);
-        IVXAIContentGenerator.Instance?.SetAuthToken(token);
-
-        if (!string.IsNullOrEmpty(userId))
+        if (_sdkConfig == null)
         {
-            IVXAIProfiler.Instance?.Initialize(aiConfig, userId);
-            IVXAIProfiler.Instance?.SetAuthToken(token);
-            IVXAIProfiler.Instance?.StartAutoTracking();
+            Debug.LogError("[GameBootstrap] Assign IntelliVerseXConfig (see also CompleteGameBootstrap).");
+            return;
         }
 
-        IVXAIVoiceServices.Instance?.Initialize(aiConfig);
-        IVXAIVoiceServices.Instance?.SetAuthToken(token);
+        if (!_sdkConfig.IsValid())
+        {
+            Debug.LogError("[GameBootstrap] IntelliVerseXConfig is invalid. Check Game ID and Game Name.");
+            return;
+        }
 
-        Debug.Log("[GameBootstrap] AI managers initialized.");
+        IntelliVerseXManager.Initialize(_sdkConfig);
+        IntelliVerseXManager.Instance.OnReady += OnSdkReady;
+        IntelliVerseXManager.Instance.OnError += OnSdkError;
+    }
+
+    private void OnDestroy()
+    {
+        if (IntelliVerseXManager.Instance != null)
+        {
+            IntelliVerseXManager.Instance.OnReady -= OnSdkReady;
+            IntelliVerseXManager.Instance.OnError -= OnSdkError;
+        }
+    }
+
+    private void OnSdkError(string message)
+    {
+        Debug.LogError($"[GameBootstrap] SDK error: {message}");
+    }
+
+    private void OnSdkReady()
+    {
+        Debug.Log("[GameBootstrap] SDK ready.");
+
+        if (_showSdkInfo)
+            PrintSdkInfo();
+
+        StartGame();
     }
 
     private void StartGame()
     {
         Debug.Log("=== GAME STARTING ===");
-        Debug.Log($"Welcome, Player {IVXBootstrap.Instance.UserId}!");
-
-        // Your game logic here:
-        // SceneManager.LoadScene("MainMenu");
+        Debug.Log($"Welcome, {IntelliVerseXIdentity.Username} (GameId: {IntelliVerseXIdentity.GameId})");
     }
 
-    private void PrintSDKInfo()
+    private void PrintSdkInfo()
     {
-        var bootstrap = IVXBootstrap.Instance;
-        Debug.Log("=== IntelliVerseX SDK v5.8.0 ===");
-        Debug.Log($"User ID:    {bootstrap.UserId}");
-        Debug.Log($"User Name:  {bootstrap.UserName}");
-        Debug.Log($"AI Config:  {(aiConfig != null ? aiConfig.Provider.ToString() : "None")}");
-        Debug.Log($"Mock Mode:  {(aiConfig != null ? aiConfig.MockMode.ToString() : "N/A")}");
-        Debug.Log("================================");
+        Debug.Log("=== IntelliVerseX SDK (UPM sample) ===");
+        Debug.Log($"SDK Version: {IntelliVerseXManager.SDKVersion}");
+        Debug.Log($"Config:    {_sdkConfig.gameName} ({_sdkConfig.gameId})");
+        Debug.Log($"Username:  {IntelliVerseXIdentity.Username}");
+        Debug.Log($"DeviceId:  {IntelliVerseXIdentity.DeviceId}");
+        Debug.Log($"GameId:    {IntelliVerseXIdentity.GameId}");
+        Debug.Log("======================================");
     }
 
-    // Example: Submit score to leaderboard (replace leaderboard id with your Hiro leaderboard id)
+    /// <summary>
+    /// Example: submit a score to a Hiro leaderboard (requires <see cref="IVXHiroCoordinator"/> initialized).
+    /// </summary>
     public async void SubmitScore(long score)
     {
         var hiro = IVXHiroCoordinator.Instance;
-        if (hiro == null || !hiro.IsInitialized) return;
-        string gameId = string.IsNullOrEmpty(IVXBootstrap.Instance.GameId) ? null : IVXBootstrap.Instance.GameId;
+        if (hiro == null || !hiro.IsInitialized)
+            return;
+
+        string gameId = string.IsNullOrEmpty(IntelliVerseXIdentity.GameId) ? null : IntelliVerseXIdentity.GameId;
         var result = await hiro.Leaderboards.SubmitScoreAsync("default", score, 0, null, null, gameId);
         if (result != null)
-            Debug.Log($"Score {score} submitted! (rank {result.rank})");
+            Debug.Log($"[GameBootstrap] Score {score} submitted (rank {result.rank}).");
     }
 
-    // Example: Moderate chat before sending
+    /// <summary>Example chat send (no moderation — add your own filter if needed).</summary>
     public void SendChat(string message)
     {
-        if (IVXAIModerator.Instance == null || !IVXAIModerator.Instance.IsEnabled)
-        {
-            BroadcastChat(message);
-            return;
-        }
-
-        IVXAIModerator.Instance.FilterMessage(message, filtered =>
-        {
-            if (!string.IsNullOrEmpty(filtered))
-                BroadcastChat(filtered);
-        });
+        BroadcastChat(message);
     }
 
-    private void BroadcastChat(string message)
+    private static void BroadcastChat(string message)
     {
         Debug.Log($"[Chat] {message}");
     }

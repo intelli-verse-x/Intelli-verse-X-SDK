@@ -139,7 +139,7 @@ Score deletion is **server-dependent** (permissions and hooks). Many games never
 
 For limited-time events, use the Hiro integration:
 
-- Type: `IVXEventLeaderboardSystem` (`ListAsync`, etc.) under `Assets/_IntelliVerseXSDK/Hiro/`.
+- Type: `IVXEventLeaderboardSystem` (`ListAsync`, etc.) under `Assets/Intelli-verse-X-SDK/Hiro/` (UPM package root).
 - See [Hiro API](hiro.md) and [Hiro integration guide](../guides/hiro-integration.md).
 
 Event leaderboards complement Nakama period leaderboards; configure both in backend and keep ids documented per game.
