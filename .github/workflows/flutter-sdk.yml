@@ -13,8 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # nakama ^1.3.0 → protobuf ≥4.1.0 requires Dart SDK ≥3.6
-        sdk: ['3.6.0', 'stable']
+        sdk: ['3.4.0', 'stable']
 
     steps:
       - uses: actions/checkout@v4
