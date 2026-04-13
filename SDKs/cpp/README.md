@@ -117,7 +117,7 @@ target_link_libraries(your_app PRIVATE intelliversex)
 # Or via FetchContent
 include(FetchContent)
 FetchContent_Declare(intelliversex
-    GIT_REPOSITORY https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git
+    GIT_REPOSITORY https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git
     SOURCE_SUBDIR SDKs/cpp
 )
 FetchContent_MakeAvailable(intelliversex)
@@ -225,7 +225,7 @@ src/
 
 ## API Reference
 
-See the [full documentation](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/platforms/cpp/).
+See the [full documentation](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/platforms/cpp/).
 
 ## Nakama Client Library
 

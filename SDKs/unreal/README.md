@@ -232,7 +232,7 @@ Source/IntelliVerseX/
 
 ## API Reference
 
-See the [full documentation](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/platforms/unreal/).
+See the [full documentation](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/platforms/unreal/).
 
 ## Nakama Client Library
 

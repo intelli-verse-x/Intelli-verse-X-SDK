@@ -10,12 +10,12 @@ namespace IntelliVerseX.Editor
     {
         #region Constants
         
-        private const string DOCS_URL = "https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/";
+        private const string DOCS_URL = "https://intelli-verse-x.github.io/Intelli-verse-X-SDK/";
         private const string QUICKSTART_URL = DOCS_URL + "getting-started/quickstart/";
         private const string API_REFERENCE_URL = DOCS_URL + "api/core/";
         private const string TROUBLESHOOTING_URL = DOCS_URL + "troubleshooting/faq/";
         private const string CHANGELOG_URL = DOCS_URL + "changelog/";
-        private const string GITHUB_URL = "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK";
+        private const string GITHUB_URL = "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK";
         private const string ISSUES_URL = GITHUB_URL + "/issues";
         
         #endregion

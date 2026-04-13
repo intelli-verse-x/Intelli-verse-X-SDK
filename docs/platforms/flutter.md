@@ -16,7 +16,7 @@ Add to your `pubspec.yaml`:
 dependencies:
   intelliversex_sdk:
     git:
-      url: https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git
+      url: https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git
       path: SDKs/flutter
   nakama: ^1.3.0
 ```
@@ -246,7 +246,7 @@ Built on **[nakama](https://pub.dev/packages/nakama)** — the official Heroic L
 
 ## Source
 
-- **[SDKs/flutter/](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/tree/main/SDKs/flutter)** — `lib/intelliversex_sdk.dart`, `lib/src/*.dart`, `pubspec.yaml`, tests under `test/` when present.
+- **[SDKs/flutter/](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/tree/main/SDKs/flutter)** — `lib/intelliversex_sdk.dart`, `lib/src/*.dart`, `pubspec.yaml`, tests under `test/` when present.
 
 ## Further reading
 

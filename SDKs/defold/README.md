@@ -216,7 +216,7 @@ intelliversex/
 
 ## API Reference
 
-See the [full documentation](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/platforms/defold/).
+See the [full documentation](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/platforms/defold/).
 
 ## Nakama Client Library
 

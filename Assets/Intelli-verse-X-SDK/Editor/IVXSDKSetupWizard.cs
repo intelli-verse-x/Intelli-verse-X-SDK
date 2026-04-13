@@ -33,8 +33,8 @@ namespace IntelliVerseX.Editor
         private const string PACKAGE_NAME = "com.intelliversex.sdk";
         
         // Version check URLs
-        private const string GITHUB_RELEASES_API_URL = "https://api.github.com/repos/AkshayAdsworlds/Intelli-verse-X-Unity-SDK/releases/latest";
-        private const string GITHUB_RELEASES_PAGE_URL = "https://github.com/AkshayAdsworlds/Intelli-verse-X-Unity-SDK/releases";
+        private const string GITHUB_RELEASES_API_URL = "https://api.github.com/repos/AkshayAdsworlds/Intelli-verse-X-SDK/releases/latest";
+        private const string GITHUB_RELEASES_PAGE_URL = "https://github.com/AkshayAdsworlds/Intelli-verse-X-SDK/releases";
         private const string VERSION_CHECK_PREF_KEY = "IVX_LastVersionCheck";
         private const double VERSION_CHECK_INTERVAL_HOURS = 1.0; // Check every hour
 

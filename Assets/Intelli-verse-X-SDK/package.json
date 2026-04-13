@@ -5,9 +5,9 @@
   "description": "Complete game SDK: Bootstrap (one-drop init), 33 Hiro live-ops systems, 7 AI/LLM subsystems (NPC dialog, assistant, moderation, content gen, profiling, voice services, personas), 11 Discord Social subsystems, multiplayer, analytics, 16 demo UIs. 10-platform support. Battle-tested in production.",
   "unity": "2023.3",
   "unityRelease": "0f1",
-  "documentationUrl": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK#readme",
-  "changelogUrl": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/blob/main/Assets/Intelli-verse-X-SDK/CHANGELOG.md",
-  "licensesUrl": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/blob/main/Assets/Intelli-verse-X-SDK/LICENSE",
+  "documentationUrl": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK#readme",
+  "changelogUrl": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/blob/main/Assets/Intelli-verse-X-SDK/CHANGELOG.md",
+  "licensesUrl": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/blob/main/Assets/Intelli-verse-X-SDK/LICENSE",
   "hideInEditor": false,
   "type": "library",
   "keywords": [
@@ -110,7 +110,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git"
+    "url": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git"
   },
   "license": "MIT",
   "_ivx_externalDependencies": {

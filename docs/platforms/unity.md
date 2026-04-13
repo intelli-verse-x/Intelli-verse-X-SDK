@@ -24,7 +24,7 @@ Add to your `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Assets/_IntelliVerseXSDK"
   }
 }
 ```
@@ -34,7 +34,7 @@ With specific version tag:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git?path=Assets/_IntelliVerseXSDK#v5.8.0"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Assets/_IntelliVerseXSDK#v5.8.0"
   }
 }
 ```
@@ -422,7 +422,7 @@ See the [Unity modules documentation](../modules/index.md) for complete API refe
 
 ## Source
 
-[Assets/\_IntelliVerseXSDK/](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/tree/main/Assets/_IntelliVerseXSDK)
+[Assets/\_IntelliVerseXSDK/](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/tree/main/Assets/_IntelliVerseXSDK)
 
 ## Further Reading
 

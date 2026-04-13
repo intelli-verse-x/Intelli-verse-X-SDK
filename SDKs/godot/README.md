@@ -282,7 +282,7 @@ addons/intelliversex/
 
 ## API Reference
 
-See the [full documentation](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/platforms/godot/).
+See the [full documentation](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/platforms/godot/).
 
 ## Nakama Client Library
 

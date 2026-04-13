@@ -8,7 +8,7 @@ namespace IntelliVerseX.GameModes
     /// Central singleton for game mode selection, player slot management, and match lifecycle.
     /// Attach to a persistent GameObject or let it auto-create via Instance.
     /// </summary>
-    [HelpURL("https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/modules/multiplayer/")]
+    [HelpURL("https://intelli-verse-x.github.io/Intelli-verse-X-SDK/modules/multiplayer/")]
     public class IVXGameModeManager : MonoBehaviour
     {
         #region Singleton

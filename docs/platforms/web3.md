@@ -269,8 +269,8 @@ await ivx.fetchWallet();
 
 ## Further Reading
 
-- [SDKs/web3/README.md](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/tree/main/SDKs/web3) — npm package readme and API notes
-- [SDK Web3 strategy doc](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/blob/main/SDKs/Web3-SDK-Strategy-and-Features.md) — product and integration context
+- [SDKs/web3/README.md](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/tree/main/SDKs/web3) — npm package readme and API notes
+- [SDK Web3 strategy doc](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/blob/main/SDKs/Web3-SDK-Strategy-and-Features.md) — product and integration context
 - [Nakama JavaScript client](https://heroiclabs.com/docs/nakama/client-libraries/javascript/) — sessions, RPC, storage
 - [Nakama custom authentication](https://heroiclabs.com/docs/nakama/concepts/user-accounts/#custom-authentication) — how `authenticateCustom` maps to your verifier
 - [ethers v6 docs](https://docs.ethers.org/v6/) — `BrowserProvider`, signing
@@ -283,4 +283,4 @@ await ivx.fetchWallet();
 
 ## Source
 
-[SDKs/web3/](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/tree/main/SDKs/web3)
+[SDKs/web3/](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/tree/main/SDKs/web3)

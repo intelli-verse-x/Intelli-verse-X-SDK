@@ -7,11 +7,11 @@ From game design document to live retention — one SDK, any engine, every platf
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License"></a>
-  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/Version-5.8.1-orange.svg" alt="Version"></a>
-  <a href="https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/"><img src="https://img.shields.io/badge/Docs-Online-blue.svg" alt="Documentation"></a>
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/Version-5.8.2-orange.svg" alt="Version"></a>
+  <a href="https://intelli-verse-x.github.io/Intelli-verse-X-SDK/"><img src="https://img.shields.io/badge/Docs-Online-blue.svg" alt="Documentation"></a>
   <a href="https://openupm.com/packages/com.intelliversex.sdk"><img src="https://img.shields.io/npm/v/com.intelliversex.sdk?label=openupm&registry_uri=https://package.openupm.com" alt="OpenUPM"></a>
   <a href=".cursor/skills"><img src="https://img.shields.io/badge/AI%20Skills-31-blueviolet" alt="31 AI Skills"></a>
-  <a href="https://discord.gg/intelliversex"><img src="https://img.shields.io/badge/Discord-Join-5865F2?logo=discord&logoColor=white" alt="Discord"></a>
+  <a href="https://discord.gg/YVPxPFftMQ"><img src="https://img.shields.io/badge/Discord-Join-5865F2?logo=discord&logoColor=white" alt="Discord"></a>
 </p>
 
 ---
@@ -110,7 +110,7 @@ Keep players engaged and revenue growing after launch:
 
 | Platform | Language | Source | Guide |
 |----------|----------|--------|-------|
-| **Unity** | C# | [Assets/Intelli-verse-X-SDK](Assets/Intelli-verse-X-SDK/) | [Quickstart](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/getting-started/quickstart/) |
+| **Unity** | C# | [Assets/Intelli-verse-X-SDK](Assets/Intelli-verse-X-SDK/) | [Quickstart](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/getting-started/quickstart/) |
 | **Unreal Engine** | C++ / Blueprints | [SDKs/unreal](SDKs/unreal/) | [Guide](SDKs/unreal/README.md) |
 | **Godot 4** | GDScript | [SDKs/godot](SDKs/godot/) | [Guide](SDKs/godot/README.md) |
 | **Roblox** | Luau | [SDKs/roblox](SDKs/roblox/) | [Guide](SDKs/roblox/README.md) |
@@ -165,7 +165,7 @@ Keep players engaged and revenue growing after launch:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Assets/Intelli-verse-X-SDK#v5.8.1"
+    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Assets/Intelli-verse-X-SDK#v5.8.2"
   }
 }
 ```
@@ -1052,18 +1052,18 @@ Built on proven open-source foundations:
 
 ## Documentation
 
-[**Full Documentation Site**](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/)
+[**Full Documentation Site**](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/)
 
 | Topic | Link |
 |-------|------|
-| Getting Started | [Quickstart](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/getting-started/quickstart/) |
-| Platform SDKs | [Platforms](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/platforms/) |
-| API Reference | [API](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/api/core/) |
-| AI Agent Skills | [Skills Guide](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/guides/ai-agent-skills/) |
-| XR/VR/AR | [XR Guide](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/platforms/xr-vr-ar/) |
-| Console | [Console Guide](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/platforms/console/) |
-| Troubleshooting | [FAQ](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/troubleshooting/faq/) |
-| Changelog | [Changelog](https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/changelog/) |
+| Getting Started | [Quickstart](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/getting-started/quickstart/) |
+| Platform SDKs | [Platforms](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/platforms/) |
+| API Reference | [API](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/api/core/) |
+| AI Agent Skills | [Skills Guide](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/guides/ai-agent-skills/) |
+| XR/VR/AR | [XR Guide](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/platforms/xr-vr-ar/) |
+| Console | [Console Guide](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/platforms/console/) |
+| Troubleshooting | [FAQ](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/troubleshooting/faq/) |
+| Changelog | [Changelog](https://intelli-verse-x.github.io/Intelli-verse-X-SDK/changelog/) |
 
 ---
 
@@ -1081,9 +1081,9 @@ MIT License — see [LICENSE](LICENSE)
 
 ## Support
 
-- [Issues](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues)
-- [Discussions](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/discussions)
-- [Discord](https://discord.gg/intelliversex)
+- [Issues](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/issues)
+- [Discussions](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/discussions)
+- [Discord](https://discord.gg/YVPxPFftMQ)
 - Email: support@intelli-verse-x.ai
 
 ---

@@ -12,7 +12,7 @@ namespace IntelliVerseX.Bootstrap
     /// to start automatically in <c>Start()</c>.
     /// </summary>
     [DisallowMultipleComponent]
-    [HelpURL("https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/getting-started/quickstart/")]
+    [HelpURL("https://intelli-verse-x.github.io/Intelli-verse-X-SDK/getting-started/quickstart/")]
     public sealed class IVXBootstrap : MonoBehaviour
     {
         #region Serialized Fields

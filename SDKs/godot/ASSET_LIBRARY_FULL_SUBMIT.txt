@@ -20,16 +20,16 @@ Addons → Scripts
 Custom
 
 --- REPOSITORY URL ---
-https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK
+https://github.com/Intelli-verse-X/Intelli-verse-X-SDK
 
 --- ISSUES URL ---
-https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues
+https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/issues
 
 --- DOWNLOAD (Commit or URL — paste when host is Custom) ---
-https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/releases/download/godot-v5.1.0/IntelliVerseX-Godot-5.1.0.zip
+https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/releases/download/godot-v5.1.0/IntelliVerseX-Godot-5.1.0.zip
 
 --- ICON URL ---
-https://raw.githubusercontent.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/main/SDKs/godot/icon.png
+https://raw.githubusercontent.com/Intelli-verse-X/Intelli-verse-X-SDK/main/SDKs/godot/icon.png
 (IMPORTANT: Commit and push icon.png from SDKs/godot/ to main so this URL resolves. No ?raw=true.)
 
 --- LICENSE ---

@@ -115,8 +115,8 @@ We welcome:
 ### Clone Repository
 
 ```bash
-git clone https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git
-cd Intelli-verse-X-Unity-SDK
+git clone https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git
+cd Intelli-verse-X-SDK
 ```
 
 ### Unity First Run
@@ -387,7 +387,7 @@ mkdocs serve
 
 ## Questions?
 
-- 💬 [GitHub Discussions](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/discussions)
+- 💬 [GitHub Discussions](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/discussions)
 - 📧 [Email](mailto:contribute@intelli-verse-x.ai)
 
 ---

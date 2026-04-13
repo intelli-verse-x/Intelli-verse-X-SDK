@@ -236,7 +236,7 @@ Built on [nakama-js](https://github.com/heroiclabs/nakama-js). Wallet and severa
 
 ## Source
 
-- [SDKs/javascript/](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/tree/main/SDKs/javascript)
+- [SDKs/javascript/](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/tree/main/SDKs/javascript)
 - [Feature Coverage Matrix](../FEATURE_COVERAGE_MATRIX.md)
 - [ivx-cross-platform skill](../../.cursor/skills/ivx-cross-platform/SKILL.md) (repo) — parity and stub semantics
 

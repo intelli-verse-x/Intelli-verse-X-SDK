@@ -3,7 +3,7 @@
 # and commit the updated versions/* and port version/sha512.
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
-    REPO Intelli-verse-X/Intelli-verse-X-Unity-SDK
+    REPO Intelli-verse-X/Intelli-verse-X-SDK
     REF "v1.5.0"
     SHA512 0
     HEAD_REF main

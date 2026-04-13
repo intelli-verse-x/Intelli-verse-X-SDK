@@ -11,8 +11,8 @@ Automate your game SDK integration with 7 purpose-built AI agent skills. Works w
 Skills are included in the repository. Clone the repo and they activate automatically:
 
 ```bash
-git clone https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git
-cd Intelli-verse-X-Unity-SDK
+git clone https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git
+cd Intelli-verse-X-SDK
 # Open in Cursor or Windsurf — skills are auto-discovered from .cursor/skills/
 ```
 
@@ -26,7 +26,7 @@ The agent loads the matching skill and walks you through the entire process.
 
 ```bash
 # Add the IntelliVerseX marketplace
-/plugin marketplace add https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK
+/plugin marketplace add https://github.com/Intelli-verse-X/Intelli-verse-X-SDK
 
 # Install a specific skill
 /plugin install ivx-sdk-setup

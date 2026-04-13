@@ -273,13 +273,13 @@ Built on [nakama-cpp](https://github.com/heroiclabs/nakama-cpp). Community proje
 
 ## Source
 
-- [SDKs/cocos2dx/](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/tree/main/SDKs/cocos2dx)
+- [SDKs/cocos2dx/](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/tree/main/SDKs/cocos2dx)
 - [Feature Coverage Matrix](../FEATURE_COVERAGE_MATRIX.md)
 
 ## Further Reading
 
 - [Nakama C++ client guide](https://heroiclabs.com/docs/nakama/client-libraries/cpp/)
 - [Cocos2d-x programming guide](https://docs.cocos2d-x.org/)
-- [IntelliVerseX Cocos README](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/blob/main/SDKs/cocos2dx/README.md)
+- [IntelliVerseX Cocos README](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/blob/main/SDKs/cocos2dx/README.md)
 - [Live ops skill](../../.cursor/skills/ivx-live-ops/SKILL.md)
 - [Cross-platform skill](../../.cursor/skills/ivx-cross-platform/SKILL.md)

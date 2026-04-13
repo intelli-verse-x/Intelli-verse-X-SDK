@@ -26,7 +26,7 @@ namespace IntelliVerseX.AI
     /// Create via Assets > Create > IntelliVerseX > AI > Configuration.
     /// </summary>
     [CreateAssetMenu(fileName = "IVXAIConfig", menuName = "IntelliVerseX/AI/Configuration", order = 1)]
-    [HelpURL("https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/modules/ai/")]
+    [HelpURL("https://intelli-verse-x.github.io/Intelli-verse-X-SDK/modules/ai/")]
     public class IVXAIConfig : ScriptableObject
     {
         #region Serialized Fields

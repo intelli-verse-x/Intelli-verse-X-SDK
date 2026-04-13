@@ -101,7 +101,7 @@ Add to your `pubspec.yaml`:
 dependencies:
   intelliversex_sdk:
     git:
-      url: https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git
+      url: https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git
       path: SDKs/flutter
   nakama: ^1.3.0
 ```

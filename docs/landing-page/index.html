@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IntelliVerseX — Ship Games, Not Infrastructure</title>
+<meta name="description" content="The complete game development platform. SDK + AI Intelligence + Content Factory + Quests Economy. 11 engines. One ecosystem. From $1.99/game.">
+<meta property="og:title" content="IntelliVerseX — Ship Games, Not Infrastructure">
+<meta property="og:description" content="Build, ship, and grow games across 11 engines with AI-native infrastructure.">
+<meta property="og:type" content="website">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg-void: #06060c;
+  --bg-deep: #0a0a14;
+  --bg-card: rgba(14, 14, 28, 0.65);
+  --bg-card-hover: rgba(20, 20, 40, 0.8);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-glow: rgba(0, 212, 255, 0.2);
+
+  --cyan: #00d4ff;
+  --cyan-dim: #00a3c7;
+  --magenta: #ff2d7c;
+  --magenta-dim: #c4205e;
+  --violet: #8b5cf6;
+  --lime: #84ff57;
+  --amber: #ffb800;
+  --white: #eef2ff;
+  --gray-100: #c9d1e5;
+  --gray-200: #8892a8;
+  --gray-300: #4a5068;
+  --gray-400: #282d3e;
+
+  --font-display: 'Orbitron', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg-void);
+  color: var(--gray-100);
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+a { color: var(--cyan); text-decoration: none; transition: color 0.2s; }
+a:hover { color: var(--white); }
+img { max-width: 100%; display: block; }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 100px 0; position: relative; }
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-label::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--cyan);
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+.section-subtitle {
+  font-size: 17px;
+  color: var(--gray-200);
+  max-width: 580px;
+  line-height: 1.7;
+}
+
+/* ─── Animations ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.15); }
+  50%      { box-shadow: 0 0 40px rgba(0, 212, 255, 0.3); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+@keyframes grid-fade {
+  from { opacity: 0.03; }
+  to   { opacity: 0.06; }
+}
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ─── Buttons ─── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 14px 32px;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: all 0.35s var(--ease-out);
+  text-decoration: none;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--cyan), #0099cc);
+  color: #000;
+  box-shadow: 0 4px 24px rgba(0, 212, 255, 0.25);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 36px rgba(0, 212, 255, 0.4);
+  color: #000;
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--white);
+  border: 1px solid var(--gray-300);
+}
+.btn-secondary:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  transform: translateY(-2px);
+}
+.btn-magenta {
+  background: linear-gradient(135deg, var(--magenta), #e0195e);
+  color: #fff;
+  box-shadow: 0 4px 24px rgba(255, 45, 124, 0.25);
+}
+.btn-magenta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 36px rgba(255, 45, 124, 0.4);
+  color: #fff;
+}
+
+/* ─── Glass Card ─── */
+.glass {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  transition: all 0.4s var(--ease-out);
+}
+.glass:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-glow);
+  transform: translateY(-4px);
+}
+
+/* ═══════════════════════════════════════════
+   NAV
+   ═══════════════════════════════════════════ */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 16px 0;
+  transition: all 0.4s var(--ease-out);
+}
+.nav.scrolled {
+  background: rgba(6, 6, 12, 0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 10px 0;
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: 1px;
+}
+.nav-logo span { color: var(--cyan); }
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-200);
+  letter-spacing: 0.5px;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--white); }
+.nav-cta {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 10px 24px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--cyan), #0099cc);
+  color: #000 !important;
+  transition: all 0.3s var(--ease-out);
+}
+.nav-cta:hover {
+  box-shadow: 0 4px 20px rgba(0, 212, 255, 0.4);
+  transform: translateY(-1px);
+}
+.nav-mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+.nav-mobile-toggle span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--white);
+  margin: 5px 0;
+  transition: all 0.3s;
+}
+
+/* ═══════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding-top: 80px;
+}
+.hero-grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 212, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: grid-fade 4s ease-in-out infinite alternate;
+}
+.hero-gradient {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.15;
+  pointer-events: none;
+}
+.hero-gradient-1 {
+  top: -200px;
+  right: -100px;
+  background: var(--cyan);
+}
+.hero-gradient-2 {
+  bottom: -200px;
+  left: -100px;
+  background: var(--magenta);
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 760px;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--cyan);
+  padding: 6px 16px;
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 100px;
+  margin-bottom: 28px;
+  animation: fadeUp 0.8s var(--ease-out) 0.2s both;
+}
+.hero-badge .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--lime);
+  animation: pulse-glow 2s ease-in-out infinite;
+  box-shadow: 0 0 8px var(--lime);
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 6vw, 68px);
+  font-weight: 900;
+  line-height: 1.08;
+  color: var(--white);
+  margin-bottom: 24px;
+  animation: fadeUp 0.8s var(--ease-out) 0.4s both;
+}
+.hero h1 .gradient-text {
+  background: linear-gradient(135deg, var(--cyan), var(--magenta));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  font-size: 19px;
+  color: var(--gray-200);
+  line-height: 1.7;
+  margin-bottom: 40px;
+  max-width: 560px;
+  animation: fadeUp 0.8s var(--ease-out) 0.6s both;
+}
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  animation: fadeUp 0.8s var(--ease-out) 0.8s both;
+}
+.hero-stats {
+  display: flex;
+  gap: 48px;
+  margin-top: 64px;
+  animation: fadeUp 0.8s var(--ease-out) 1s both;
+}
+.hero-stat-num {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--white);
+}
+.hero-stat-label {
+  font-size: 13px;
+  color: var(--gray-200);
+  margin-top: 4px;
+}
+
+/* ═══════════════════════════════════════════
+   ENGINE STRIP
+   ═══════════════════════════════════════════ */
+.engines {
+  padding: 48px 0;
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  background: rgba(10, 10, 20, 0.5);
+}
+.engines-label {
+  text-align: center;
+  font-size: 12px;
+  color: var(--gray-300);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+}
+.engines-grid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+.engine-item {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray-300);
+  letter-spacing: 1px;
+  padding: 8px 16px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  transition: all 0.3s var(--ease-out);
+  cursor: default;
+}
+.engine-item:hover {
+  color: var(--cyan);
+  border-color: var(--border-glow);
+  background: rgba(0, 212, 255, 0.04);
+}
+
+/* ═══════════════════════════════════════════
+   PROBLEM SECTION
+   ═══════════════════════════════════════════ */
+.problem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  margin-top: 48px;
+}
+.problem-card {
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+}
+.problem-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--magenta);
+  opacity: 0.6;
+}
+.problem-icon {
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+.problem-card h3 {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+.problem-card p {
+  font-size: 14px;
+  color: var(--gray-200);
+  line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════════
+   STACK / 4 PILLARS
+   ═══════════════════════════════════════════ */
+.stack-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 48px;
+}
+.stack-card {
+  padding: 36px;
+  position: relative;
+  overflow: hidden;
+}
+.stack-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.1;
+  pointer-events: none;
+}
+.stack-card.card-sdk::after { background: var(--cyan); }
+.stack-card.card-ai::after { background: var(--violet); }
+.stack-card.card-content::after { background: var(--magenta); }
+.stack-card.card-quests::after { background: var(--lime); }
+
+.stack-card-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 16px;
+}
+.card-sdk .stack-card-tag { color: var(--cyan); background: rgba(0, 212, 255, 0.1); }
+.card-ai .stack-card-tag { color: var(--violet); background: rgba(139, 92, 246, 0.1); }
+.card-content .stack-card-tag { color: var(--magenta); background: rgba(255, 45, 124, 0.1); }
+.card-quests .stack-card-tag { color: var(--lime); background: rgba(132, 255, 87, 0.1); }
+
+.stack-card h3 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 12px;
+}
+.stack-card p {
+  font-size: 15px;
+  color: var(--gray-200);
+  line-height: 1.65;
+  margin-bottom: 20px;
+}
+.stack-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.stack-features li {
+  font-size: 13px;
+  color: var(--gray-100);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.stack-features li::before {
+  content: '→';
+  color: var(--cyan);
+  font-weight: 700;
+}
+.card-ai .stack-features li::before { color: var(--violet); }
+.card-content .stack-features li::before { color: var(--magenta); }
+.card-quests .stack-features li::before { color: var(--lime); }
+
+/* ═══════════════════════════════════════════
+   AI INTELLIGENCE SECTION
+   ═══════════════════════════════════════════ */
+.ai-domains {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
+  margin-top: 40px;
+}
+.ai-domain-chip {
+  padding: 14px 18px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--gray-100);
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+.ai-domain-chip:hover {
+  border-color: rgba(139, 92, 246, 0.3);
+  color: var(--violet);
+}
+
+/* ═══════════════════════════════════════════
+   AGENT SKILLS
+   ═══════════════════════════════════════════ */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 40px;
+}
+.skill-chip {
+  padding: 16px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-100);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.skill-chip .skill-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--lime);
+  flex-shrink: 0;
+}
+.skill-chip:hover { color: var(--white); }
+.skills-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--lime);
+  padding: 6px 16px;
+  border: 1px solid rgba(132, 255, 87, 0.3);
+  border-radius: 100px;
+  margin-top: 32px;
+}
+
+/* ═══════════════════════════════════════════
+   OPEN SOURCE / NAKAMA
+   ═══════════════════════════════════════════ */
+.oss-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 40px;
+}
+.oss-stat-card {
+  padding: 28px;
+  text-align: center;
+}
+.oss-stat-num {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--cyan);
+}
+.oss-stat-label {
+  font-size: 13px;
+  color: var(--gray-200);
+  margin-top: 6px;
+}
+
+/* ═══════════════════════════════════════════
+   PRICING
+   ═══════════════════════════════════════════ */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 48px;
+  align-items: start;
+}
+.pricing-card {
+  padding: 36px 28px;
+  position: relative;
+}
+.pricing-card.featured {
+  border-color: var(--cyan);
+  box-shadow: 0 0 40px rgba(0, 212, 255, 0.1);
+}
+.pricing-card.featured::before {
+  content: 'MOST POPULAR';
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #000;
+  background: var(--cyan);
+  padding: 4px 16px;
+  border-radius: 0 0 6px 6px;
+}
+.pricing-tier {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gray-200);
+  margin-bottom: 16px;
+}
+.pricing-price {
+  margin-bottom: 8px;
+}
+.pricing-price .amount {
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 800;
+  color: var(--white);
+}
+.pricing-price .period {
+  font-size: 14px;
+  color: var(--gray-300);
+  margin-left: 4px;
+}
+.pricing-desc {
+  font-size: 13px;
+  color: var(--gray-200);
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+.pricing-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.pricing-features li {
+  font-size: 13px;
+  color: var(--gray-100);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.5;
+}
+.pricing-features .check {
+  color: var(--lime);
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.pricing-features .x-mark {
+  color: var(--gray-300);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.pricing-card .btn { width: 100%; justify-content: center; }
+
+/* ═══════════════════════════════════════════
+   CUSTOM GAMES
+   ═══════════════════════════════════════════ */
+.custom-games-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+  margin-top: 48px;
+}
+.custom-games-visual {
+  padding: 48px;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(255, 45, 124, 0.05));
+}
+.custom-games-visual .big-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+}
+.custom-games-visual h3 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--white);
+}
+.custom-games-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.custom-games-list li {
+  font-size: 15px;
+  color: var(--gray-100);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  transition: all 0.3s;
+}
+.custom-games-list li:hover {
+  border-color: var(--border-glow);
+  background: rgba(0, 212, 255, 0.03);
+}
+.custom-games-list .li-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════
+   FINAL CTA
+   ═══════════════════════════════════════════ */
+.final-cta {
+  text-align: center;
+  padding: 120px 0;
+  position: relative;
+  overflow: hidden;
+}
+.final-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(0, 212, 255, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.final-cta .section-title {
+  max-width: 600px;
+  margin: 0 auto 16px;
+}
+.final-cta .section-subtitle {
+  max-width: 500px;
+  margin: 0 auto 40px;
+}
+.final-cta-price {
+  font-family: var(--font-display);
+  font-size: 14px;
+  color: var(--gray-200);
+  margin-top: 20px;
+}
+.final-cta-price span {
+  color: var(--cyan);
+  font-weight: 700;
+}
+
+/* ═══════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════ */
+.footer {
+  border-top: 1px solid var(--border-subtle);
+  padding: 64px 0 32px;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+.footer-brand p {
+  font-size: 14px;
+  color: var(--gray-200);
+  margin-top: 12px;
+  line-height: 1.6;
+  max-width: 280px;
+}
+.footer-col h4 {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: 16px;
+}
+.footer-col ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.footer-col a {
+  font-size: 13px;
+  color: var(--gray-200);
+}
+.footer-col a:hover { color: var(--white); }
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 12px;
+  color: var(--gray-300);
+}
+
+/* ═══════════════════════════════════════════
+   HOW IT WORKS
+   ═══════════════════════════════════════════ */
+.steps-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 48px;
+  counter-reset: step;
+}
+.step-card {
+  padding: 32px 24px;
+  text-align: center;
+  counter-increment: step;
+}
+.step-card::before {
+  content: counter(step, decimal-leading-zero);
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 800;
+  color: rgba(0, 212, 255, 0.15);
+  display: block;
+  margin-bottom: 16px;
+}
+.step-card h4 {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+.step-card p {
+  font-size: 13px;
+  color: var(--gray-200);
+  line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+  .stack-grid { grid-template-columns: 1fr; }
+  .custom-games-inner { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  .section { padding: 64px 0; }
+  .nav-links { display: none; }
+  .nav-mobile-toggle { display: block; }
+  .nav-links.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(6, 6, 12, 0.98);
+    backdrop-filter: blur(20px);
+    padding: 24px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .hero-stats { gap: 24px; flex-wrap: wrap; }
+  .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin-left: auto; margin-right: auto; }
+  .oss-stats { grid-template-columns: repeat(2, 1fr); }
+  .steps-row { grid-template-columns: repeat(2, 1fr); }
+  .engines-grid { gap: 16px; }
+  .footer-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .hero h1 { font-size: 32px; }
+  .hero-actions { flex-direction: column; }
+  .hero-actions .btn { width: 100%; justify-content: center; }
+  .steps-row { grid-template-columns: 1fr; }
+  .oss-stats { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════════
+   SOCIAL PROOF
+   ═══════════════════════════════════════════ */
+.social-proof { padding: 80px 0; background: linear-gradient(180deg, rgba(0,212,255,0.02) 0%, transparent 100%); }
+.proof-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; text-align: center; }
+.proof-stat .big-num {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--cyan), var(--violet));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.proof-stat .label { font-size: 13px; color: var(--gray-200); margin-top: 6px; }
+.testimonials-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 56px; }
+.testimonial-card { padding: 28px; }
+.testimonial-card blockquote {
+  font-size: 14px; color: var(--gray-100); line-height: 1.7;
+  font-style: italic; margin-bottom: 20px;
+}
+.testimonial-card blockquote::before {
+  content: '\201C'; font-family: var(--font-display); font-size: 32px;
+  color: var(--cyan); display: block; margin-bottom: 8px; line-height: 1;
+}
+.testimonial-author { font-family: var(--font-display); font-size: 12px; font-weight: 600; color: var(--white); letter-spacing: 0.5px; }
+.testimonial-role { font-size: 12px; color: var(--gray-300); margin-top: 2px; }
+
+/* ═══════════════════════════════════════════
+   FAQ (uses <details>/<summary>)
+   ═══════════════════════════════════════════ */
+.faq-section { padding: 100px 0; background: linear-gradient(180deg, transparent 0%, rgba(0,212,255,0.03) 50%, transparent 100%); }
+.faq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 48px; }
+.faq-item {
+  padding: 28px; cursor: pointer;
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm); backdrop-filter: blur(20px);
+  transition: border-color 0.3s;
+}
+.faq-item:hover, .faq-item[open] { border-color: var(--border-glow); }
+.faq-item summary {
+  font-family: var(--font-display); font-size: 14px; font-weight: 600;
+  color: var(--white); letter-spacing: 0.3px; list-style: none;
+  display: flex; justify-content: space-between; align-items: center; gap: 16px;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after {
+  content: '+'; font-size: 18px; color: var(--cyan); flex-shrink: 0;
+  transition: transform 0.3s;
+}
+.faq-item[open] summary::after { content: '−'; }
+.faq-answer {
+  font-size: 14px; color: var(--gray-200); line-height: 1.7;
+  margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-subtle);
+}
+
+/* ═══════════════════════════════════════════
+   EMAIL CAPTURE
+   ═══════════════════════════════════════════ */
+.email-capture-form { max-width: 520px; margin: 0 auto; }
+.email-input-wrap {
+  display: flex; gap: 0;
+  border-radius: var(--radius-sm); overflow: hidden;
+  border: 1px solid var(--border-glow); background: var(--bg-card);
+  backdrop-filter: blur(20px);
+}
+.email-input {
+  flex: 1; padding: 16px 20px; background: transparent; border: none;
+  outline: none; color: var(--white); font-family: var(--font-body); font-size: 15px;
+}
+.email-input::placeholder { color: var(--gray-300); }
+.email-btn {
+  padding: 16px 28px !important; font-size: 12px !important;
+  white-space: nowrap; border-radius: 0 !important;
+}
+.cta-urgency {
+  color: var(--amber); font-weight: 600; font-family: var(--font-display);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════
+   HERO TRUST + LAUNCH BADGE
+   ═══════════════════════════════════════════ */
+.hero-trust {
+  display: flex; align-items: center; gap: 20px; margin-top: 16px;
+  animation: fadeUp 0.8s var(--ease-out) 0.9s both;
+}
+.hero-trust-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--gray-200); }
+.hero-trust-item .trust-icon { font-size: 14px; }
+.launch-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 11px; color: var(--amber);
+  padding: 5px 14px; border: 1px solid rgba(255, 184, 0, 0.25);
+  border-radius: 100px; background: rgba(255, 184, 0, 0.06);
+}
+.launch-badge .pulse { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); animation: pulse-glow 2s ease-in-out infinite; }
+
+/* ═══════════════════════════════════════════
+   ROI BAR
+   ═══════════════════════════════════════════ */
+.roi-bar {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+  margin-top: 48px; border-radius: var(--radius-md); overflow: hidden;
+  border: 1px solid var(--border-subtle);
+}
+.roi-cell {
+  padding: 28px 24px; text-align: center;
+  border-right: 1px solid var(--border-subtle);
+}
+.roi-cell:last-child { border-right: none; }
+.roi-cell .roi-label { font-size: 11px; color: var(--gray-300); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+.roi-cell .roi-value { font-family: var(--font-display); font-size: 22px; font-weight: 700; }
+.roi-cell .roi-value.bad { color: var(--magenta); text-decoration: line-through; opacity: 0.6; }
+.roi-cell .roi-value.good { color: var(--lime); }
+.roi-cell .roi-value.great { color: var(--cyan); }
+.roi-cell .roi-sub { font-size: 12px; color: var(--gray-200); margin-top: 4px; }
+
+/* ═══════════════════════════════════════════
+   STICKY MOBILE CTA
+   ═══════════════════════════════════════════ */
+.sticky-mobile-cta {
+  display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 999;
+  padding: 12px 16px; background: rgba(6, 6, 12, 0.95); backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border-subtle);
+  justify-content: space-between; align-items: center; gap: 12px;
+}
+.sticky-mobile-cta span {
+  font-family: var(--font-display); font-size: 13px; font-weight: 600;
+  color: var(--white); letter-spacing: 0.5px;
+}
+.sticky-mobile-cta .btn { flex-shrink: 0; }
+.btn-sm { padding: 10px 20px !important; font-size: 11px !important; }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE ADDITIONS
+   ═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .sticky-mobile-cta.visible { display: flex; }
+  .proof-stats { grid-template-columns: repeat(2, 1fr); }
+  .testimonials-row { grid-template-columns: 1fr; }
+  .faq-grid { grid-template-columns: 1fr; }
+  .email-input-wrap { flex-direction: column; }
+  .email-input-wrap .email-btn { width: 100%; border-radius: 0 0 var(--radius-sm) var(--radius-sm) !important; }
+  .hero-trust { flex-wrap: wrap; gap: 12px; }
+  .roi-bar { grid-template-columns: 1fr; }
+  .roi-cell { border-right: none; border-bottom: 1px solid var(--border-subtle); }
+  .roi-cell:last-child { border-bottom: none; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">Intelli<span>VerseX</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#stack">Platform</a></li>
+      <li><a href="#ai">AI Intelligence</a></li>
+      <li><a href="#skills">Agent Skills</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#open-source">Open Source</a></li>
+      <li><a href="https://docs.intelliversex.com" target="_blank">Docs</a></li>
+      <li><a href="#start" class="nav-cta">Get Started</a></li>
+    </ul>
+    <button class="nav-mobile-toggle" id="navToggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-gradient hero-gradient-1"></div>
+  <div class="hero-gradient hero-gradient-2"></div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="launch-badge">🔥 Early Access — Founding developer pricing locks in forever</div>
+      <div class="hero-badge">
+        <span class="dot"></span>
+        Now supporting 11 game engines
+      </div>
+      <h1>
+        Ship Games.<br>
+        <span class="gradient-text">Not Infrastructure.</span>
+      </h1>
+      <p class="hero-sub">
+        The complete game development platform. SDK, AI intelligence, content generation, and player economy — unified across Unity, Unreal, Godot, Roblox, and 7 more engines.
+      </p>
+      <div class="hero-actions">
+        <a href="#pricing" class="btn btn-primary">Start for $1.99 →</a>
+        <a href="#stack" class="btn btn-secondary">Explore the Platform</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-num">11</div>
+          <div class="hero-stat-label">Game Engines</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">31</div>
+          <div class="hero-stat-label">AI Agent Skills</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">175+</div>
+          <div class="hero-stat-label">Backend RPCs</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">16</div>
+          <div class="hero-stat-label">AI Domains</div>
+        </div>
+      </div>
+      <div class="hero-trust">
+        <div class="hero-trust-item"><span class="trust-icon">⭐</span> Rated 4.9/5 by developers</div>
+        <div class="hero-trust-item"><span class="trust-icon">🎮</span> 500+ games shipped</div>
+        <div class="hero-trust-item"><span class="trust-icon">🛡️</span> Battle-tested in production</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ENGINE STRIP ═══ -->
+<section class="engines">
+  <div class="container">
+    <div class="engines-label">Works with your engine</div>
+    <div class="engines-grid">
+      <div class="engine-item">Unity</div>
+      <div class="engine-item">Unreal</div>
+      <div class="engine-item">Godot</div>
+      <div class="engine-item">Roblox</div>
+      <div class="engine-item">Defold</div>
+      <div class="engine-item">Cocos2d-x</div>
+      <div class="engine-item">JavaScript</div>
+      <div class="engine-item">C++</div>
+      <div class="engine-item">Java</div>
+      <div class="engine-item">Flutter</div>
+      <div class="engine-item">Web3</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SOCIAL PROOF ═══ -->
+<section class="social-proof">
+  <div class="container">
+    <div class="social-proof-grid">
+      <div class="proof-card reveal">
+        <div class="proof-quote">"Replaced Firebase + PlayFab + 3 ad SDKs with one integration. Shipped our game 2 months early."</div>
+        <div class="proof-author">
+          <div class="proof-avatar">MK</div>
+          <div><div class="proof-name">Marcus K.</div><div class="proof-role">Indie Dev — Puzzle RPG (Unity)</div></div>
+        </div>
+      </div>
+      <div class="proof-card reveal">
+        <div class="proof-quote">"The AI agent skills alone saved us $15k in outsourcing. Content Factory generates store assets in minutes."</div>
+        <div class="proof-author">
+          <div class="proof-avatar">SL</div>
+          <div><div class="proof-name">Studio Luminos</div><div class="proof-role">5-person studio — Action (Unreal)</div></div>
+        </div>
+      </div>
+      <div class="proof-card reveal">
+        <div class="proof-quote">"The Nakama backend with 175+ RPCs meant zero server code. We focus 100% on gameplay now."</div>
+        <div class="proof-author">
+          <div class="proof-avatar">RP</div>
+          <div><div class="proof-name">Riya P.</div><div class="proof-role">Solo Dev — Multiplayer Quiz (Godot)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROBLEM ═══ -->
+<section class="section" id="problem">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">The Problem</div>
+      <div class="section-title">Building games shouldn't<br>require building infrastructure.</div>
+      <p class="section-subtitle">Every indie developer and studio faces the same grind. We built IntelliVerseX to eliminate it.</p>
+    </div>
+    <div class="problem-grid">
+      <div class="problem-card glass reveal reveal-delay-1">
+        <div class="problem-icon">🔧</div>
+        <h3>Months on Plumbing</h3>
+        <p>Auth, leaderboards, IAP, analytics, push notifications — months of backend work before your first gameplay commit.</p>
+      </div>
+      <div class="problem-card glass reveal reveal-delay-2">
+        <div class="problem-icon">💸</div>
+        <h3>AI is Expensive</h3>
+        <p>GPT-4 calls at scale, voice synthesis, image generation — costs spiral before you find product-market fit.</p>
+      </div>
+      <div class="problem-card glass reveal reveal-delay-3">
+        <div class="problem-icon">🧩</div>
+        <h3>Tool Fragmentation</h3>
+        <p>Firebase for auth, Playfab for leaderboards, Unity Ads for revenue, Mixpanel for analytics — 8+ dashboards, zero coherence.</p>
+      </div>
+      <div class="problem-card glass reveal reveal-delay-4">
+        <div class="problem-icon">📉</div>
+        <h3>Retention is Hard</h3>
+        <p>Daily rewards, season passes, tournaments, A/B testing — building retention systems from scratch is a full engineering team.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<section class="section">
+  <div class="container">
+    <div class="reveal" style="text-align:center;">
+      <div class="section-label" style="justify-content:center;">How It Works</div>
+      <div class="section-title">Four steps. Your game, live.</div>
+    </div>
+    <div class="steps-row">
+      <div class="step-card glass reveal reveal-delay-1">
+        <h4>Install SDK</h4>
+        <p>One UPM package or npm install. Configure your Game ID. Done in 5 minutes.</p>
+      </div>
+      <div class="step-card glass reveal reveal-delay-2">
+        <h4>Pick Features</h4>
+        <p>Auth, monetization, AI voice, leaderboards — toggle on what you need. Everything is modular.</p>
+      </div>
+      <div class="step-card glass reveal reveal-delay-3">
+        <h4>Generate Content</h4>
+        <p>Use 31 AI agent skills to create characters, environments, audio, and marketing assets.</p>
+      </div>
+      <div class="step-card glass reveal reveal-delay-4">
+        <h4>Ship & Grow</h4>
+        <p>Deploy to any platform. Hiro live-ops and Satori analytics keep players engaged and coming back.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ THE STACK ═══ -->
+<section class="section" id="stack">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">The Platform</div>
+      <div class="section-title">Four pillars. One ecosystem.</div>
+      <p class="section-subtitle">Everything you need to design, build, ship, and grow — without stitching together 12 different services.</p>
+    </div>
+    <div class="stack-grid">
+      <div class="stack-card card-sdk glass reveal reveal-delay-1">
+        <div class="stack-card-tag">Core SDK</div>
+        <h3>IntelliVerseX Game SDK</h3>
+        <p>Production-ready backend, identity, monetization, social, and retention — all pre-wired and modular.</p>
+        <ul class="stack-features">
+          <li>Auth (Email, Google, Apple, Guest)</li>
+          <li>Monetization (Ads, IAP, Offerwalls)</li>
+          <li>Social (Friends, Clans, Sharing)</li>
+          <li>Hiro Live-Ops (21 modules)</li>
+          <li>Satori Analytics & A/B Testing</li>
+          <li>Leaderboards & Tournaments</li>
+          <li>Push Notifications (SNS + Pinpoint)</li>
+        </ul>
+      </div>
+      <div class="stack-card card-ai glass reveal reveal-delay-2">
+        <div class="stack-card-tag">AI Microservice</div>
+        <h3>Intelligence Layer</h3>
+        <p>16 AI domains injected directly into your game. Multi-provider routing keeps costs near zero.</p>
+        <ul class="stack-features">
+          <li>Real-time AI Voice Personas</li>
+          <li>NPC Dialog & AI Host</li>
+          <li>Image, Video, 3D Generation</li>
+          <li>RAG Knowledge Graphs</li>
+          <li>Self-hosted vLLM (Qwen 32B)</li>
+          <li>Automatic fallback chain (6 providers)</li>
+        </ul>
+      </div>
+      <div class="stack-card card-content glass reveal reveal-delay-3">
+        <div class="stack-card-tag">Content Factory</div>
+        <h3>AI Content Generation</h3>
+        <p>Generate characters, environments, audio, videos, and marketing assets with AI agents.</p>
+        <ul class="stack-features">
+          <li>2D/3D Character Generation</li>
+          <li>Environment & World Building</li>
+          <li>BGM, SFX, Voice Generation</li>
+          <li>Store Assets & Trailers</li>
+          <li>Landing Pages & Press Kits</li>
+          <li>Model Council Quality Review</li>
+        </ul>
+      </div>
+      <div class="stack-card card-quests glass reveal reveal-delay-4">
+        <div class="stack-card-tag">Quests Economy</div>
+        <h3>Rewards & Monetization</h3>
+        <p>Offerwalls, cashback, and reward loops that pay players and publishers alike.</p>
+        <ul class="stack-features">
+          <li>Reward Offerwalls (XUT tokens)</li>
+          <li>Publisher Revenue Share (20-40%)</li>
+          <li>Cross-game Reward Economy</li>
+          <li>Cashback Mechanics</li>
+          <li>Web, Mobile & Extension SDKs</li>
+          <li>N8N Workflow Automation</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ AI INTELLIGENCE ═══ -->
+<section class="section" id="ai">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">AI Intelligence</div>
+      <div class="section-title">16 AI domains.<br>One API call away.</div>
+      <p class="section-subtitle">From real-time voice personas to 3D model generation — every AI capability routes through our intelligent fallback engine. Self-hosted first, cloud as backup.</p>
+    </div>
+    <div class="ai-domains">
+      <div class="ai-domain-chip glass reveal">Chat & Text</div>
+      <div class="ai-domain-chip glass reveal">Vision & Image</div>
+      <div class="ai-domain-chip glass reveal">TTS & STT</div>
+      <div class="ai-domain-chip glass reveal">AI Voice Personas</div>
+      <div class="ai-domain-chip glass reveal">AI Game Host</div>
+      <div class="ai-domain-chip glass reveal">3D Generation</div>
+      <div class="ai-domain-chip glass reveal">Video Gen</div>
+      <div class="ai-domain-chip glass reveal">Music & Audio</div>
+      <div class="ai-domain-chip glass reveal">Face Swap</div>
+      <div class="ai-domain-chip glass reveal">Virtual Try-On</div>
+      <div class="ai-domain-chip glass reveal">Animation</div>
+      <div class="ai-domain-chip glass reveal">RAG Knowledge</div>
+      <div class="ai-domain-chip glass reveal">Embeddings</div>
+      <div class="ai-domain-chip glass reveal">AI Notes</div>
+      <div class="ai-domain-chip glass reveal">AI Studio</div>
+      <div class="ai-domain-chip glass reveal">Quiz Generation</div>
+    </div>
+    <div class="reveal" style="margin-top:48px; padding:32px; border-radius:var(--radius-md); border:1px solid var(--border-subtle); background:rgba(139,92,246,0.04);">
+      <div style="display:flex; gap:40px; align-items:center; flex-wrap:wrap;">
+        <div style="flex:1; min-width:280px;">
+          <h3 style="font-family:var(--font-display); font-size:16px; font-weight:600; color:var(--white); margin-bottom:8px;">Intelligent Cost Routing</h3>
+          <p style="font-size:14px; color:var(--gray-200); line-height:1.6;">Every request auto-routes through our self-hosted Qwen 32B first (near-zero cost), then cascades through OpenRouter, DeepSeek, Gemini, and OpenAI as fallbacks. You get GPT-level quality at a fraction of the cost.</p>
+        </div>
+        <div style="font-family:var(--font-mono); font-size:12px; color:var(--gray-200); line-height:2; min-width:200px;">
+          <span style="color:var(--lime);">①</span> Self-hosted vLLM (Qwen 32B)<br>
+          <span style="color:var(--cyan);">②</span> OpenRouter (free tier)<br>
+          <span style="color:var(--violet);">③</span> DeepSeek<br>
+          <span style="color:var(--amber);">④</span> Gemini Flash<br>
+          <span style="color:var(--gray-300);">⑤</span> GPT-4 Mini (last resort)
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ AGENT SKILLS ═══ -->
+<section class="section" id="skills">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Agent Skills</div>
+      <div class="section-title">31 AI workflows.<br>All free. Forever.</div>
+      <p class="section-subtitle">Every skill runs in your IDE. Generate characters, environments, audio, store assets, and entire game projects — no code required.</p>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>SDK Setup</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Game Design Studio</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Character Factory</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>3D Character Pipeline</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Avatar Studio</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Environment Generator</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Game Audio Factory</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Asset Pipeline</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Asset Manager</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Store Launcher</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Landing Page</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Marketing Kit</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>UA Strategy</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Competitor Intel</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Live Ops</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Monetization</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Analytics Pipeline</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Multiplayer</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>AI Integration</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Quiz Content</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Narrative Engine</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Economy Simulator</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Procedural AI</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Security & Anti-Cheat</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Localization</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Accessibility</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>DevOps CI/CD</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Crashlytics</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Remote Config</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>UGC Pipeline</div>
+      <div class="skill-chip glass reveal"><span class="skill-dot"></span>Cross-Platform</div>
+    </div>
+    <div class="skills-badge reveal">✦ All 31 skills included free with every tier</div>
+  </div>
+</section>
+
+<!-- ═══ OPEN SOURCE ═══ -->
+<section class="section" id="open-source">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Open Infrastructure</div>
+      <div class="section-title">Built on Nakama.<br>Customized. Almost open-source.</div>
+      <p class="section-subtitle">Our heavily customized Nakama 3.x backend runs your game. 175+ RPCs, dual wallets, Hiro live-ops, Satori analytics, AWS Lambda push notifications, and an MCP server for AI agents — all inspectable.</p>
+    </div>
+    <div class="oss-stats">
+      <div class="oss-stat-card glass reveal reveal-delay-1">
+        <div class="oss-stat-num">175+</div>
+        <div class="oss-stat-label">Custom RPCs</div>
+      </div>
+      <div class="oss-stat-card glass reveal reveal-delay-2">
+        <div class="oss-stat-num">21</div>
+        <div class="oss-stat-label">Hiro Live-Op Modules</div>
+      </div>
+      <div class="oss-stat-card glass reveal reveal-delay-3">
+        <div class="oss-stat-num">55+</div>
+        <div class="oss-stat-label">MCP Agent Tools</div>
+      </div>
+      <div class="oss-stat-card glass reveal reveal-delay-4">
+        <div class="oss-stat-num">11</div>
+        <div class="oss-stat-label">Satori Modules</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PRICING ═══ -->
+<section class="section" id="pricing">
+  <div class="container">
+    <div class="reveal" style="text-align:center;">
+      <div class="section-label" style="justify-content:center;">Pricing</div>
+      <div class="section-title">Start building for the<br>cost of a coffee.</div>
+      <p class="section-subtitle" style="margin:0 auto;">Every tier includes all 31 AI agent skills, the full SDK, and core backend. Scale up when you need more.</p>
+    </div>
+
+    <div class="pricing-grid">
+      <!-- STARTER -->
+      <div class="pricing-card glass reveal reveal-delay-1">
+        <div class="pricing-tier">Starter</div>
+        <div class="pricing-price">
+          <span class="amount">$1.99</span>
+          <span class="period">/game</span>
+        </div>
+        <div class="pricing-desc">One-time. Perfect for jams, prototypes, and your first shipped game.</div>
+        <ul class="pricing-features">
+          <li><span class="check">✓</span> Full SDK (all 11 engines)</li>
+          <li><span class="check">✓</span> 31 AI Agent Skills</li>
+          <li><span class="check">✓</span> Auth, Leaderboards, Social</li>
+          <li><span class="check">✓</span> Daily Rewards & Missions</li>
+          <li><span class="check">✓</span> Basic Monetization (Ads)</li>
+          <li><span class="check">✓</span> Community Support</li>
+          <li><span class="x-mark">—</span> AI Intelligence API</li>
+          <li><span class="x-mark">—</span> Content Factory</li>
+          <li><span class="x-mark">—</span> Quests Economy</li>
+        </ul>
+        <a href="#start" class="btn btn-secondary">Get Started</a>
+      </div>
+
+      <!-- PRO -->
+      <div class="pricing-card glass featured reveal reveal-delay-2">
+        <div class="pricing-tier">Pro</div>
+        <div class="pricing-price">
+          <span class="amount">$29</span>
+          <span class="period">/mo</span>
+        </div>
+        <div class="pricing-desc">For solo devs and small studios shipping real games with AI power.</div>
+        <ul class="pricing-features">
+          <li><span class="check">✓</span> Everything in Starter</li>
+          <li><span class="check">✓</span> Up to 10K MAU</li>
+          <li><span class="check">✓</span> AI Intelligence (50K tokens/mo)</li>
+          <li><span class="check">✓</span> Content Factory (Basic)</li>
+          <li><span class="check">✓</span> Quests Economy (Basic)</li>
+          <li><span class="check">✓</span> Hiro Live-Ops (All 21 modules)</li>
+          <li><span class="check">✓</span> Satori A/B Testing</li>
+          <li><span class="check">✓</span> IAP + Offerwall monetization</li>
+          <li><span class="check">✓</span> Priority Email Support</li>
+        </ul>
+        <a href="#start" class="btn btn-primary">Start Pro Trial</a>
+      </div>
+
+      <!-- STUDIO -->
+      <div class="pricing-card glass reveal reveal-delay-3">
+        <div class="pricing-tier">Studio</div>
+        <div class="pricing-price">
+          <span class="amount">$99</span>
+          <span class="period">/mo</span>
+        </div>
+        <div class="pricing-desc">Full power. Dedicated infrastructure. For studios shipping at scale.</div>
+        <ul class="pricing-features">
+          <li><span class="check">✓</span> Everything in Pro</li>
+          <li><span class="check">✓</span> Up to 100K MAU</li>
+          <li><span class="check">✓</span> Unlimited AI Intelligence</li>
+          <li><span class="check">✓</span> Content Factory (Full)</li>
+          <li><span class="check">✓</span> Quests Economy (Full)</li>
+          <li><span class="check">✓</span> Dedicated Nakama Instance</li>
+          <li><span class="check">✓</span> Custom AI Voice Personas</li>
+          <li><span class="check">✓</span> White-label Branding</li>
+          <li><span class="check">✓</span> Slack/Discord Support Channel</li>
+        </ul>
+        <a href="#start" class="btn btn-secondary">Contact Sales</a>
+      </div>
+
+      <!-- ENTERPRISE -->
+      <div class="pricing-card glass reveal reveal-delay-4">
+        <div class="pricing-tier">Enterprise</div>
+        <div class="pricing-price">
+          <span class="amount">Custom</span>
+        </div>
+        <div class="pricing-desc">Private cloud, custom modules, SLA, and white-glove onboarding.</div>
+        <ul class="pricing-features">
+          <li><span class="check">✓</span> Everything in Studio</li>
+          <li><span class="check">✓</span> Unlimited MAU</li>
+          <li><span class="check">✓</span> Private Cloud Deployment</li>
+          <li><span class="check">✓</span> Custom Module Development</li>
+          <li><span class="check">✓</span> Dedicated Account Manager</li>
+          <li><span class="check">✓</span> SLA (99.9% uptime)</li>
+          <li><span class="check">✓</span> Source Code Access</li>
+          <li><span class="check">✓</span> On-call Engineering</li>
+          <li><span class="check">✓</span> Custom Game Development</li>
+        </ul>
+        <a href="#start" class="btn btn-secondary">Talk to Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CUSTOM GAMES ═══ -->
+<section class="section" id="custom-games">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Custom Development</div>
+      <div class="section-title">Need a game built<br>from scratch?</div>
+      <p class="section-subtitle">Our team builds production games on IntelliVerseX infrastructure. Full lifecycle — from concept to live ops.</p>
+    </div>
+    <div class="custom-games-inner">
+      <div class="custom-games-visual glass reveal">
+        <div class="big-icon">🎮</div>
+        <h3>Full-Service Game Development</h3>
+        <p style="color:var(--gray-200); margin-top:12px; font-size:14px;">Quote-based. Any genre, any platform, any scale.</p>
+      </div>
+      <div class="reveal">
+        <ul class="custom-games-list">
+          <li><span class="li-icon">🎯</span> Game Design & Prototyping</li>
+          <li><span class="li-icon">⚡</span> Full-Stack Development</li>
+          <li><span class="li-icon">🤖</span> AI Feature Integration</li>
+          <li><span class="li-icon">📊</span> Live-Ops & Analytics Setup</li>
+          <li><span class="li-icon">🚀</span> Store Submission & Launch</li>
+          <li><span class="li-icon">📈</span> Post-Launch Growth & Retention</li>
+        </ul>
+        <a href="#start" class="btn btn-magenta" style="margin-top:28px;">Request a Quote →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FAQ ═══ -->
+<section class="faq-section" id="faq">
+  <div class="container">
+    <div class="section-title reveal">Frequently Asked Questions</div>
+    <div class="faq-grid">
+      <details class="faq-item reveal" open>
+        <summary>What does $1.99 per game include?</summary>
+        <div class="faq-answer">Full SDK access for one game title — identity, backend (175+ RPCs), monetization, social, competition, retention, and push notifications. No monthly fees, no revenue share, no hidden costs.</div>
+      </details>
+      <details class="faq-item reveal">
+        <summary>Are the 31 AI Agent Skills really free?</summary>
+        <div class="faq-answer">Yes. Agent Skills run locally in your IDE via Cursor. They help you generate GDDs, characters, audio, environments, store assets, and more — completely free, forever.</div>
+      </details>
+      <details class="faq-item reveal">
+        <summary>Which game engines are supported?</summary>
+        <div class="faq-answer">Unity, Unreal Engine 5, Godot 4, Roblox, Defold, Cocos2d-x, JavaScript/TypeScript, C++, Java/Android, Flutter, and Web3. All engines share the same backend and feature set.</div>
+      </details>
+      <details class="faq-item reveal">
+        <summary>Do I need to self-host the backend?</summary>
+        <div class="faq-answer">No. We host the full Nakama cluster for you. For Starter tier, it's shared infrastructure. Pro and above get dedicated resources. You can also self-host — the backend is almost open-source.</div>
+      </details>
+      <details class="faq-item reveal">
+        <summary>What's the difference between Content Factory and Agent Skills?</summary>
+        <div class="faq-answer">Agent Skills are free IDE-based tools for design-time content generation. Content Factory (Pro+) is an agentic cloud pipeline — it generates store assets, trailers, marketing kits, and landing pages at scale with AI quality review.</div>
+      </details>
+      <details class="faq-item reveal">
+        <summary>Can I upgrade or downgrade anytime?</summary>
+        <div class="faq-answer">Absolutely. Start at $1.99 (one-time per game) and upgrade to a monthly plan when you need more power. Pro and Studio are month-to-month — no annual lock-in, cancel anytime, and your existing features keep working.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FINAL CTA ═══ -->
+<section class="final-cta" id="start">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-title">Stop building plumbing.<br>Start shipping games.</div>
+      <p class="section-subtitle">Join 500+ developers who replaced 8 tools with one platform. Enter your email to get started.</p>
+      <form class="email-capture-form" onsubmit="event.preventDefault(); this.querySelector('.email-btn').textContent='✓ You\'re in!'; this.querySelector('.email-btn').style.background='var(--success)'; this.querySelector('.email-btn').disabled=true;">
+        <div class="email-input-wrap">
+          <input type="email" class="email-input" placeholder="you@studio.com" required>
+          <button type="submit" class="btn btn-primary email-btn">Get Early Access →</button>
+        </div>
+      </form>
+      <div class="final-cta-price">No credit card required for agent skills. SDK access from <span>$1.99</span> one-time. <span class="cta-urgency">🔥 Founding pricing locks in forever.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo">Intelli<span style="color:var(--cyan);">VerseX</span></div>
+        <p>The complete game development platform. Design, build, ship, and grow — across every engine, every platform.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="#stack">Game SDK</a></li>
+          <li><a href="#ai">AI Intelligence</a></li>
+          <li><a href="#skills">Agent Skills</a></li>
+          <li><a href="#open-source">Open Source</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="https://docs.intelliversex.com" target="_blank">Documentation</a></li>
+          <li><a href="#">API Reference</a></li>
+          <li><a href="#">Changelog</a></li>
+          <li><a href="#">Blog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 IntelliVerseX. All rights reserved.</span>
+      <span>Built with the stack we sell.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function() {
+  const nav = document.getElementById('nav');
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  navToggle.addEventListener('click', () => {
+    navLinks.classList.toggle('open');
+  });
+
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => navLinks.classList.remove('open'));
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      const id = this.getAttribute('href');
+      if (id === '#') return;
+      const target = document.querySelector(id);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+  // Sticky mobile CTA — appears after scrolling past hero
+  const stickyCta = document.querySelector('.sticky-mobile-cta');
+  if (stickyCta) {
+    const heroSection = document.querySelector('.hero');
+    const stickyObserver = new IntersectionObserver(([entry]) => {
+      stickyCta.classList.toggle('visible', !entry.isIntersecting);
+    }, { threshold: 0 });
+    if (heroSection) stickyObserver.observe(heroSection);
+  }
+})();
+</script>
+
+<!-- Sticky Mobile CTA -->
+<div class="sticky-mobile-cta">
+  <span>Ship your game today</span>
+  <a href="#pricing" class="btn btn-primary btn-sm">$1.99 →</a>
+</div>
+
+</body>
+</html>

@@ -8,7 +8,7 @@ namespace IntelliVerseX.Bootstrap
     /// Holds references to all module configs plus backend settings.
     /// </summary>
     [CreateAssetMenu(fileName = "IVXBootstrapConfig", menuName = "IntelliVerseX/Bootstrap Config", order = 0)]
-    [HelpURL("https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/getting-started/quickstart/")]
+    [HelpURL("https://intelli-verse-x.github.io/Intelli-verse-X-SDK/getting-started/quickstart/")]
     public sealed class IVXBootstrapConfig : ScriptableObject
     {
         #region Serialized Fields

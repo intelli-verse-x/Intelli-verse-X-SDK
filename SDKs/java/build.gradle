@@ -67,7 +67,7 @@ publishing {
                 packaging = 'jar'
                 name = 'IntelliVerseX SDK'
                 description = 'Complete modular game development SDK for Java/Android — Auth, Backend (Nakama), Profile, Wallet, Leaderboards, Storage, RPC.'
-                url = 'https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK'
+                url = 'https://github.com/Intelli-verse-X/Intelli-verse-X-SDK'
                 licenses {
                     license {
                         name = 'MIT License'
@@ -75,9 +75,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection = 'scm:git:git://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git'
-                    developerConnection = 'scm:git:ssh://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK.git'
-                    url = 'https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK'
+                    connection = 'scm:git:git://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git'
+                    developerConnection = 'scm:git:ssh://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git'
+                    url = 'https://github.com/Intelli-verse-X/Intelli-verse-X-SDK'
                 }
                 developers {
                     developer {

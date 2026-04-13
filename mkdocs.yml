@@ -4,10 +4,10 @@
 site_name: IntelliVerseX SDK
 site_description: Complete modular game development SDK for Unity, Unreal, Godot, Defold, Cocos2d-x, JavaScript, C++, Java, Flutter, and Web3
 site_author: IntelliVerse-X Team
-site_url: https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/
+site_url: https://intelli-verse-x.github.io/Intelli-verse-X-SDK/
 
-repo_name: Intelli-verse-X/Intelli-verse-X-Unity-SDK
-repo_url: https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK
+repo_name: Intelli-verse-X/Intelli-verse-X-SDK
+repo_url: https://github.com/intelli-verse-x/Intelli-verse-X-SDK
 edit_uri: edit/main/docs/
 
 copyright: Copyright &copy; 2026 IntelliVerse-X
@@ -176,13 +176,41 @@ nav:
     - AI Agent Skills: guides/ai-agent-skills.md
     - Skills:
       - guides/skills/index.md
-      - SDK Setup: guides/skills/sdk-setup.md
-      - Monetization: guides/skills/monetization.md
-      - Multiplayer: guides/skills/multiplayer.md
-      - AI Integration: guides/skills/ai-integration.md
-      - Live Operations: guides/skills/live-ops.md
-      - Quiz Content: guides/skills/quiz-content.md
-      - Cross-Platform: guides/skills/cross-platform.md
+      - 3D Character Pipeline: guides/skills/ivx-3d-character-pipeline.md
+      - AI Integration: guides/skills/ivx-ai-integration.md
+      - Accessibility: guides/skills/ivx-accessibility.md
+      - Analytics Pipeline: guides/skills/ivx-analytics-pipeline.md
+      - Asset Manager: guides/skills/ivx-asset-manager.md
+      - Asset Pipeline: guides/skills/ivx-asset-pipeline.md
+      - Avatar Studio: guides/skills/ivx-avatar-studio.md
+      - Character Factory: guides/skills/ivx-character-factory.md
+      - Competitor Intelligence Skill: guides/skills/ivx-competitor-intel.md
+      - Crashlytics: guides/skills/ivx-crashlytics.md
+      - Cross-Platform SDK: guides/skills/ivx-cross-platform.md
+      - DevOps & CI/CD: guides/skills/ivx-devops-cicd.md
+      - Economy Simulator: guides/skills/ivx-economy-simulator.md
+      - Environment Generator: guides/skills/ivx-environment-generator.md
+      - Game Audio Factory: guides/skills/ivx-game-audio-factory.md
+      - Game Design Studio: guides/skills/ivx-game-design-studio.md
+      - Landing Page Generator: guides/skills/ivx-landing-page.md
+      - Legal Compliance Skill: guides/skills/ivx-legal-compliance.md
+      - Live Operations: guides/skills/ivx-live-ops.md
+      - Localization: guides/skills/ivx-localization.md
+      - Marketing Kit Skill: guides/skills/ivx-marketing-kit.md
+      - Monetization: guides/skills/ivx-monetization.md
+      - Multiplayer: guides/skills/ivx-multiplayer.md
+      - Narrative Engine: guides/skills/ivx-narrative-engine.md
+      - Notification Orchestration: guides/skills/ivx-notification-orchestration.md
+      - Procedural AI: guides/skills/ivx-procedural-ai.md
+      - Quality Gates: guides/skills/ivx-quality-gates.md
+      - Quiz Content Pipeline: guides/skills/ivx-quiz-content.md
+      - Remote Config: guides/skills/ivx-remote-config.md
+      - Roblox SDK: guides/skills/ivx-roblox.md
+      - SDK Setup & Configuration: guides/skills/ivx-sdk-setup.md
+      - Security & Anti-Cheat: guides/skills/ivx-security-anticheat.md
+      - Store Launcher: guides/skills/ivx-store-launcher.md
+      - UA & Marketing Strategy: guides/skills/ivx-ua-marketing-strategy.md
+      - UGC Pipeline: guides/skills/ivx-ugc-pipeline.md
   - Troubleshooting:
     - troubleshooting/index.md
     - Build Errors: troubleshooting/build-errors.md
@@ -223,8 +251,8 @@ markdown_extensions:
   - pymdownx.keys
   - pymdownx.magiclink:
       repo_url_shorthand: true
-      user: Intelli-verse-X
-      repo: Intelli-verse-X-Unity-SDK
+      user: intelli-verse-x
+      repo: Intelli-verse-X-SDK
   - pymdownx.mark
   - pymdownx.smartsymbols
   - pymdownx.superfences:

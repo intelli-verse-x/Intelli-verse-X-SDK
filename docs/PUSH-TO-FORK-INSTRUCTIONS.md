@@ -4,7 +4,7 @@ Run these from the **repo root** on your machine (where you are logged into GitH
 
 
 ```bash
-git remote add fork https://github.com/hasanraza31/Intelli-verse-X-Unity-SDK.git
+git remote add fork https://github.com/hasanraza31/Intelli-verse-X-SDK.git
 ```
 
 ## Push each SDK branch

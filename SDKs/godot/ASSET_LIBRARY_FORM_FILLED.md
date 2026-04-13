@@ -13,8 +13,8 @@ Use this when submitting at: **https://godotengine.org/asset-library/asset/submi
 | **Godot version** | `4.2` (supports 4.2 up to 4.6.x) |
 | **Version** | `5.1.0` |
 | **Repository host** | `GitHub` |
-| **Repository URL** | `https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK` |
-| **Issues URL** | `https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues` |
+| **Repository URL** | `https://github.com/Intelli-verse-X/Intelli-verse-X-SDK` |
+| **Issues URL** | `https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/issues` |
 | **Download Commit** | *(see below)* |
 | **Icon URL** | *(see below)* |
 | **License** | `MIT` |
@@ -35,7 +35,7 @@ Use the **full commit hash** of the commit that contains the Godot SDK (e.g. aft
 
 Upload a **square icon** (min 128×128 px) to your repo (e.g. `SDKs/godot/icon.png`), then use the **raw** URL:
 
-- Example: `https://raw.githubusercontent.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/main/SDKs/godot/icon.png`
+- Example: `https://raw.githubusercontent.com/Intelli-verse-X/Intelli-verse-X-SDK/main/SDKs/godot/icon.png`
 - Replace `main` with your branch name if the icon is not on `main` yet.
 
 ---
@@ -72,8 +72,8 @@ Enable the IntelliVerseX plugin in Project → Project Settings → Plugins, the
 
 If the form has a **Support URL** or **Documentation URL**:
 
-- `https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK#readme`  
-  or your docs site if you have one (e.g. `https://intelli-verse-x.github.io/Intelli-verse-X-Unity-SDK/platforms/godot/`).
+- `https://github.com/Intelli-verse-X/Intelli-verse-X-SDK#readme`  
+  or your docs site if you have one (e.g. `https://intelli-verse-x.github.io/Intelli-verse-X-SDK/platforms/godot/`).
 
 ---
 

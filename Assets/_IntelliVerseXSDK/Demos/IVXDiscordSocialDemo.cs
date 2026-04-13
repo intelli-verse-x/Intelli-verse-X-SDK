@@ -494,7 +494,7 @@ namespace IntelliVerseX.Demos
             {
                 if (pr == null) { SetFooterStatus("IVXDiscordPresence missing."); return; }
                 pr.AddButton("Discord", "https://discord.com");
-                pr.AddButton("Community", "https://discord.com/invite");
+                pr.AddButton("Community", "https://discord.gg/YVPxPFftMQ");
                 SetFooterStatus("AddButton x2");
             });
 

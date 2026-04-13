@@ -13,7 +13,7 @@ From your vcpkg clone (or project that uses vcpkg):
 
 ```powershell
 # Path to this overlay (adjust if your repo is elsewhere)
-$overlay = "D:\work\Unityprojects\Intelli-verse-X-Unity-SDK\ports-overlay"
+$overlay = "D:\work\Unityprojects\Intelli-verse-X-SDK\ports-overlay"
 
 # Install nakama-sdk from the overlay
 .\vcpkg install nakama-sdk:x64-windows --overlay-ports=$overlay

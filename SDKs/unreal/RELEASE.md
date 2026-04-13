@@ -8,7 +8,7 @@ How to publish the plugin to **GitHub**, **Unreal Marketplace**, and **GameDev M
 
 ### 1.1 What to ship
 
-- The **plugin** lives under `SDKs/unreal/` in the repo (e.g. `Intelli-verse-X-Unity-SDK`).
+- The **plugin** lives under `SDKs/unreal/` in the repo (e.g. `Intelli-verse-X-SDK`).
 - For a **release**, tag the repo and attach a **zip of the plugin** so users can drop it into `Plugins/` without cloning the whole repo.
 
 ### 1.2 Steps

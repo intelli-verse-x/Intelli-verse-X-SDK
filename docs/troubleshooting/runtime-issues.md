@@ -352,5 +352,5 @@ Debug.Log($"User ID: {IVXAuthService.CurrentUser?.Id}");
 ## Still Stuck?
 
 1. Run SDK diagnostics: `IntelliVerse-X → Diagnostics → Run Check`
-2. Check [GitHub Issues](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/issues)
-3. Post on [GitHub Discussions](https://github.com/Intelli-verse-X/Intelli-verse-X-Unity-SDK/discussions)
+2. Check [GitHub Issues](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/issues)
+3. Post on [GitHub Discussions](https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/discussions)

@@ -23,7 +23,7 @@ Step-by-step to publish **com.intelliversex.sdk** (Unity C# SDK only) on [OpenUP
    | Package name | `com.intelliversex.sdk` |
    | Display name | `IntelliVerseX SDK` |
    | Description | Complete modular game development SDK with 15+ packages: Core, Identity, Auth, Backend, Networking, Localization, Storage, Quiz, Monetization (IAP, Ads), Analytics, and more. |
-   | Repository URL | `https://github.com/intelli-verse-x/Intelli-verse-X-Unity-SDK` |
+   | Repository URL | `https://github.com/intelli-verse-x/Intelli-verse-X-SDK` |
    | License (SPDX) | `MIT` |
    | Topics | `services`, `network`, `mobile`, `integration`, `frameworks` (choose from [topics list](https://github.com/openupm/openupm/blob/master/data/topics.yml)) |
    | README path | `main:README.md` (or `master:README.md` if your default branch is master) |
