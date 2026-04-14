@@ -25,6 +25,7 @@ graph TB
     
     subgraph "Game Features"
         Leaderboards[Leaderboards]
+        Quest[Quest System]
         Quiz[Quiz System]
         Localization[Localization]
     end
@@ -46,6 +47,7 @@ graph TB
     Backend --> Social
     Backend --> Analytics
     Backend --> Leaderboards
+    Backend --> Quest
     Backend --> Quiz
     Core --> Localization
     Core --> IAP
@@ -76,6 +78,7 @@ graph TB
 | [Multiplayer](multiplayer.md) | `IntelliVerseX.GameModes` | Game modes, lobby, matchmaking, local multiplayer |
 | [Wallet & Economy](wallet.md) | `IntelliVerseX.Backend` / `IntelliVerseX.Hiro` | Wallet balance, Hiro economy, store, IAP validation |
 | [Leaderboards](leaderboards.md) | `IntelliVerseX.Leaderboard` | Rankings and scores |
+| [Quest](quest.md) | `IntelliVerseX.Quest` | Task-based rewards, daily missions, milestones, PvP challenges |
 | [Quiz](quiz.md) | `IntelliVerseX.Quiz` | Quiz game framework |
 | [Localization](localization.md) | `IntelliVerseX.Localization` | Multi-language support |
 | [Analytics](analytics.md) | `IntelliVerseX.Analytics` | Event tracking |
@@ -120,6 +123,8 @@ Each module has its own assembly definition:
 | `IntelliVerseX.Localization` | Language support |
 | `IntelliVerseX.Storage` | Data storage |
 | `IntelliVerseX.Leaderboard` | Leaderboard features |
+| `IntelliVerseX.Quest` | Quest system, daily tasks, milestones |
+| `IntelliVerseX.QuestUI` | Quest UI components |
 | `IntelliVerseX.Quiz` | Quiz logic |
 | `IntelliVerseX.QuizUI` | Quiz UI components |
 | `IntelliVerseX.UI` | General UI |
@@ -152,6 +157,7 @@ Core (no dependencies)
 ├── Monetization (→ Core, Storage)
 ├── Platform (→ Core)
 ├── UI (→ Core)
+├── Quest (→ Core, Backend, Identity, Hiro, Analytics)
 ├── Quiz (→ Core, Backend)
 ├── MoreOfUs (→ Core, Backend)
 └── Demos (→ AI, Core, Hiro)
@@ -273,6 +279,7 @@ Core (no dependencies)
 | Social | Backend module |
 | Monetization | LevelPlay/Appodeal/AdMob |
 | Localization | None |
+| Quest | Backend, Identity, Hiro, Analytics modules |
 | Quiz | Backend module |
 | UI | TextMeshPro |
 | AI | Core, Backend, Storage, Monetization + IntelliVerseX AI Backend |

@@ -96,6 +96,7 @@ nav:
     - Localization: modules/localization.md
     - Storage: modules/storage.md
     - Leaderboards: modules/leaderboards.md
+    - Quest System: modules/quest.md
     - Quiz System: modules/quiz.md
     - UI Components: modules/ui.md
     - More Of Us: modules/more-of-us.md
