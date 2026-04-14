@@ -277,11 +277,19 @@ var balance = await IVXWallet.Instance.GetBalance();
 // Redemption options
 var giftCards = await IVXRedemption.Instance.GetGiftCards(countryCode: "US");
 var topUps = await IVXRedemption.Instance.GetMobileTopUps(countryCode: "IN");
+var digitalItems = await IVXRedemption.Instance.GetDigitalMerch(category: "audiobooks");
 
 // Redeem XUT for a gift card
 await IVXRedemption.Instance.RedeemGiftCard(new RedeemRequest {
     ProductId = giftCards[0].Id,   // e.g. Amazon $10
     XutAmount = 1000
+});
+
+// Redeem XUT for digital merchandise (audiobook, video, game skin)
+await IVXRedemption.Instance.RedeemDigitalMerch(new RedeemRequest {
+    ProductId = digitalItems[0].Id,   // e.g. "audiobook-mystery-vol1"
+    XutAmount = 200,
+    DeliveryMethod = DeliveryMethod.InAppDownload
 });
 ```
 

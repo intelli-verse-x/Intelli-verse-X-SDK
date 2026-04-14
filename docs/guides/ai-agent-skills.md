@@ -466,11 +466,12 @@ flowchart LR
 
 | Type | Provider | How It Works |
 |------|----------|-------------|
-| Gift Cards | Reloadly | XUT → gift card for 150+ brands |
+| Gift Cards | Reloadly | XUT → gift card for 150+ brands (Amazon, Apple, Steam, etc.) |
 | Mobile Top-Up | Reloadly | XUT → mobile airtime in 140+ countries |
 | Cash Out | Platform wallet | XUT → bank transfer / PayPal |
-| Merchandise | IntelliVerseX Store | XUT → physical merch |
-| In-Game Items | Your game | XUT → premium skins, characters, boosters |
+| Physical Merchandise | Shipping partner | XUT → t-shirts, hoodies, collectibles |
+| Digital Merchandise | Content delivery | XUT → audiobooks, videos, audio creations, game skins, digital art |
+| In-Game Items | Your game / Nakama | XUT → premium skins, characters, boosters |
 
 ---
 

@@ -22,7 +22,7 @@ The Quest module lets any game add task-based rewards, daily missions, milestone
 - **Platform Quests** — Generic quests across all games (surveys, deals, referrals)
 - **PvP Challenges** — Compete against other players on quest completion
 - **Mini-Game Quests** — Scratch & Win, Spin & Win, IntelliDraws
-- **Reward Redemption** — XUT tokens redeemable for gift cards, mobile top-ups, cash out, merchandise, in-game items
+- **Reward Redemption** — XUT tokens redeemable for gift cards, mobile top-ups, cash out, physical merchandise, digital merchandise (audiobooks, videos, audio creations, game skins), and in-game items
 
 ---
 
@@ -34,9 +34,18 @@ flowchart TD
     Nakama -->|"updates"| UserCanvas["User Canvas"]
     Nakama -->|"updates"| GameCanvas["Quest-GameID Canvas"]
     Nakama -->|"triggers progress"| QuestEngine["Quest Engine"]
-    QuestEngine -->|"completion"| RewardEngine["Reward Engine (XUT)"]
-    RewardEngine -->|"credited"| Wallet["User Wallet"]
-    Wallet -->|"redeems"| Redemption["Gift Cards / Cash Out / Merch"]
+
+    QuestEngine -->|"quest completed"| RewardEngine["Reward Engine"]
+    RewardEngine -->|"XUT + badges"| Wallet["User Wallet"]
+    RewardEngine -->|"leaderboard pts"| Leaderboard["Leaderboard"]
+
+    Wallet -->|"redeems"| PhysicalRedemption["Physical Merchandise\n(Shipping Partner)"]
+    Wallet -->|"redeems"| DigitalRedemption["Digital Merchandise\n(Audiobooks · Videos · Audio\nCreations · Game Skins)"]
+    Wallet -->|"redeems"| GiftCards["Gift Cards\n(Reloadly · 150+ brands)"]
+    Wallet -->|"redeems"| MobileTopUp["Mobile Top-Up\n(Reloadly · 140+ countries)"]
+    Wallet -->|"redeems"| CashOut["Cash Out\n(Bank · PayPal)"]
+    Wallet -->|"redeems"| InGameItems["In-Game Items\n(Nakama Economy)"]
+
     UserCanvas -->|"predicts"| DailyBoard["Daily Quest Board"]
     GameCanvas -->|"cold start"| DailyBoard
 ```
@@ -492,6 +501,26 @@ var result = await IVXQuestManager.RedeemXUTAsync(
         OperatorId = "t-mobile-us"
     });
 
+// Redeem for digital merchandise (audiobooks, videos, game skins)
+var result = await IVXQuestManager.RedeemXUTAsync(
+    RedemptionType.DigitalMerch,
+    new RedemptionOptions
+    {
+        Amount = 200,
+        DigitalItemId = "audiobook-mystery-vol1",
+        DeliveryMethod = DeliveryMethod.InAppDownload
+    });
+
+// Redeem for game skins
+var result = await IVXQuestManager.RedeemXUTAsync(
+    RedemptionType.DigitalMerch,
+    new RedemptionOptions
+    {
+        Amount = 150,
+        DigitalItemId = "dragon-armor-skin",
+        DeliveryMethod = DeliveryMethod.InGameGrant
+    });
+
 // Redeem for in-game items (via Nakama economy)
 var result = await IVXQuestManager.RedeemXUTAsync(
     RedemptionType.InGameItem,
@@ -504,14 +533,26 @@ var result = await IVXQuestManager.RedeemXUTAsync(
 
 ### Redemption Types
 
-| Type | Enum | Backend |
+| Type | Enum | Backend | Examples |
+| --- | --- | --- | --- |
+| Gift Card | `RedemptionType.GiftCard` | Reloadly API | Amazon, Apple, Google Play, Steam |
+| Mobile Top-Up | `RedemptionType.MobileTopUp` | Reloadly API | Airtime in 140+ countries |
+| Cash Out | `RedemptionType.CashOut` | Bank/PayPal | Direct bank transfer, PayPal |
+| Physical Merchandise | `RedemptionType.PhysicalMerch` | Shipping partner | T-shirts, hoodies, collectibles |
+| Digital Merchandise | `RedemptionType.DigitalMerch` | Content delivery | Audiobooks, videos, audio creations, game skins |
+| Coupon Code | `RedemptionType.Coupon` | QuestX coupon pool | Discount codes, promo codes |
+| In-Game Item | `RedemptionType.InGameItem` | Nakama economy | Swords, boosters, premium characters |
+
+### Digital Merchandise Categories
+
+| Category | Delivery Method | Example Items |
 | --- | --- | --- |
-| Gift Card | `RedemptionType.GiftCard` | Reloadly API |
-| Mobile Top-Up | `RedemptionType.MobileTopUp` | Reloadly API |
-| Cash Out | `RedemptionType.CashOut` | Bank/PayPal |
-| Merchandise | `RedemptionType.Merchandise` | Shipping partner |
-| Coupon Code | `RedemptionType.Coupon` | QuestX coupon pool |
-| In-Game Item | `RedemptionType.InGameItem` | Nakama economy |
+| Audiobooks | `DeliveryMethod.InAppDownload` | Original audio stories, guided meditation, game lore narrations |
+| Video Content | `DeliveryMethod.InAppStream` | Exclusive tutorials, behind-the-scenes, creator content |
+| Audio Creations | `DeliveryMethod.InAppDownload` | Music tracks, sound packs, podcast episodes |
+| Game Skins | `DeliveryMethod.InGameGrant` | Character skins, weapon skins, vehicle wraps |
+| Digital Art | `DeliveryMethod.InAppDownload` | Wallpapers, avatars, concept art packs |
+| Premium Filters | `DeliveryMethod.InGameGrant` | AR filters, camera effects, sticker packs |
 
 ---
 
