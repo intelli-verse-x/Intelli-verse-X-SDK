@@ -204,6 +204,7 @@ nav:
       - Notification Orchestration: guides/skills/ivx-notification-orchestration.md
       - Procedural AI: guides/skills/ivx-procedural-ai.md
       - Quality Gates: guides/skills/ivx-quality-gates.md
+      - Quest System: guides/skills/ivx-quest.md
       - Quiz Content Pipeline: guides/skills/ivx-quiz-content.md
       - Remote Config: guides/skills/ivx-remote-config.md
       - Roblox SDK: guides/skills/ivx-roblox.md

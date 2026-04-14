@@ -1,6 +1,6 @@
 # AI Agent Skills for IntelliVerseX SDK
 
-Automate your game SDK integration with 7 purpose-built AI agent skills. Works with **Cursor**, **Windsurf**, **Claude Code**, **Devin**, **OpenAI Codex**, and any agent that reads `SKILL.md` files.
+Automate your game SDK integration with 8 purpose-built AI agent skills. Works with **Cursor**, **Windsurf**, **Claude Code**, **Devin**, **OpenAI Codex**, and any agent that reads `SKILL.md` files.
 
 ---
 
@@ -38,12 +38,12 @@ The agent loads the matching skill and walks you through the entire process.
 skillsgate add @intelliversex/ivx-sdk-setup
 skillsgate add @intelliversex/ivx-monetization
 # ... or install all at once
-skillsgate add @intelliversex/ivx-sdk-setup @intelliversex/ivx-monetization @intelliversex/ivx-multiplayer @intelliversex/ivx-ai-integration @intelliversex/ivx-live-ops @intelliversex/ivx-quiz-content @intelliversex/ivx-cross-platform
+skillsgate add @intelliversex/ivx-sdk-setup @intelliversex/ivx-monetization @intelliversex/ivx-multiplayer @intelliversex/ivx-ai-integration @intelliversex/ivx-live-ops @intelliversex/ivx-quiz-content @intelliversex/ivx-cross-platform @intelliversex/ivx-quest
 ```
 
 ---
 
-## The 7 Skills at a Glance
+## The 8 Skills at a Glance
 
 | # | Skill | What It Does | Say This to Activate |
 |---|-------|-------------|---------------------|
@@ -54,6 +54,7 @@ skillsgate add @intelliversex/ivx-sdk-setup @intelliversex/ivx-monetization @int
 | 5 | **ivx-live-ops** | Set up Hiro live-ops + Satori analytics | "Add daily rewards" / "set up leagues" / "fortune wheel" |
 | 6 | **ivx-quiz-content** | Build quiz content pipelines with S3 + LLM | "Add quiz" / "set up daily quiz" / "generate trivia" |
 | 7 | **ivx-cross-platform** | Port features between 10 game engines | "Port to Unreal" / "port to Godot" / "feature parity" |
+| 8 | **ivx-quest** | Add quests, daily missions, PvP challenges, Scratch & Win, Spin & Win, IntelliDraws | "Add quests" / "add Scratch & Win" / "add PvP challenge" / "set up daily missions" |
 
 ---
 
@@ -348,6 +349,131 @@ GPT-4o -> Python Script -> S3 Bucket -> IVXS3QuizProvider -> Game Client
 
 ---
 
+## Skill 8: Quest System (`ivx-quest`)
+
+**What it does:** Adds a complete quest engine to your game — daily missions, milestone challenges, PvP competitions, and mini-game quests (Scratch & Win, Spin & Win, IntelliDraws). Connects game events to the Quest Engine, issues XUT token rewards, and enables redemption for gift cards, cash out, merchandise, and in-game items.
+
+**When to use it:**
+
+- Adding daily missions or task-based rewards to your game
+- Building a Scratch & Win, Spin & Win, or lottery (IntelliDraws) experience
+- Adding PvP quest challenges between players
+- Setting up milestone/progressive quests (Reach Level 5 → 20 → 50)
+- Connecting game events (wins, scores, levels) to the quest system
+
+**Example prompts:**
+
+- "Add quests to my game"
+- "Set up daily missions for my puzzle game"
+- "Add Scratch & Win to my game"
+- "Add Spin & Win lucky wheel"
+- "Add IntelliDraws lottery"
+- "Set up PvP challenges where players compete on quest completion"
+- "Create milestone quests for level progression"
+- "Wire my game's win events to quest progress"
+- "Add quest rewards with gift card redemption"
+
+**What the agent will do:**
+
+1. Register your `gameId` with the Quest Engine via `IVXQuestManager.Initialize()`
+2. Map your game events to quest triggers using `IVXQuestManager.SendGameEvent()`
+3. Set up the appropriate quest type:
+   - `IVXDailyQuestBoard` for rotating daily missions
+   - `IVXMilestoneQuest` for progressive goal chains
+   - `IVXPvPChallenge` for player-vs-player competitions
+   - `QuestType.ScratchAndWin` / `SpinAndWin` / `IntelliDraws` for mini-game quests
+4. Configure reward tiers and XUT token payouts
+5. Wire completion callbacks to the Reward Engine
+6. Set up redemption options (gift cards, mobile top-ups, cash out, merch, in-game items)
+7. Add the pre-built Quest UI prefabs or build custom UI with quest data bindings
+
+**The 3 straightforward mini-game skills any game can add:**
+
+| Mini-Game | What It Is | Integration Time | User Experience |
+|-----------|-----------|-----------------|----------------|
+| **Scratch & Win** | Virtual scratch card — user scratches to reveal XUT prize | 10 min | Player earns a scratch card by completing a quest → scratches to reveal reward → XUT credited to wallet |
+| **Spin & Win** | Lucky wheel with weighted segments and guaranteed-win tiers | 10 min | Player earns a spin → wheel lands on a segment → XUT/bonus prize credited |
+| **IntelliDraws** | Lottery/draw entries earned through gameplay, drawn at scheduled intervals | 15 min | Player earns draw tickets → enters an active draw → winners announced → XUT distributed |
+
+**Key code patterns the agent uses:**
+
+```csharp
+// Initialize quest manager for your game
+await IVXQuestManager.Instance.Initialize(new QuestConfig {
+    GameId = "your-game-id",
+    EnableDailyBoard = true,
+    EnablePvP = true
+});
+
+// Send game events that trigger quest progress
+IVXQuestManager.Instance.SendGameEvent(new GameEvent {
+    EventType = "match_won",
+    Payload = new { score = 2500, opponent = "player123" }
+});
+
+// Load daily quest board
+var board = await IVXDailyQuestBoard.Instance.GetTodaysQuests();
+foreach (var quest in board.Quests) {
+    Debug.Log($"{quest.Title}: {quest.Progress}/{quest.Target}");
+}
+
+// Add Scratch & Win
+IVXQuestManager.Instance.AddMiniGame(QuestType.ScratchAndWin, new ScratchConfig {
+    RewardTiers = new[] { 10, 25, 50, 100, 500 },  // XUT amounts
+    Probabilities = new[] { 0.40f, 0.30f, 0.15f, 0.10f, 0.05f }
+});
+
+// Add Spin & Win
+IVXQuestManager.Instance.AddMiniGame(QuestType.SpinAndWin, new SpinConfig {
+    Segments = 8,
+    Rewards = new[] { 5, 10, 25, 50, 10, 5, 100, 25 },
+    GuaranteedWinAfter = 3  // guaranteed prize after 3 no-wins
+});
+
+// Add IntelliDraws
+IVXQuestManager.Instance.AddMiniGame(QuestType.IntelliDraws, new DrawConfig {
+    DrawSchedule = "daily",  // "daily", "weekly", "custom"
+    TicketsPerQuest = 1,
+    PrizePool = 10000  // XUT total pool
+});
+
+// Claim rewards on quest completion
+quest.OnCompleted += async (completion) => {
+    var reward = await IVXQuestManager.Instance.ClaimReward(completion.QuestId);
+    Debug.Log($"Earned {reward.XutAmount} XUT!");
+};
+```
+
+**How a new gameID integrates:**
+
+```mermaid
+flowchart LR
+    Dev["Developer says:<br/>'Add quests to my game'"] --> Skill["Agent loads ivx-quest"]
+    Skill --> Register["Registers gameID<br/>with Quest Engine"]
+    Register --> Map["Maps game events<br/>to quest triggers"]
+    Map --> Choose{"Which quest types?"}
+    Choose -->|Daily| DQ["Daily Quest Board"]
+    Choose -->|Mini-Games| MG["Scratch / Spin / Draws"]
+    Choose -->|PvP| PvP["PvP Challenge Setup"]
+    Choose -->|Milestone| MS["Progressive Quests"]
+    DQ --> UI["Quest UI + Rewards"]
+    MG --> UI
+    PvP --> UI
+    MS --> UI
+```
+
+**Redemption options:**
+
+| Type | Provider | How It Works |
+|------|----------|-------------|
+| Gift Cards | Reloadly | XUT → gift card for 150+ brands |
+| Mobile Top-Up | Reloadly | XUT → mobile airtime in 140+ countries |
+| Cash Out | Platform wallet | XUT → bank transfer / PayPal |
+| Merchandise | IntelliVerseX Store | XUT → physical merch |
+| In-Game Items | Your game | XUT → premium skins, characters, boosters |
+
+---
+
 ## How Skills Work Under the Hood
 
 Each skill is a `SKILL.md` file with:
@@ -368,7 +494,8 @@ Skills do not execute code themselves. They guide the AI agent through the corre
 ├── ivx-ai-integration/SKILL.md
 ├── ivx-live-ops/SKILL.md
 ├── ivx-quiz-content/SKILL.md
-└── ivx-cross-platform/SKILL.md
+├── ivx-cross-platform/SKILL.md
+└── ivx-quest/SKILL.md
 ```
 
 ---
@@ -442,4 +569,4 @@ All 7 skills include guidance for XR, console, and WebGL deployment targets:
 
 ---
 
-*IntelliVerseX SDK v5.8.0 -- 7 skills, 10 platforms, one natural language interface.*
+*IntelliVerseX SDK v5.8.0 -- 8 skills, 10 platforms, one natural language interface.*

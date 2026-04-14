@@ -43,6 +43,7 @@ Skills are structured markdown guides (`SKILL.md`) that AI coding agents read to
 | [Notification Orchestration](ivx-notification-orchestration.md) | `ivx-notification-orchestration` | "push notifications", "notification scheduling", |
 | [Procedural AI](ivx-procedural-ai.md) | `ivx-procedural-ai` | "procedural generation", |
 | [Quality Gates](ivx-quality-gates.md) | `ivx-quality-gates` | "quality gates", "CI validation", |
+| [Quest System](ivx-quest.md) | `ivx-quest` | "add quests", "daily missions", "Scratch & Win", "Spin & Win", "IntelliDraws", "PvP challenge" |
 | [Quiz Content Pipeline](ivx-quiz-content.md) | `ivx-quiz-content` | "add quiz", |
 | [Remote Config](ivx-remote-config.md) | `ivx-remote-config` | "remote config", "server config", "feature flags", |
 | [Roblox SDK](ivx-roblox.md) | `ivx-roblox` | Various phrases |
