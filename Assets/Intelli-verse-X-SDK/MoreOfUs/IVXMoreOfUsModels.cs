@@ -352,6 +352,147 @@ namespace IntelliVerseX.MoreOfUs
     #endregion
 
     // ========================================================================
+    // ENRICHED INDEX CATALOG (single JSON for iOS + Android)
+    // ========================================================================
+
+    #region Enriched Index Catalog
+
+    /// <summary>
+    /// Root JSON from the enriched app catalog index (JsonUtility-compatible subset; extra JSON fields are ignored).
+    /// </summary>
+    [Serializable]
+    public class IVXEnrichedAppCatalogIndex
+    {
+        public string dataVersion;
+        public List<IVXEnrichedIndexApp> apps;
+
+        public IVXEnrichedAppCatalogIndex()
+        {
+            apps = new List<IVXEnrichedIndexApp>();
+        }
+    }
+
+    [Serializable]
+    public class IVXEnrichedIndexApp
+    {
+        public string appName;
+        public string bundleId;
+        public IVXEnrichedIndexIos ios;
+        public IVXEnrichedIndexAndroid android;
+    }
+
+    [Serializable]
+    public class IVXEnrichedIndexIos
+    {
+        public bool available;
+        public long trackId;
+        public string appStoreUrl;
+        public string appIconUrl;
+        public float rating;
+        public int ratingCount;
+        public string version;
+        public List<string> genres;
+    }
+
+    [Serializable]
+    public class IVXEnrichedIndexAndroid
+    {
+        public bool available;
+        public string packageName;
+        public string playStoreUrl;
+        public string appIconUrl;
+        public float rating;
+    }
+
+    /// <summary>
+    /// Maps enriched index JSON into the same <see cref="IVXUnifiedAppInfo"/> rows the dual-catalog flow produced.
+    /// </summary>
+    public static class IVXEnrichedCatalogMapper
+    {
+        public static void AppendEnrichedIndexToMerged(IVXEnrichedAppCatalogIndex index, IVXMergedAppCatalog merged)
+        {
+            if (index == null || merged == null)
+                return;
+
+            if (!string.IsNullOrEmpty(index.dataVersion))
+                merged.dataVersion = index.dataVersion;
+
+            if (index.apps == null)
+                return;
+
+            foreach (var app in index.apps)
+            {
+                if (app == null)
+                    continue;
+
+                TryAddAndroidRow(app, merged.apps);
+                TryAddIosRow(app, merged.apps);
+            }
+        }
+
+        private static void TryAddAndroidRow(IVXEnrichedIndexApp app, List<IVXUnifiedAppInfo> target)
+        {
+            var a = app.android;
+            if (a == null || !a.available || string.IsNullOrWhiteSpace(a.playStoreUrl))
+                return;
+
+            var packageId = !string.IsNullOrWhiteSpace(a.packageName) ? a.packageName : app.bundleId;
+            if (string.IsNullOrWhiteSpace(packageId))
+                return;
+
+            var bundle = !string.IsNullOrWhiteSpace(app.bundleId) ? app.bundleId : packageId;
+
+            target.Add(new IVXUnifiedAppInfo
+            {
+                appName = app.appName ?? string.Empty,
+                appIconUrl = a.appIconUrl ?? string.Empty,
+                storeUrl = a.playStoreUrl,
+                appId = packageId,
+                bundleId = bundle,
+                developerName = string.Empty,
+                description = string.Empty,
+                rating = a.rating,
+                ratingCount = 0,
+                price = 0f,
+                isFree = true,
+                platform = IVXAppPlatform.Android
+            });
+        }
+
+        private static void TryAddIosRow(IVXEnrichedIndexApp app, List<IVXUnifiedAppInfo> target)
+        {
+            var i = app.ios;
+            if (i == null || !i.available || string.IsNullOrWhiteSpace(i.appStoreUrl))
+                return;
+
+            var bundle = app.bundleId ?? string.Empty;
+            var primaryGenre = (i.genres != null && i.genres.Count > 0) ? i.genres[0] : string.Empty;
+            var genres = i.genres != null ? new List<string>(i.genres) : new List<string>();
+
+            target.Add(new IVXUnifiedAppInfo
+            {
+                appName = app.appName ?? string.Empty,
+                appIconUrl = i.appIconUrl ?? string.Empty,
+                storeUrl = i.appStoreUrl,
+                appId = i.trackId > 0 ? i.trackId.ToString() : bundle,
+                bundleId = bundle,
+                developerName = string.Empty,
+                description = string.Empty,
+                rating = i.rating,
+                ratingCount = i.ratingCount,
+                price = 0f,
+                isFree = true,
+                platform = IVXAppPlatform.iOS,
+                version = i.version ?? string.Empty,
+                primaryGenre = primaryGenre,
+                genres = genres
+            });
+        }
+    }
+
+    #endregion
+
+    // ========================================================================
     // CONFIGURATION
     // ========================================================================
 
@@ -364,11 +505,17 @@ namespace IntelliVerseX.MoreOfUs
     public class IVXMoreOfUsConfig
     {
         [Header("Data Sources")]
+        [Tooltip("Enriched app catalog index (iOS + Android in one JSON file).")]
+        public string catalogIndexUrl =
+            "https://intelli-verse-x-media.s3.us-east-1.amazonaws.com/app-catalog/enriched/intelliversex/index.json";
+
+        /*
         [Tooltip("URL to Android app catalog JSON")]
         public string androidCatalogUrl = "https://intelli-verse-x-media.s3.us-east-1.amazonaws.com/app-catalog/unified/intelliversex/android.json";
-        
+
         [Tooltip("URL to iOS app catalog JSON")]
         public string iosCatalogUrl = "https://intelli-verse-x-media.s3.us-east-1.amazonaws.com/app-catalog/unified/intelliversex/ios.json";
+        */
 
         [Header("Caching")]
         [Tooltip("Cache duration in hours")]
@@ -392,17 +539,11 @@ namespace IntelliVerseX.MoreOfUs
         public float autoScrollInterval = 5f;
 
         /// <summary>
-        /// Get the catalog URL for the current platform
+        /// Returns the enriched catalog index URL (single source for all platforms).
         /// </summary>
         public string GetCatalogUrlForPlatform()
         {
-#if UNITY_ANDROID
-            return androidCatalogUrl;
-#elif UNITY_IOS
-            return iosCatalogUrl;
-#else
-            return androidCatalogUrl; // Default to Android in editor
-#endif
+            return catalogIndexUrl;
         }
     }
 

@@ -249,26 +249,18 @@ namespace IntelliVerseX.MoreOfUs
             
             try
             {
+                var catalogUrl = GetCatalogIndexUrl();
+                if (string.IsNullOrEmpty(catalogUrl))
+                {
+                    const string msg = "catalogIndexUrl is not set in IVXMoreOfUsConfig.";
+                    LogError(msg);
+                    OnLoadFailed?.Invoke(msg);
+                    return _cachedCatalog;
+                }
+
                 var merged = new IVXMergedAppCatalog();
-
-                // Fetch Android catalog
-                var androidCatalog = await FetchPlatformCatalogAsync<IVXAndroidAppCatalog>(
-                    Config.androidCatalogUrl, ct);
-                if (androidCatalog?.apps != null)
-                {
-                    foreach (var app in androidCatalog.apps)
-                        merged.apps.Add(app.ToUnified());
-                    merged.dataVersion = androidCatalog.dataVersion;
-                }
-
-                // Fetch iOS catalog
-                var iosCatalog = await FetchPlatformCatalogAsync<IVXiOSAppCatalog>(
-                    Config.iosCatalogUrl, ct);
-                if (iosCatalog?.apps != null)
-                {
-                    foreach (var app in iosCatalog.apps)
-                        merged.apps.Add(app.ToUnified());
-                }
+                var indexCatalog = await FetchPlatformCatalogAsync<IVXEnrichedAppCatalogIndex>(catalogUrl, ct);
+                IVXEnrichedCatalogMapper.AppendEnrichedIndexToMerged(indexCatalog, merged);
 
                 merged.fetchedAtUtc = DateTime.UtcNow;
                 _cachedCatalog = merged;
@@ -460,36 +452,19 @@ namespace IntelliVerseX.MoreOfUs
             var merged = new IVXMergedAppCatalog();
             string errorMessage = null;
 
-            // Fetch Android catalog
-            yield return FetchPlatformCatalog<IVXAndroidAppCatalog>(
-                Config.androidCatalogUrl,
-                catalog =>
-                {
-                    if (catalog?.apps != null)
-                    {
-                        foreach (var app in catalog.apps)
-                            merged.apps.Add(app.ToUnified());
-                        merged.dataVersion = catalog.dataVersion;
-                    }
-                },
-                error => errorMessage = error);
-
-            // Fetch iOS catalog
-            yield return FetchPlatformCatalog<IVXiOSAppCatalog>(
-                Config.iosCatalogUrl,
-                catalog =>
-                {
-                    if (catalog?.apps != null)
-                    {
-                        foreach (var app in catalog.apps)
-                            merged.apps.Add(app.ToUnified());
-                    }
-                },
-                error =>
-                {
-                    if (string.IsNullOrEmpty(errorMessage))
-                        errorMessage = error;
-                });
+            var catalogUrl = GetCatalogIndexUrl();
+            if (string.IsNullOrEmpty(catalogUrl))
+            {
+                errorMessage = "catalogIndexUrl is not set in IVXMoreOfUsConfig.";
+                LogError(errorMessage);
+            }
+            else
+            {
+                yield return FetchPlatformCatalog<IVXEnrichedAppCatalogIndex>(
+                    catalogUrl,
+                    catalog => IVXEnrichedCatalogMapper.AppendEnrichedIndexToMerged(catalog, merged),
+                    error => errorMessage = error);
+            }
 
             _isLoading = false;
 
@@ -508,6 +483,12 @@ namespace IntelliVerseX.MoreOfUs
                 LogError($"Failed to fetch catalog: {errorMessage}");
                 OnLoadFailed?.Invoke(errorMessage);
             }
+        }
+
+        private string GetCatalogIndexUrl()
+        {
+            var url = Config.catalogIndexUrl;
+            return string.IsNullOrWhiteSpace(url) ? null : url.Trim();
         }
 
         private IEnumerator FetchPlatformCatalog<T>(string url, Action<T> onSuccess, Action<string> onError) where T : class
