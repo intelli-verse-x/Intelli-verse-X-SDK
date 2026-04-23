@@ -156,19 +156,17 @@ namespace IntelliVerseX.MoreOfUs
         }
 
         /// <summary>
-        /// Configure the catalog URLs if using custom endpoints.
+        /// Configure the enriched catalog index URL if using a custom endpoint.
         /// </summary>
-        /// <param name="androidUrl">URL to Android app catalog JSON</param>
-        /// <param name="iosUrl">URL to iOS app catalog JSON</param>
-        public static void ConfigureUrls(string androidUrl, string iosUrl)
+        /// <param name="catalogIndexUrl">URL to the enriched app catalog index JSON (iOS + Android).</param>
+        public static void ConfigureCatalogIndexUrl(string catalogIndexUrl)
         {
             var config = IVXMoreOfUsManager.Instance?.Config;
-            if (config == null) return;
-            
-            if (!string.IsNullOrEmpty(androidUrl))
-                config.androidCatalogUrl = androidUrl;
-            if (!string.IsNullOrEmpty(iosUrl))
-                config.iosCatalogUrl = iosUrl;
+            if (config == null)
+                return;
+
+            if (!string.IsNullOrEmpty(catalogIndexUrl))
+                config.catalogIndexUrl = catalogIndexUrl;
         }
 
         /// <summary>
