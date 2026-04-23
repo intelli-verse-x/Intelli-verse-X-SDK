@@ -295,7 +295,14 @@ namespace IntelliVerseX.MoreOfUs
                 return new List<IVXUnifiedAppInfo>();
 
             var apps = _cachedCatalog.GetAppsForCurrentPlatform();
-            
+
+#if UNITY_EDITOR
+            // Editor active target may be Standalone etc.; catalog layer returns empty.
+            // When testing with a merged cache, optionally show all non-current rows (Android + iOS).
+            if (apps.Count == 0 && Config.showBothPlatformsInEditor)
+                apps = _cachedCatalog.GetOtherApps();
+#endif
+
             // Limit to max display count
             if (apps.Count > Config.maxAppsToDisplay)
                 apps = apps.GetRange(0, Config.maxAppsToDisplay);

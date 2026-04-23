@@ -318,7 +318,9 @@ namespace IntelliVerseX.MoreOfUs
         /// Get apps for the current platform.
         /// Returns only Android apps on Android, only iOS apps on iOS.
         /// In Editor, uses the active build target to simulate platform behavior.
-        /// Returns empty list on unsupported platforms (Standalone, WebGL, etc.).
+        /// Returns empty list for non-Android/iOS active build targets (e.g. Standalone).
+        /// For Editor testing with a merged cache, <see cref="IVXMoreOfUsManager.GetAppsForCurrentPlatform"/> applies
+        /// <see cref="IVXMoreOfUsConfig.showBothPlatformsInEditor"/> and may fall back to <see cref="GetOtherApps"/>.
         /// </summary>
         public List<IVXUnifiedAppInfo> GetAppsForCurrentPlatform()
         {
