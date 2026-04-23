@@ -797,7 +797,9 @@ namespace IntelliVerseX.MoreOfUs.UI
             if (!_isVisible)
                 return;
 
-            var apps = catalog.GetAppsForCurrentPlatform();
+            var apps = IVXMoreOfUsManager.HasInstance
+                ? IVXMoreOfUsManager.Instance.GetAppsForCurrentPlatform()
+                : (catalog != null ? catalog.GetAppsForCurrentPlatform() : new List<IVXUnifiedAppInfo>());
             PopulateCards(apps);
         }
 
