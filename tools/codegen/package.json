@@ -1,0 +1,21 @@
+{
+  "name": "@intelliversex/multiplayer-codegen",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Codegen pipeline for IVX Multiplayer Kernel proto schemas (TS + C#).",
+  "type": "module",
+  "scripts": {
+    "lint": "buf lint",
+    "breaking": "buf breaking --against '.git#branch=main,subdir=schemas/multiplayer'",
+    "gen:ts": "node scripts/gen-ts.mjs",
+    "gen:csharp": "node scripts/gen-csharp.mjs",
+    "gen:js-pkg": "node scripts/gen-js-pkg.mjs",
+    "gen": "pnpm lint && pnpm gen:ts && pnpm gen:csharp && pnpm gen:js-pkg",
+    "ci": "pnpm lint && pnpm breaking && pnpm gen"
+  },
+  "devDependencies": {
+    "@bufbuild/buf": "^1.43.0",
+    "@bufbuild/protoc-gen-es": "^2.2.0",
+    "@bufbuild/protobuf": "^2.2.0"
+  }
+}

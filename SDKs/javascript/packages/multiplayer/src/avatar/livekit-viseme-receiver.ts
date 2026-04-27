@@ -90,6 +90,44 @@ export class IVXLiveKitVisemeReceiver implements IIVXVisemeStream {
     this.dispatch(payload, true);
   }
 
+  /**
+   * One-line wiring against a live livekit-client `Room` — equivalent
+   * to the Unity `IVXLiveKitVisemeBinder` and Unreal
+   * `UIVXLiveKitVisemeStream::AttachToRoom`. Call once after the room
+   * is connected; the returned function detaches the listener.
+   *
+   *   import { Room, RoomEvent } from 'livekit-client';
+   *   const room = new Room(); await room.connect(url, token);
+   *   const receiver = new IVXLiveKitVisemeReceiver();
+   *   const detach = receiver.attachLiveKitRoom(room);
+   *
+   * Without this method the dev had to remember the exact event name
+   * (`RoomEvent.DataReceived`) and the argument order. We accept any
+   * EventEmitter-shaped object so the helper compiles even when
+   * `livekit-client` isn't a hard dependency of the package.
+   */
+  attachLiveKitRoom(room: {
+    on: (event: string, cb: (...args: unknown[]) => void) => void;
+    off?: (event: string, cb: (...args: unknown[]) => void) => void;
+  }): Unsub {
+    const handler = (...args: unknown[]): void => {
+      // livekit-client signature: (payload: Uint8Array, participant?, kind?, topic?: string)
+      const payload = args[0];
+      const topic   = args[3] as string | undefined;
+      if (payload instanceof Uint8Array) {
+        this.onLiveKitData(payload, topic);
+      } else if (payload && (payload as { byteLength?: number }).byteLength != null) {
+        this.onLiveKitData(new Uint8Array(payload as ArrayBuffer), topic);
+      }
+    };
+    // 'dataReceived' is the runtime event name; `RoomEvent.DataReceived`
+    // resolves to the same string in livekit-client ≥ 1.0.
+    room.on("dataReceived", handler);
+    return () => {
+      try { room.off?.("dataReceived", handler); } catch { /* swallow */ }
+    };
+  }
+
   dispatch(bytes: Uint8Array, isJson?: boolean): void {
     // Phase-4 ships JSON-on-wire; binary proto is wired up separately.
     if (isJson === false) {

@@ -9,14 +9,75 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+_(no unreleased changes)_
 
-- **Game-agnostic admin LiveOps proofcheck** — Added SDK documentation showing how any game built with the SDK can wire analytics, Hiro, and Satori into the production admin dashboard using a stable `game_id`, Satori event metadata, and `ivx_qa_<game_id>_*` QA fixtures.
+---
+
+## [5.9.0] - 2026-04-26
+
+### 🌐 New Feature: Shared 3D Worlds — Avatar Replication + LiveKit Voice/Lip-sync
+
+This release closes the last critical-path client gap for the LiveKit migration (Phases 1–4). Unity, Unreal, JS, Godot, and visionOS clients can now run **shared 3D rooms** where every human avatar replicates head + hand poses on the same wire, voice flows through LiveKit, lip-sync rides on the `viseme.v1` data channel, and AI avatars from the LiveKit Agents worker join the same room.
+
+### Added — Multiplayer Kernel (Unity)
+
+- **`IVXAvatarReplicator` (`MultiplayerKernel/Avatar/IVXAvatarReplicator.cs`)** — drop-in `MonoBehaviour` for remote-human pose replication. Publishes local head + hand transforms with idle suppression + 1 Hz heartbeat; subscribes to `HEAD_POSE`/`LEFT_HAND_POSE`/`RIGHT_HAND_POSE`/`BLENDSHAPES`/`FINGER_CURLS`/`AVATAR_DESCRIPTOR`/`LOD_HINT`/`PEER_LEFT`/`AVATAR_FALLBACK` (opcodes `0xF000`–`0xF008`); applies inbound poses to `IIVXAvatar` instances or fires events for engine-bypass scene graphs.
+- **`IVXAvatarOp` constants (`MultiplayerKernel/Wire/IVXWireConstants.cs`)** — canonical opcode range `0xF000`–`0xF008` for avatar replication, mirroring the JS/Swift/Go server constants bit-for-bit.
+- **`IVXLiveKitVisemeBinder` (`MultiplayerKernel/Voice/IVXLiveKitVisemeBinder.cs`)** — auto-wires `LiveKit.Room.DataReceived` → `IVXLiveKitVisemeReceiver` for the `viseme.v1` topic. One-line lip-sync wiring.
+- **`IVXVoiceTokenClient` (`MultiplayerKernel/Voice/IVXVoiceTokenClient.cs`)** — typed wrapper around `mp_voice_token` Nakama RPC; mints LiveKit URLs/tokens with optional spatial-audio flag.
+- **`IVXARFoundationAnchorProvider` (`MultiplayerKernel/Anchor/IVXARFoundationAnchorProvider.cs`)** — first-class anchor offer for ARFoundation iOS/Android (including ARCore Geospatial opt-in for global co-presence).
+
+### Added — Documentation
+
+- **`docs/multiplayer/AVATAR_REPLICATION_INTEGRATION_GUIDE.md`** — canonical cross-engine, cross-platform integration guide. Covers Unity, Unreal, JS, Godot, visionOS, mobile-2D, Roblox; per-platform input + anchor playbook (Vision Pro / Quest / PSVR2 / iOS-AR / Android-AR / WebXR / PCVR); Phase-5 vision opt-in; bandwidth budget + tuning; QA bot harness; troubleshooting.
+- **`docs/multiplayer/UNITY_3D_WORLD_E2E_ANALYSIS.md`** — Unity-developer end-to-end dry run (mobile + visionOS + Quest + 3D VR + AR).
+- **`docs/multiplayer/CROSS_ENGINE_3D_WORLD_E2E_ANALYSIS.md`** — Unreal / Three.js / Godot / Cocos / Defold / Flutter / Java / native C++ / Web3 / Roblox parity matrix + edge cases.
+- **`Assets/Intelli-verse-X-SDK/MultiplayerKernel/Avatar/README.md`** — focused 5-minute Unity prefab recipe for `IVXAvatarReplicator`.
+- **`Assets/Intelli-verse-X-SDK/Documentation~/admin-liveops-analytics-game-agnostic.md`** — game-agnostic admin LiveOps proofcheck doc.
+
+### Added — JavaScript SDK
+
+- **`@intelliversex/multiplayer/voice/token-client`** — TypeScript wrapper around `mp_voice_token` for browser/Node clients.
+
+### Added — Godot SDK
+
+- `addons/intelliversex/multiplayer/ivx_voice_token_client.gd`, `ivx_livekit_viseme_receiver.gd`, `ivx_multiplayer_kernel.gd` — Godot 4 GDScript bindings for the voice + viseme stack.
+
+### Added — Unreal SDK
+
+- `IVXLiveKitVisemeStream` + `IVXVoiceTokenClient` — UCLASS bindings for voice token minting and ARKit-52 morph driving. (`UIVXAvatarReplicator` UCLASS is on the Phase-6 backlog.)
+
+### Added — Other engine bindings (kernel adapters parity)
+
+- Cocos2d-x: `Classes/IntelliVerseX/IVXMultiplayerKernel.h`.
+- Defold: `intelliversex/multiplayer_kernel.lua`.
+- Flutter: `lib/src/multiplayer/`.
+- Java/Android: `com/intelliversex/sdk/multiplayer/`.
+- C++ native: `include/intelliversex/ivx_multiplayer_kernel.h`, platform notes.
+- Web3: `src/IVXMultiplayerKernelWeb3.ts`.
+- Roblox: `src/Multiplayer/`, `examples/conversational_party.lua`.
+- `SDKs/MULTIPLAYER_KERNEL_ADAPTERS.md` — parity matrix.
+
+### Added — Game-agnostic LiveOps
+
+- **Game-agnostic admin LiveOps proofcheck** — SDK documentation showing how any game built with the SDK can wire analytics, Hiro, and Satori into the production admin dashboard using a stable `game_id`, Satori event metadata, and `ivx_qa_<game_id>_*` QA fixtures.
 - **Configurable analytics RPC IDs** — `IVXAnalyticsManager` now supports `ConfigureRpcIds(...)` and `SetGameRpcPrefix(...)` so new SDK-built games are not forced to use QuizVerse RPC names. QuizVerse defaults remain unchanged for backward compatibility.
 
 ### Fixed
 
 - **Analytics event-name guard** — `IVXAnalyticsManager.TrackEvent` now rejects null, empty, or `"unknown"` event names before emitting to Nakama.
+
+### Server-side prerequisites (already deployed)
+
+- Nakama Goja kernel template `avatar-replication-v1` (`data/modules/avatar_replication/`) registered.
+- LiveKit SFU running; `mp_voice_token` RPC mints tokens.
+- LiveKit Agents worker (`Intelliverse-X-AI/services/livekit-agent-worker/`) joins matches as `agent-${persona_id}`.
+- Feature flags `IVX_LIVEKIT_MULTIPLAYER_VOICE`, `IVX_LIVEKIT_MULTI_HUMAN_AI`, `IVX_LIVEKIT_AVATAR_ENABLED` enabled per the Phase-1–4 runbook (`Intelliverse-X-AI/docs/livekit/MIGRATION_FINAL_SIGNOFF.md`). Phase-5 vision is opt-in via `IVX_LIVEKIT_VISION_ENABLED`.
+
+### Migration notes
+
+- **No breaking changes.** Existing games continue to work without picking up the avatar replicator. Drop `IVXAvatarReplicator` on a player root only when you want shared-3D-world presence.
+- **No client deployment changes required for voice or viseme** — those have been live since Phase-2 / Phase-4. This release adds the human-pose replication piece.
 
 ---
 

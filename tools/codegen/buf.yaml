@@ -1,0 +1,12 @@
+version: v2
+modules:
+  - path: ../../schemas/multiplayer
+  - path: ../../schemas/avatar
+lint:
+  use:
+    - STANDARD
+  except:
+    - PACKAGE_VERSION_SUFFIX
+breaking:
+  use:
+    - FILE

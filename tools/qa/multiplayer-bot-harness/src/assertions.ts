@@ -123,7 +123,11 @@ const OPS: Record<string, (a: number, b: number) => boolean> = {
  * Throws with a human-readable failure if it doesn't hold.
  */
 export function evaluate(stats: BotRunStats, exp: Expectation): void {
-  const m = exp.expression.match(/^\s*([a-z_]+)\s*(<=|>=|==|!=|<|>)\s*([0-9.eE+-]+)\s*$/);
+  // Metric names use [a-z0-9_]+ so percentile suffixes like `_p95_ms`
+  // and version suffixes like `_v1` parse correctly. Bug found by
+  // QA-runbook synthetic run on 2026-04-26 — three Phase-4 viseme
+  // assertions silently failed-to-parse before this fix.
+  const m = exp.expression.match(/^\s*([a-z0-9_]+)\s*(<=|>=|==|!=|<|>)\s*([0-9.eE+-]+)\s*$/);
   if (!m) {
     throw new Error(`bad expectation expression: ${exp.expression}`);
   }

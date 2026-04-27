@@ -1,0 +1,118 @@
+# IVX Multiplayer Kernel — 12-test conformance suite (Pillar 8 + 10).
+# Every adapter PR runs this against the canonical kernel build; the admin
+# dashboard surfaces a pass/fail row per (adapter, engine, version).
+
+version: 1
+suite_id: ivx-mp-conformance-v1
+owner: multiplayer-kernel
+
+tests:
+  - id: C01-handshake-version-skew
+    title: HELLO with stale wire_version returns SCHEMA_TOO_OLD with min_required_version
+    spec: envelope.proto Error.SCHEMA_TOO_OLD
+    matrix: [unity, js, unreal, godot, flutter, java, cpp, web3]
+    success_criteria:
+      - Error.code == SCHEMA_TOO_OLD
+      - Error.min_required_version is non-empty semver
+      - kernel logs negotiation_failed counter += 1
+
+  - id: C02-idempotent-opcode-replay
+    title: Same client_opcode_uuid sent twice in 60s is dropped silently
+    spec: envelope.proto Header.client_opcode_uuid
+    matrix: [unity, js, unreal, godot, flutter, java, cpp, web3]
+    success_criteria:
+      - server processes first occurrence
+      - duplicate is logged as DUPLICATE_OPCODE warn, not error
+      - no template-level callback runs twice
+
+  - id: C03-seq-gap-resync
+    title: Gap > 32 in sender's seq triggers SEQ_GAP and STATE_RESYNC
+    spec: envelope.proto Error.SEQ_GAP, kernel.proto STATE_RESYNC
+    matrix: [unity, js, unreal, godot, flutter, java, cpp, web3]
+    success_criteria:
+      - Error.code == SEQ_GAP returned
+      - Server emits STATE_RESYNC with snapshot_seq >= last server seq
+      - Client side state replaces local cleanly
+
+  - id: C04-reconnect-grace
+    title: Disconnect within reconnect_grace_ms re-attaches presence; over → kicked
+    spec: kernel.proto MATCH_RESUME, PlayerLeft.reason
+    matrix: [unity, js, unreal, godot, flutter, java, cpp, web3]
+    success_criteria:
+      - resume within grace returns Welcome with reconnect_grace_ms_remaining > 0
+      - resume after grace returns MATCH_NOT_FOUND or MATCH_ENDED
+      - PlayerLeft.reason matches (TIMEOUT vs LEFT_VOLUNTARILY)
+
+  - id: C05-clock-authority
+    title: Server match_time_ms is authoritative; client clock skew >30s rejected
+    spec: envelope.proto Header.match_time_ms, Error.CLOCK_SKEW_EXTREME
+    matrix: [unity, js, unreal, godot, flutter, java, cpp, web3]
+    success_criteria:
+      - Hello.wall_clock_unix_ms > server_unix + 30_000 → CLOCK_SKEW_EXTREME
+      - Subsequent inbound opcodes use server match_time, not client clock
+      - ClockSync emitted at >= 5s cadence
+
+  - id: C06-flapping-soft-ban
+    title: > 5 reconnects in 60s soft-bans (FLAPPING) for 30s
+    spec: kernel.proto PlayerKicked.Reason.FLAPPING
+    matrix: [unity, js, unreal, godot, flutter, java, cpp, web3]
+    success_criteria:
+      - 6th reconnect rejected with PlayerKicked.FLAPPING
+      - ban_seconds >= 30
+      - 7th reconnect after ban_seconds succeeds
+
+  - id: C07-rate-limit-burst
+    title: Per-user opcode burst > limit returns RATE_LIMITED, not connection drop
+    spec: envelope.proto Error.RATE_LIMITED
+    matrix: [unity, js, unreal, godot, flutter, java, cpp, web3]
+    success_criteria:
+      - Error.code == RATE_LIMITED with retry_after_ms > 0
+      - Connection remains open
+      - Next opcode after retry_after_ms succeeds
+
+  - id: C08-state-overflow-end-match
+    title: Match state > hard cap → END_MATCH(STATE_OVERFLOW), MatchResultEnvelope persisted
+    spec: kernel.proto MatchEnded.Reason.STATE_OVERFLOW
+    matrix: [unity, js, unreal, godot, flutter, java, cpp, web3]
+    success_criteria:
+      - all clients receive MatchEnded with reason STATE_OVERFLOW
+      - MatchResultEnvelope is persisted (audit row)
+      - kernel emits AnalyticsAlerts mp.state_overflow
+
+  - id: C09-voice-degradation
+    title: LiveKit unavailable → VOICE_UNAVAILABLE + VoiceModeChanged(TEXT_ONLY)
+    spec: kernel.proto VoiceUnavailable, VoiceModeChanged
+    matrix: [unity, js, unreal, swift-visionos, webxr]
+    success_criteria:
+      - server emits VOICE_UNAVAILABLE then VOICE_MODE_CHANGED(TEXT_ONLY)
+      - text chat opcodes still flow
+      - on provider recovery server emits VOICE_MODE_CHANGED(BROADCAST/SPATIAL)
+
+  - id: C10-anchor-lost-fallback
+    title: MR anchor lost → degrade to room-relative; non-MR clients keep playing
+    spec: templates/mixed_reality_anchor.proto AnchorLost
+    matrix: [unity, swift-visionos, webxr, unreal]
+    success_criteria:
+      - AnchorLost.degraded_to_room_relative == true
+      - existing AvatarReplication continues with identity transform
+      - reconverge after anchor recovery without disconnecting clients
+
+  - id: C11-agent-budget-degrade
+    title: Agent exceeds per-match LLM budget → AGENT_DEGRADED_MODE; match continues
+    spec: services/agent.proto AgentDegradedMode.Reason.BUDGET_EXCEEDED
+    matrix: [unity, js, unreal]
+    success_criteria:
+      - AgentDegradedMode emitted with reason BUDGET_EXCEEDED
+      - agent voice falls back to TEXT_ONLY or PRERENDERED_CLIPS
+      - match does NOT end
+      - per-game cost dashboard records spike
+
+  - id: C12-moderation-kill-switch
+    title: Toggling moderation kill-switch pauses enforcement but keeps logging
+    spec: services/moderation.proto ModerationKillSwitch
+    matrix: [unity, js, unreal]
+    success_criteria:
+      - admin toggles kill-switch on
+      - subsequent decisions persist to SafetyDecisionLog
+      - no MUTE/KICK/BAN actions enforced
+      - SEXUAL_MINORS class still blocked (always-blocking override)

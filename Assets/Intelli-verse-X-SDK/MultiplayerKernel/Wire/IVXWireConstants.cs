@@ -170,6 +170,24 @@ namespace IntelliVerseX.MultiplayerKernel.Wire
         public const int MATCH_QUEUE_INFO  = 0xA00D;
     }
 
+    /// <summary>
+    /// Avatar-replication opcodes (templates/avatar_replication.proto, XR_POSE range 0xF000-0xFFFF).
+    /// Mirrors `data/modules/avatar_replication/main.go` and the JS WebXR adapter
+    /// (<c>SDKs/javascript/.../webxr/adapter.ts</c>). Used by <c>IVXAvatarReplicator</c>.
+    /// </summary>
+    public static class IVXAvatarOp
+    {
+        public const int HEAD_POSE         = 0xF000; // PoseQuantized (sender id stamped by server)
+        public const int LEFT_HAND_POSE    = 0xF001; // HandPose (is_left implied by opcode)
+        public const int RIGHT_HAND_POSE   = 0xF002; // HandPose (is_left implied by opcode)
+        public const int BLENDSHAPES       = 0xF003; // FaceBlendshapes
+        public const int FINGER_CURLS      = 0xF004; // FingerPose
+        public const int AVATAR_DESCRIPTOR = 0xF005; // AvatarDescriptor (avatar_v1.proto)
+        public const int LOD_HINT          = 0xF006; // AvatarLOD
+        public const int PEER_LEFT         = 0xF007; // {user_id, reason}
+        public const int AVATAR_FALLBACK   = 0xF008; // {user_id, reason}
+    }
+
     /// <summary>Sync-turn opcodes (templates/sync_turn.proto).</summary>
     public static class IVXSyncTurnOp
     {

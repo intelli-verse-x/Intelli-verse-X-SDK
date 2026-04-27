@@ -67,6 +67,8 @@ export async function runBot(cfg: BotConfig): Promise<BotOutcome> {
   const start = Date.now();
   const tickPeriodMs = 1000 / (cfg.tickRateHz ?? 30);
   const deadline = start + cfg.durationSec * 1000;
+  // Per-bot scratch state (synthetic viseme cycle bookkeeping etc.).
+  const synthState: { headerAt?: number } = {};
 
   let session: { send: Function; leave: Function } | null = null;
   try {
@@ -154,21 +156,42 @@ export async function runBot(cfg: BotConfig): Promise<BotOutcome> {
           if (cfg.visemeFeed) {
             await drainVisemeFeed(cfg.visemeFeed, stats, tickPeriodMs);
           } else {
-            // Synthetic mode — emulate one TTS line every ~5 s with
-            // realistic frame counts and timings so the harness still
-            // exercises the assertion path during local dev.
-            if (stats.totalTicks % Math.max(1, Math.round((cfg.tickRateHz ?? 30) * 5)) === 0) {
+            // Synthetic mode — drip frames per-tick so per-second
+            // bandwidth matches the real LiveKit cadence (60 Hz × 92 B
+            // ≈ 5.5 kbps per active line). Pattern per cycle:
+            //   * tick 0      → header + N frames
+            //   * tick 1..L-1 → N frames each
+            //   * tick L      → footer (bytes only — no frame counter bump)
+            //   * tick L+1..  → idle until next cycle
+            // L (in ticks) is chosen so the line is ~4 s of wall-clock.
+            const tickHz = cfg.tickRateHz ?? 30;
+            const cycleSecs = 5;
+            const lineSecs  = 4;
+            const cycleTicks = Math.max(1, Math.round(tickHz * cycleSecs));
+            const lineTicks  = Math.max(1, Math.round(tickHz * lineSecs));
+            const framesPerTick = Math.max(1, Math.round(60 / tickHz)); // 60 Hz target
+            const cyclePos = stats.totalTicks % cycleTicks;
+            if (cyclePos === 0) {
+              // Header frame.
               stats.visemeHeaders++;
-              const lineFrames = 60 * 4; // ~4s line at 60 Hz
-              const headerAt = Date.now();
-              for (let i = 0; i < lineFrames; i++) {
+              stats.visemeBytesReceived += 110;
+              stats.visemeFirstFrameLatencyMs.push(8 + Math.random() * 12);
+              (synthState as any).headerAt = Date.now();
+            }
+            if (cyclePos >= 0 && cyclePos < lineTicks) {
+              for (let i = 0; i < framesPerTick; i++) {
                 stats.visemeFramesReceived++;
-                stats.visemeBytesReceived += 92; // approx JSON-encoded VisemeFrame
-                if (i === 0) stats.visemeFirstFrameLatencyMs.push(8 + Math.random() * 12);
+                stats.visemeBytesReceived += 92;
                 stats.visemeAudioVideoSkewMs.push(Math.random() * 14);
               }
+            } else if (cyclePos === lineTicks) {
+              // Footer frame.
               stats.visemeFootersReceived++;
-              stats.visemeFooterLatencyMs.push(Date.now() - headerAt + (lineFrames * 16));
+              stats.visemeBytesReceived += 80;
+              const headerAt = (synthState as any).headerAt as number | undefined;
+              if (typeof headerAt === "number") {
+                stats.visemeFooterLatencyMs.push(Date.now() - headerAt);
+              }
             }
           }
           break;

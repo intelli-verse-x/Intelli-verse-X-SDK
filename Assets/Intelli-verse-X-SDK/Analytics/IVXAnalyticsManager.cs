@@ -8,7 +8,9 @@ namespace IntelliVerseX.Analytics
 {
     /// <summary>
     /// Analytics service for IntelliVerse-X SDK
-    /// Uses Nakama RPC for event tracking and session analytics
+    /// Uses Nakama RPC for event tracking and session analytics.
+    /// Defaults preserve the original QuizVerse RPCs; new games can call
+    /// ConfigureRpcIds or SetGameRpcPrefix before Initialize.
     /// 
     /// RPCs used:
     /// - quizverse_log_event: Log custom events with properties
@@ -35,6 +37,9 @@ namespace IntelliVerseX.Analytics
         }
 
         private static string _gameId = string.Empty;
+        private static string _logEventRpcId = "quizverse_log_event";
+        private static string _sessionStartRpcId = "quizverse_track_session_start";
+        private static string _sessionEndRpcId = "quizverse_track_session_end";
 
         /// <summary>
         /// Sets the Game ID for analytics. Must be called before Initialize().
@@ -48,6 +53,42 @@ namespace IntelliVerseX.Analytics
                 return;
             }
             _gameId = gameId;
+        }
+
+        /// <summary>
+        /// Configures game-specific analytics RPC IDs. Call before Initialize.
+        /// </summary>
+        public static void ConfigureRpcIds(string logEventRpcId, string sessionStartRpcId, string sessionEndRpcId)
+        {
+            if (string.IsNullOrWhiteSpace(logEventRpcId) ||
+                string.IsNullOrWhiteSpace(sessionStartRpcId) ||
+                string.IsNullOrWhiteSpace(sessionEndRpcId))
+            {
+                Debug.LogError("[IVXAnalyticsManager] Analytics RPC IDs cannot be null or empty");
+                return;
+            }
+
+            _logEventRpcId = logEventRpcId;
+            _sessionStartRpcId = sessionStartRpcId;
+            _sessionEndRpcId = sessionEndRpcId;
+        }
+
+        /// <summary>
+        /// Configures RPC IDs using the standard game prefix pattern:
+        /// {prefix}_log_event, {prefix}_track_session_start, {prefix}_track_session_end.
+        /// </summary>
+        public static void SetGameRpcPrefix(string rpcPrefix)
+        {
+            if (string.IsNullOrWhiteSpace(rpcPrefix))
+            {
+                Debug.LogError("[IVXAnalyticsManager] RPC prefix cannot be null or empty");
+                return;
+            }
+
+            ConfigureRpcIds(
+                $"{rpcPrefix}_log_event",
+                $"{rpcPrefix}_track_session_start",
+                $"{rpcPrefix}_track_session_end");
         }
 
         private IClient _nakamaClient;
@@ -113,6 +154,13 @@ namespace IntelliVerseX.Analytics
                 return false;
             }
 
+            if (string.IsNullOrWhiteSpace(eventName) ||
+                string.Equals(eventName, "unknown", StringComparison.OrdinalIgnoreCase))
+            {
+                Debug.LogWarning("[IVXAnalyticsManager] Rejected analytics event with missing or unknown event name");
+                return false;
+            }
+
             if (_nakamaSession == null || _nakamaSession.IsExpired)
             {
                 Debug.LogError("[IVXAnalyticsManager] Session expired");
@@ -127,7 +175,7 @@ namespace IntelliVerseX.Analytics
                 Debug.Log($"[IVXAnalyticsManager] Tracking event: {eventName}");
 
                 // Call Nakama RPC
-                await _nakamaClient.RpcAsync(_nakamaSession, "quizverse_log_event", jsonPayload);
+                await _nakamaClient.RpcAsync(_nakamaSession, _logEventRpcId, jsonPayload);
 
                 OnEventTracked?.Invoke(eventName);
                 return true;
@@ -160,7 +208,7 @@ namespace IntelliVerseX.Analytics
 
                 Debug.Log($"[IVXAnalyticsManager] Starting session: {_sessionKey}");
 
-                await _nakamaClient.RpcAsync(_nakamaSession, "quizverse_track_session_start", jsonPayload);
+                await _nakamaClient.RpcAsync(_nakamaSession, _sessionStartRpcId, jsonPayload);
 
                 OnSessionStarted?.Invoke(_sessionKey);
                 return true;
@@ -192,7 +240,7 @@ namespace IntelliVerseX.Analytics
 
                 Debug.Log($"[IVXAnalyticsManager] Ending session: {_sessionKey} (duration: {duration}s)");
 
-                await _nakamaClient.RpcAsync(_nakamaSession, "quizverse_track_session_end", jsonPayload);
+                await _nakamaClient.RpcAsync(_nakamaSession, _sessionEndRpcId, jsonPayload);
 
                 OnSessionEnded?.Invoke(_sessionKey, duration);
                 

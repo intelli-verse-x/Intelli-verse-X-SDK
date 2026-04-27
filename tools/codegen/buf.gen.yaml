@@ -1,0 +1,16 @@
+version: v2
+inputs:
+  - directory: ../../schemas/multiplayer
+  - directory: ../../schemas/avatar
+plugins:
+  # TypeScript (used by Nakama runtime + JS adapter)
+  - remote: buf.build/bufbuild/es:v2.2.0
+    out: gen/ts
+    opt:
+      - target=ts
+      - import_extension=.js
+  # C# (used by Unity adapter)
+  - remote: buf.build/protocolbuffers/csharp:v27.2
+    out: gen/csharp
+    opt:
+      - file_extension=.g.cs

@@ -24,7 +24,7 @@ namespace IntelliVerseX.Core
         /// <summary>
         /// SDK version string (semantic versioning)
         /// </summary>
-        public static string version => "5.8.2";
+        public static string version => "5.9.0";
 
         [Header("Game Identity")]
         [Tooltip("Unique game identifier (UUID). Get from IntelliVerse-X admin panel.")]

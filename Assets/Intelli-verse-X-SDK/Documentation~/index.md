@@ -14,6 +14,7 @@ Welcome to the IntelliVerseX SDK documentation. This guide will help you get sta
 8. [FAQ](faq.md)
 9. [Emoji Support](emoji-support.md)
 10. [Profile System Master Blueprint](profile-system-master-blueprint.md)
+11. [Admin Dashboard, Analytics, Hiro, and Satori Readiness](admin-liveops-analytics-game-agnostic.md)
 
 ## Quick Links
 

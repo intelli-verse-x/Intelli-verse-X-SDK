@@ -9,7 +9,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+_(no unreleased changes)_
+
+---
+
+## [5.9.0] — 2026-04-26
+
+### 🌐 Shared 3D Worlds — Avatar Replication + LiveKit Voice/Lip-sync
+
+Closes the last critical-path client gap for the LiveKit migration. Unity, Unreal, JS, Godot, and visionOS clients can now run shared 3D rooms where every human avatar replicates head + hand poses on the same wire, voice flows through LiveKit, lip-sync rides on the `viseme.v1` data channel, and AI avatars from the LiveKit Agents worker join the same room. **Cross-engine, cross-platform interop is built in:** Vision Pro, Quest, iOS, Android, WebXR, and PCVR users can all share a room.
+
+See [`Assets/Intelli-verse-X-SDK/CHANGELOG.md`](Assets/Intelli-verse-X-SDK/CHANGELOG.md) (entry `[5.9.0]`) for the full per-engine breakdown.
+
+**Headline additions:**
+
+- Unity `IVXAvatarReplicator` MonoBehaviour — drop-in remote-human pose replication.
+- Unity `IVXLiveKitVisemeBinder`, `IVXVoiceTokenClient`, `IVXARFoundationAnchorProvider` — one-line wiring for voice, lip-sync, and AR anchors.
+- JS, Godot, Unreal, Cocos2d-x, Defold, Flutter, Java, native C++, Web3, Roblox — voice + viseme bindings shipped at parity (per-engine details in the SDK CHANGELOG).
+- Canonical integration guide: [`docs/multiplayer/AVATAR_REPLICATION_INTEGRATION_GUIDE.md`](docs/multiplayer/AVATAR_REPLICATION_INTEGRATION_GUIDE.md).
+- Per-engine end-to-end dry-runs: [`docs/multiplayer/UNITY_3D_WORLD_E2E_ANALYSIS.md`](docs/multiplayer/UNITY_3D_WORLD_E2E_ANALYSIS.md), [`docs/multiplayer/CROSS_ENGINE_3D_WORLD_E2E_ANALYSIS.md`](docs/multiplayer/CROSS_ENGINE_3D_WORLD_E2E_ANALYSIS.md).
+
+**Server-side prerequisites:** all already deployed in Phases 1–4 (see `Intelliverse-X-AI/docs/livekit/MIGRATION_FINAL_SIGNOFF.md`).
+
+**Migration:** **no breaking changes.** Existing games continue to work without picking up `IVXAvatarReplicator`.
+
+### Previously-unreleased items rolled into 5.9.0
 
 - Smithery-format MCP static server card at [`.well-known/mcp/server-card.json`](.well-known/mcp/server-card.json) and deployment notes in [`docs/platforms/mcp-smithery-publish.md`](docs/platforms/mcp-smithery-publish.md) (RFC 9728 sample: [`.well-known/oauth-protected-resource.sample.json`](.well-known/oauth-protected-resource.sample.json))
 - MCP server card validation: [`tools/mcp/validate_server_card.py`](tools/mcp/validate_server_card.py), GitHub Actions workflow [`.github/workflows/mcp-server-card.yml`](.github/workflows/mcp-server-card.yml), and production deploy runbook [`infra/mcp-well-known/README.md`](infra/mcp-well-known/README.md) (nginx, ALB, S3, app route; public `GET` contract for discovery)
