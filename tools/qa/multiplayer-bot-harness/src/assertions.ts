@@ -23,6 +23,16 @@ export interface BotRunStats {
   voiceTokenProviderUnspecified: number;
   // ── Conversational floor ─────────────────────────────────────────────
   speakerGrants: number;
+  // ── Phase-4 viseme / avatar bandwidth + latency metrics ─────────────
+  visemeHeaders: number;
+  visemeFramesReceived: number;
+  visemeFootersReceived: number;
+  visemeOutOfOrder: number;
+  visemeBytesReceived: number;
+  visemeFirstFrameLatencyMs: number[];   // per-line: header → first frame
+  visemeFooterLatencyMs: number[];       // per-line: header → footer
+  visemeAudioVideoSkewMs: number[];      // per-frame: |audio_ts - render_ts|
+  egressVideoTrackBytes: number;         // bytes received on the egress video track (when subscribed)
 }
 
 export interface Expectation {
@@ -75,6 +85,26 @@ export const metrics = {
   voice_token_provider_unspecified_count: (s: BotRunStats): number =>
     s.voiceTokenProviderUnspecified,
   speaker_grants: (s: BotRunStats): number => s.speakerGrants,
+  // ── Phase-4 viseme / avatar bandwidth + latency metrics ─────────────
+  viseme_headers: (s: BotRunStats): number => s.visemeHeaders,
+  viseme_frames_received: (s: BotRunStats): number => s.visemeFramesReceived,
+  viseme_footers_received: (s: BotRunStats): number => s.visemeFootersReceived,
+  viseme_out_of_order: (s: BotRunStats): number => s.visemeOutOfOrder,
+  viseme_first_frame_latency_p95_ms: (s: BotRunStats): number =>
+    percentile(s.visemeFirstFrameLatencyMs, 95),
+  viseme_footer_latency_p95_ms: (s: BotRunStats): number =>
+    percentile(s.visemeFooterLatencyMs, 95),
+  viseme_av_skew_p95_ms: (s: BotRunStats): number =>
+    percentile(s.visemeAudioVideoSkewMs, 95),
+  // Average data-channel bytes/frame — used to confirm the viseme
+  // protocol stays under the 96-byte/frame budget at 60 Hz.
+  viseme_bytes_per_frame: (s: BotRunStats): number =>
+    s.visemeFramesReceived === 0 ? 0 : s.visemeBytesReceived / s.visemeFramesReceived,
+  // 60 Hz × 96 B = ~5.6 KB/s; allow 10 KB/s overhead for header/footer.
+  viseme_kbps: (s: BotRunStats): number =>
+    s.durationSec === 0 ? 0 : (s.visemeBytesReceived * 8) / s.durationSec / 1000,
+  egress_video_kbps: (s: BotRunStats): number =>
+    s.durationSec === 0 ? 0 : (s.egressVideoTrackBytes * 8) / s.durationSec / 1000,
 } as const;
 
 export type MetricName = keyof typeof metrics;

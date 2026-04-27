@@ -66,6 +66,15 @@ function aggregate(outcomes: BotOutcome[]): BotRunStats {
     voiceTokenFutureExpiry: 0,
     voiceTokenProviderUnspecified: 0,
     speakerGrants: 0,
+    visemeHeaders: 0,
+    visemeFramesReceived: 0,
+    visemeFootersReceived: 0,
+    visemeOutOfOrder: 0,
+    visemeBytesReceived: 0,
+    visemeFirstFrameLatencyMs: [],
+    visemeFooterLatencyMs: [],
+    visemeAudioVideoSkewMs: [],
+    egressVideoTrackBytes: 0,
   };
   for (const o of outcomes) {
     agg.totalTicks += o.stats.totalTicks;
@@ -85,6 +94,15 @@ function aggregate(outcomes: BotOutcome[]): BotRunStats {
     agg.voiceTokenFutureExpiry += o.stats.voiceTokenFutureExpiry;
     agg.voiceTokenProviderUnspecified += o.stats.voiceTokenProviderUnspecified;
     agg.speakerGrants += o.stats.speakerGrants;
+    agg.visemeHeaders += o.stats.visemeHeaders;
+    agg.visemeFramesReceived += o.stats.visemeFramesReceived;
+    agg.visemeFootersReceived += o.stats.visemeFootersReceived;
+    agg.visemeOutOfOrder += o.stats.visemeOutOfOrder;
+    agg.visemeBytesReceived += o.stats.visemeBytesReceived;
+    agg.visemeFirstFrameLatencyMs.push(...o.stats.visemeFirstFrameLatencyMs);
+    agg.visemeFooterLatencyMs.push(...o.stats.visemeFooterLatencyMs);
+    agg.visemeAudioVideoSkewMs.push(...o.stats.visemeAudioVideoSkewMs);
+    agg.egressVideoTrackBytes += o.stats.egressVideoTrackBytes;
   }
   return agg;
 }

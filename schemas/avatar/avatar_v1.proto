@@ -1,0 +1,58 @@
+// IIVXAvatar v1 — cross-platform avatar interop schema.
+// Lets a Quest/visionOS/WebXR/PCVR avatar replicate to participants on other
+// platforms by exposing a common skeleton + blendshapes profile.
+syntax = "proto3";
+
+package ivx.avatar.v1;
+
+option csharp_namespace = "IntelliVerseX.Avatar.V1";
+option go_package        = "github.com/intelliversex/avatar/v1;ivxavv1";
+
+message AvatarDescriptor {
+  string avatar_id     = 1;
+  string user_id       = 2;
+  string skeleton_profile = 3; // "ivx_humanoid_v1"
+  string blendshape_profile = 4; // "arkit_52" | "ovr_60" | "vrm_69"
+  AvatarSource source  = 5;
+  string mesh_url      = 6;     // CDN URL to GLB / FBX
+  uint32 material_count = 7;
+  string lod_root_url  = 8;     // optional: prefix with /lod0..lod3.glb
+  uint32 max_lod       = 9;
+  bytes  fingerprint_sha256 = 10;
+  uint32 schema_version = 11;
+}
+
+enum AvatarSource {
+  AVATAR_SOURCE_UNSPECIFIED = 0;
+  AVATAR_SOURCE_OVR         = 1; // Meta Avatars
+  AVATAR_SOURCE_VRM         = 2;
+  AVATAR_SOURCE_READYPLAYERME = 3;
+  AVATAR_SOURCE_VISIONOS_PERSONA = 4;
+  AVATAR_SOURCE_IVX_NATIVE  = 5;
+  AVATAR_SOURCE_FALLBACK_BILLBOARD = 6;
+}
+
+// Per-skeleton joint ordering for ivx_humanoid_v1.
+enum HumanoidJoint {
+  HJ_HIPS         = 0;
+  HJ_SPINE        = 1;
+  HJ_CHEST        = 2;
+  HJ_NECK         = 3;
+  HJ_HEAD         = 4;
+  HJ_LEFT_SHOULDER  = 5;
+  HJ_LEFT_UPPER_ARM = 6;
+  HJ_LEFT_LOWER_ARM = 7;
+  HJ_LEFT_HAND      = 8;
+  HJ_RIGHT_SHOULDER = 9;
+  HJ_RIGHT_UPPER_ARM = 10;
+  HJ_RIGHT_LOWER_ARM = 11;
+  HJ_RIGHT_HAND     = 12;
+  HJ_LEFT_UPPER_LEG = 13;
+  HJ_LEFT_LOWER_LEG = 14;
+  HJ_LEFT_FOOT      = 15;
+  HJ_RIGHT_UPPER_LEG = 16;
+  HJ_RIGHT_LOWER_LEG = 17;
+  HJ_RIGHT_FOOT     = 18;
+  // Reserved up to 32 for future extension
+  reserved 19 to 31;
+}

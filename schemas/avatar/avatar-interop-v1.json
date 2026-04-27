@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.intelliversex.com/avatar/v1/avatar-interop-v1.json",
+  "title": "IIVXAvatar Interop Spec v1",
+  "description": "Cross-platform avatar interoperability standard. Pillar 2 deliverable: GLB/GLTF + Ready Player Me-style blendshapes + canonical bone naming so Quest, Vision Pro, WebXR, Unreal, and Unity peers render each other correctly.",
+  "type": "object",
+  "required": [
+    "rig_id",
+    "asset_url",
+    "bone_standard",
+    "blendshape_set",
+    "fidelity_level",
+    "joint_layout"
+  ],
+  "properties": {
+    "rig_id": {
+      "type": "string",
+      "description": "Unique rig identifier. Format: `<vendor>-<rig>-v<major>`. Example: `ivx-rpm-v1`, `ivx-quest-fp-v1`, `ivx-fullbody-v1`."
+    },
+    "asset_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "GLB/GLTF download URL or content-addressed hash (sha256:...)."
+    },
+    "bone_standard": {
+      "type": "string",
+      "enum": ["ivx-bone-v1"],
+      "description": "Canonical bone naming standard. ivx-bone-v1 maps to Mixamo + RPM with the IVX prefix."
+    },
+    "blendshape_set": {
+      "type": "string",
+      "enum": [
+        "rpm-arkit-52",
+        "ivx-viseme-15",
+        "ivx-emotion-7",
+        "ivx-arkit-and-viseme-67"
+      ],
+      "description": "Blendshape vocabulary. Renderers MUST drive only these names."
+    },
+    "fidelity_level": {
+      "type": "integer",
+      "enum": [0, 1, 2, 3],
+      "description": "0 = full body + face + fingers; 1 = full body + face; 2 = upper body + face; 3 = head + hands only (Quest first-person)."
+    },
+    "joint_layout": {
+      "type": "object",
+      "required": ["head", "left_hand", "right_hand"],
+      "description": "Canonical joint indices used in PoseUpdateFull / PoseUpdateDelta. Senders MUST use these indices; receivers MUST tolerate missing optional joints.",
+      "properties": {
+        "head":            { "const": 0 },
+        "left_hand":       { "const": 1 },
+        "right_hand":      { "const": 2 },
+        "hips":            { "const": 3 },
+        "spine":           { "const": 4 },
+        "chest":           { "const": 5 },
+        "neck":            { "const": 6 },
+        "left_shoulder":   { "const": 7 },
+        "left_elbow":      { "const": 8 },
+        "right_shoulder":  { "const": 9 },
+        "right_elbow":     { "const": 10 },
+        "left_hip":        { "const": 11 },
+        "left_knee":       { "const": 12 },
+        "left_foot":       { "const": 13 },
+        "right_hip":       { "const": 14 },
+        "right_knee":      { "const": 15 },
+        "right_foot":      { "const": 16 }
+      }
+    },
+    "viseme_index": {
+      "type": "object",
+      "description": "15-state IPA-derived viseme indices used in VisemeFrame.viseme_index.",
+      "properties": {
+        "sil":  { "const": 0 },
+        "PP":   { "const": 1 },
+        "FF":   { "const": 2 },
+        "TH":   { "const": 3 },
+        "DD":   { "const": 4 },
+        "kk":   { "const": 5 },
+        "CH":   { "const": 6 },
+        "SS":   { "const": 7 },
+        "nn":   { "const": 8 },
+        "RR":   { "const": 9 },
+        "aa":   { "const": 10 },
+        "E":    { "const": 11 },
+        "I":    { "const": 12 },
+        "O":    { "const": 13 },
+        "U":    { "const": 14 }
+      }
+    },
+    "coordinate_system": {
+      "type": "object",
+      "description": "All transforms are right-handed, Y-up, meters. Engines that ship Z-up or left-handed coords MUST convert at the adapter boundary.",
+      "properties": {
+        "handedness": { "const": "right" },
+        "up_axis": { "const": "Y" },
+        "units": { "const": "meters" },
+        "forward_axis": { "const": "-Z" }
+      }
+    },
+    "physics_assumptions": {
+      "type": "object",
+      "description": "Engines MUST disable rigid-body sim on remote avatars; pose comes from the wire. Local first-person rig is up to the engine.",
+      "properties": {
+        "remote_avatar_simulation": { "const": "kinematic" },
+        "lod_distances_meters": {
+          "type": "array",
+          "items": { "type": "number" },
+          "default": [4.0, 12.0, 25.0]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,126 @@
+// Viseme / blendshape data-channel protocol — Phase-4 of the LiveKit
+// migration plan. Drives the lip-sync + facial expression of a
+// server-rendered (or client-rendered) avatar from a TTS audio track.
+//
+// Lives on the LiveKit DATA channel — not a video track — so the same
+// 52-blendshape ARKit weights drive both:
+//   1. Content-Factory server-rendered avatars (egress publishes audio +
+//      video; this channel carries blendshape-only ground truth used by
+//      QA bots and recordings).
+//   2. Client-rendered avatars (Unity / WebGL / visionOS) where the
+//      client already has the avatar mesh and only needs blendshape +
+//      jaw + brow weights to animate lip-sync over an audio track.
+//
+// Wire-rate is intentionally low (60 Hz max). Each frame is ≤96 bytes
+// quantized so a 60-second TTS line fits in ~340 KB of LiveKit data
+// traffic — negligible compared to the audio bitrate.
+syntax = "proto3";
+
+package ivx.avatar.v1;
+
+option csharp_namespace = "IntelliVerseX.Avatar.V1";
+option go_package        = "github.com/intelliversex/avatar/v1;ivxavv1";
+
+// Single 16ms (≈60 Hz) facial-animation frame.
+//   blendshapes — uint8[N] where N depends on `profile`:
+//                 ARKIT_52 → 52 bytes; OVR_60 → 60; VRM_69 → 69.
+//   audio_seq   — monotonic counter aligned with the TTS audio track so
+//                 the client renderer can drift-correct.
+//   audio_ts_ms — monotonic-clock timestamp of the corresponding audio
+//                 sample (LiveKit's `track.publishTime`-anchored clock).
+//   intensity_pct — 0..100, rapid attack/decay envelope from the TTS
+//                  emphasis predictor; used to amplify expressiveness.
+message VisemeFrame {
+  string user_id     = 1;     // matches AvatarDescriptor.user_id
+  bytes  blendshapes = 2;     // uint8[N]
+  uint32 profile     = 3;     // mirror of IVXBlendshapeProfile
+  uint64 audio_seq   = 4;
+  int64  audio_ts_ms = 5;
+  uint32 intensity_pct = 6;   // 0..100
+  uint32 frame_seq   = 7;     // monotonic per session
+}
+
+// Coarse-grained TTS phoneme stream — optional secondary channel that
+// older runtimes (without a real face tracker) can use to drive a 14-
+// viseme classic mouth shape instead of the full 52-blendshape rig.
+//
+//   Visemes follow the standard MS Speech / Oculus Lipsync mapping:
+//   0=sil, 1=PP, 2=FF, 3=TH, 4=DD, 5=kk, 6=CH, 7=SS, 8=nn, 9=RR,
+//   10=aa, 11=E, 12=ih, 13=oh, 14=ou.
+message PhonemeFrame {
+  string user_id    = 1;
+  uint32 viseme     = 2;       // 0..14
+  uint32 weight_pct = 3;       // 0..100
+  uint64 audio_seq  = 4;
+  int64  audio_ts_ms = 5;
+  uint32 frame_seq  = 6;
+}
+
+// Eye-and-brow expression channel (separate so it can run at a
+// different cadence — typically 30 Hz).
+message FacialExpressionFrame {
+  string user_id    = 1;
+  uint32 brow_inner_up_pct = 2;
+  uint32 brow_outer_up_pct = 3;
+  uint32 eye_blink_l_pct = 4;
+  uint32 eye_blink_r_pct = 5;
+  int32  gaze_yaw_centideg  = 6; // hundredths of a degree
+  int32  gaze_pitch_centideg = 7;
+  uint64 frame_seq  = 8;
+}
+
+// Source-of-truth marker for who is driving an avatar.
+//   AGENT      — server-side LiveKit Agent (Content-Factory rendered).
+//   USER_FACE  — client face-tracking (ARKit / OVR / VisionPro).
+//   USER_TTS   — client-side TTS phoneme synthesis.
+//   FALLBACK   — random idle animation (mesh-only fallback).
+enum VisemeSource {
+  VISEME_SOURCE_UNSPECIFIED = 0;
+  VISEME_SOURCE_AGENT       = 1;
+  VISEME_SOURCE_USER_FACE   = 2;
+  VISEME_SOURCE_USER_TTS    = 3;
+  VISEME_SOURCE_FALLBACK    = 4;
+}
+
+// Header packet sent at the start of every TTS line so the renderer
+// can pre-warm + size buffers.
+message VisemeStreamHeader {
+  string user_id     = 1;
+  string track_id    = 2;     // LiveKit track ID for the TTS audio
+  VisemeSource source = 3;
+  uint32 expected_frames = 4;
+  uint32 sample_rate_hz  = 5; // matched to TTS audio (24000 typical)
+  uint32 frame_hz        = 6; // 60 by default
+  uint32 profile         = 7; // IVXBlendshapeProfile
+  uint64 line_id         = 8; // unique per TTS line
+}
+
+// Tail packet — emit after the last VisemeFrame so renderers can
+// schedule a clean mouth-close.
+message VisemeStreamFooter {
+  string user_id = 1;
+  uint64 line_id = 2;
+  uint32 frames_sent = 3;
+  uint64 final_audio_seq = 4;
+}
+
+// Wire-level data-channel envelope. Single message that covers all
+// four payload types so the receiver only needs to switch on `kind`.
+message VisemePacket {
+  enum Kind {
+    KIND_UNSPECIFIED = 0;
+    KIND_HEADER      = 1;
+    KIND_FRAME       = 2;
+    KIND_PHONEME     = 3;
+    KIND_EXPRESSION  = 4;
+    KIND_FOOTER      = 5;
+  }
+  Kind kind = 1;
+  oneof payload {
+    VisemeStreamHeader  header     = 2;
+    VisemeFrame         frame      = 3;
+    PhonemeFrame        phoneme    = 4;
+    FacialExpressionFrame expression = 5;
+    VisemeStreamFooter  footer     = 6;
+  }
+}

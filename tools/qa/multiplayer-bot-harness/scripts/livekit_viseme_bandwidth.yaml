@@ -1,0 +1,63 @@
+name: livekit_viseme_bandwidth
+template_id: avatar_replication_v1
+
+# Phase-4 regression: 8 client bots subscribe to a server-rendered
+# avatar's `viseme.v1` data channel and validate that:
+#   1. Headers / frames / footers all arrive (no protocol drops).
+#   2. First-frame latency p95 stays below 120 ms (interactive feel).
+#   3. Footer latency p95 stays below 4 200 ms (fits a 4 s TTS line + 200 ms grace).
+#   4. Viseme bandwidth stays below ~12 kbps per subscriber (60 Hz × 96 B + headers).
+#   5. Audio↔viseme skew p95 stays below 80 ms (LiveKit AV-sync target).
+#   6. No out-of-order frames slip through to the renderer.
+#   7. (When the egress video track is also subscribed) the 1080p video
+#      stream stays under 4500 kbps so KEDA-based egress autoscaling
+#      doesn't trip prematurely.
+#
+# Run with the agent worker writing to a real LiveKit cluster:
+#   tsx ../../tools/qa/multiplayer-bot-harness/src/runner.ts \
+#     --target wss://livekit.staging.intelliverse-x.com \
+#     --script scripts/livekit_viseme_bandwidth.yaml \
+#     --report junit
+#
+# In synthetic mode (no rpcClient / visemeFeed wired) the bots
+# emulate a realistic 60 Hz viseme stream so the harness exercises
+# the assertion path during local CI.
+
+duration_sec: 90
+tick_rate_hz: 30
+pose_publish_rate_hz: 60
+
+bots:
+  - kind: viseme
+    count: 8
+
+expectations:
+  - expression: "viseme_headers > 0"
+    description: "at least one TTS line was driven during the run"
+
+  - expression: "viseme_frames_received > 100"
+    description: "viseme stream produced enough frames to validate"
+
+  - expression: "viseme_footers_received > 0"
+    description: "lines closed cleanly with footer packets"
+
+  - expression: "viseme_out_of_order == 0"
+    description: "no out-of-order frames reached the renderer"
+
+  - expression: "viseme_first_frame_latency_p95_ms < 120"
+    description: "header → first frame p95 stays under 120 ms"
+
+  - expression: "viseme_footer_latency_p95_ms < 4200"
+    description: "header → footer p95 stays under 4.2 s for a 4 s line"
+
+  - expression: "viseme_av_skew_p95_ms < 80"
+    description: "audio ↔ viseme skew p95 stays under 80 ms"
+
+  - expression: "viseme_bytes_per_frame < 130"
+    description: "average frame size stays under 130 bytes (JSON envelope budget)"
+
+  - expression: "viseme_kbps < 12"
+    description: "viseme stream stays under 12 kbps / subscriber"
+
+  - expression: "egress_video_kbps < 4500"
+    description: "1080p egress video stays under 4.5 Mbps (KEDA scale-up bound)"
