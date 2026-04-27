@@ -1,0 +1,73 @@
+// TournamentOrchestrator — bracket-driven tournament across many sub-matches.
+// Opcodes: 0x8000-0x8FFF.
+syntax = "proto3";
+
+package ivx.multiplayer.v1;
+
+option csharp_namespace = "IntelliVerseX.Multiplayer.V1";
+option go_package        = "github.com/intelliversex/multiplayer/proto/v1;ivxmpv1";
+
+message Bracket {
+  string tournament_id = 1;
+  BracketKind kind     = 2;
+  repeated Round rounds = 3;
+  uint32 current_round  = 4;
+}
+
+enum BracketKind {
+  BRACKET_UNSPECIFIED  = 0;
+  BRACKET_SINGLE_ELIM  = 1;
+  BRACKET_DOUBLE_ELIM  = 2;
+  BRACKET_ROUND_ROBIN  = 3;
+  BRACKET_SWISS        = 4;
+}
+
+message Round {
+  uint32 round_index = 1;
+  repeated Matchup matchups = 2;
+  int64 starts_at_ms = 3;
+  int64 ends_at_ms   = 4;
+}
+
+message Matchup {
+  string matchup_id = 1;
+  repeated string user_ids = 2;
+  string sub_match_id = 3; // the actual SyncTurn / RealtimeTick match running this matchup
+  RoundResult result  = 4;
+}
+
+message RoundStart {
+  uint32 round_index = 1;
+  Round round = 2;
+}
+
+message RoundResult {
+  string matchup_id = 1;
+  repeated PlacedPlayer placed = 2;
+  bool   forfeit    = 3;
+}
+
+message PlacedPlayer {
+  string user_id = 1;
+  int32  rank    = 2;
+  int64  score   = 3;
+}
+
+message TournamentBye {
+  string user_id = 1;
+  uint32 round_index = 2;
+}
+
+message TournamentFinal {
+  Bracket bracket = 1;
+  repeated PlacedPlayer final_standings = 2;
+}
+
+message TournamentParams {
+  BracketKind kind   = 1;
+  uint32 player_cap  = 2;
+  uint32 round_seconds = 3;
+  uint32 inter_round_seconds = 4;
+  string sub_template = 5; // "sync_turn", etc.
+  bool   allow_byes  = 6;
+}

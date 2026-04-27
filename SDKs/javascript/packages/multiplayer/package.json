@@ -1,0 +1,65 @@
+{
+  "name": "@intelliversex/multiplayer",
+  "version": "0.1.0",
+  "description": "IntelliVerseX Multiplayer Kernel adapter for JavaScript/TypeScript — implements IIVXMultiplayer over @heroiclabs/nakama-js.",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./templates/sync-turn": {
+      "types": "./dist/templates/sync-turn.d.ts",
+      "import": "./dist/templates/sync-turn.mjs",
+      "require": "./dist/templates/sync-turn.js"
+    },
+    "./wire": {
+      "types": "./dist/wire/index.d.ts",
+      "import": "./dist/wire/index.mjs",
+      "require": "./dist/wire/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts src/templates/sync-turn.ts src/wire/index.ts --format cjs,esm --dts",
+    "build:prod": "tsup src/index.ts src/templates/sync-turn.ts src/wire/index.ts --format cjs,esm --dts --minify",
+    "dev": "tsup src/index.ts --format cjs,esm --watch",
+    "test": "vitest run",
+    "lint": "tsc --noEmit"
+  },
+  "keywords": [
+    "intelliversex",
+    "nakama",
+    "multiplayer",
+    "game-sdk",
+    "websocket"
+  ],
+  "author": "IntelliVerse-X <support@intelli-verse-x.ai>",
+  "license": "MIT",
+  "homepage": "https://intelli-verse-x.github.io/Intelli-verse-X-SDK/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git",
+    "directory": "SDKs/javascript/packages/multiplayer"
+  },
+  "bugs": {
+    "url": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/issues"
+  },
+  "peerDependencies": {
+    "@heroiclabs/nakama-js": ">=2.7.0"
+  },
+  "devDependencies": {
+    "@heroiclabs/nakama-js": "^2.8.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^2.0.0"
+  }
+}

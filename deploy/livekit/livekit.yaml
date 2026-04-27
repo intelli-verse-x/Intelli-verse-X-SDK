@@ -1,0 +1,109 @@
+# LiveKit SFU deployment for IVX Multiplayer voice.
+#
+# Apply with:
+#   helm upgrade --install ivx-livekit livekit/livekit-server \
+#     -n ivx-voice --create-namespace -f livekit.yaml
+#
+# A self-hosted LiveKit cluster powers the IVX IIVXVoice abstraction; the
+# kernel mints short-lived JWTs against the api_key/api_secret pair and
+# clients connect directly to the SFU using the wss URL.
+#
+# Required infra:
+#   * Redis  — coordinates SFU nodes for room dispatch
+#   * UDP    — TURN: 7882/udp; SFU: 50000-60000/udp
+#   * TCP    — wss: 7880/tcp (LB-fronted)
+#
+# See ../k8s/multiplayer/livekit-supplemental.yaml for the LB + Service
+# definitions IVX expects (load balancer + UDP node ports).
+
+# ─── Replicas / topology ──────────────────────────────────────────────
+replicaCount: 3
+
+# Pin SFU pods to dedicated voice nodes; multiplayer (Nakama) lives on
+# game-state pools and we don't want them competing for cores.
+nodeSelector:
+  workload: voice
+
+# Anti-affinity so two SFU replicas never co-locate. Spread by topology.
+podAntiAffinityPreset: hard
+topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: DoNotSchedule
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/name: livekit-server
+
+# ─── Resources (sized for ~200 concurrent publishers per pod) ─────────
+resources:
+  requests:
+    cpu:    "1500m"
+    memory: "2Gi"
+  limits:
+    cpu:    "3000m"
+    memory: "4Gi"
+
+# ─── Service exposure ─────────────────────────────────────────────────
+loadBalancer:
+  type: external
+  # Annotations appropriate for AWS NLB; swap for your provider.
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+
+# Use hostNetwork on the SFU UDP ports so RTP/RTCP traverses the host
+# directly and we avoid SNAT thrashing at the LB.
+useHostNetwork: true
+
+# ─── LiveKit server config ────────────────────────────────────────────
+livekit:
+  port: 7880
+  prometheus_port: 6789
+  log_level: info
+  rtc:
+    use_external_ip: true
+    port_range_start: 50000
+    port_range_end:   60000
+    tcp_port: 7881
+  turn:
+    enabled: true
+    domain: turn.ivx.example.com
+    udp_port: 7882
+    tls_port: 5349
+  redis:
+    address: ivx-redis.ivx-voice.svc.cluster.local:6379
+  webhook:
+    api_key: "${LIVEKIT_WEBHOOK_KEY}"
+    urls:
+      # Webhooks fire on participant join/leave, track publish, and ASR
+      # events. Nakama receives these via the IVX webhook ingress.
+      - "https://nakama.ivx.example.com/internal/livekit/webhooks"
+  ingress:
+    rtmp_base_url: "rtmp://livekit-ingress.ivx-voice.svc.cluster.local/rtmp"
+    whip_base_url: "https://whip.livekit.ivx.example.com"
+
+# ─── Secrets ──────────────────────────────────────────────────────────
+# IMPORTANT: in production these MUST come from a secret manager
+# (e.g. AWS Secrets Manager, HashiCorp Vault). Inline values here are
+# placeholders so the chart renders for local kind / docker-desktop.
+keys:
+  IVX_LIVEKIT_API_KEY_PLACEHOLDER: "IVX_LIVEKIT_API_SECRET_PLACEHOLDER_REPLACE_AT_DEPLOY"
+
+# ─── HPA ──────────────────────────────────────────────────────────────
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 50
+  targetCPUUtilizationPercentage: 65
+  # LiveKit publishes a Prometheus counter for active rooms; an external
+  # KEDA ScaledObject in ../k8s/multiplayer/livekit-keda.yaml scales on
+  # `livekit_room_total` for tighter coupling to load.
+
+# ─── Observability ────────────────────────────────────────────────────
+serviceMonitor:
+  enabled: true
+  selector:
+    release: kube-prometheus-stack
+podMonitor:
+  enabled: true

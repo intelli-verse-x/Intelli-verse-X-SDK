@@ -1,0 +1,186 @@
+// IVX Multiplayer Kernel — wire envelope.
+// SINGLE SOURCE OF TRUTH for every match message.
+//
+// Stability rules:
+//   - Field numbers MUST NOT be reused. New fields append.
+//   - Enum values MUST NOT be repurposed. Reserve gaps.
+//   - Schema_version is a uint32; bumped only on breaking changes.
+//   - delta_base_seq + quantization_profile are reserved for high-frequency
+//     XR pose data so the fast-path can avoid full envelope parse.
+//
+// Reserved opcode ranges: see opcodes.proto.
+syntax = "proto3";
+
+package ivx.multiplayer.v1;
+
+option csharp_namespace = "IntelliVerseX.Multiplayer.V1";
+option go_package        = "github.com/intelliversex/multiplayer/proto/v1;ivxmpv1";
+
+// ──────────────────────────────────────────────────────────────────────────
+// MatchEnvelope: every byte that crosses the kernel/template boundary.
+// ──────────────────────────────────────────────────────────────────────────
+message MatchEnvelope {
+  MatchHeader header  = 1;
+  bytes       payload = 2; // proto-marshalled opcode-specific message
+}
+
+message MatchHeader {
+  uint32 opcode             = 1; // see Opcode enum (opcodes.proto reservations)
+  uint64 seq                = 2; // monotonic per (match_id, sender_user_id)
+  int64  ts_ms              = 3; // server-authoritative; client values clamped
+  string sender_user_id     = 4; // 'agt_*' for AI agents; otherwise Nakama user id
+  string match_id           = 5;
+  string client_opcode_uuid = 6; // idempotency key (server dedupes on receive)
+  uint32 schema_version     = 7; // major proto schema version
+  string trace_id           = 8; // OpenTelemetry W3C traceparent (or empty)
+
+  // High-frequency fast-path fields (used only by Avatar / RealtimeTick).
+  uint32 delta_base_seq      = 9;  // 0 = full snapshot; non-zero = delta over that base
+  uint32 quantization_profile = 10; // index into pre-agreed quantization table
+
+  // Authority + ack scaffolding for distributed object authority.
+  uint32 authority_token     = 11; // optional: holder of write auth for this opcode
+  uint32 ack_window           = 12; // optional: for ack-batched protocols
+
+  // Reserved for forward compat — fill BEFORE adding new fields.
+  reserved 100 to 999;
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// Standardized error envelope for kernel + template + adapter errors.
+// All adapters surface this as `OnError(ErrorEnvelope)`.
+// ──────────────────────────────────────────────────────────────────────────
+message ErrorEnvelope {
+  ErrorCode code               = 1;
+  string    detail             = 2;
+  string    min_required_version = 3; // SCHEMA_TOO_OLD: client should upgrade
+  repeated string supported    = 4;   // ANCHOR_INCOMPAT, etc.
+  uint32    retry_after_ms     = 5;   // RATE_LIMITED
+  string    correlation_id     = 6;   // ties back to the offending opcode
+}
+
+// Stable across schema_version. Adapters MUST surface the integer code
+// even if their generated enum predates a value (forward-compat).
+//
+// Retry policy guidance (the docs/multiplayer/error-taxonomy.md is the
+// canonical source; this is a quick reference):
+//   * 1xx   schema/version → upgrade required, do not retry on same client
+//   * 4    seq gap         → resume via MATCH_RESUME, do not retry blindly
+//   * 5/6  bad/dup payload → log, drop, do not retry
+//   * 7    clock skew      → run NETWORK_CLOCK_PING/PONG, then retry
+//   * 20-29 capacity       → backoff with jitter; FLAPPING is hard ban
+//   * 30-39 auth/perm      → do not retry; surface to user
+//   * 40-49 agent          → kernel falls back to degraded provider
+//   * 50-59 anchor/spatial → fall back to QR/marker or PCVR pseudo-anchor
+//   * 60-69 voice          → kernel emits VOICE_UNAVAILABLE; muted continue
+//   * 70-79 moderation     → terminal; appeal flow only
+//   * 80-89 lifecycle      → match-fatal; client must rejoin
+//   * 90-99 capability     → degrade gracefully (e.g. drop XR opcodes)
+//   * 100-119 infra/persistence → kernel may auto-recover; client retries
+//   * 999   internal       → log + alert; treat as transient
+enum ErrorCode {
+  ERROR_UNSPECIFIED         = 0;
+  // Schema / version (do not retry without upgrade)
+  ERROR_SCHEMA_TOO_OLD       = 1;
+  ERROR_SERVER_TOO_OLD       = 2;
+  ERROR_BAD_PAYLOAD          = 3;
+  ERROR_SEQ_GAP              = 4;
+  ERROR_UNKNOWN_OPCODE       = 5; // sender used an opcode the receiver doesn't know
+  ERROR_DUPLICATE_OPCODE     = 6; // idempotency: same client_opcode_uuid replayed
+  // Time
+  ERROR_CLOCK_SKEW_EXTREME   = 7;
+  // Match-state size guard (per-match limit hit)
+  ERROR_MATCH_STATE_LARGE    = 8;
+  // Capacity / membership
+  ERROR_MATCH_FULL           = 20;
+  ERROR_MATCH_NOT_FOUND      = 21;
+  ERROR_NOT_A_MEMBER         = 22;
+  ERROR_RATE_LIMITED         = 23;
+  ERROR_FLAPPING             = 24; // hard ban after N rapid (re)joins
+  ERROR_MATCH_ENDED          = 25; // template explicitly told caller match is over
+  ERROR_SESSION_REPLACED     = 26; // same user_id from a different socket
+  // Auth / permission
+  ERROR_PERMISSION_DENIED    = 30;
+  ERROR_KICKED               = 31;
+  ERROR_BANNED               = 32;
+  ERROR_NOT_AUTHORIZED       = 33; // generic 401-ish (token expired / missing)
+  // Agent
+  ERROR_BAD_PERSONA          = 40;
+  ERROR_AGENT_BUDGET_EXCEEDED = 41;
+  ERROR_AGENT_PROVIDER_DOWN  = 42;
+  // XR / spatial
+  ERROR_ANCHOR_INCOMPAT      = 50;
+  ERROR_ANCHOR_LOST          = 51;
+  // Voice
+  ERROR_VOICE_UNAVAILABLE    = 60;
+  ERROR_VOICE_PERMISSION_DENIED = 61;
+  // Moderation
+  ERROR_MODERATION_BLOCKED   = 70;
+  // Lifecycle (match-fatal)
+  ERROR_TIMEOUT              = 80;
+  ERROR_QUORUM_LOST          = 81;
+  ERROR_DURATION_EXCEEDED    = 82;
+  ERROR_STATE_OVERFLOW       = 83;
+  // Capability negotiation
+  ERROR_CAPABILITY_UNSUPPORTED = 90; // adapter lacks a required capability
+  // Server-side infra
+  ERROR_OVERLOAD             = 100; // pod overloaded; backoff
+  ERROR_PERSISTENCE_DEGRADED = 101; // storage is degraded; transient
+  ERROR_TICK_OVERRUN_DEGRADED = 102; // sustained tick overrun; client should reduce input rate
+  ERROR_PROVIDER_UNAVAILABLE = 103; // an external provider (LiveKit, ASR) is down
+  // Catch-all
+  ERROR_INTERNAL             = 999;
+}
+
+// Adapters surface non-fatal warnings via OnWarning(WarningEnvelope).
+// Warnings never close a match. Codes are stable.
+message WarningEnvelope {
+  WarningCode code      = 1;
+  string      detail    = 2;
+  uint32      retry_after_ms = 3;
+}
+
+enum WarningCode {
+  WARN_UNSPECIFIED        = 0;
+  WARN_RATE_LIMITED        = 1; // server budget hit; non-fatal
+  WARN_TICK_OVERRUN        = 2;
+  WARN_MATCH_STATE_LARGE    = 3;
+  WARN_AVATAR_FALLBACK     = 4; // forced LOD demotion
+  WARN_DEPRECATED_CLIENT   = 5;
+  WARN_STATE_REBUILT       = 6; // resume couldn't replay; full snapshot delivered
+  WARN_LOW_BANDWIDTH       = 7; // server is throttling tick rate / fidelity
+  WARN_AGENT_DEGRADED      = 8; // agent failed over to a smaller model
+  WARN_CLOCK_REALIGN       = 9; // server stepped client clock by > drift threshold
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// Connection handshake — first opcode after socket open.
+// Drives schema-version negotiation and capability discovery.
+// ──────────────────────────────────────────────────────────────────────────
+message ClientHello {
+  uint32          schema_version       = 1;
+  string          client_proto_hash    = 2; // sha256 of generated client proto file
+  string          adapter_id           = 3; // "unity-csharp", "js", "godot", etc.
+  string          adapter_version      = 4;
+  string          engine_version       = 5; // Unity 6000.3.6f1, etc.
+  string          locale               = 6; // BCP-47
+  ClientCapabilities capabilities      = 7;
+}
+
+message ClientCapabilities {
+  bool can_publish_voice = 1;
+  bool can_subscribe_voice = 2;
+  bool can_render_xr     = 3;
+  bool can_anchor        = 4; // cloud-anchor-capable (Quest, Vision Pro, ARKit)
+  bool low_bandwidth_mode = 5;
+  uint32 max_avatar_lod  = 6; // 0..3
+}
+
+message ServerHello {
+  uint32 schema_version    = 1;
+  string server_version    = 2;
+  string region            = 3;
+  uint32 reconnect_grace_seconds = 4;
+  uint32 heartbeat_seconds = 5;
+  bool   compat_shim_active = 6; // true if server is bridging an older client
+}

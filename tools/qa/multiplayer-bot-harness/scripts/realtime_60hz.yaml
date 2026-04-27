@@ -1,0 +1,12 @@
+name: realtime_60hz
+template_id: realtime-tick-v1
+duration_sec: 300
+tick_rate_hz: 60
+bots:
+  - kind: realtime
+    count: 8
+expectations:
+  - expression: "tick_overrun_ratio < 0.01"
+    description: "Tick budget overruns must stay below 1%"
+  - expression: "rtt_p99_ms < 90"
+    description: "p99 RTT must stay under 90ms"

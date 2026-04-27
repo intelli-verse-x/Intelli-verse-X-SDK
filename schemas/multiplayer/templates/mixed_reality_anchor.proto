@@ -1,0 +1,90 @@
+// MixedRealityAnchorMatch (XR) — shared spatial frames + co-located object
+// authority for room-scale MR. Opcodes: 0xB000-0xBFFF.
+syntax = "proto3";
+
+package ivx.multiplayer.v1;
+
+option csharp_namespace = "IntelliVerseX.Multiplayer.V1";
+option go_package        = "github.com/intelliversex/multiplayer/proto/v1;ivxmpv1";
+
+// Spatial frame offer from a host who has scanned a room.
+message AnchorOffer {
+  string anchor_id  = 1;
+  AnchorProvider provider = 2;
+  string provider_anchor_token = 3; // opaque, vendor-specific
+  bytes  fallback_qr_data = 4;       // QR-based anchor for cross-vendor rooms
+  bytes  fallback_marker_image = 5;  // optional image marker payload
+  string room_label = 6;
+  int64  ts_ms      = 7;
+  string region     = 8;
+}
+
+enum AnchorProvider {
+  ANCHOR_UNSPECIFIED = 0;
+  ANCHOR_META_SHARED_SPATIAL = 1;
+  ANCHOR_VISIONOS_SHARED     = 2;
+  ANCHOR_ARKIT_COLLAB        = 3;
+  ANCHOR_AZURE_SPATIAL       = 4;
+  ANCHOR_QR_FALLBACK         = 5;
+  ANCHOR_IMAGE_MARKER        = 6;
+  ANCHOR_PCVR_FAKE           = 7; // PCVR participants use fake floor anchor
+}
+
+message AnchorResolved {
+  string user_id   = 1;
+  string anchor_id = 2;
+  bool   ok        = 3;
+  string failure_detail = 4;
+  uint32 attempt_index  = 5;
+}
+
+message AnchorLost {
+  string user_id   = 1;
+  string anchor_id = 2;
+  string reason    = 3;
+}
+
+message Relocalized {
+  string user_id   = 1;
+  string anchor_id = 2;
+  uint32 confidence_pct = 3;
+}
+
+message ObjectGrab {
+  string object_id = 1;
+  string user_id   = 2;
+  uint32 priority  = 3; // for tie-breaking concurrent grabs
+}
+
+message ObjectGrabRejected {
+  string object_id = 1;
+  string user_id   = 2;
+  string reason    = 3; // "held_by_other", "frozen", "not_grabbable"
+  string current_holder = 4;
+}
+
+message ObjectRelease {
+  string object_id = 1;
+  string user_id   = 2;
+}
+
+message ObjectTransform {
+  string object_id = 1;
+  string holder_user_id = 2;
+  uint32 authority_token = 3; // server-issued; rejected if stale
+  // pose relative to anchor:
+  int32 px_mm = 4;
+  int32 py_mm = 5;
+  int32 pz_mm = 6;
+  uint32 rot_packed = 7;
+}
+
+message MixedRealityAnchorParams {
+  uint32 max_users         = 1;
+  uint32 anchor_resolve_timeout_ms = 2;
+  bool   require_anchor_to_join = 3;
+  bool   allow_qr_fallback = 4;
+  bool   allow_marker_fallback = 5;
+  bool   allow_pcvr_fake_anchor = 6;
+  uint32 grab_priority_window_ms = 7; // collision window for grab tiebreaks
+}

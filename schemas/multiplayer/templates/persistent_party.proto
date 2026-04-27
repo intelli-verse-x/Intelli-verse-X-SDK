@@ -1,0 +1,48 @@
+// PersistentPartyRoom — long-lived friend group room that survives across
+// game sessions. Functions as a hub with rotating "game of the day" inner
+// templates. Opcodes: 0xA000-0xAFFF.
+syntax = "proto3";
+
+package ivx.multiplayer.v1;
+
+import "kernel.proto";
+
+option csharp_namespace = "IntelliVerseX.Multiplayer.V1";
+option go_package        = "github.com/intelliversex/multiplayer/proto/v1;ivxmpv1";
+
+message PartyJoined {
+  Presence presence = 1;
+  uint32   total_members = 2;
+}
+
+message PartyLeft {
+  string user_id = 1;
+}
+
+message PartyGameOfDay {
+  string game_id    = 1;
+  string template   = 2;
+  string sub_match_id = 3;
+  bytes  params     = 4;
+}
+
+message PartyTransferHost {
+  string from_user_id = 1;
+  string to_user_id   = 2;
+  string reason       = 3; // "voluntary", "host_offline", "host_idle"
+}
+
+message PartyInvite {
+  string party_id  = 1;
+  string from_user = 2;
+  string to_user   = 3;
+  string deeplink  = 4;
+  int64  expires_at_ms = 5;
+}
+
+message PartyParams {
+  uint32 max_members        = 1;
+  bool   allow_voice        = 2;
+  bool   require_friends    = 3;
+  uint32 idle_disband_seconds = 4;
+}

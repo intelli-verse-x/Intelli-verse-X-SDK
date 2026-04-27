@@ -1,0 +1,48 @@
+// LobbyHandoffMatch — players form up in a lobby, then are handed off to
+// another transport (RealtimeTickMatch, peer-to-peer WebRTC, dedicated server).
+// Opcodes: 0x7000-0x7FFF.
+syntax = "proto3";
+
+package ivx.multiplayer.v1;
+
+option csharp_namespace = "IntelliVerseX.Multiplayer.V1";
+option go_package        = "github.com/intelliversex/multiplayer/proto/v1;ivxmpv1";
+
+message LobbyReady {
+  string user_id = 1;
+  bool   ready   = 2;
+}
+
+message LobbyFormUpDone {
+  repeated string user_ids = 1;
+  string lobby_id = 2;
+}
+
+message LobbyHandoffInfo {
+  HandoffKind kind = 1;
+  string target_match_id = 2;
+  string target_endpoint = 3; // websocket URL for next transport
+  string session_token   = 4; // short-lived join token
+  bytes  signaling_data  = 5; // for WebRTC ICE candidates etc.
+  int64  expires_at_ms   = 6;
+}
+
+enum HandoffKind {
+  HANDOFF_UNSPECIFIED  = 0;
+  HANDOFF_NAKAMA_MATCH = 1;
+  HANDOFF_WEBRTC       = 2;
+  HANDOFF_DEDICATED    = 3;
+  HANDOFF_LIVEKIT      = 4;
+}
+
+message LobbyDisband {
+  string reason = 1;
+}
+
+message LobbyHandoffParams {
+  uint32 min_players      = 1;
+  uint32 max_players      = 2;
+  uint32 ready_timeout_ms = 3;
+  HandoffKind handoff_kind = 4;
+  string target_template  = 5; // e.g. "realtime_tick"
+}

@@ -1,0 +1,90 @@
+// SyncTurnMatch — synchronous turn template (e.g. QuizVerse rounds).
+// All players answer the same prompt within a server-enforced window.
+// Server is authoritative on phase boundaries and scoring.
+//
+// Opcodes: 0x4000-0x4FFF (see opcodes.proto).
+syntax = "proto3";
+
+package ivx.multiplayer.v1;
+
+import "envelope.proto";
+import "kernel.proto";
+
+option csharp_namespace = "IntelliVerseX.Multiplayer.V1";
+option go_package        = "github.com/intelliversex/multiplayer/proto/v1;ivxmpv1";
+
+// ──────────────────────────────────────────────────────────────────────────
+// Server → All
+// ──────────────────────────────────────────────────────────────────────────
+message SyncPhaseStart {
+  uint32 phase_index    = 1; // 0-based round index
+  uint32 phase_total    = 2;
+  int64  starts_at_ms   = 3; // server clock
+  uint32 duration_ms    = 4;
+  bytes  prompt         = 5; // game-specific (question, board, ...)
+  string prompt_kind    = 6; // "trivia.mcq", "image.tap", ...
+  uint32 input_min      = 7;
+  uint32 input_max      = 8;
+  bool   secret         = 9; // if true, individual answers stay private until phase end
+}
+
+message SyncPhaseEnd {
+  uint32 phase_index = 1;
+  int64  ended_at_ms = 2;
+  bytes  reveal      = 3; // correct answer, summary, etc.
+  repeated SyncPhaseScore phase_scores = 4;
+}
+
+message SyncPhaseScore {
+  string user_id    = 1;
+  int64  score      = 2;
+  int64  delta      = 3;
+  uint32 streak     = 4;
+  bool   correct    = 5;
+  uint32 latency_ms = 6;
+  bool   forfeit    = 7;
+}
+
+message SyncTimerTick {
+  uint32 phase_index = 1;
+  uint32 remaining_ms = 2;
+}
+
+message SyncScoreUpdate {
+  uint32 phase_index = 1;
+  repeated SyncPhaseScore leaderboard = 2;
+}
+
+message SyncPlayerEliminated {
+  string user_id = 1;
+  uint32 phase_index = 2;
+  string reason  = 3; // "wrong_answer", "timeout", "forfeit"
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// Client → Server
+// ──────────────────────────────────────────────────────────────────────────
+message SyncPlayerInput {
+  uint32 phase_index = 1;
+  bytes  input       = 2; // game-specific (answer, tap coords, ...)
+  uint32 client_latency_ms = 3; // server uses min(this, server-derived) for scoring
+  string client_input_uuid = 4; // idempotency
+}
+
+message SyncPlayerReady {
+  uint32 phase_index = 1;
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// Match parameters (passed at matchInit by the game plugin)
+// ──────────────────────────────────────────────────────────────────────────
+message SyncTurnParams {
+  uint32 max_players          = 1;
+  uint32 phase_count          = 2;
+  uint32 default_phase_ms     = 3;
+  uint32 inter_phase_delay_ms = 4;
+  uint32 elimination_threshold = 5; // 0 = no elimination
+  bool   allow_late_join      = 6;
+  uint32 grace_period_ms      = 7; // for late joiners + reconnect
+  string scoring_mode         = 8; // "fastest_correct", "score_per_phase", ...
+}

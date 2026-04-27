@@ -1,0 +1,194 @@
+// QuizVerse — game-specific opcodes and messages.
+// Reserved opcode range: 0xC100-0xC1FF.
+syntax = "proto3";
+
+package ivx.multiplayer.v1.games.quizverse;
+
+option csharp_namespace = "IntelliVerseX.Multiplayer.V1.Games.QuizVerse";
+option go_package        = "github.com/intelliversex/multiplayer/proto/v1/games/quizverse;ivxqvv1";
+
+// Game-specific opcodes. All within the 0xC100-0xC1FF range.
+enum QvOpcode {
+  QV_UNSPECIFIED          = 0x0000;
+  QV_QUESTION_PROMPT      = 0xC100;
+  QV_ANSWER               = 0xC101;
+  QV_REVEAL               = 0xC102;
+  QV_LEADERBOARD          = 0xC103;
+  QV_LIFELINE_USE         = 0xC104;
+  QV_LIFELINE_RESULT      = 0xC105;
+  QV_AI_HOST_LINE         = 0xC106;
+  QV_VOICE_TOGGLE         = 0xC107;
+  QV_BOOST_APPLIED        = 0xC108;
+  QV_REMATCH_REQUEST      = 0xC109;
+  QV_REMATCH_ACCEPT       = 0xC10A;
+
+  // Friend-Battle team layer (1v1, 2v2, 3v3, 4v4, 5v5).
+  QV_TEAM_JOIN            = 0xC10B; // client -> server: claim team
+  QV_TEAM_STATE           = 0xC10C; // server -> all : authoritative team layout
+  QV_TEAM_SCORE_DELTA     = 0xC10D; // client -> server: add points to a team
+  QV_BATTLE_CONFIG        = 0xC10E; // server -> all : mode + names + ttl
+  QV_TEAMS_READY          = 0xC10F; // server -> all : both sides full, kick off
+}
+
+message QuestionPrompt {
+  string question_id = 1;
+  string text        = 2;
+  repeated string options = 3;
+  string image_url   = 4;
+  string audio_url   = 5;
+  string category    = 6;
+  uint32 difficulty  = 7;
+  uint32 time_ms     = 8;
+}
+
+message Answer {
+  string question_id = 1;
+  uint32 option_index = 2;
+  uint32 latency_ms  = 3;
+  bool   used_lifeline = 4;
+  string lifeline_kind = 5;
+}
+
+message Reveal {
+  string question_id  = 1;
+  uint32 correct_option = 2;
+  string explanation = 3;
+  repeated PlayerAnswerSummary players = 4;
+}
+
+message PlayerAnswerSummary {
+  string user_id = 1;
+  uint32 chose_option = 2;
+  bool   correct = 3;
+  uint32 latency_ms = 4;
+  int64  delta_score = 5;
+  uint32 streak = 6;
+  bool   used_lifeline = 7;
+}
+
+message Leaderboard {
+  repeated LbEntry entries = 1;
+  uint32 round_index = 2;
+  uint32 round_total = 3;
+}
+
+message LbEntry {
+  string user_id  = 1;
+  string display_name = 2;
+  int64  score    = 3;
+  int32  rank     = 4;
+  uint32 streak   = 5;
+}
+
+message LifelineUse {
+  string question_id = 1;
+  string kind        = 2; // "fifty_fifty", "skip", "audience", "double_down"
+}
+
+message LifelineResult {
+  string question_id = 1;
+  string kind        = 2;
+  bytes  payload     = 3; // kind-specific
+  bool   ok          = 4;
+  string detail      = 5;
+}
+
+message AiHostLine {
+  string text       = 1;
+  string voice_id   = 2;
+  uint32 ttfa_ms    = 3;
+  string mood       = 4; // "excited", "calm", "snarky"
+  uint32 question_index = 5;
+}
+
+message BoostApplied {
+  string user_id = 1;
+  string boost_id = 2;
+  int64  delta_score = 3;
+  string reason  = 4;
+}
+
+message RematchRequest {
+  string requester_user_id = 1;
+  string match_template = 2;
+}
+
+message RematchAccept {
+  string user_id = 1;
+  bool   accepted = 2;
+}
+
+// ===== Friend-Battle (team) =====
+
+// Battle mode mirrors Trivia.Friends.BattleMode (1=1v1, 2=2v2, ...).
+enum BattleMode {
+  BATTLE_MODE_UNSPECIFIED = 0;
+  ONE_VS_ONE              = 1;
+  TWO_VS_TWO              = 2;
+  THREE_VS_THREE          = 3;
+  FOUR_VS_FOUR            = 4;
+  FIVE_VS_FIVE            = 5;
+}
+
+enum BattleTeam {
+  BATTLE_TEAM_NONE  = 0;
+  BATTLE_TEAM_ONE   = 1;
+  BATTLE_TEAM_TWO   = 2;
+}
+
+message BattleConfig {
+  BattleMode mode       = 1;
+  string     team1_name = 2;
+  string     team2_name = 3;
+  uint32     timeout_seconds = 4;
+  string     room_code  = 5; // shareable code (creator-only at start)
+  string     challenger_id  = 6;
+  string     challenger_name = 7;
+  repeated string topics = 8;
+}
+
+message TeamJoin {
+  BattleTeam team = 1;
+}
+
+message TeamState {
+  // user_id -> team mapping. Authoritative. Server prunes on PLAYER_LEFT.
+  repeated TeamMember members = 1;
+  string team1_name = 2;
+  string team2_name = 3;
+  int64  team1_score = 4;
+  int64  team2_score = 5;
+  // True once both sides reach `team_size`. Server emits TEAMS_READY too.
+  bool   teams_ready = 6;
+  uint32 team_size = 7;
+}
+
+message TeamMember {
+  string     user_id = 1;
+  string     display_name = 2;
+  BattleTeam team = 3;
+}
+
+message TeamScoreDelta {
+  BattleTeam team = 1;
+  int32      points = 2;
+  // Optional attribution for analytics + cheat-detection.
+  string     reason = 3;
+  string     question_id = 4;
+}
+
+message TeamsReady {
+  uint64 match_time_ms = 1;
+}
+
+// QuizVerse-level result body. Goes inside MatchResultEnvelope.game_result.
+message QuizVerseMatchResult {
+  string mode             = 1; // "friend_battle", "link_and_play", "ranked"
+  string room_code        = 2;
+  uint32 round_total      = 3;
+  uint32 questions_total  = 4;
+  uint32 questions_correct_avg_pct = 5;
+  bool   ai_host_present  = 6;
+  string ai_host_persona  = 7;
+  uint32 ai_cost_usd_micros = 8;
+}

@@ -1,0 +1,201 @@
+// IVX Multiplayer Kernel — opcode reservations.
+//
+// Reserved ranges:
+//   0x0000-0x0FFF  kernel core      (PlayerJoined, Heartbeat, Error, Hello, ...)
+//   0x1000-0x1FFF  social / conv-party
+//   0x2000-0x2FFF  AI agents
+//   0x3000-0x3FFF  moderation
+//   0x4000-0x4FFF  SyncTurnMatch
+//   0x5000-0x5FFF  AsyncTurnMatch
+//   0x6000-0x6FFF  RealtimeTickMatch
+//   0x7000-0x7FFF  LobbyHandoffMatch
+//   0x8000-0x8FFF  TournamentOrchestrator
+//   0x9000-0x9FFF  LiveEventRoom
+//   0xA000-0xAFFF  PersistentPartyRoom
+//   0xB000-0xBFFF  MixedRealityAnchorMatch (anchor + spatial frame)
+//   0xC000-0xCFFF  game-specific (per-game opcodes; QuizVerse uses 0xC100-0xC1FF)
+//   0xD000-0xDFFF  reserved future
+//   0xE000-0xEFFF  reserved future
+//   0xF000-0xFFFF  XR pose / AvatarReplicationMatch (fast-path)
+//
+// Adding a new opcode: pick the next free integer inside the right range and
+// add a constant here. Never repurpose an existing value.
+syntax = "proto3";
+
+package ivx.multiplayer.v1;
+
+option csharp_namespace = "IntelliVerseX.Multiplayer.V1";
+option go_package        = "github.com/intelliversex/multiplayer/proto/v1;ivxmpv1";
+
+enum Opcode {
+  OP_UNSPECIFIED            = 0x0000;
+
+  // ─── Kernel core (0x0001–0x0FFF) ──────────────────────────────────────
+  OP_CLIENT_HELLO           = 0x0001;
+  OP_SERVER_HELLO           = 0x0002;
+  OP_HEARTBEAT              = 0x0003;
+  OP_PLAYER_JOINED          = 0x0004;
+  OP_PLAYER_LEFT            = 0x0005;
+  OP_PLAYER_KICKED          = 0x0006;
+  OP_MATCH_ENDED            = 0x0007;
+  OP_ERROR                  = 0x0008;
+  OP_MATCH_RESUME           = 0x0009; // client → server: replay-from-seq
+  OP_MATCH_RESUME_ACK       = 0x000A;
+  OP_LATENCY_WARNING        = 0x000B;
+  OP_TICK_RATE_CHANGED      = 0x000C;
+  OP_VOICE_CAPABILITY_CHANGED = 0x000D;
+  OP_VOICE_UNAVAILABLE      = 0x000E;
+  OP_VOICE_MODE_CHANGED     = 0x000F;
+  OP_LOW_BANDWIDTH_REQUEST  = 0x0010;
+  OP_NETWORK_CLOCK_PING     = 0x0011;
+  OP_NETWORK_CLOCK_PONG     = 0x0012;
+  OP_WARN_RATE_LIMITED      = 0x0013;
+  OP_WARN_TICK_OVERRUN      = 0x0014;
+  OP_WARN_MATCH_STATE_LARGE = 0x0015;
+  OP_WARN_AVATAR_FALLBACK   = 0x0016;
+  OP_WARN_DEPRECATED_CLIENT = 0x0017;
+  OP_WARN_STATE_REBUILT     = 0x0018;
+  OP_CLOCK_SYNC             = 0x0019; // server-initiated periodic broadcast (distinct from PING/PONG request/response)
+
+  // ─── Social / ConversationalParty (0x1000–0x1FFF) ─────────────────────
+  OP_CONV_SPEAKER_REQUEST     = 0x1000;
+  OP_CONV_SPEAKER_GRANT       = 0x1001;
+  OP_CONV_SPEAKER_REVOKE      = 0x1002;
+  OP_CONV_MUTE_SELF           = 0x1003;
+  OP_CONV_REACTION            = 0x1004;
+  OP_CONV_TEXT_CHAT           = 0x1005;
+  OP_CONV_TOPIC_SET           = 0x1006;
+  OP_CONV_PIN_MESSAGE         = 0x1007;
+  OP_CONV_TRANSCRIPT_CHUNK    = 0x1008;
+  OP_CONV_VOICE_MODE          = 0x1009; // broadcast vs spatial
+  OP_CONV_HAND_LOWER          = 0x100A;
+  OP_CONV_ROOM_SNAPSHOT       = 0x100B; // full state on (re)join
+
+  // ─── Agents (0x2000–0x2FFF) ──────────────────────────────────────────
+  OP_AGENT_JOINED             = 0x2000;
+  OP_AGENT_LEFT               = 0x2001;
+  OP_AGENT_THINKING           = 0x2002;
+  OP_AGENT_SPOKE              = 0x2003;
+  OP_AGENT_VISEME_STREAM      = 0x2004;
+  OP_AGENT_REQUEST_TURN       = 0x2005;
+  OP_AGENT_GRANT_TURN         = 0x2006;
+  OP_AGENT_DEGRADED           = 0x2007;
+  OP_AGENT_BUDGET_EXCEEDED    = 0x2008;
+  OP_AGENT_CONTEXT_RESET      = 0x2009;
+  OP_AGENT_TOOL_CALL          = 0x200A;
+  OP_AGENT_TOOL_RESULT        = 0x200B;
+
+  // ─── Moderation (0x3000–0x3FFF) ───────────────────────────────────────
+  OP_MOD_DECISION             = 0x3000;
+  OP_MOD_WARN                 = 0x3001;
+  OP_MOD_MUTE                 = 0x3002;
+  OP_MOD_KICK                 = 0x3003;
+  OP_MOD_APPEAL_OPENED        = 0x3004;
+  OP_MOD_APPEAL_RESOLVED      = 0x3005;
+
+  // ─── SyncTurn (0x4000–0x4FFF) ─────────────────────────────────────────
+  OP_SYNC_PHASE_START         = 0x4000;
+  OP_SYNC_PHASE_END           = 0x4001;
+  OP_SYNC_PLAYER_INPUT        = 0x4002;
+  OP_SYNC_PLAYER_READY        = 0x4003;
+  OP_SYNC_SCORE_UPDATE        = 0x4004;
+  OP_SYNC_PLAYER_ELIMINATED   = 0x4005;
+  OP_SYNC_TIMER_TICK          = 0x4006;
+
+  // ─── AsyncTurn (0x5000–0x5FFF) ────────────────────────────────────────
+  OP_ASYNC_TURN_START         = 0x5000;
+  OP_ASYNC_TURN_SUBMIT        = 0x5001;
+  OP_ASYNC_TURN_END           = 0x5002;
+  OP_ASYNC_NOTIFY_OPPONENT    = 0x5003;
+  OP_ASYNC_FORFEIT            = 0x5004;
+  OP_ASYNC_RESIGN             = 0x5005;
+
+  // ─── RealtimeTick (0x6000–0x6FFF) ─────────────────────────────────────
+  OP_TICK_INPUT               = 0x6000;
+  OP_TICK_SNAPSHOT            = 0x6001; // full
+  OP_TICK_DELTA               = 0x6002; // delta from snapshot
+  OP_TICK_RECONCILE           = 0x6003; // server correction
+  OP_TICK_HEARTBEAT           = 0x6004; // server periodic clock + tick
+  OP_TICK_QUALITY_REPORT      = 0x6005; // client telemetry: jitter/loss/RTT
+  OP_TICK_RATE_PROPOSAL       = 0x6006; // server proposes new tick hz to client
+  // WebRTC peer-to-peer handoff signaling (sub-range, in-band on match).
+  // Server is a relay-only broker; payloads are opaque SDP/ICE.
+  OP_TICK_WEBRTC_OFFER        = 0x6080; // client -> peer (via server)
+  OP_TICK_WEBRTC_ANSWER       = 0x6081;
+  OP_TICK_WEBRTC_ICE          = 0x6082;
+  OP_TICK_WEBRTC_BYE          = 0x6083;
+  OP_TICK_WEBRTC_HANDOFF_INFO = 0x6084; // server -> all : signaling endpoint + STUN/TURN
+
+  // ─── LobbyHandoff (0x7000–0x7FFF) ─────────────────────────────────────
+  OP_LOBBY_READY              = 0x7000;
+  OP_LOBBY_FORM_UP_DONE       = 0x7001;
+  OP_LOBBY_HANDOFF_INFO       = 0x7002; // address/credentials for next transport
+  OP_LOBBY_DISBAND            = 0x7003;
+
+  // ─── Tournament (0x8000–0x8FFF) ───────────────────────────────────────
+  // Implemented by data/modules/src/multiplayer-kernel/templates/tournament-match.ts.
+  OP_TOURN_REGISTER            = 0x8000; // client -> server
+  OP_TOURN_REGISTRATION_CLOSED = 0x8001; // server -> all
+  OP_TOURN_BRACKET_UPDATED     = 0x8002; // server -> all
+  OP_TOURN_LEG_MATCH_INFO      = 0x8003; // server -> participants of a leg
+  OP_TOURN_LEG_MATCH_RESULT    = 0x8004; // server -> all
+  OP_TOURN_RESOLVED            = 0x8005; // server -> all (champion announced)
+  OP_TOURN_PLAYER_FORFEIT      = 0x8006; // client -> server
+  OP_TOURN_BYE_AWARDED         = 0x8007; // server -> all
+
+  // ─── LiveEvent (0x9000–0x9FFF) ────────────────────────────────────────
+  // Implemented by data/modules/src/multiplayer-kernel/templates/live-event-match.ts.
+  OP_LIVE_PHASE_CHANGED        = 0x9000; // server -> all
+  OP_LIVE_REACTION             = 0x9001; // client -> server -> all (rate-limited, sampled)
+  OP_LIVE_DROP_AWARDED         = 0x9002; // server -> targeted (or all)
+  OP_LIVE_EVENT_PROGRESS       = 0x9003; // server -> all (crowd-meter)
+  OP_LIVE_PARTICIPATION_LOG    = 0x9004; // server -> targeted; per-player participation
+  OP_LIVE_EVENT_CHAT           = 0x9005; // client -> server -> all (rate-limited)
+  OP_LIVE_EVENT_SIGNAL         = 0x9006; // host/admin -> server (advance, drop, end)
+  OP_LIVE_QUEUED               = 0x9007; // server -> all (waiting room status)
+  OP_LIVE_TIME_TO_START        = 0x9008; // server -> all (countdown)
+
+  // ─── PersistentParty (0xA000–0xAFFF) ──────────────────────────────────
+  // Implemented by data/modules/src/multiplayer-kernel/templates/persistent-party-match.ts.
+  OP_PARTY_STATE              = 0xA000; // server -> all (snapshot of doc)
+  OP_PARTY_INVITE             = 0xA001; // owner/officer -> server -> targeted
+  OP_PARTY_INVITE_ACCEPT      = 0xA002; // client -> server
+  OP_PARTY_INVITE_DECLINE     = 0xA003; // client -> server
+  OP_PARTY_KICK               = 0xA004; // owner/officer -> server
+  OP_PARTY_PROMOTE            = 0xA005; // owner -> server
+  OP_PARTY_DEMOTE             = 0xA006; // owner -> server
+  OP_PARTY_TRANSFER_OWNER     = 0xA007; // owner -> server
+  OP_PARTY_LEAVE              = 0xA008; // client -> server (leave permanently)
+  OP_PARTY_SETTING_UPDATED    = 0xA009; // owner/officer -> server -> all
+  OP_PARTY_CHAT               = 0xA00A; // client -> server -> all (rate-limited)
+  OP_PARTY_MEMBER_PRESENCE    = 0xA00B; // server -> all (online/offline)
+  OP_PARTY_READY_FOR_MATCH    = 0xA00C; // client -> server (queue for game)
+  OP_PARTY_MATCH_QUEUE_INFO   = 0xA00D; // server -> all (party is queueing)
+
+  // ─── MixedRealityAnchor (0xB000–0xBFFF) ───────────────────────────────
+  OP_MR_ANCHOR_OFFER          = 0xB000;
+  OP_MR_ANCHOR_RESOLVED       = 0xB001;
+  OP_MR_ANCHOR_LOST           = 0xB002;
+  OP_MR_RELOCALIZED           = 0xB003;
+  OP_MR_OBJECT_GRAB           = 0xB010;
+  OP_MR_OBJECT_RELEASE        = 0xB011;
+  OP_MR_OBJECT_GRAB_REJECTED  = 0xB012;
+  OP_MR_OBJECT_TRANSFORM      = 0xB013;
+
+  // ─── Game-specific (0xC000–0xCFFF) ────────────────────────────────────
+  // QuizVerse 0xC100-0xC1FF (declared in games/quizverse.proto)
+  // Other games take next available 0xC2xx, 0xC3xx, ...
+
+  // ─── XR pose fast-path (0xF000–0xFFFF) ────────────────────────────────
+  OP_XR_HEAD_POSE             = 0xF000;
+  OP_XR_HAND_POSE             = 0xF001;
+  OP_XR_BODY_POSE             = 0xF002;
+  OP_XR_FACE_BLENDSHAPES      = 0xF003;
+  OP_XR_VOICE_POSITION        = 0xF004;
+  OP_XR_FINGER_POSE           = 0xF005;
+  OP_XR_AVATAR_LOD            = 0xF006;
+
+  // Reserved — DO NOT REUSE
+  reserved 0xD000 to 0xDFFF;
+  reserved 0xE000 to 0xEFFF;
+}

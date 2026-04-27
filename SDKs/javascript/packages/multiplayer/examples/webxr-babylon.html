@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>IVX WebXR + Babylon.js sample</title>
+  <style>
+    html, body { margin: 0; padding: 0; overflow: hidden; height: 100%; background: #0b0d10; }
+    #renderCanvas { width: 100%; height: 100%; touch-action: none; }
+    #info { position: fixed; top: 12px; left: 12px; color: #fff; font: 14px/1.4 system-ui, sans-serif;
+            background: rgba(0,0,0,.5); padding: 8px 12px; border-radius: 6px; z-index: 10; }
+  </style>
+</head>
+<body>
+  <div id="info">
+    IVX WebXR — Babylon.js sample
+    <div>Match: <span id="matchId">-</span></div>
+  </div>
+  <canvas id="renderCanvas"></canvas>
+
+  <script src="https://cdn.babylonjs.com/babylon.js"></script>
+  <script type="module">
+    // Replace with your published bundle:
+    // import { IVXMultiplayerClient, IVXWebXRAdapter } from "@intelliversex/multiplayer";
+
+    const canvas = document.getElementById("renderCanvas");
+    const engine = new BABYLON.Engine(canvas, true);
+    const scene  = new BABYLON.Scene(engine);
+    scene.clearColor = new BABYLON.Color4(0.05, 0.07, 0.10, 1);
+
+    const camera = new BABYLON.UniversalCamera("cam", new BABYLON.Vector3(0, 1.6, -3), scene);
+    camera.attachControl(canvas, true);
+    new BABYLON.HemisphericLight("h", new BABYLON.Vector3(0, 1, 0), scene);
+    BABYLON.MeshBuilder.CreateGround("g", { width: 8, height: 8 }, scene)
+      .material = (() => { const m = new BABYLON.StandardMaterial("gm", scene);
+        m.diffuseColor = new BABYLON.Color3(0.10, 0.13, 0.16); return m; })();
+
+    // Per-peer avatars.
+    const peerAvatars = new Map();
+    function ensurePeer(uid) {
+      if (peerAvatars.has(uid)) return peerAvatars.get(uid);
+      const head = BABYLON.MeshBuilder.CreateSphere("h_" + uid, { diameter: 0.24 }, scene);
+      const lh   = BABYLON.MeshBuilder.CreateSphere("l_" + uid, { diameter: 0.12 }, scene);
+      const rh   = BABYLON.MeshBuilder.CreateSphere("r_" + uid, { diameter: 0.12 }, scene);
+      const av = { head, leftHand: lh, rightHand: rh };
+      peerAvatars.set(uid, av);
+      return av;
+    }
+    function applyPose(target, pose) {
+      target.position.set(pose.px_mm / 1000, pose.py_mm / 1000, pose.pz_mm / 1000);
+    }
+
+    async function main() {
+      const xrHelper = await scene.createDefaultXRExperienceAsync({
+        floorMeshes: [scene.getMeshByName("g")]
+      });
+      // const matchId = location.hash.slice(1) || "demo-match";
+      // document.getElementById("matchId").textContent = matchId;
+      // const client  = await IVXMultiplayerClient.connect({...});
+      // const session = await client.joinMatch(matchId);
+      // const adapter = new IVXWebXRAdapter(session, { headHz: 60, handHz: 30 });
+      // adapter.onPeerPose(e => applyPose(ensurePeer(e.user_id)[e.bone], e.pose));
+      // adapter.onPeerLeft(e => {
+      //   const av = peerAvatars.get(e.user_id);
+      //   if (av) { av.head.dispose(); av.leftHand.dispose(); av.rightHand.dispose();
+      //             peerAvatars.delete(e.user_id); }
+      // });
+      // xrHelper.baseExperience.onStateChangedObservable.add(state => {
+      //   if (state === BABYLON.WebXRState.IN_XR) {
+      //     const xrSession = xrHelper.baseExperience.sessionManager.session;
+      //     const refSpace  = xrHelper.baseExperience.sessionManager.referenceSpace;
+      //     adapter.attach(xrSession, refSpace);
+      //   }
+      // });
+    }
+
+    main();
+    engine.runRenderLoop(() => scene.render());
+    addEventListener("resize", () => engine.resize());
+  </script>
+</body>
+</html>

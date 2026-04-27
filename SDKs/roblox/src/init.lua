@@ -126,5 +126,6 @@ end
 IVX.AI = require(script.AI)
 IVX.Hiro = require(script.Hiro)
 IVX.Identity = require(script.Identity)
+IVX.Multiplayer = require(script.Multiplayer)
 
 return IVX

@@ -1,0 +1,198 @@
+// IVX Multiplayer Kernel — kernel-level message types.
+// These are the bodies for opcodes in the 0x0000-0x0FFF range.
+syntax = "proto3";
+
+package ivx.multiplayer.v1;
+
+import "envelope.proto";
+
+option csharp_namespace = "IntelliVerseX.Multiplayer.V1";
+option go_package        = "github.com/intelliversex/multiplayer/proto/v1;ivxmpv1";
+
+// ──────────────────────────────────────────────────────────────────────────
+// Membership
+// ──────────────────────────────────────────────────────────────────────────
+message Presence {
+  string user_id      = 1;
+  string username     = 2;
+  string display_name = 3;
+  string avatar_url   = 4;
+  bool   is_agent     = 5;
+  string region       = 6;
+  uint32 ping_ms      = 7;
+  ConnectionQuality quality = 8;
+}
+
+enum ConnectionQuality {
+  CONN_UNSPECIFIED = 0;
+  CONN_GOOD        = 1;
+  CONN_FAIR        = 2;
+  CONN_POOR        = 3;
+}
+
+message PlayerJoined {
+  Presence presence = 1;
+  uint64   join_seq = 2;
+}
+
+message PlayerLeft {
+  string  user_id  = 1;
+  LeaveReason reason = 2;
+  bool    will_resume = 3;
+}
+
+enum LeaveReason {
+  LEAVE_UNSPECIFIED   = 0;
+  LEAVE_VOLUNTARY     = 1;
+  LEAVE_DISCONNECT    = 2;
+  LEAVE_KICK          = 3;
+  LEAVE_BAN           = 4;
+  LEAVE_TIMEOUT       = 5;
+  LEAVE_FLAPPING      = 6;
+  LEAVE_MATCH_ENDED   = 7;
+}
+
+message PlayerKicked {
+  string user_id     = 1;
+  string moderator   = 2;
+  string reason      = 3;
+  uint32 ban_seconds = 4;
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// Match lifecycle
+// ──────────────────────────────────────────────────────────────────────────
+message MatchEnded {
+  string match_id   = 1;
+  EndReason reason  = 2;
+  string detail     = 3;
+  bytes  result_envelope = 4; // game-specific MatchResultEnvelope payload
+}
+
+enum EndReason {
+  END_UNSPECIFIED      = 0;
+  END_COMPLETED        = 1;
+  END_TIMEOUT          = 2;
+  END_QUORUM_LOST      = 3;
+  END_HOST_DISBAND     = 4;
+  END_KICKED_ALL       = 5;
+  END_DURATION_EXCEEDED = 6;
+  END_KERNEL_INTERNAL  = 7;
+  // P5: lobby disbanded before handoff, async-game cancelled, etc.
+  // Distinct from COMPLETED (succeeded) and TIMEOUT (timed out).
+  END_CANCELLED        = 8;
+}
+
+message Heartbeat {
+  int64  ts_ms     = 1;
+  uint32 client_rtt_ms = 2;
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// Reconnect / resume
+// ──────────────────────────────────────────────────────────────────────────
+message MatchResume {
+  string user_id      = 1;
+  uint64 last_seen_seq = 2;
+  uint32 schema_version = 3;
+}
+
+message MatchResumeAck {
+  bool   replay_supported = 1;
+  uint64 from_seq         = 2;
+  uint64 to_seq           = 3;
+  uint64 dropped          = 4; // events the server cannot replay
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// Network clock — Cristian-style sync, server is authoritative.
+// ──────────────────────────────────────────────────────────────────────────
+message NetworkClockPing {
+  int64 client_ts_ms = 1;
+}
+message NetworkClockPong {
+  int64 client_ts_ms = 1;
+  int64 server_ts_ms = 2;
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// Voice capability churn
+// ──────────────────────────────────────────────────────────────────────────
+message VoiceCapabilityChanged {
+  bool can_publish   = 1;
+  bool can_subscribe = 2;
+  string reason      = 3;
+}
+
+message VoiceModeChanged {
+  VoiceMode mode = 1;
+}
+enum VoiceMode {
+  VOICE_OFF       = 0;
+  VOICE_BROADCAST = 1;
+  VOICE_SPATIAL   = 2;
+  VOICE_PTT       = 3;
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// Warnings (non-fatal). Adapters surface these as `OnWarning(...)`.
+// ──────────────────────────────────────────────────────────────────────────
+message WarnRateLimited {
+  uint32 budget_remaining = 1;
+  uint32 retry_after_ms   = 2;
+}
+
+message WarnTickOverrun {
+  uint32 tick_interval_ms = 1;
+  uint32 actual_ms        = 2;
+}
+
+message WarnMatchStateLarge {
+  uint32 size_bytes  = 1;
+  uint32 limit_bytes = 2;
+}
+
+message WarnAvatarFallback {
+  string user_id = 1;
+  uint32 from_lod = 2;
+  uint32 to_lod   = 3;
+  string reason   = 4;
+}
+
+message WarnDeprecatedClient {
+  string client_version = 1;
+  string sunset_date    = 2; // ISO-8601
+}
+
+message WarnStateRebuilt {
+  uint64 expected_seq = 1;
+  uint64 actual_seq   = 2;
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// MatchResult — the cross-template result envelope.
+// Every match end produces exactly one. AnalyticsAlerts persists.
+// ──────────────────────────────────────────────────────────────────────────
+message MatchResultEnvelope {
+  string match_id          = 1;
+  string template_id       = 2; // "sync_turn", "conv_party", ...
+  string game_id           = 3; // "quizverse", ...
+  int64  started_at_ms     = 4;
+  int64  ended_at_ms       = 5;
+  EndReason end_reason     = 6;
+  repeated PlayerResult player_results = 7;
+  bytes  game_result       = 8; // game-specific result body
+  string region            = 9;
+  uint32 schema_version    = 10;
+}
+
+message PlayerResult {
+  string user_id  = 1;
+  bool   is_agent = 2;
+  int32  rank     = 3;
+  int64  score    = 4;
+  bool   forfeit  = 5;
+  bool   disconnected = 6;
+  uint32 reconnects = 7;
+  bytes  game_specific = 8;
+}

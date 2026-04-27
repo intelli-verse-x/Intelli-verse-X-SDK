@@ -1,0 +1,58 @@
+// AsyncTurnMatch — long-form correspondence-style play (chess, words, etc.).
+// State persists in storage; players take turns minutes/hours/days apart.
+// Opcodes: 0x5000-0x5FFF.
+syntax = "proto3";
+
+package ivx.multiplayer.v1;
+
+import "kernel.proto";
+
+option csharp_namespace = "IntelliVerseX.Multiplayer.V1";
+option go_package        = "github.com/intelliversex/multiplayer/proto/v1;ivxmpv1";
+
+message AsyncTurnStart {
+  uint32 turn_index   = 1;
+  string active_user  = 2;
+  int64  deadline_ms  = 3; // 0 if untimed
+  bytes  state        = 4; // game state snapshot
+  uint32 schema_version = 5;
+}
+
+message AsyncTurnSubmit {
+  uint32 turn_index   = 1;
+  bytes  move         = 2;
+  string client_move_uuid = 3; // idempotency
+  string text_message = 4;     // optional in-band chat (subject to moderation)
+}
+
+message AsyncTurnEnd {
+  uint32 turn_index   = 1;
+  bytes  next_state   = 2;
+  string next_user    = 3;
+  bool   game_over    = 4;
+  EndReason end_reason = 5;
+}
+
+message AsyncNotifyOpponent {
+  string user_id   = 1;
+  string match_id  = 2;
+  string title     = 3;
+  string body      = 4;
+  string deeplink  = 5;
+}
+
+message AsyncForfeit {
+  string user_id = 1;
+}
+
+message AsyncResign {
+  string user_id = 1;
+}
+
+message AsyncTurnParams {
+  uint32 max_players       = 1;
+  uint32 default_turn_seconds = 2;
+  uint32 max_concurrent_per_user = 3;
+  bool   allow_in_band_chat = 4;
+  bool   require_friends    = 5;
+}

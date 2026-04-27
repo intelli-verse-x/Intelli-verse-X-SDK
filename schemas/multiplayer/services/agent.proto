@@ -1,0 +1,129 @@
+// IIVXAgent — first-class AI-agent kernel service.
+// Agents appear as Presence members with user_id prefixed "agt_*".
+// They can speak (TTS into LiveKit), animate (server-driven avatar), and
+// participate in any template. Opcodes: 0x2000-0x2FFF.
+syntax = "proto3";
+
+package ivx.multiplayer.v1;
+
+import "kernel.proto";
+
+option csharp_namespace = "IntelliVerseX.Multiplayer.V1";
+option go_package        = "github.com/intelliversex/multiplayer/proto/v1;ivxmpv1";
+
+// Persona registry entry — referenced by id when spawning an agent.
+message AgentPersona {
+  string persona_id    = 1; // "trivia_host_v1", "town_crier_v2", ...
+  string display_name  = 2;
+  string avatar_url    = 3;
+  string voice_id      = 4; // TTS provider voice
+  string llm_provider  = 5; // "openai", "anthropic", "azure", "custom"
+  string llm_model     = 6;
+  string system_prompt_ref = 7; // S3/Storage ref; not inlined for size
+  PersonaConstraints constraints = 8;
+  uint32 version_major = 9;
+  uint32 version_minor = 10;
+}
+
+message PersonaConstraints {
+  uint32 max_response_tokens     = 1;
+  uint32 max_responses_per_minute = 2;
+  uint32 max_seconds_speaking_per_minute = 3;
+  uint32 max_concurrent_matches  = 4;
+  bool   allow_proactive_speak   = 5;
+  bool   allow_tools             = 6;
+  uint32 cost_budget_usd_micros_per_match = 7; // hard cap
+  string locale_allowlist_csv    = 8; // empty = all
+}
+
+message AgentJoined {
+  string agent_id     = 1; // "agt_<persona>_<uuid>"
+  string persona_id   = 2;
+  string display_name = 3;
+  string avatar_url   = 4;
+  string spawned_by_user = 5; // empty if kernel-spawned
+  string spawn_reason = 6;    // "host", "moderator", "filler", "user_invoked"
+  uint32 persona_version_major = 7;
+  uint32 persona_version_minor = 8;
+}
+
+message AgentLeft {
+  string agent_id  = 1;
+  string reason    = 2; // "task_done", "kicked", "budget_exceeded", "provider_down"
+}
+
+message AgentThinking {
+  string agent_id = 1;
+  bool   thinking = 2; // toggle for typing indicator / avatar idle
+}
+
+message AgentSpoke {
+  string agent_id = 1;
+  string text     = 2;
+  int64  ts_ms    = 3;
+  uint32 ttfa_ms  = 4; // time-to-first-audio (LiveKit ingestion)
+  uint32 cost_usd_micros = 5;
+  string llm_provider = 6;
+  string locale   = 7;
+  bool   muted_by_moderation = 8;
+}
+
+message AgentVisemeStream {
+  string agent_id = 1;
+  bytes  visemes  = 2; // packed (time_ms uint16, viseme uint8) pairs
+  int64  start_ts_ms = 3;
+}
+
+message AgentRequestTurn {
+  string agent_id = 1;
+  string topic_hint = 2;
+}
+
+message AgentGrantTurn {
+  string agent_id = 1;
+  uint32 floor_seconds = 2;
+}
+
+message AgentDegraded {
+  string agent_id = 1;
+  string from_provider = 2;
+  string to_provider   = 3; // "static_response", "smaller_model", "noop"
+  string reason = 4;
+}
+
+message AgentBudgetExceeded {
+  string agent_id = 1;
+  uint32 cap_usd_micros = 2;
+  uint32 used_usd_micros = 3;
+  string action = 4; // "muted", "kicked", "throttled"
+}
+
+message AgentContextReset {
+  string agent_id = 1;
+  string reason   = 2; // "moderator", "topic_change", "drift"
+}
+
+message AgentToolCall {
+  string agent_id = 1;
+  string tool_id  = 2;
+  bytes  args     = 3;
+  string call_id  = 4;
+}
+
+message AgentToolResult {
+  string call_id = 1;
+  bytes  result  = 2;
+  bool   ok      = 3;
+  string error  = 4;
+}
+
+// Server-internal: agent spawn request from a game plugin.
+// Not exposed over the wire to clients.
+message AgentSpawnRequest {
+  string match_id      = 1;
+  string persona_id    = 2;
+  string spawned_by_user = 3;
+  string spawn_reason  = 4;
+  bytes  initial_context = 5;
+  uint32 max_lifetime_seconds = 6;
+}

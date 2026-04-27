@@ -1,0 +1,12 @@
+name: conv_party_agents
+template_id: conversational-party-v1
+duration_sec: 600
+tick_rate_hz: 5
+bots:
+  - kind: realtime
+    count: 2
+  - kind: agent
+    count: 2
+expectations:
+  - expression: "agent_budget_exceeded == 0"
+    description: "Agent token / cost budget must never be exceeded"

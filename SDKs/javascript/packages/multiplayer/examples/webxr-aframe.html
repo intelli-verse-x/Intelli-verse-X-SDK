@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>IVX WebXR + A-Frame sample</title>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <style>
+    #info { position: fixed; top: 12px; left: 12px; z-index: 10;
+            color: #fff; font: 14px/1.4 system-ui, sans-serif;
+            background: rgba(0,0,0,.5); padding: 8px 12px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <div id="info">
+    IVX WebXR — A-Frame sample
+    <div>Match: <span id="matchId">-</span></div>
+  </div>
+
+  <a-scene background="color: #0b0d10">
+    <a-plane position="0 0 0" rotation="-90 0 0" width="8" height="8" color="#161b22"></a-plane>
+    <a-camera position="0 1.6 0"></a-camera>
+    <a-entity id="peers"></a-entity>
+  </a-scene>
+
+  <script type="module">
+    // Replace with your published bundle:
+    // import { IVXMultiplayerClient, IVXWebXRAdapter } from "@intelliversex/multiplayer";
+
+    const peersRoot = document.getElementById("peers");
+    const peerAvatars = new Map();
+
+    function ensurePeer(uid) {
+      if (peerAvatars.has(uid)) return peerAvatars.get(uid);
+      const head = document.createElement("a-sphere");
+      head.setAttribute("radius", "0.12");
+      head.setAttribute("color", "#4493f8");
+      const lh = head.cloneNode();
+      lh.setAttribute("radius", "0.06"); lh.setAttribute("color", "#a371f7");
+      const rh = lh.cloneNode();
+      [head, lh, rh].forEach(n => peersRoot.appendChild(n));
+      const av = { head, leftHand: lh, rightHand: rh };
+      peerAvatars.set(uid, av);
+      return av;
+    }
+    function applyPose(target, pose) {
+      target.setAttribute("position",
+        `${pose.px_mm / 1000} ${pose.py_mm / 1000} ${pose.pz_mm / 1000}`);
+    }
+
+    document.querySelector("a-scene").addEventListener("enter-vr", async () => {
+      // const matchId = location.hash.slice(1) || "demo-match";
+      // document.getElementById("matchId").textContent = matchId;
+      // const client  = await IVXMultiplayerClient.connect({...});
+      // const session = await client.joinMatch(matchId);
+      // const adapter = new IVXWebXRAdapter(session, { headHz: 60, handHz: 30 });
+      // adapter.onPeerPose(e => applyPose(ensurePeer(e.user_id)[e.bone], e.pose));
+      // adapter.onPeerLeft(e => {
+      //   const av = peerAvatars.get(e.user_id);
+      //   if (av) { av.head.remove(); av.leftHand.remove(); av.rightHand.remove();
+      //             peerAvatars.delete(e.user_id); }
+      // });
+      // const xrSession = AFRAME.scenes[0].xrSession;
+      // const refSpace  = AFRAME.scenes[0].renderer.xr.getReferenceSpace();
+      // adapter.attach(xrSession, refSpace);
+    });
+  </script>
+</body>
+</html>

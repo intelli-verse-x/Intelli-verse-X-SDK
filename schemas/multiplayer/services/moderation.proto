@@ -1,0 +1,108 @@
+// Moderation pipeline — voice ASR → text classifier → action.
+// Applied uniformly to human voice, agent TTS, and text-chat.
+// Opcodes: 0x3000-0x3FFF.
+syntax = "proto3";
+
+package ivx.multiplayer.v1;
+
+option csharp_namespace = "IntelliVerseX.Multiplayer.V1";
+option go_package        = "github.com/intelliversex/multiplayer/proto/v1;ivxmpv1";
+
+enum ModSurface {
+  MOD_SURFACE_UNSPECIFIED = 0;
+  MOD_SURFACE_VOICE       = 1;
+  MOD_SURFACE_TEXT_CHAT   = 2;
+  MOD_SURFACE_AGENT_TTS   = 3;
+  MOD_SURFACE_USERNAME    = 4;
+  MOD_SURFACE_AVATAR      = 5;
+}
+
+enum ModAction {
+  MOD_ACTION_UNSPECIFIED = 0;
+  MOD_ACTION_ALLOW       = 1;
+  MOD_ACTION_WARN        = 2;
+  MOD_ACTION_REDACT      = 3; // censor utterance, leave member in match
+  MOD_ACTION_MUTE        = 4;
+  MOD_ACTION_KICK        = 5;
+  MOD_ACTION_BAN         = 6;
+  MOD_ACTION_AGENT_CORRECT = 7; // ask agent to retry within constraints
+}
+
+enum ModSeverity {
+  MOD_SEV_UNSPECIFIED = 0;
+  MOD_SEV_LOW         = 1;
+  MOD_SEV_MEDIUM      = 2;
+  MOD_SEV_HIGH        = 3;
+  MOD_SEV_CRITICAL    = 4;
+}
+
+// SafetyDecisionLog — every decision the moderation pipeline makes.
+// Stored append-only in `safety_decision_log` Nakama storage collection +
+// shipped to the analytics warehouse for audit.
+message SafetyDecision {
+  string decision_id   = 1; // ulid
+  string match_id      = 2;
+  string user_id       = 3;
+  bool   is_agent      = 4;
+  ModSurface surface   = 5;
+  ModSeverity severity = 6;
+  ModAction  action    = 7;
+  string detail        = 8;
+  repeated string categories = 9; // "hate", "self-harm", "spam", ...
+  string transcript    = 10;       // censored copy if applicable
+  int64  ts_ms         = 11;
+  string classifier_model = 12;
+  string asr_model     = 13;
+  uint32 latency_ms    = 14;
+  string locale        = 15;
+  string region        = 16;
+  bool   appealable    = 17;
+  string correlation_id = 18;
+}
+
+message ModDecision {
+  SafetyDecision decision = 1;
+}
+
+message ModWarn {
+  string user_id = 1;
+  string detail  = 2;
+  ModSeverity severity = 3;
+}
+
+message ModMute {
+  string user_id = 1;
+  uint32 mute_seconds = 2;
+  string detail  = 3;
+}
+
+message ModKick {
+  string user_id = 1;
+  string detail  = 2;
+  uint32 ban_seconds = 3;
+}
+
+message ModAppealOpened {
+  string decision_id = 1;
+  string user_id     = 2;
+  string text        = 3;
+}
+
+message ModAppealResolved {
+  string decision_id = 1;
+  bool   upheld      = 2;
+  string moderator_user_id = 3;
+  string detail      = 4;
+}
+
+message ModerationParams {
+  bool   enable_voice_asr     = 1;
+  bool   enable_text          = 2;
+  bool   enable_agent_pre_check = 3;
+  uint32 voice_window_ms      = 4; // ASR window
+  uint32 max_warnings_before_mute = 5;
+  string classifier_model     = 6;
+  string asr_model            = 7;
+  bool   strict_mode          = 8; // higher-severity defaults
+  string locale_allowlist_csv = 9;
+}

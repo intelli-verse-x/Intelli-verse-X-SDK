@@ -1,0 +1,25 @@
+name: livekit_voice_8
+template_id: conversational-party-v1
+duration_sec: 240
+tick_rate_hz: 4    # ConvParty tick is conversation-paced
+pose_publish_rate_hz: 0
+bots:
+  - kind: voice
+    count: 8
+expectations:
+  # Token-issuance success rate
+  - expression: "voice_token_success_ratio > 0.99"
+    description: "mp_voice_token must succeed for ≥99% of calls"
+  # JWT must be well-formed three-segment string
+  - expression: "voice_token_wellformed_ratio > 0.99"
+    description: "Returned JWT must split into 3 base64url segments"
+  # If LiveKit configured, expires_at_ms must be in the future
+  - expression: "voice_token_future_expiry_ratio > 0.99"
+    description: "Token expires_at_ms must be > now() at issue time"
+  # Provider must be LIVEKIT (=1) when configured, NONE (=5) when not.
+  # Either is acceptable here — we just disallow UNSPECIFIED (=0).
+  - expression: "voice_token_provider_unspecified_count == 0"
+    description: "Provider must never be UNSPECIFIED (0)"
+  # Floor management: ≥1 speaker promotion observed
+  - expression: "speaker_grants >= 1"
+    description: "At least one bot must hold the floor during the run"

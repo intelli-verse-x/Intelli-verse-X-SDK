@@ -1,0 +1,102 @@
+// ConversationalPartyMatch — voice-first social template.
+// Speaker queue, hand-raise, reactions, persistent state, AI agent support.
+// Opcodes: 0x1000-0x1FFF (social/conv-party).
+//
+// State invariants enforced by the kernel:
+//   1. At most one speaker grant per (user_id) at a time.
+//   2. Speaker queue length is capped (default 50); overflow returns RATE_LIMITED.
+//   3. Reactions are throttled per user (default 5/sec).
+//   4. Transcript chunks are append-only + opaquely tagged with sender.
+syntax = "proto3";
+
+package ivx.multiplayer.v1;
+
+import "kernel.proto";
+
+option csharp_namespace = "IntelliVerseX.Multiplayer.V1";
+option go_package        = "github.com/intelliversex/multiplayer/proto/v1;ivxmpv1";
+
+message SpeakerRequest {
+  string user_id     = 1;
+  string topic_hint  = 2;
+}
+
+message SpeakerGrant {
+  string user_id     = 1;
+  uint32 floor_seconds = 2;
+  uint32 queue_position = 3;
+}
+
+message SpeakerRevoke {
+  string user_id = 1;
+  string reason  = 2; // "time_up", "moderated", "quiet", "voluntary"
+}
+
+message MuteSelf {
+  string user_id = 1;
+  bool   muted   = 2;
+}
+
+message Reaction {
+  string user_id    = 1;
+  uint32 reaction_id = 2;
+  string emoji      = 3; // optional unicode sequence
+  int64  ts_ms      = 4;
+}
+
+message TextChat {
+  string user_id    = 1;
+  string text       = 2;
+  string client_uuid = 3;
+}
+
+message TopicSet {
+  string topic     = 1;
+  string set_by    = 2;
+}
+
+message PinMessage {
+  string message_id = 1;
+  string user_id    = 2;
+  bool   pinned     = 3;
+}
+
+message TranscriptChunk {
+  string speaker_user_id = 1;
+  bool   is_agent        = 2;
+  string text            = 3;
+  int64  start_ts_ms     = 4;
+  int64  end_ts_ms       = 5;
+  bool   final           = 6; // false = interim ASR; true = stable
+  string locale          = 7;
+}
+
+message HandLower {
+  string user_id = 1;
+}
+
+// Sent on (re)join so the joiner can rebuild the room without a full
+// kernel state replay.
+message RoomSnapshot {
+  repeated Presence members         = 1;
+  repeated string   speaker_queue   = 2;
+  string   current_speaker_user_id  = 3;
+  string   topic                    = 4;
+  repeated TranscriptChunk recent_transcript = 5;
+  repeated string   moderators      = 6;
+  uint32   schema_version           = 7;
+}
+
+message ConversationalPartyParams {
+  uint32 max_members          = 1;
+  uint32 speaker_floor_seconds = 2; // default 60
+  uint32 speaker_queue_cap    = 3;  // default 50
+  uint32 reaction_rate_per_sec = 4; // default 5
+  bool   allow_text_chat      = 5;
+  bool   allow_agents         = 6;
+  uint32 max_agents           = 7;
+  bool   moderation_enabled   = 8;
+  bool   transcript_enabled   = 9;
+  string default_voice_mode   = 10; // "broadcast" | "spatial" | "ptt"
+  bool   anyone_can_topic     = 11;
+}

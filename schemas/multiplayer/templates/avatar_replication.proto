@@ -1,0 +1,80 @@
+// AvatarReplicationMatch (XR) — high-frequency pose replication for VR/MR rooms.
+// Uses fast-path opcodes 0xF000+ to bypass full envelope parse where possible.
+//
+// Quantization profiles are pre-agreed between client and server (negotiated
+// in the ServerHello) so high-frequency pose updates can use compact integer
+// representations.
+syntax = "proto3";
+
+package ivx.multiplayer.v1;
+
+option csharp_namespace = "IntelliVerseX.Multiplayer.V1";
+option go_package        = "github.com/intelliversex/multiplayer/proto/v1;ivxmpv1";
+
+// Compact pose with quantized rotation.
+// Position: meters from anchor, fixed-point millimeters (int32 ~= 2^21 mm = ±2 km).
+// Rotation: smallest-three quaternion compression (3 × int16) per quantization profile.
+message PoseQuantized {
+  int32 px_mm = 1;
+  int32 py_mm = 2;
+  int32 pz_mm = 3;
+  uint32 rot_packed = 4; // 3x10-bit quaternion smallest-three + 2 bits index
+  uint32 quant_profile = 5;
+  int64  ts_ms = 6;
+  uint32 confidence_pct = 7; // 0..100 (used for tracking-loss fallback)
+}
+
+message HeadPose {
+  string user_id = 1;
+  PoseQuantized pose = 2;
+}
+
+message HandPose {
+  string user_id = 1;
+  bool   is_left = 2;
+  PoseQuantized pose = 3;
+  uint32 grip_pct = 4;    // 0..100
+  uint32 trigger_pct = 5; // 0..100
+}
+
+message BodyPose {
+  string user_id = 1;
+  repeated PoseQuantized joints = 2; // per skeleton-v1 joint order
+}
+
+message FaceBlendshapes {
+  string user_id = 1;
+  bytes  blendshapes = 2; // ARKit 52 weights as uint8[52] (0..255)
+  uint32 quant_profile = 3;
+}
+
+message FingerPose {
+  string user_id = 1;
+  bool   is_left = 2;
+  bytes  finger_curls = 3; // 5 fingers × 3 joints, uint8 0..255
+}
+
+message AvatarLOD {
+  string user_id = 1;
+  uint32 lod = 2; // 0=full,1=mid,2=low,3=billboard
+  string reason = 3; // "distance", "bandwidth", "occluded"
+}
+
+message VoicePosition {
+  string user_id = 1;
+  PoseQuantized head = 2;
+  uint32 talking_volume_pct = 3; // 0..100 from VAD on server (NOT raw audio)
+}
+
+message AvatarReplicationParams {
+  uint32 head_hz   = 1; // typical 30-72
+  uint32 hand_hz   = 2; // typical 30-72
+  uint32 body_hz   = 3; // typical 15-30
+  uint32 face_hz   = 4; // typical 30-60
+  uint32 finger_hz = 5; // typical 30-60
+  uint32 default_quant_profile = 6;
+  bool   enable_aoi = 7;       // area-of-interest culling
+  uint32 aoi_radius_mm = 8;
+  uint32 max_avatars = 9;
+  bool   enable_lod_auto_demote = 10;
+}

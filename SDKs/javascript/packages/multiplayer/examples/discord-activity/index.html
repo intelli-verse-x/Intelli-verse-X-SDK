@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IVX Discord Activity (sample)</title>
+    <style>
+      :root { color-scheme: dark; }
+      body {
+        font-family: 'gg sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: #2b2d31; color: #f2f3f5;
+        margin: 0; padding: 24px;
+      }
+      h1 { margin: 0 0 12px; }
+      pre { background: #1e1f22; padding: 12px; border-radius: 8px; overflow: auto; }
+    </style>
+  </head>
+  <body>
+    <h1>IVX × Discord Activities</h1>
+    <p id="status">booting…</p>
+    <pre id="log"></pre>
+
+    <script type="module">
+      // Replace with the real package once published; here we resolve
+      // from a local build to keep the sample drop-in.
+      import { DiscordSDK } from "https://esm.sh/@discord/embedded-app-sdk@1?bundle";
+      import {
+        IVXDiscordActivityAdapter,
+        DefaultMultiplayerClient
+      } from "../../dist/index.mjs";
+
+      const $log    = document.getElementById("log");
+      const $status = document.getElementById("status");
+      const log = (msg) => { $log.textContent += msg + "\n"; };
+
+      const DISCORD_CLIENT_ID = window.DISCORD_CLIENT_ID || "PUT_YOUR_CLIENT_ID";
+      const NAKAMA_CONFIG = {
+        host: "nakama.intelliverse.example",
+        port: 7350,
+        useSsl: true,
+        serverKey: "defaultkey",
+      };
+
+      // The host's backend swaps OAuth `code` for a Discord access token.
+      async function exchangeToken(code) {
+        const r = await fetch("/api/discord/token", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code }),
+        });
+        if (!r.ok) throw new Error("[IVX] token exchange failed: " + r.status);
+        const { access_token } = await r.json();
+        return access_token;
+      }
+
+      const sdk = new DiscordSDK(DISCORD_CLIENT_ID);
+      const multiplayer = new DefaultMultiplayerClient(NAKAMA_CONFIG);
+
+      const adapter = new IVXDiscordActivityAdapter({
+        sdk,
+        multiplayer,
+        clientId: DISCORD_CLIENT_ID,
+        exchangeToken,
+        onReady: ({ discordUserId, channelId }) => {
+          $status.textContent = `ready — user=${discordUserId} channel=${channelId}`;
+          log("[IVX] ready");
+        },
+      });
+
+      try {
+        await adapter.attach();
+        const session = await adapter.createMatchForActivity({
+          templateId: "conversational-party-v1",
+          templateInit: { max_humans: 8, agent_personas: ["ivx-icebreaker"] },
+        });
+        log("[IVX] match created: " + session.match_id);
+      } catch (err) {
+        log("[IVX] error: " + err.message);
+      }
+    </script>
+  </body>
+</html>

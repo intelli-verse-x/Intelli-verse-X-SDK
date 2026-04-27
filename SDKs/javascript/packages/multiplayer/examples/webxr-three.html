@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>IVX WebXR + Three.js sample</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { margin: 0; background: #0d1117; color: #e6edf3; font: 14px/1.4 system-ui, sans-serif; }
+    #info { position: fixed; top: 12px; left: 12px; background: rgba(0,0,0,.55); padding: 8px 12px; border-radius: 6px; }
+    #enter { padding: 8px 14px; }
+  </style>
+</head>
+<body>
+  <div id="info">
+    IVX WebXR — Three.js sample.
+    <div>Match: <span id="matchId">-</span></div>
+    <button id="enter">Enter VR</button>
+  </div>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import * as THREE from "three";
+    import { VRButton } from "three/addons/webxr/VRButton.js";
+    // The IVX SDK is bundled by your build pipeline; in this sample we
+    // assume a UMD bundle is shipped alongside the HTML. Replace with a
+    // real import once you publish the package.
+    // import { IVXMultiplayerClient, IVXWebXRAdapter } from "@intelliversex/multiplayer";
+
+    const NAKAMA_HOST   = location.hostname;
+    const NAKAMA_PORT   = 7350;
+    const SERVER_KEY    = "defaultkey";
+    const TEMPLATE_ID   = "avatar-replication-v1";
+
+    // --- Three.js scene -------------------------------------------------
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0d1117);
+    const camera = new THREE.PerspectiveCamera(70, innerWidth / innerHeight, 0.1, 50);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(devicePixelRatio);
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.xr.enabled = true;
+    document.body.appendChild(renderer.domElement);
+    document.body.appendChild(VRButton.createButton(renderer));
+
+    // Floor reference.
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(8, 8),
+      new THREE.MeshStandardMaterial({ color: 0x161b22 }));
+    floor.rotation.x = -Math.PI / 2;
+    scene.add(floor);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x202020, 1.2));
+
+    // Per-peer simple capsule avatars.
+    const peerAvatars = new Map(); // user_id -> {head, leftHand, rightHand}
+
+    function ensurePeer(userId) {
+      if (peerAvatars.has(userId)) return peerAvatars.get(userId);
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16),
+        new THREE.MeshStandardMaterial({ color: 0x4493f8 }));
+      const left = new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 12),
+        new THREE.MeshStandardMaterial({ color: 0xa371f7 }));
+      const right = left.clone();
+      scene.add(head); scene.add(left); scene.add(right);
+      const av = { head, leftHand: left, rightHand: right };
+      peerAvatars.set(userId, av);
+      return av;
+    }
+
+    // Convert IVXQuantizedPose back to THREE units.
+    function applyPose(target, pose) {
+      target.position.set(pose.px_mm / 1000, pose.py_mm / 1000, pose.pz_mm / 1000);
+      // (rot_packed unpack is small but omitted in this minimal sample;
+      //  see SDK docs / @intelliversex/multiplayer for the helper.)
+    }
+
+    // --- IVX hookup -----------------------------------------------------
+    let ivxAdapter = null;
+
+    document.getElementById("enter").addEventListener("click", async () => {
+      // 1. Connect Nakama + create or join an MR-anchor or avatar match.
+      //    In production you would `await IVXMultiplayerClient.connect(...)`
+      //    and then `await client.createMatch({ templateId: TEMPLATE_ID })`.
+      //    For brevity we assume a matchId from URL hash:
+      const matchId = location.hash.slice(1) || "demo-match";
+      document.getElementById("matchId").textContent = matchId;
+
+      // 2. Hook the WebXR adapter into the session.
+      // const session = await client.joinMatch(matchId);
+      // ivxAdapter = new IVXWebXRAdapter(session, { headHz: 60, handHz: 30 });
+      // ivxAdapter.onPeerPose(e => {
+      //   const av = ensurePeer(e.user_id);
+      //   applyPose(av[e.bone], e.pose);
+      // });
+      // ivxAdapter.onPeerLeft(e => {
+      //   const av = peerAvatars.get(e.user_id);
+      //   if (av) { scene.remove(av.head, av.leftHand, av.rightHand); peerAvatars.delete(e.user_id); }
+      // });
+
+      // 3. Once the XRSession is active, attach the adapter.
+      renderer.xr.addEventListener("sessionstart", async () => {
+        const xrSession = renderer.xr.getSession();
+        const refSpace  = await xrSession.requestReferenceSpace("local-floor");
+        // ivxAdapter.attach(xrSession, refSpace);
+      });
+    });
+
+    renderer.setAnimationLoop(() => renderer.render(scene, camera));
+    addEventListener("resize", () => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+// IIVXVoice — voice provider abstraction.
+//
+// The IVX kernel does not transport audio bytes itself. It brokers session
+// tokens, speaker permissions, server-side mute, spatial-audio positions,
+// and ASR/moderation hooks against a pluggable provider:
+//
+//   * livekit          — primary (self-hosted SFU + ASR sidecar)
+//   * agora            — drop-in alternative (regional / ToS reasons)
+//   * twilio           — fallback for low-stakes events
+//   * dolby            — premium spatial audio
+//   * none             — match runs voiceless (text-only / chat-only)
+//
+// Every provider speaks the same wire vocabulary. Concrete provider clients
+// live in `SDKs/<engine>/.../voice/` and implement the IIVXVoice contract
+// (see Assets/.../API/IIVXVoice.cs in the Unity SDK).
+syntax = "proto3";
+
+package ivx.multiplayer.v1;
+
+import "kernel.proto"; // for VoiceMode
+
+option csharp_namespace = "IntelliVerseX.Multiplayer.V1";
+option go_package        = "github.com/intelliversex/multiplayer/proto/v1;ivxmpv1";
+
+enum VoiceProvider {
+  VOICE_PROVIDER_UNSPECIFIED = 0;
+  VOICE_PROVIDER_LIVEKIT     = 1;
+  VOICE_PROVIDER_AGORA       = 2;
+  VOICE_PROVIDER_TWILIO      = 3;
+  VOICE_PROVIDER_DOLBY       = 4;
+  VOICE_PROVIDER_NONE        = 5;
+}
+
+enum VoiceCodec {
+  VOICE_CODEC_UNSPECIFIED = 0;
+  VOICE_CODEC_OPUS        = 1;
+  VOICE_CODEC_AAC         = 2;
+}
+
+// VoiceSessionToken — minted by the kernel and shipped to clients on join.
+// The actual SFU connection is established directly between client and
+// provider. The kernel only knows the room/identity tuple and the bearer
+// token. Tokens MUST be short-lived (default 60s) and signed.
+message VoiceSessionToken {
+  VoiceProvider provider   = 1;
+  string token            = 2;  // bearer; opaque to kernel
+  string room_id          = 3;
+  string identity         = 4;  // kernel user_id (or 'agt_*' for agents)
+  string url              = 5;  // SFU endpoint (wss://...)
+  int64  expires_at_ms    = 6;
+  bool   can_publish      = 7;
+  bool   can_subscribe    = 8;
+  bool   spatial          = 9;  // server-driven 3D positional audio
+  string region           = 10;
+  // Provider-specific options (e.g. LiveKit metadata, Agora app id).
+  map<string, string> provider_opts = 11;
+}
+
+message VoiceCapability {
+  bool can_publish         = 1;
+  bool can_subscribe       = 2;
+  bool can_spatial         = 3;  // engine + provider both support spatial
+  repeated VoiceCodec codecs = 4;
+  uint32 max_publishers    = 5;  // hard cap
+  bool   can_change_provider = 6;
+  bool   can_passthrough_external = 7; // external mic (e.g. visionOS persona)
+  // Mode hints the engine can offer:
+  bool   ptt_supported     = 8;
+  bool   broadcast_supported = 9;
+  bool   spatial_supported  = 10;
+}
+
+// SpeakerStateChanged — server broadcasts when a speaker's effective state
+// changes (granted, revoked, muted by moderation, ducked under crowd noise).
+message SpeakerStateChanged {
+  string user_id      = 1;
+  bool   granted      = 2;  // has the floor
+  bool   muted_by_self = 3;
+  bool   muted_by_kernel = 4; // moderation, rate-limit, agent budget
+  uint32 floor_seconds_remaining = 5;
+  string reason       = 6;
+}
+
+// VoiceLevels — server-side VAD broadcast (NOT raw audio). 0..100 per user
+// so non-WebRTC clients can render speaking indicators / crowd meters.
+message VoiceLevels {
+  message Sample {
+    string user_id       = 1;
+    uint32 talking_pct   = 2; // 0..100
+    bool   silent        = 3;
+  }
+  repeated Sample samples = 1;
+  int64 ts_ms             = 2;
+}
+
+// VoiceModerationDecision — moderation pipeline mutes/unmutes a user.
+// The kernel forwards this to the SFU side-channel; the SFU revokes the
+// publishing track without relying on the client to mute itself.
+message VoiceModerationDecision {
+  string user_id     = 1;
+  bool   mute        = 2;
+  uint32 mute_seconds = 3;
+  string detail      = 4;
+}
+
+// SpatialPosition — periodic publish from client (60-90 Hz for XR users,
+// 5-10 Hz for flat-screen users). Server multiplexes into the SFU and
+// also rebroadcasts a downsampled VoicePosition to non-XR participants.
+message SpatialPosition {
+  string user_id  = 1;
+  // Pose is expressed in the active SpatialFrame; receivers MUST drop
+  // messages with frame_id != current.
+  string frame_id = 2;
+  int32  px_mm    = 3;
+  int32  py_mm    = 4;
+  int32  pz_mm    = 5;
+  uint32 yaw_deg  = 6; // 0..359
+  int64  ts_ms    = 7;
+}
+
+// VoiceModeRequested — client requests a mode change (PTT/broadcast/spatial).
+// The server validates against ConversationalPartyParams.default_voice_mode
+// and the room's owners. The VoiceMode enum lives in kernel.proto so it can
+// be referenced uniformly by VoiceModeChanged broadcasts.
+message VoiceModeRequested {
+  VoiceMode mode = 1; // imported from kernel.proto
+  bool      apply_to_all = 2; // owners only
+}

@@ -1,0 +1,63 @@
+// LiveEventRoom — many viewers + small set of broadcasters; reactions,
+// polls, Q&A, low-latency status. Opcodes: 0x9000-0x9FFF.
+syntax = "proto3";
+
+package ivx.multiplayer.v1;
+
+option csharp_namespace = "IntelliVerseX.Multiplayer.V1";
+option go_package        = "github.com/intelliversex/multiplayer/proto/v1;ivxmpv1";
+
+message LiveViewerJoined {
+  string user_id      = 1;
+  string display_name = 2;
+  uint32 total_viewers = 3;
+}
+
+message LiveViewerLeft {
+  string user_id      = 1;
+  uint32 total_viewers = 2;
+}
+
+message LiveReactionFanout {
+  string user_id  = 1;
+  uint32 reaction_id = 2; // index into a curated set
+  uint32 count    = 3;
+  int64  ts_ms    = 4;
+}
+
+message LivePollOpen {
+  string poll_id = 1;
+  string question = 2;
+  repeated string options = 3;
+  int64  ends_at_ms = 4;
+}
+
+message LivePollVote {
+  string poll_id = 1;
+  uint32 option_index = 2;
+}
+
+message LivePollResult {
+  string poll_id = 1;
+  repeated uint32 vote_counts = 2;
+  uint32 total_votes = 3;
+}
+
+message LiveQAQuestion {
+  string question_id = 1;
+  string user_id     = 2;
+  string text        = 3;
+  int64  ts_ms       = 4;
+  bool   moderated   = 5;
+}
+
+message LiveQAPromote {
+  string question_id = 1;
+}
+
+message LiveEventParams {
+  uint32 viewer_cap          = 1; // 0 = unlimited (sharded)
+  uint32 reaction_fanout_hz  = 2; // throttle
+  uint32 max_concurrent_polls = 3;
+  bool   pre_moderate_qa     = 4;
+}

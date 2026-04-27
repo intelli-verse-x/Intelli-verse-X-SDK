@@ -9,6 +9,12 @@ option(IVX_BUILD_EXAMPLES "Build examples" OFF)
 option(IVX_BUILD_TESTS "Build tests" OFF)
 option(IVX_ENABLE_OPENXR "Enable OpenXR XR platform detection (requires OpenXR SDK)" OFF)
 
+# Console platform bridge — exactly one should be set ON for a console
+# build. If none are set, the desktop bridge is compiled.
+option(IVX_PLATFORM_XBOX   "Compile Xbox / GDK console bridge"   OFF)
+option(IVX_PLATFORM_PS5    "Compile PS5 / libNp console bridge"  OFF)
+option(IVX_PLATFORM_SWITCH "Compile Nintendo Switch / NEX bridge" OFF)
+
 include(FetchContent)
 
 FetchContent_Declare(
@@ -38,6 +44,29 @@ set(IVX_SOURCES
     src/IVXDiscordDebug.cpp
     src/IVXSatori.cpp
 )
+
+# ---------------------------------------------------------------------------
+# Console bridge translation unit selection. Mutually exclusive: pick one.
+# ---------------------------------------------------------------------------
+set(_ivx_platform_count 0)
+foreach(_p IVX_PLATFORM_XBOX IVX_PLATFORM_PS5 IVX_PLATFORM_SWITCH)
+    if(${${_p}})
+        math(EXPR _ivx_platform_count "${_ivx_platform_count}+1")
+    endif()
+endforeach()
+if(_ivx_platform_count GREATER 1)
+    message(FATAL_ERROR "IVX: only one of IVX_PLATFORM_XBOX/PS5/SWITCH may be ON")
+endif()
+
+if(IVX_PLATFORM_XBOX)
+    list(APPEND IVX_SOURCES src/platform/xbox/ivx_xbox_bridge.cpp)
+elseif(IVX_PLATFORM_PS5)
+    list(APPEND IVX_SOURCES src/platform/ps5/ivx_ps5_bridge.cpp)
+elseif(IVX_PLATFORM_SWITCH)
+    list(APPEND IVX_SOURCES src/platform/switch/ivx_switch_bridge.cpp)
+else()
+    list(APPEND IVX_SOURCES src/platform/desktop/ivx_desktop_bridge.cpp)
+endif()
 
 set(IVX_HEADERS
     include/intelliversex/ivx.h
@@ -86,6 +115,14 @@ if(IVX_ENABLE_OPENXR)
     find_package(OpenXR REQUIRED)
     target_compile_definitions(intelliversex PUBLIC IVX_HAS_OPENXR)
     target_link_libraries(intelliversex PUBLIC OpenXR::openxr_loader)
+endif()
+
+if(IVX_PLATFORM_XBOX)
+    target_compile_definitions(intelliversex PUBLIC IVX_PLATFORM_XBOX)
+elseif(IVX_PLATFORM_PS5)
+    target_compile_definitions(intelliversex PUBLIC IVX_PLATFORM_PS5)
+elseif(IVX_PLATFORM_SWITCH)
+    target_compile_definitions(intelliversex PUBLIC IVX_PLATFORM_SWITCH)
 endif()
 
 set_target_properties(intelliversex PROPERTIES

@@ -1,0 +1,13 @@
+name: avatar_party_8
+template_id: avatar-replication-v1
+duration_sec: 300
+tick_rate_hz: 30
+pose_publish_rate_hz: 60
+bots:
+  - kind: avatar
+    count: 8
+expectations:
+  - expression: "lod_changes_per_min <= 1"
+    description: "Avatar LOD demotion must average no more than 1/min"
+  - expression: "dup_pose_ratio < 0.001"
+    description: "Duplicate pose frames must stay below 0.1%"

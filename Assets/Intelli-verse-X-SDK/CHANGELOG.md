@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- **Game-agnostic admin LiveOps proofcheck** — Added SDK documentation showing how any game built with the SDK can wire analytics, Hiro, and Satori into the production admin dashboard using a stable `game_id`, Satori event metadata, and `ivx_qa_<game_id>_*` QA fixtures.
+- **Configurable analytics RPC IDs** — `IVXAnalyticsManager` now supports `ConfigureRpcIds(...)` and `SetGameRpcPrefix(...)` so new SDK-built games are not forced to use QuizVerse RPC names. QuizVerse defaults remain unchanged for backward compatibility.
+
+### Fixed
+
+- **Analytics event-name guard** — `IVXAnalyticsManager.TrackEvent` now rejects null, empty, or `"unknown"` event names before emitting to Nakama.
+
+---
+
 ## [5.8.2] - 2026-04-09
 
 ### Fixed

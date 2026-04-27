@@ -1,0 +1,45 @@
+// RealtimeTickMatch — Go-implemented high-frequency tick template (10–30 Hz).
+// Used for action games, racing, fast-paced multiplayer.
+// Opcodes: 0x6000-0x6FFF. Pose updates use 0xF000+ fast-path.
+syntax = "proto3";
+
+package ivx.multiplayer.v1;
+
+option csharp_namespace = "IntelliVerseX.Multiplayer.V1";
+option go_package        = "github.com/intelliversex/multiplayer/proto/v1;ivxmpv1";
+
+message TickInput {
+  uint64 input_seq    = 1;
+  uint32 tick         = 2;
+  bytes  input        = 3; // game-specific (button mask, axes, ...)
+  int64  client_ts_ms = 4;
+}
+
+message TickSnapshot {
+  uint32 tick         = 1;
+  int64  server_ts_ms = 2;
+  bytes  state        = 3;
+}
+
+message TickDelta {
+  uint32 tick         = 1;
+  uint32 base_tick    = 2;
+  int64  server_ts_ms = 3;
+  bytes  delta        = 4;
+}
+
+message TickReconcile {
+  uint32 tick         = 1;
+  bytes  authoritative_state = 2;
+  uint64 ack_input_seq = 3;
+}
+
+message RealtimeTickParams {
+  uint32 tick_rate_hz       = 1; // 10..30
+  uint32 max_players        = 2;
+  uint32 snapshot_every_n   = 3; // full snapshot every N ticks
+  uint32 input_buffer_ticks = 4; // server buffer to absorb jitter
+  bool   enable_lag_compensation = 5;
+  bool   enable_interest_management = 6;
+  uint32 aoi_radius_units   = 7; // area-of-interest radius
+}

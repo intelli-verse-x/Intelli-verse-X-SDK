@@ -1,0 +1,10 @@
+name: mr_anchor_4
+template_id: mixed-reality-anchor-v1
+duration_sec: 240
+tick_rate_hz: 10
+bots:
+  - kind: anchor-viewer
+    count: 4
+expectations:
+  - expression: "anchor_resolve_p95_ms < 5000"
+    description: "Anchor resolution p95 must stay under 5s"

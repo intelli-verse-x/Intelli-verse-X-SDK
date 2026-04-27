@@ -1,0 +1,10 @@
+name: tournament_64
+template_id: tournament-v1
+duration_sec: 1200
+tick_rate_hz: 1
+bots:
+  - kind: realtime
+    count: 64
+expectations:
+  - expression: "legs_monotonic == 1"
+    description: "Leg promotions must be monotonically non-decreasing"

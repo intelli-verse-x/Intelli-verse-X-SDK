@@ -1,0 +1,113 @@
+// ISpatialFrame — the kernel-level spatial coordinate abstraction shared
+// by every XR template (AvatarReplicationMatch, MixedRealityAnchorMatch,
+// ConversationalPartyMatch with spatial voice).
+//
+// A SpatialFrame describes a coordinate system that all participants in a
+// match agree on. Every pose / anchor / spatial-audio source is expressed
+// relative to the active frame. Frames can be:
+//
+//   * `kernel_world`     — abstract origin chosen by the kernel (default).
+//                          Participants on flat-screen / PCVR start here.
+//   * `cloud_anchor`     — backed by a vendor cloud anchor (Meta SSA,
+//                          ARKit collab, Azure Spatial, OpenXR MSFT).
+//   * `qr_marker`        — physical QR / fiducial; cross-vendor fallback.
+//   * `image_marker`     — printed image marker; cross-vendor fallback.
+//   * `local_floor`      — each user's local OpenXR LOCAL_FLOOR; positions
+//                          are NOT shared across users (only voice mode
+//                          and voice positions are world-relative).
+//   * `pcvr_pseudo`      — synthetic frame built from height+forward; used
+//                          when a flat-screen/PCVR user joins an MR room.
+//
+// Adapters MUST advertise which frames they support in ClientCapabilities;
+// the server picks the highest common denominator at match start, with
+// fallback chain MR_CLOUD_ANCHOR -> QR_MARKER -> IMAGE_MARKER -> PCVR_PSEUDO.
+syntax = "proto3";
+
+package ivx.multiplayer.v1;
+
+option csharp_namespace = "IntelliVerseX.Multiplayer.V1";
+option go_package        = "github.com/intelliversex/multiplayer/proto/v1;ivxmpv1";
+
+enum SpatialFrameKind {
+  SPATIAL_FRAME_UNSPECIFIED   = 0;
+  SPATIAL_FRAME_KERNEL_WORLD   = 1;
+  SPATIAL_FRAME_CLOUD_ANCHOR   = 2;
+  SPATIAL_FRAME_QR_MARKER      = 3;
+  SPATIAL_FRAME_IMAGE_MARKER   = 4;
+  SPATIAL_FRAME_LOCAL_FLOOR    = 5;
+  SPATIAL_FRAME_PCVR_PSEUDO    = 6;
+}
+
+// All transforms inside a SpatialFrame use IVX canonical coords:
+//   * right-handed
+//   * Y-up
+//   * units = meters
+//   * forward = -Z
+// Engines that ship Z-up or left-handed coords MUST convert at the adapter
+// boundary. See `Intelli-verse-X-SDK/schemas/avatar/avatar-interop-v1.json`.
+
+// SpatialFrame — the active frame for a match.
+message SpatialFrame {
+  string             frame_id   = 1; // ulid; stable for the life of the frame
+  SpatialFrameKind   kind       = 2;
+  string             provider   = 3; // "meta_ssa", "arkit_collab", "azure", "openxr_msft", "qr", ""
+  string             vendor_token = 4; // opaque vendor anchor handle (empty for kernel_world)
+  bytes              payload    = 5; // optional vendor-specific payload (image bytes, QR data)
+  int64              issued_ms  = 6; // server time the frame was committed
+  string             region     = 7; // pinning hint
+  // For PCVR_PSEUDO and KERNEL_WORLD only — server-chosen physical defaults
+  // so flat-screen avatars still appear at sensible positions:
+  float              floor_height_m = 8; // typical 0.0
+  float              forward_yaw_deg = 9; // 0 = facing north of kernel world
+  // Recovery hints if the frame is lost (e.g. relocalize, reanchor):
+  uint32             relocalize_grace_ms = 10;
+}
+
+// PoseFrameRef — every pose / anchor message carries the frame_id it's
+// expressed in. Receivers drop messages not matching the current frame
+// (with a one-frame grace window to absorb in-flight messages on switch).
+message PoseFrameRef {
+  string frame_id = 1;
+  int64  ts_ms    = 2;
+}
+
+// SpatialFrameOffer — host (or kernel) proposes a frame upgrade
+// (e.g. cloud anchor resolved). Other participants resolve and ack.
+message SpatialFrameOffer {
+  SpatialFrame frame             = 1;
+  string       offered_by_user_id = 2;
+  uint32       resolve_timeout_ms = 3;
+  // What everyone falls back to if resolve fails:
+  SpatialFrameKind fallback_kind = 4;
+}
+
+message SpatialFrameAck {
+  string frame_id = 1;
+  string user_id  = 2;
+  bool   ok       = 3;
+  string detail   = 4; // failure reason or vendor diagnostic
+}
+
+// SpatialFrameSwitched — server-issued, atomic frame switch.
+// Clients MUST drop any pose frame_id not equal to this once acked.
+message SpatialFrameSwitched {
+  SpatialFrame to_frame = 1;
+  string       previous_frame_id = 2;
+  uint32       grace_ms = 3; // allow in-flight messages this long
+}
+
+// SpatialCapability — clients declare in ClientHello.capabilities.
+// The server intersects these with the room's required frames to pick a
+// concrete SpatialFrame at match start.
+message SpatialCapability {
+  repeated SpatialFrameKind supported_frames = 1;
+  bool can_publish_anchor = 2;
+  bool can_resolve_cloud_anchor = 3;
+  bool can_print_qr      = 4;
+  bool can_print_image_marker = 5;
+  // Coordinate-system runtime metadata (engines self-describe so the
+  // adapter can convert at the boundary without baking assumptions).
+  string handedness      = 6; // "right" | "left"
+  string up_axis         = 7; // "Y" | "Z"
+  string forward_axis    = 8; // "-Z" | "+Z" | ...
+}

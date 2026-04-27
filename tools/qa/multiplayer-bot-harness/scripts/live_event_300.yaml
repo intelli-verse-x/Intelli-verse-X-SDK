@@ -1,0 +1,10 @@
+name: live_event_300
+template_id: live-event-v1
+duration_sec: 600
+tick_rate_hz: 2
+bots:
+  - kind: spectator
+    count: 300
+expectations:
+  - expression: "reaction_fanout_p95_ms < 250"
+    description: "Reaction fan-out p95 must stay under 250ms"
