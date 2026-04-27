@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00e5ff"/>
+      <stop offset="100%" stop-color="#ff2d7b"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="#0a0e1a"/>
+  <polygon points="256,56 432,156 432,356 256,456 80,356 80,156" fill="none" stroke="url(#g)" stroke-width="28" stroke-linejoin="round" filter="url(#glow)"/>
+  <text x="256" y="310" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-weight="900" font-size="220" fill="url(#g)">X</text>
+</svg>

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0e1a"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00e5ff"/>
+      <stop offset="100%" stop-color="#ff2d7b"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <line x1="0" y1="580" x2="1200" y2="580" stroke="url(#accent)" stroke-width="4" opacity="0.6"/>
+
+  <polygon points="160,200 260,258 260,374 160,432 60,374 60,258"
+           fill="none" stroke="url(#accent)" stroke-width="6"
+           stroke-linejoin="round" filter="url(#glow)" opacity="0.25"/>
+
+  <polygon points="1060,100 1120,135 1120,205 1060,240 1000,205 1000,135"
+           fill="none" stroke="#00e5ff" stroke-width="3"
+           stroke-linejoin="round" opacity="0.15"/>
+
+  <text x="600" y="240" text-anchor="middle"
+        font-family="system-ui,-apple-system,sans-serif" font-weight="900"
+        font-size="72" fill="white" letter-spacing="-2">
+    IntelliVerse<tspan fill="url(#accent)">X</tspan>
+  </text>
+
+  <text x="600" y="320" text-anchor="middle"
+        font-family="system-ui,-apple-system,sans-serif" font-weight="400"
+        font-size="32" fill="#94a3b8">
+    The AI-Native Game Platform
+  </text>
+
+  <rect x="300" y="370" width="600" height="2" fill="url(#accent)" opacity="0.4" rx="1"/>
+
+  <text x="600" y="430" text-anchor="middle"
+        font-family="system-ui,-apple-system,sans-serif" font-weight="600"
+        font-size="22" fill="#00e5ff">
+    11 Engines &#x00B7; 175+ RPCs &#x00B7; 31 AI Agent Skills &#x00B7; Self-Host Ready
+  </text>
+
+  <text x="600" y="480" text-anchor="middle"
+        font-family="system-ui,-apple-system,sans-serif" font-weight="400"
+        font-size="20" fill="#64748b">
+    SDK &#x00B7; Content Factory &#x00B7; AI Companions &#x00B7; Quests Economy
+  </text>
+
+  <text x="600" y="555" text-anchor="middle"
+        font-family="system-ui,-apple-system,sans-serif" font-weight="700"
+        font-size="20" fill="white" opacity="0.9">
+    intelliversex.com
+  </text>
+</svg>
