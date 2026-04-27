@@ -83,6 +83,20 @@ func InitModule(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runti
 		return err
 	}
 
-	logger.Info("IntelliVerseX: all 20 RPCs registered")
+	// Quest/Challenge RPCs
+	if err := initializer.RegisterRpc("ivx_quest_get", rpcs.IVXQuestGet); err != nil {
+		return err
+	}
+	if err := initializer.RegisterRpc("ivx_quest_progress", rpcs.IVXQuestProgress); err != nil {
+		return err
+	}
+	if err := initializer.RegisterRpc("ivx_quest_claim", rpcs.IVXQuestClaim); err != nil {
+		return err
+	}
+	if err := initializer.RegisterRpc("ivx_quest_config", rpcs.IVXQuestConfig); err != nil {
+		return err
+	}
+
+	logger.Info("IntelliVerseX: all 24 RPCs registered")
 	return nil
 }

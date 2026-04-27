@@ -1,0 +1,22 @@
+{
+    "name": "IntelliVerseX.Quest",
+    "rootNamespace": "IntelliVerseX.Quest",
+    "references": [
+        "IntelliVerseX.Core",
+        "IntelliVerseX.Backend",
+        "IntelliVerseX.Hiro",
+        "NakamaRuntime",
+        "Newtonsoft.Json"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "INTELLIVERSEX_HAS_NAKAMA"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
