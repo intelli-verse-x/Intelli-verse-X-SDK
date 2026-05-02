@@ -177,6 +177,8 @@ nav:
     - AI Agent Skills: guides/ai-agent-skills.md
     - Skills:
       - guides/skills/index.md
+      - Agent Skills Game-ID Platform Matrix: guides/skills/agent-skills-game-id-platform-matrix.md
+      - Agent Skill Code Reference: guides/skills/agent-skill-code-reference.md
       - 3D Character Pipeline: guides/skills/ivx-3d-character-pipeline.md
       - AI Integration: guides/skills/ivx-ai-integration.md
       - Accessibility: guides/skills/ivx-accessibility.md

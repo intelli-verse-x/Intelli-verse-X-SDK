@@ -40,6 +40,7 @@ set(IVX_SOURCES
     src/ivx_discord_social.cpp
     src/ivx_game_modes.cpp
     src/ivx_hiro_systems.cpp
+    src/intelliversex/ivx_multiplayer_kernel.cpp
     src/IVXDiscordLinkedChannels.cpp
     src/IVXDiscordDebug.cpp
     src/IVXSatori.cpp
@@ -79,6 +80,7 @@ set(IVX_HEADERS
     include/intelliversex/ivx_discord_social.h
     include/intelliversex/ivx_game_modes.h
     include/intelliversex/ivx_hiro_systems.h
+    include/intelliversex/ivx_multiplayer_kernel.h
     include/intelliversex/IVXAIAssistant.h
     include/intelliversex/IVXAIContentGenerator.h
     include/intelliversex/IVXAIModerator.h
