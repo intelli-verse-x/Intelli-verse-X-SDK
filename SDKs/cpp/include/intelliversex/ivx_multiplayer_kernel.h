@@ -19,6 +19,7 @@
 #include <mutex>
 #include <string>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 namespace Nakama {
@@ -87,9 +88,16 @@ struct CreateMatchResponse {
     std::string error_message;
 };
 
+struct RpcResponse {
+    std::string payload_json;
+    bool        ok = false;
+    std::string error_message;
+};
+
 using EnvelopeHandler  = std::function<void(const Envelope&)>;
 using StateHandler     = std::function<void(TransportState)>;
 using CreateMatchCb    = std::function<void(const CreateMatchResponse&)>;
+using RpcCb            = std::function<void(const RpcResponse&)>;
 
 class MultiplayerKernel;
 class MatchSession;
@@ -220,6 +228,24 @@ public:
     /// `mp_create_match` Nakama RPC. Async; result in `cb`.
     void CreateMatch(const CreateMatchRequest& req, CreateMatchCb cb);
 
+    /// `mp_list_templates` Nakama RPC. Returns raw JSON `{ templates: [...] }`.
+    void ListTemplates(RpcCb cb);
+
+    /// `mp_read_match_result` Nakama RPC. Returns the persisted result envelope.
+    void ReadMatchResult(const std::string& match_id, RpcCb cb);
+
+    /// `mp_agent_list_personas` Nakama RPC.
+    void ListAgentPersonas(RpcCb cb);
+
+    /// `mp_agent_spawn` Nakama RPC. `request_json` must be a JSON object.
+    void SpawnAgent(const std::string& request_json, RpcCb cb);
+
+    /// `mp_agent_despawn` Nakama RPC. `request_json` must be a JSON object.
+    void DespawnAgent(const std::string& request_json, RpcCb cb);
+
+    /// `mp_agent_speak` Nakama RPC. `request_json` must be a JSON object.
+    void AgentSpeak(const std::string& request_json, RpcCb cb);
+
     /// Join an existing match. Async.
     void JoinMatch(const std::string& match_id,
                    std::function<void(std::shared_ptr<MatchSession>)> cb);
@@ -251,6 +277,7 @@ private:
     std::atomic<uint64_t> next_state_id_{1};
 
     void SetState(TransportState s);
+    void RpcRaw(const std::string& rpc_id, const std::string& payload_json, RpcCb cb);
     static bool ParseEnvelope(const std::string& body, int32_t op_code,
                               const std::string& sender, Envelope& out);
 };

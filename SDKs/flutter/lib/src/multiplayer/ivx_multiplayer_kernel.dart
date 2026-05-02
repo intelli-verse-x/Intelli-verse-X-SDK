@@ -339,6 +339,88 @@ class IVXMultiplayerKernel {
     }
   }
 
+  Future<Map<String, dynamic>> listTemplates() async {
+    return _rpcMap('mp_list_templates');
+  }
+
+  Future<Map<String, dynamic>> readMatchResult(String matchId) async {
+    if (matchId.trim().isEmpty) {
+      throw ArgumentError.value(matchId, 'matchId', 'must not be empty');
+    }
+    return _rpcMap('mp_read_match_result', {'match_id': matchId});
+  }
+
+  Future<Map<String, dynamic>> listAgentPersonas() async {
+    return _rpcMap('mp_agent_list_personas');
+  }
+
+  Future<Map<String, dynamic>> spawnAgent({
+    required String matchId,
+    required String personaId,
+    String? spawnedByUser,
+    String? spawnReason,
+    String? agentId,
+  }) async {
+    if (matchId.trim().isEmpty) {
+      throw ArgumentError.value(matchId, 'matchId', 'must not be empty');
+    }
+    if (personaId.trim().isEmpty) {
+      throw ArgumentError.value(personaId, 'personaId', 'must not be empty');
+    }
+    return _rpcMap('mp_agent_spawn', {
+      'match_id': matchId,
+      'persona_id': personaId,
+      if (spawnedByUser != null) 'spawned_by_user': spawnedByUser,
+      if (spawnReason != null) 'spawn_reason': spawnReason,
+      if (agentId != null) 'agent_id': agentId,
+    });
+  }
+
+  Future<Map<String, dynamic>> despawnAgent({
+    required String matchId,
+    required String agentId,
+    String? reason,
+  }) async {
+    if (matchId.trim().isEmpty) {
+      throw ArgumentError.value(matchId, 'matchId', 'must not be empty');
+    }
+    if (agentId.trim().isEmpty) {
+      throw ArgumentError.value(agentId, 'agentId', 'must not be empty');
+    }
+    return _rpcMap('mp_agent_despawn', {
+      'match_id': matchId,
+      'agent_id': agentId,
+      if (reason != null) 'reason': reason,
+    });
+  }
+
+  Future<Map<String, dynamic>> agentSpeak({
+    required String matchId,
+    required String agentId,
+    required String text,
+    String? locale,
+    bool? isProactive,
+    bool? silentTranscript,
+  }) async {
+    if (matchId.trim().isEmpty) {
+      throw ArgumentError.value(matchId, 'matchId', 'must not be empty');
+    }
+    if (agentId.trim().isEmpty) {
+      throw ArgumentError.value(agentId, 'agentId', 'must not be empty');
+    }
+    if (text.trim().isEmpty) {
+      throw ArgumentError.value(text, 'text', 'must not be empty');
+    }
+    return _rpcMap('mp_agent_speak', {
+      'match_id': matchId,
+      'agent_id': agentId,
+      'text': text,
+      if (locale != null) 'locale': locale,
+      if (isProactive != null) 'is_proactive': isProactive,
+      if (silentTranscript != null) 'silent_transcript': silentTranscript,
+    });
+  }
+
   Future<IVXMatchSession?> joinMatch(String matchId) async {
     if (!_initialized || _socket == null) return null;
     try {
@@ -384,6 +466,23 @@ class IVXMultiplayerKernel {
       // ignore: avoid_print
       print('[IVXMultiplayerKernel] could not wire matchData stream: $e');
     }
+  }
+
+  Future<Map<String, dynamic>> _rpcMap(
+    String rpcId, [
+    Map<String, dynamic>? payload,
+  ]) async {
+    if (!_initialized) {
+      throw StateError('[IVXMultiplayerKernel] not initialized');
+    }
+    final rpc = await client.rpc(
+      session: session,
+      id: rpcId,
+      payload: jsonEncode(payload ?? const <String, dynamic>{}),
+    );
+    final body = rpc?.payload as String? ?? '';
+    if (body.isEmpty) return <String, dynamic>{};
+    return jsonDecode(body) as Map<String, dynamic>;
   }
 
   void _onMatchData(dynamic md) {

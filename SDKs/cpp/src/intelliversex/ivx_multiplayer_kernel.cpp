@@ -378,6 +378,32 @@ void MultiplayerKernel::CreateMatch(const CreateMatchRequest& req, CreateMatchCb
         });
 }
 
+void MultiplayerKernel::ListTemplates(RpcCb cb) {
+    RpcRaw("mp_list_templates", "{}", std::move(cb));
+}
+
+void MultiplayerKernel::ReadMatchResult(const std::string& match_id, RpcCb cb) {
+    std::ostringstream o;
+    o << "{\"match_id\":\"" << EscapeJsonString(match_id) << "\"}";
+    RpcRaw("mp_read_match_result", o.str(), std::move(cb));
+}
+
+void MultiplayerKernel::ListAgentPersonas(RpcCb cb) {
+    RpcRaw("mp_agent_list_personas", "{}", std::move(cb));
+}
+
+void MultiplayerKernel::SpawnAgent(const std::string& request_json, RpcCb cb) {
+    RpcRaw("mp_agent_spawn", LooksLikeJsonObjectOrArray(request_json) ? request_json : "{}", std::move(cb));
+}
+
+void MultiplayerKernel::DespawnAgent(const std::string& request_json, RpcCb cb) {
+    RpcRaw("mp_agent_despawn", LooksLikeJsonObjectOrArray(request_json) ? request_json : "{}", std::move(cb));
+}
+
+void MultiplayerKernel::AgentSpeak(const std::string& request_json, RpcCb cb) {
+    RpcRaw("mp_agent_speak", LooksLikeJsonObjectOrArray(request_json) ? request_json : "{}", std::move(cb));
+}
+
 void MultiplayerKernel::JoinMatch(const std::string& match_id,
                                   std::function<void(std::shared_ptr<MatchSession>)> cb) {
     if (!initialized_.load() || !rt_client_) {
@@ -468,6 +494,20 @@ void MultiplayerKernel::SetState(TransportState s) {
     for (auto& h : snapshot) {
         if (h) try { h(s); } catch (...) {}
     }
+}
+
+void MultiplayerKernel::RpcRaw(const std::string& rpc_id, const std::string& payload_json, RpcCb cb) {
+    if (!initialized_.load() || !client_ || !session_) {
+        if (cb) cb(RpcResponse{ "", false, "not_initialized" });
+        return;
+    }
+    client_->rpc(session_, rpc_id, payload_json.empty() ? "{}" : payload_json,
+        [cb](const Nakama::NRpc& rpc) {
+            if (cb) cb(RpcResponse{ rpc.payload, true, "" });
+        },
+        [cb](const Nakama::NError& e) {
+            if (cb) cb(RpcResponse{ "", false, e.message });
+        });
 }
 
 bool MultiplayerKernel::ParseEnvelope(const std::string& body, int32_t op_code,

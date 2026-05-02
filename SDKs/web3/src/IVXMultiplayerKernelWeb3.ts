@@ -28,8 +28,17 @@ import type {
   IIVXMultiplayer,
   IVXCreateMatchRequest,
   IVXCreateMatchResponse,
+  IVXAgentDespawnRequest,
+  IVXAgentDespawnResponse,
+  IVXAgentSpeakRequest,
+  IVXAgentSpeakResponse,
+  IVXAgentSpawnRequest,
+  IVXAgentSpawnResponse,
   IVXJoinOptions,
   IVXKernelEvent,
+  IVXListAgentPersonasResponse,
+  IVXListTemplatesResponse,
+  IVXMatchResultEnvelope,
   IVXSubscription,
   IVXTransportState,
 } from "@intelliversex/multiplayer";
@@ -118,6 +127,30 @@ export class IVXMultiplayerKernelWeb3 {
 
   createMatch(req: IVXCreateMatchRequest): Promise<IVXCreateMatchResponse> {
     return this.inner.createMatch(req);
+  }
+
+  listTemplates(): Promise<IVXListTemplatesResponse> {
+    return this.inner.listTemplates();
+  }
+
+  readMatchResult(matchId: string): Promise<IVXMatchResultEnvelope> {
+    return this.inner.readMatchResult(matchId);
+  }
+
+  listAgentPersonas(): Promise<IVXListAgentPersonasResponse> {
+    return this.inner.listAgentPersonas();
+  }
+
+  spawnAgent(req: IVXAgentSpawnRequest): Promise<IVXAgentSpawnResponse> {
+    return this.inner.spawnAgent(req);
+  }
+
+  despawnAgent(req: IVXAgentDespawnRequest): Promise<IVXAgentDespawnResponse> {
+    return this.inner.despawnAgent(req);
+  }
+
+  agentSpeak(req: IVXAgentSpeakRequest): Promise<IVXAgentSpeakResponse> {
+    return this.inner.agentSpeak(req);
   }
 
   async joinMatch(matchId: string, options?: IVXJoinOptions): Promise<IIVXMatchSession> {
