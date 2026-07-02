@@ -117,10 +117,11 @@ namespace IntelliVerseX.Satori
         public static IVXSatoriClient Instance { get; private set; }
         public bool IsInitialized { get; set; }
         private void Awake() { Instance = this; }
-        
-        public void TrackEvent(string name, Dictionary<string, string> properties = null) {}
-        public Task CaptureEventAsync(string name, Dictionary<string, string> properties = null) => Task.CompletedTask;
-        public void IdentifyAsync() {}
+
+        public Task CaptureEventAsync(string name, Dictionary<string, string> metadata = null) => Task.CompletedTask;
+        public Task UpdateIdentityAsync(
+            Dictionary<string, string> defaultProperties = null,
+            Dictionary<string, string> customProperties = null) => Task.CompletedTask;
     }
 }
 

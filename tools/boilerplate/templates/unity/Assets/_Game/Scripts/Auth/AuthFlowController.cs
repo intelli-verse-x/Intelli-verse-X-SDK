@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,6 +7,7 @@ using UnityEngine.SceneManagement;
 using TMPro;
 using IntelliVerseX.Identity;
 using IntelliVerseX.Analytics;
+using IntelliVerseX.Satori;
 
 namespace {{game_name}}.Auth
 {
@@ -191,7 +193,9 @@ namespace {{game_name}}.Auth
 
         private void TrackAuth(string method)
         {
-            IVXSatoriClient.Instance?.TrackEvent("auth_complete", new()
+            var satori = IVXSatoriClient.Instance;
+            if (satori == null || !satori.IsInitialized) return;
+            _ = satori.CaptureEventAsync("auth_complete", new Dictionary<string, string>
             {
                 { "method", method },
                 { "game_id", "{{game_id}}" },

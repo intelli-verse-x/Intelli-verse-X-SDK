@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -6,6 +7,8 @@ using IntelliVerseX.Core;
 using IntelliVerseX.Identity;
 using IntelliVerseX.Backend;
 using IntelliVerseX.Analytics;
+using IntelliVerseX.Hiro;
+using IntelliVerseX.Satori;
 
 namespace {{game_name}}.Bootstrap
 {
@@ -118,8 +121,14 @@ namespace {{game_name}}.Bootstrap
         private void InitializeSatori()
         {
             Log("Initializing Satori analytics + feature flags...");
-            IVXSatoriClient.Instance?.IdentifyAsync();
-            IVXSatoriClient.Instance?.TrackEvent("app_launch", new()
+            var satori = IVXSatoriClient.Instance;
+            if (satori == null || !satori.IsInitialized)
+            {
+                Log("Satori client not ready — skipping app_launch event");
+                return;
+            }
+
+            _ = satori.CaptureEventAsync("app_launch", new Dictionary<string, string>
             {
                 { "game_id", "{{game_id}}" },
                 { "engine", "unity" },

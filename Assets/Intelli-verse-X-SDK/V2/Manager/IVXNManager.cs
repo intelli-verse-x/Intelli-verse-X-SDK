@@ -134,6 +134,9 @@ namespace IntelliVerseX.Backend.Nakama
                 IVXNWalletManager.RefreshFromServerAsync = RefreshWalletFromServerAsync;
                 IVXNWalletManager.ApplyOperationOnServerAsync = ApplyWalletOperationOnServerAsync;
 
+                TutorXCoinGate.CallRpcAsync = CallTutorXRpcAsync;
+                TutorXCoinGate.EnableDebugLogs = enableDebugLogs;
+
                 IVXNProfileManager.EnableDebugLogs = enableDebugLogs;
                 IVXNProfileManager.OnProfileLoaded -= HandleProfileLoaded;
                 IVXNProfileManager.OnProfileUpdated -= HandleProfileUpdated;
@@ -382,6 +385,7 @@ private void CreateClientIfNeeded()
 
                     IVXNWalletManager.RefreshFromServerAsync = RefreshWalletFromServerAsync;
                     IVXNWalletManager.ApplyOperationOnServerAsync = ApplyWalletOperationOnServerAsync;
+                    TutorXCoinGate.CallRpcAsync = CallTutorXRpcAsync;
 
                     LogSession("Restored existing Nakama session.");
 
@@ -1532,6 +1536,23 @@ private void CreateClientIfNeeded()
 
             Log($"[Wallet] Final operation result: GameBalance={updatedGame}, GlobalBalance={updatedGlobal}");
             return new IVXNWalletManager.WalletSnapshot(updatedGame, updatedGlobal);
+        }
+
+        private async Task<string> CallTutorXRpcAsync(string rpcName, CancellationToken ct)
+        {
+            bool ok = await EnsureValidSessionAsync();
+            if (!ok || _client == null || _session == null)
+                throw new Exception("Nakama session not ready for TutorX RPC.");
+
+            var payload = string.IsNullOrWhiteSpace(_gameId) 
+                ? "{}" 
+                : JsonConvert.SerializeObject(new { gameId = _gameId });
+            
+            Log($"[TutorX] Calling RPC '{rpcName}' with payload: {payload}");
+            var rpc = await _client.RpcAsync(_session, rpcName, payload, retryConfiguration: null, canceller: ct);
+            Log($"[TutorX] RPC '{rpcName}' responded with: {rpc.Payload}");
+            
+            return rpc.Payload;
         }
 
         #endregion

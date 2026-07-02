@@ -9,7 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_(no unreleased changes)_
+### Fixed — Boilerplate Analytics API Alignment
+
+- **`GameBootstrap.cs`** — replaced non-existent `IVXSatoriClient.TrackEvent` and `IVXSatoriClient.IdentifyAsync()` stub-only calls with correct `CaptureEventAsync` fire-and-forget pattern; added `IsInitialized` guard; added missing `using System.Collections.Generic` and `using IntelliVerseX.Satori` imports.
+- **`MainMenuController.cs`** — same `TrackEvent` → `CaptureEventAsync` migration for `game_start` and `screen_view` events.
+- **`AuthFlowController.cs`** — same `TrackEvent` → `CaptureEventAsync` migration for `auth_complete` event.
+- **`IVXStubs.cs`** — removed non-existent `TrackEvent(string, Dictionary)` and `IdentifyAsync()` methods from the `IVXSatoriClient` stub; replaced with `UpdateIdentityAsync` to match the real `IVXSatoriClient` API surface.
 
 ---
 

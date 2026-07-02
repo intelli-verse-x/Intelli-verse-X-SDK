@@ -1,7 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
 using IntelliVerseX.Analytics;
+using IntelliVerseX.Satori;
 
 namespace {{game_name}}.UI
 {
@@ -97,11 +99,13 @@ namespace {{game_name}}.UI
         private void OnPlay()
         {
             TrackScreen("gameplay");
-            IVXSatoriClient.Instance?.TrackEvent("game_start", new()
-            {
-                { "game_id", "{{game_id}}" },
-                { "source", "main_menu" },
-            });
+            var satori = IVXSatoriClient.Instance;
+            if (satori != null && satori.IsInitialized)
+                _ = satori.CaptureEventAsync("game_start", new Dictionary<string, string>
+                {
+                    { "game_id", "{{game_id}}" },
+                    { "source", "main_menu" },
+                });
             UnityEngine.SceneManagement.SceneManager.LoadScene(_gameplayScene);
         }
 
@@ -111,7 +115,9 @@ namespace {{game_name}}.UI
 
         private void TrackScreen(string name)
         {
-            IVXSatoriClient.Instance?.TrackEvent("screen_view", new()
+            var satori = IVXSatoriClient.Instance;
+            if (satori == null || !satori.IsInitialized) return;
+            _ = satori.CaptureEventAsync("screen_view", new Dictionary<string, string>
             {
                 { "screen", name },
                 { "game_id", "{{game_id}}" },
