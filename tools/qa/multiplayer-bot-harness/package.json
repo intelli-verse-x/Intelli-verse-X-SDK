@@ -5,8 +5,8 @@
   "description": "Synthetic-bot validation harness for the IVX multiplayer kernel and adapters.",
   "type": "module",
   "scripts": {
-    "build": "tsc -p .",
-    "run:script": "ts-node src/runner.ts"
+    "build": "node init && tsc -p .",
+    "run:script": "node init && ts-node src/runner.ts"
   },
   "dependencies": {
     "@intelliversex/multiplayer": "file:../../../SDKs/javascript/packages/multiplayer",

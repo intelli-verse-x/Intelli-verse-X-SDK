@@ -3,10 +3,12 @@ name: C/C++ SDK
 on:
   push:
     paths:
+      - '.github/workflows/cpp-sdk.yml'
       - 'SDKs/cpp/**'
       - 'SDKs/cocos2dx/**'
   pull_request:
     paths:
+      - '.github/workflows/cpp-sdk.yml'
       - 'SDKs/cpp/**'
       - 'SDKs/cocos2dx/**'
 
@@ -33,9 +35,27 @@ jobs:
             brew install curl
           fi
 
-      - name: Configure (C++ SDK)
+      - name: Install Windows dependencies
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: vcpkg install curl:x64-windows
+
+      - name: Configure (C++ SDK, Unix)
+        if: runner.os != 'Windows'
         working-directory: SDKs/cpp
         run: cmake -B build -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} -DIVX_BUILD_TESTS=OFF
+
+      - name: Configure (C++ SDK, Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        working-directory: SDKs/cpp
+        run: |
+          $env:VCPKG_ROOT = $env:VCPKG_INSTALLATION_ROOT
+          cmake -B build `
+            -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} `
+            -DIVX_BUILD_TESTS=OFF `
+            "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" `
+            -DVCPKG_TARGET_TRIPLET=x64-windows
 
       - name: Build (C++ SDK)
         working-directory: SDKs/cpp
