@@ -1,7 +1,7 @@
 {
   "name": "@intelliversex/sdk",
   "version": "5.8.0",
-  "description": "IntelliVerseX SDK for JavaScript/TypeScript — Auth, Backend (Nakama), Analytics, Social, Monetization, AI, Multiplayer, Hiro Live Ops, and more.",
+  "description": "IntelliVerseX SDK for JavaScript/TypeScript \u2014 Auth, Backend (Nakama), Analytics, Social, Monetization, AI, Multiplayer, Hiro Live Ops, and more.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -17,9 +17,9 @@
     "src"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm && tsc -p tsconfig.build.json",
-    "build:prod": "tsup src/index.ts --format cjs,esm --minify && tsc -p tsconfig.build.json",
-    "dev": "tsup src/index.ts --format cjs,esm --watch",
+    "build": "node init && tsup src/index.ts --format cjs,esm && tsc -p tsconfig.build.json",
+    "build:prod": "node init && tsup src/index.ts --format cjs,esm --minify && tsc -p tsconfig.build.json",
+    "dev": "node init && tsup src/index.ts --format cjs,esm --watch",
     "test": "vitest run",
     "test:watch": "vitest",
     "prepublishOnly": "npm run build:prod",
