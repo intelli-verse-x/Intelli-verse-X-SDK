@@ -1,0 +1,35 @@
+set(file "core/buildProtoFiles.cmake")
+file(READ "${file}" source)
+set(before [[IMPORT_DIRS "${NAKAMA_COMMON}"]])
+set(after "IMPORT_DIRS \"\${NAKAMA_COMMON};${PROTOBUF_SOURCE_DIR}/src\"")
+string(REPLACE "${before}" "${after}" patched "${source}")
+if(patched STREQUAL source)
+  string(FIND "${source}" "${after}" already_patched)
+  if(already_patched EQUAL -1)
+    message(FATAL_ERROR "nakama-cpp protobuf import patch no longer applies")
+  endif()
+endif()
+file(WRITE "${file}" "${patched}")
+
+set(common_file "core/common/CMakeLists.txt")
+file(READ "${common_file}" common_source)
+set(common_before "        PRIVATE\n            protobuf::libprotobuf")
+set(common_after "        PRIVATE\n            protobuf::libprotobuf\n            rapidjson")
+string(REPLACE
+  "${common_before}"
+  "${common_after}"
+  common_patched
+  "${common_source}"
+)
+if(common_patched STREQUAL common_source)
+  string(FIND "${common_source}" "            rapidjson" already_patched)
+  if(already_patched EQUAL -1)
+    message(FATAL_ERROR "nakama-cpp RapidJSON target patch no longer applies")
+  endif()
+endif()
+file(WRITE "${common_file}" "${common_patched}")
+set(rapidjson_include "target_include_directories(nakama-sdk-core-common PRIVATE \"${RAPIDJSON_SOURCE_DIR}/include\")")
+string(FIND "${common_patched}" "${rapidjson_include}" include_already_patched)
+if(include_already_patched EQUAL -1)
+  file(APPEND "${common_file}" "\n${rapidjson_include}\n")
+endif()

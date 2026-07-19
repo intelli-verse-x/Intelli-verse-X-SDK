@@ -68,7 +68,7 @@ void Manager::init(const Config& cfg) {
     p.port = cfg.port;
     p.ssl = cfg.useSSL;
 
-    _client = Nakama::createDefaultClient(p);
+    _client = Nakama::createRestClient(p);
     if (!_client) {
         _init = false;
         log("ERROR: Nakama::createDefaultClient returned null");
@@ -146,7 +146,7 @@ void Manager::fetchProfile(ProfileCb ok, ErrorCb err) {
     if (!hasSession()) { if (err) err({-1, "No session"}); return; }
     _client->getAccount(_session,
         [ok](const Nakama::NAccount& a) {
-            Profile p{a.user.id, a.user.username, a.user.displayName, a.user.avatarUrl, a.user.langTag, a.user.metadata, a.wallet};
+            Profile p{a.user.id, a.user.username, a.user.displayName, a.user.avatarUrl, "", a.user.metadata, a.wallet};
             if (ok) ok(p);
         },
         [err](const Nakama::NError& e) { if (err) err({e.code, e.message}); });
@@ -154,7 +154,8 @@ void Manager::fetchProfile(ProfileCb ok, ErrorCb err) {
 
 void Manager::updateProfile(const std::string& dn, const std::string& av, const std::string& lt, SuccessCb ok, ErrorCb err) {
     if (!hasSession()) { if (err) err({-1, "No session"}); return; }
-    _client->updateAccount(_session, Nakama::opt::nullopt, dn, av, lt, Nakama::opt::nullopt,
+    _client->updateAccount(_session, Nakama::opt::nullopt, dn, av, lt,
+        Nakama::opt::nullopt, Nakama::opt::nullopt,
         [this, ok]() { log("Profile updated"); if (ok) ok(); },
         [err](const Nakama::NError& e) { if (err) err({e.code, e.message}); });
 }
@@ -176,7 +177,7 @@ void Manager::grantCurrency(const std::string& cid, int64_t amt, StringCb ok, Er
 
 void Manager::submitScore(const std::string& lid, int64_t score, SuccessCb ok, ErrorCb err) {
     if (!hasSession()) { if (err) err({-1, "No session"}); return; }
-    _client->writeLeaderboardRecord(_session, lid, score, Nakama::opt::nullopt, Nakama::opt::nullopt, Nakama::opt::nullopt,
+    _client->writeLeaderboardRecord(_session, lid, score, Nakama::opt::nullopt, Nakama::opt::nullopt,
         [this, ok, lid, score](const Nakama::NLeaderboardRecord&) { log("Score " + std::to_string(score) + " -> " + lid); if (ok) ok(); },
         [err](const Nakama::NError& e) { if (err) err({e.code, e.message}); });
 }
@@ -190,7 +191,7 @@ void Manager::fetchLeaderboard(const std::string& lid, int limit, LeaderboardCb 
                 for (auto& r : list->records) {
                     LeaderboardRecord rec;
                     rec.ownerId = r.ownerId;
-                    rec.username = r.username.has_value() ? r.username.value() : "";
+                    rec.username = r.username;
                     rec.score = r.score;
                     rec.rank = r.rank;
                     out.push_back(rec);
@@ -207,7 +208,8 @@ void Manager::writeStorage(const std::string& col, const std::string& key, const
     if (!hasSession()) { if (err) err({-1, "No session"}); return; }
     Nakama::NStorageObjectWrite w;
     w.collection = col; w.key = key; w.value = json;
-    w.permissionRead = 1; w.permissionWrite = 1;
+    w.permissionRead = Nakama::NStoragePermissionRead::OWNER_READ;
+    w.permissionWrite = Nakama::NStoragePermissionWrite::OWNER_WRITE;
     _client->writeStorageObjects(_session, {w},
         [this, ok, col, key](const Nakama::NStorageObjectAcks&) { log("Write " + col + "/" + key); if (ok) ok(); },
         [err](const Nakama::NError& e) { if (err) err({e.code, e.message}); });

@@ -26,6 +26,8 @@ namespace Nakama {
     class NClientInterface;
     class NSessionInterface;
     class NRtClientInterface;
+    class NRtTransportInterface;
+    class NRtDefaultClientListener;
     struct NMatchData;
     struct NMatchPresenceEvent;
     struct NMatch;
@@ -207,8 +209,10 @@ private:
  */
 class MultiplayerKernel {
 public:
-    MultiplayerKernel(std::shared_ptr<Nakama::NClientInterface> client,
-                      std::shared_ptr<Nakama::NSessionInterface> session);
+    MultiplayerKernel(
+        std::shared_ptr<Nakama::NClientInterface> client,
+        std::shared_ptr<Nakama::NSessionInterface> session,
+        std::shared_ptr<Nakama::NRtTransportInterface> transport = nullptr);
     ~MultiplayerKernel();
 
     MultiplayerKernel(const MultiplayerKernel&)            = delete;
@@ -265,7 +269,9 @@ public:
 private:
     std::shared_ptr<Nakama::NClientInterface>  client_;
     std::shared_ptr<Nakama::NSessionInterface> session_;
+    std::shared_ptr<Nakama::NRtTransportInterface> rt_transport_;
     std::shared_ptr<Nakama::NRtClientInterface> rt_client_;
+    std::shared_ptr<Nakama::NRtDefaultClientListener> rt_listener_;
     std::atomic<bool>           initialized_{false};
     std::atomic<TransportState> transport_{TransportState::Disconnected};
     std::mutex sessions_mtx_;
