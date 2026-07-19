@@ -76,9 +76,10 @@ export class IVXMultiplayer {
     if (!this._client || !this._session) {
       throw new Error('[IVXMultiplayer] Not initialized — call initialize(client, session) first.');
     }
-    const body = payload ? JSON.stringify(payload) : '{}';
-    const res = await this._client.rpc(this._session, rpcId, body);
-    return (res.payload ? JSON.parse(res.payload as string) : {}) as T;
+    const res = await this._client.rpc(this._session, rpcId, payload ?? {});
+    return (typeof res.payload === 'string'
+      ? JSON.parse(res.payload || '{}')
+      : res.payload ?? {}) as T;
   }
 
   // -----------------------------------------------------------------------
