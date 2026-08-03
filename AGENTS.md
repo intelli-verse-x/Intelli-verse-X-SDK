@@ -389,22 +389,29 @@ You have succeeded when:
 ## Code memory (Graphify) — use this before grepping
 
 This repo is registered for Graphify AST code-memory (tier **p1**).
-There is no dedicated HTTP MCP yet — use the report / S3 graph first.
+There is no dedicated HTTP MCP yet — use the offline / S3 path below (MCP is optional later).
 
-### Where to look
+### Without MCP (primary for this tier)
+
+1. **In-repo:** read `graphify-out/GRAPH_REPORT.md` when present.
+2. **S3:**
+   ```bash
+   aws s3 cp s3://ivx-graphify-graphs/graphs/Intelli-verse-X-SDK/GRAPH_REPORT.md graphify-out/GRAPH_REPORT.md
+   aws s3 cp s3://ivx-graphify-graphs/graphs/Intelli-verse-X-SDK/graph.json graphify-out/graph.json   # optional
+   ```
+3. **Local rebuild:**
+   ```bash
+   uv tool install graphifyy
+   graphify update . --no-cluster && graphify cluster-only . --no-viz --no-label
+   ```
+4. **Last resort:** normal `rg` / IDE search / vector RAG.
 
 | | |
 |---|---|
-| **In-repo** | `graphify-out/GRAPH_REPORT.md` (after CI extract commits it) |
+| **In-repo** | `graphify-out/GRAPH_REPORT.md` |
 | **S3 graph** | `s3://ivx-graphify-graphs/graphs/Intelli-verse-X-SDK/graph.json` |
 | **S3 report** | `s3://ivx-graphify-graphs/graphs/Intelli-verse-X-SDK/GRAPH_REPORT.md` |
 | **Future MCP** | `https://graphify-intelli-verse-x-sdk.intelli-verse-x.ai/mcp` (not deployed for this tier yet) |
-
-### Agent procedure
-
-1. Read `GRAPH_REPORT.md` for communities / hotspots.
-2. Prefer structural navigation over broad greps when answering “who calls / where defined”.
-3. Fallback to normal search for fuzzy prose. Graphify is **code DNA**, not Brand DNA / vector RAG.
 
 ### Ops
 
