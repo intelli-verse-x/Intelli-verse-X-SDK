@@ -73,8 +73,9 @@ export async function runBot(cfg: BotConfig): Promise<BotOutcome> {
   let session: { send: Function; leave: Function } | null = null;
   try {
     const mod = await import("@intelliversex/multiplayer").catch(() => null);
-    if (mod) {
-      const client = mod.createClient({ host: cfg.target });
+    const factory = (mod as { createClient?: (opts: { host: string }) => any } | null)?.createClient;
+    if (factory) {
+      const client = factory({ host: cfg.target });
       await client.connect();
       const matchSession =
         cfg.matchId

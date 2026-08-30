@@ -120,6 +120,40 @@ func create_match(req: Dictionary) -> Dictionary:
         return {"error": "invalid_response"}
     return parsed
 
+func list_templates() -> Dictionary:
+    return await _rpc_dict("mp_list_templates", {})
+
+func read_match_result(match_id: String) -> Dictionary:
+    if match_id.strip_edges().is_empty():
+        return {"error": "match_id_required"}
+    return await _rpc_dict("mp_read_match_result", {"match_id": match_id})
+
+func list_agent_personas() -> Dictionary:
+    return await _rpc_dict("mp_agent_list_personas", {})
+
+func spawn_agent(req: Dictionary) -> Dictionary:
+    if str(req.get("match_id", "")).strip_edges().is_empty():
+        return {"error": "match_id_required"}
+    if str(req.get("persona_id", "")).strip_edges().is_empty():
+        return {"error": "persona_id_required"}
+    return await _rpc_dict("mp_agent_spawn", req)
+
+func despawn_agent(req: Dictionary) -> Dictionary:
+    if str(req.get("match_id", "")).strip_edges().is_empty():
+        return {"error": "match_id_required"}
+    if str(req.get("agent_id", "")).strip_edges().is_empty():
+        return {"error": "agent_id_required"}
+    return await _rpc_dict("mp_agent_despawn", req)
+
+func agent_speak(req: Dictionary) -> Dictionary:
+    if str(req.get("match_id", "")).strip_edges().is_empty():
+        return {"error": "match_id_required"}
+    if str(req.get("agent_id", "")).strip_edges().is_empty():
+        return {"error": "agent_id_required"}
+    if str(req.get("text", "")).strip_edges().is_empty():
+        return {"error": "text_required"}
+    return await _rpc_dict("mp_agent_speak", req)
+
 # Returns IVXMatchSession or null on failure.
 func join_match(match_id: String) -> Variant:
     if not _initialized:
@@ -166,6 +200,17 @@ func _on_match_state(match_state) -> void:
         "recv_unix_ms": Time.get_unix_time_from_system() * 1000,
     }
     sess._dispatch(env)
+
+func _rpc_dict(rpc_id: String, payload_dict: Dictionary) -> Dictionary:
+    if not _initialized:
+        return {"error": "not_initialized"}
+    var rpc = await _nakama_client.rpc_async(_nakama_session, rpc_id, JSON.stringify(payload_dict))
+    if rpc.is_exception():
+        return {"error": "rpc_failed", "message": rpc.get_exception().message}
+    var parsed: Variant = JSON.parse_string(rpc.payload)
+    if typeof(parsed) != TYPE_DICTIONARY:
+        return {"error": "invalid_response"}
+    return parsed
 
 func _set_state(s: int) -> void:
     transport_state = s
