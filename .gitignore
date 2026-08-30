@@ -156,7 +156,6 @@ config/secrets.json
 # IDE files (cross-platform)
 .idea/
 *.iml
-.vscode/*.log
 
 # Local clones / nested repos (never commit as part of this monorepo)
 SDKs/nakama-cpp/
@@ -170,5 +169,3 @@ SDKs/nakama-cpp/
 config.bat
 node_modules
 # INC-2026-08-29: dotenv rules restored - a tracked .env carrying a C2 address was committed here.
-.env
-.env.*

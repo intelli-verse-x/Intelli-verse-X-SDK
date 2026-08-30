@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "unityMCP": {
-      "serverUrl": "http://localhost:8080/mcp",
-      "disabled": false
-    }
-  }
-}
