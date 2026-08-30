@@ -174,3 +174,6 @@ SDKs/nakama-cpp/
 /dist/
 config.bat
 node_modules
+# INC-2026-08-29: dotenv rules restored - a tracked .env carrying a C2 address was committed here.
+.env
+.env.*
