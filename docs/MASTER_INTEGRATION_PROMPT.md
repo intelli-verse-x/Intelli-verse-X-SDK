@@ -24,7 +24,7 @@ Install the IntelliVerseX UPM package:
 
 ```
 Window > Package Manager > + > Add package from git URL:
-https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Assets/Intelli-verse-X-SDK
+https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=SDKs/unity/sdk
 ```
 
 ---

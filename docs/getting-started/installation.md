@@ -36,7 +36,7 @@ Add the IntelliVerseX SDK to the `dependencies` section:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Assets/Intelli-verse-X-SDK"
+    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=SDKs/unity/sdk"
   }
 }
 ```
@@ -58,7 +58,7 @@ For production builds, always pin to a specific version tag:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Assets/Intelli-verse-X-SDK#v5.8.0"
+    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=SDKs/unity/sdk#v5.8.0"
   }
 }
 ```
@@ -94,7 +94,7 @@ Go to **Window > Package Manager** in Unity.
 2. Select **Add package from git URL...**
 3. Enter:
    ```
-   https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Assets/Intelli-verse-X-SDK#v5.8.0
+   https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=SDKs/unity/sdk#v5.8.0
    ```
 4. Click **Add**
 
@@ -214,7 +214,7 @@ com.intelliversex.sdk/          # Package id; content from Assets/Intelli-verse-
 Simply change the version tag in `manifest.json`:
 
 ```json
-"com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Assets/Intelli-verse-X-SDK#v5.8.0"
+"com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=SDKs/unity/sdk#v5.8.0"
 ```
 
 Use the tag you want (for example `#v5.8.0` for the current recommended release).
@@ -236,7 +236,7 @@ Use the tag you want (for example `#v5.8.0` for the current recommended release)
 **Solution:**
 1. Ensure Git is installed and in your PATH
 2. Check your internet connection
-3. Verify the Git URL is correct (including `?path=Assets/Intelli-verse-X-SDK`)
+3. Verify the Git URL is correct (including `?path=SDKs/unity/sdk`)
 
 ### Compilation errors after install
 

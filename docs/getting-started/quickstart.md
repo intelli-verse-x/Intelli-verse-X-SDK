@@ -57,7 +57,7 @@ curl -s -X POST 'https://msapi.intelli-verse-x.io/api/games/game/info' \
 
 ```
 Window > Package Manager > + > Add package from git URL:
-https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Assets/Intelli-verse-X-SDK
+https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=SDKs/unity/sdk
 ```
 
 ---

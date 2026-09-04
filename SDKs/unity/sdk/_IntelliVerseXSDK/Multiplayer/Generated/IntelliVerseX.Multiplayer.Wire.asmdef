@@ -1,0 +1,16 @@
+{
+    "name": "IntelliVerseX.Multiplayer.Wire",
+    "rootNamespace": "IntelliVerseX.Multiplayer.Wire",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [
+        "Google.Protobuf.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

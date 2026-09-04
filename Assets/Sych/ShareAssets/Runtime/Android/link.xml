@@ -1,6 +1,0 @@
-<linker>
-  <assembly fullname="Sych.ShareAssets.Runtime.Android">
-    <type fullname="Sych.ShareAssets.Runtime.Android.ShareNativeBridge" preserve="all"/>
-    <type fullname="Sych.ShareAssets.Runtime.Android.ShareNativeBridge+ShareCallback" preserve="all"/>
-  </assembly>
-</linker>

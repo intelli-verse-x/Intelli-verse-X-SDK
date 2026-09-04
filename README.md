@@ -165,7 +165,7 @@ Keep players engaged and revenue growing after launch:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Assets/Intelli-verse-X-SDK#v5.9.0"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=SDKs/unity/sdk#v5.9.0"
   }
 }
 ```
