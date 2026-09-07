@@ -215,3 +215,6 @@ node_modules
 SDKs/unity/editor/*test-results*.xml
 SDKs/unity/editor/ivx-*.xml
 SDKs/unity/editor/.vscode/
+
+test-results.xml
+
