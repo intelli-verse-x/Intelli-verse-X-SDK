@@ -11,10 +11,20 @@ Get-ChildItem $root -Recurse -Filter *.cs |
     foreach ($line in Get-Content $_.FullName) {
       if ($line -match 'const string RPC_\w+\s*=\s*"([a-z0-9_]+)"') { [void]$ids.Add($Matches[1]) }
       if ($line -match 'RpcAsync\([^,]+,\s*"([a-z0-9_]+)"') { [void]$ids.Add($Matches[1]) }
+      if ($line -match 'CallAsync<[^>]+>\(\s*"([a-z0-9_]+)"') { [void]$ids.Add($Matches[1]) }
+      if ($line -match 'CallAsync\([^,]*,\s*"([a-z0-9_]+)"') { [void]$ids.Add($Matches[1]) }
     }
   }
 
 [void]$ids.Add("nakama_js_health")
+# Prod-canonical social RPCs (2026-09 nakama-mcp audit)
+@(
+  "send_friend_challenge","accept_friend_challenge","decline_friend_challenge","cancel_friend_challenge",
+  "list_pending_friend_challenges","friends_spectate",
+  "friend_streak_get_state","friend_streak_record_contribution","friend_streak_send_nudge",
+  "friend_streak_get_broken_log","friend_streak_repair",
+  "friend_quest_get_state","friend_quest_complete"
+) | ForEach-Object { [void]$ids.Add($_) }
 $sorted = $ids | Sort-Object
 $entries = foreach ($id in $sorted) {
   $module = "platform"

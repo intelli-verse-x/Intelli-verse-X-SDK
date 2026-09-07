@@ -103,8 +103,8 @@ namespace IntelliVerseX.Social
         /// <returns>A list of friend streaks.</returns>
         public async Task<List<IVXFriendStreak>> GetStreaksAsync()
         {
-            var rpc = await _rpcClient.CallAsync<IVXFriendStreakListResponse>("friend_streaks_get");
-            if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "friend_streaks_get"))
+            var rpc = await _rpcClient.CallAsync<IVXFriendStreakListResponse>("friend_streak_get_state");
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "friend_streak_get_state"))
                 return new List<IVXFriendStreak>();
             return envelope?.streaks ?? new List<IVXFriendStreak>();
         }
@@ -117,8 +117,8 @@ namespace IntelliVerseX.Social
         public async Task<IVXFriendStreak> RecordInteractionAsync(string friendId)
         {
             var payload = new IVXFriendInteractionRequest { friendId = friendId };
-            var rpc = await _rpcClient.CallAsync<IVXFriendStreak>("friend_streaks_interact", payload);
-            if (!HiroRpcResponseUtility.TryGetData(rpc, out var streak, "friend_streaks_interact"))
+            var rpc = await _rpcClient.CallAsync<IVXFriendStreak>("friend_streak_record_contribution", payload);
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var streak, "friend_streak_record_contribution"))
                 return null;
             if (streak != null)
             {
@@ -136,32 +136,29 @@ namespace IntelliVerseX.Social
         /// <returns>A list of active friend quests.</returns>
         public async Task<List<IVXFriendQuest>> GetActiveQuestsAsync()
         {
-            var rpc = await _rpcClient.CallAsync<IVXFriendQuestListResponse>("friend_quests_get_active");
-            if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "friend_quests_get_active"))
+            var rpc = await _rpcClient.CallAsync<IVXFriendQuestListResponse>("friend_quest_get_state");
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "friend_quest_get_state"))
                 return new List<IVXFriendQuest>();
             return envelope?.quests ?? new List<IVXFriendQuest>();
         }
 
         /// <summary>
-        /// Contributes progress to a friend quest.
+        /// Completes a friend quest (<c>friend_quest_complete</c>).
         /// </summary>
-        /// <param name="questId">The quest identifier.</param>
-        /// <param name="progress">The progress increment.</param>
-        /// <returns>The updated friend quest.</returns>
-        public async Task<IVXFriendQuest> ContributeToQuestAsync(string questId, int progress)
+        public async Task<IVXFriendQuest> CompleteQuestAsync(string questId)
         {
             var payload = new IVXFriendQuestContributeRequest
             {
                 questId = questId,
-                progress = progress
+                quest_id = questId
             };
-            var rpc = await _rpcClient.CallAsync<IVXFriendQuest>("friend_quests_contribute", payload);
-            if (!HiroRpcResponseUtility.TryGetData(rpc, out var quest, "friend_quests_contribute"))
+            var rpc = await _rpcClient.CallAsync<IVXFriendQuest>("friend_quest_complete", payload);
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var quest, "friend_quest_complete"))
                 return null;
             if (quest != null)
             {
                 OnQuestProgress?.Invoke(quest);
-                if (quest.completed)
+                if (quest.completed || !string.IsNullOrEmpty(quest.completedAt))
                     OnQuestCompleted?.Invoke(quest);
             }
             return quest;

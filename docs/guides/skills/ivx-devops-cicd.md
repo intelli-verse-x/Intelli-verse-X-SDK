@@ -361,12 +361,56 @@ IVXEnvironmentManager.Instance.SetEnvironment("staging");
 
 ---
 
+## Prod Nakama RPC gate (GitHub Actions / Jenkins)
+
+There is **no Jenkinsfile in this SDK repo** today — CI ships as GitHub Actions under `.github/workflows/`. The same stage can be copied into Jenkins.
+
+**Goal:** fail the build if Unity-indexed RPCs disappear or hit broken aliases on **production** Nakama.
+
+1. MCP endpoint (no caller token): `https://nakama-mcp.intelli-verse-x.ai/`
+2. Local / agent: `powershell -File tools/probe-prod-rpcs.ps1`
+3. Treat `not_found` and `broken_alias` as hard failures; `auth_or_perm` / `soft_fail` are expected without a user session.
+
+### Jenkins pipeline stage (Groovy)
+
+```groovy
+stage('Prod Nakama RPC probe') {
+  steps {
+    bat 'powershell -NoProfile -File tools/probe-prod-rpcs.ps1 -OutFile reports/rpc-prod-probe.json'
+    bat '''
+      powershell -NoProfile -Command "
+        $r = Get-Content reports/rpc-prod-probe.json -Raw | ConvertFrom-Json;
+        $bad = @($r | Where-Object { $_.status -in @('not_found','broken_alias') });
+        if ($bad.Count -gt 0) { $bad | Format-Table; exit 1 }
+      "
+    '''
+  }
+}
+```
+
+### GitHub Actions step
+
+```yaml
+- name: Probe prod Nakama RPCs
+  shell: pwsh
+  run: |
+    ./tools/probe-prod-rpcs.ps1 -OutFile reports/rpc-prod-probe.json
+    $r = Get-Content reports/rpc-prod-probe.json -Raw | ConvertFrom-Json
+    $bad = @($r | Where-Object { $_.status -in @('not_found','broken_alias') })
+    if ($bad.Count -gt 0) { $bad | Format-Table; exit 1 }
+```
+
+Full audit notes: [nakama-rpc-prod-audit.md](../nakama-rpc-prod-audit.md).
+
+---
+
 ## Checklist
 
 - [ ] GitHub Actions workflow generated for target engine and platforms
 - [ ] Build pipeline tested with successful artifact generation
 - [ ] Unit tests running in CI with coverage reporting
 - [ ] Version bumping configured (SemVer or CalVer)
+- [ ] Prod Nakama RPC probe wired (GHA or Jenkins) against `nakama-mcp`
 - [ ] Changelog generation from conventional commits verified
 - [ ] Asset bundle pipeline building and uploading to CDN
 - [ ] Code signing configured for Android (keystore) and iOS (provisioning)

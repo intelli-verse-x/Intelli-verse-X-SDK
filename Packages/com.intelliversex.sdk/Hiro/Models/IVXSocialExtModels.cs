@@ -11,39 +11,31 @@ namespace IntelliVerseX.Hiro
     [Serializable]
     public class IVXFriendQuest
     {
-        [JsonProperty("questId")] public string questId;
+        [JsonProperty("id")] public string questId;
         [JsonProperty("title")] public string title;
         [JsonProperty("description")] public string description;
-        [JsonProperty("targetValue")] public int targetValue;
-        [JsonProperty("currentValue")] public int currentValue;
+        [JsonProperty("type")] public string type;
+        [JsonProperty("target")] public int targetValue;
+        [JsonProperty("progress")] public int currentValue;
         [JsonProperty("partnerId")] public string partnerId;
         [JsonProperty("partnerName")] public string partnerName;
         [JsonProperty("partnerProgress")] public int partnerProgress;
         [JsonProperty("reward")] public IVXReward reward;
         [JsonProperty("status")] public string status;
-        [JsonProperty("expiresAt")] public long expiresAt;
-        [JsonProperty("completedAt")] public long completedAt;
+        [JsonProperty("expiresAt")] public string expiresAt;
+        [JsonProperty("completedAt")] public string completedAt;
     }
 
     [Serializable]
     public class IVXFriendQuestState
     {
-        [JsonProperty("activeQuests")] public List<IVXFriendQuest> activeQuests;
-        [JsonProperty("availableQuests")] public List<IVXFriendQuest> availableQuests;
-        [JsonProperty("completedToday")] public int completedToday;
+        [JsonProperty("quests")] public List<IVXFriendQuest> quests;
+        [JsonProperty("generatedAt")] public string generatedAt;
 
         public IVXFriendQuestState()
         {
-            activeQuests = new List<IVXFriendQuest>();
-            availableQuests = new List<IVXFriendQuest>();
+            quests = new List<IVXFriendQuest>();
         }
-    }
-
-    [Serializable]
-    public class IVXFriendQuestAcceptResponse
-    {
-        [JsonProperty("quest")] public IVXFriendQuest quest;
-        [JsonProperty("accepted")] public bool accepted;
     }
 
     [Serializable]
@@ -53,6 +45,7 @@ namespace IntelliVerseX.Hiro
         [JsonProperty("updated")] public bool updated;
         [JsonProperty("completed")] public bool completed;
         [JsonProperty("reward")] public IVXReward reward;
+        [JsonProperty("success")] public bool success;
     }
 
     // ========================================================================
@@ -62,15 +55,15 @@ namespace IntelliVerseX.Hiro
     [Serializable]
     public class IVXFriendStreak
     {
-        [JsonProperty("streakId")] public string streakId;
         [JsonProperty("friendId")] public string friendId;
-        [JsonProperty("friendName")] public string friendName;
-        [JsonProperty("currentStreak")] public int currentStreak;
+        [JsonProperty("friendDisplayName")] public string friendName;
+        [JsonProperty("streakDays")] public int currentStreak;
         [JsonProperty("longestStreak")] public int longestStreak;
-        [JsonProperty("lastInteractionAt")] public long lastInteractionAt;
+        [JsonProperty("lastInteractionAt")] public string lastInteractionAt;
         [JsonProperty("myContributionToday")] public bool myContributionToday;
         [JsonProperty("friendContributionToday")] public bool friendContributionToday;
-        [JsonProperty("expiresAt")] public long expiresAt;
+        [JsonProperty("hoursUntilBreak")] public float hoursUntilBreak;
+        [JsonProperty("isAtRisk")] public bool isAtRisk;
         [JsonProperty("milestoneRewards")] public List<IVXFriendStreakMilestone> milestoneRewards;
 
         public IVXFriendStreak()
@@ -91,7 +84,9 @@ namespace IntelliVerseX.Hiro
     public class IVXFriendStreakState
     {
         [JsonProperty("streaks")] public List<IVXFriendStreak> streaks;
-        [JsonProperty("maxActiveStreaks")] public int maxActiveStreaks;
+        [JsonProperty("totalActive")] public int totalActive;
+        [JsonProperty("maxStreaks")] public int maxActiveStreaks;
+        [JsonProperty("nudgesRemaining")] public int nudgesRemaining;
 
         public IVXFriendStreakState()
         {
@@ -102,42 +97,48 @@ namespace IntelliVerseX.Hiro
     [Serializable]
     public class IVXFriendStreakInteractResponse
     {
-        [JsonProperty("streak")] public IVXFriendStreak streak;
-        [JsonProperty("recorded")] public bool recorded;
-        [JsonProperty("milestoneReward")] public IVXReward milestoneReward;
+        [JsonProperty("friendId")] public string friendId;
+        [JsonProperty("streakDays")] public int streakDays;
+        [JsonProperty("advanced")] public bool advanced;
+        [JsonProperty("myContributionToday")] public bool myContributionToday;
+        [JsonProperty("friendContributionToday")] public bool friendContributionToday;
+        [JsonProperty("success")] public bool success;
     }
 
     // ========================================================================
-    // FRIEND BATTLE
+    // FRIEND BATTLE / CHALLENGE
     // ========================================================================
 
     [Serializable]
     public class IVXFriendBattleChallenge
     {
         [JsonProperty("challengeId")] public string challengeId;
-        [JsonProperty("challengerId")] public string challengerId;
+        [JsonProperty("fromUserId")] public string challengerId;
+        [JsonProperty("toUserId")] public string opponentId;
         [JsonProperty("challengerName")] public string challengerName;
-        [JsonProperty("challengerScore")] public int challengerScore;
-        [JsonProperty("opponentId")] public string opponentId;
         [JsonProperty("opponentName")] public string opponentName;
-        [JsonProperty("opponentScore")] public int opponentScore;
+        [JsonProperty("gameId")] public string gameId;
         [JsonProperty("gameMode")] public string gameMode;
         [JsonProperty("status")] public string status;
-        [JsonProperty("wager")] public IVXReward wager;
-        [JsonProperty("winnerReward")] public IVXReward winnerReward;
-        [JsonProperty("expiresAt")] public long expiresAt;
+        [JsonProperty("roomCode")] public string roomCode;
+        [JsonProperty("shareCode")] public string shareCode;
+        [JsonProperty("isAsync")] public bool isAsync;
+        [JsonProperty("expiresAt")] public string expiresAt;
         [JsonProperty("winnerId")] public string winnerId;
     }
 
     [Serializable]
     public class IVXFriendBattleState
     {
+        /// <summary>Prod list RPC may return challenges under several keys; normalize in callers if needed.</summary>
+        [JsonProperty("challenges")] public List<IVXFriendBattleChallenge> challenges;
         [JsonProperty("pendingChallenges")] public List<IVXFriendBattleChallenge> pendingChallenges;
         [JsonProperty("activeBattles")] public List<IVXFriendBattleChallenge> activeBattles;
         [JsonProperty("recentResults")] public List<IVXFriendBattleChallenge> recentResults;
 
         public IVXFriendBattleState()
         {
+            challenges = new List<IVXFriendBattleChallenge>();
             pendingChallenges = new List<IVXFriendBattleChallenge>();
             activeBattles = new List<IVXFriendBattleChallenge>();
             recentResults = new List<IVXFriendBattleChallenge>();
@@ -147,15 +148,13 @@ namespace IntelliVerseX.Hiro
     [Serializable]
     public class IVXFriendBattleSendResponse
     {
+        [JsonProperty("challengeId")] public string challengeId;
+        [JsonProperty("fromUserId")] public string fromUserId;
+        [JsonProperty("toUserId")] public string toUserId;
+        [JsonProperty("gameId")] public string gameId;
+        [JsonProperty("status")] public string status;
+        [JsonProperty("success")] public bool success;
         [JsonProperty("challenge")] public IVXFriendBattleChallenge challenge;
         [JsonProperty("sent")] public bool sent;
-    }
-
-    [Serializable]
-    public class IVXFriendBattleSubmitResponse
-    {
-        [JsonProperty("challenge")] public IVXFriendBattleChallenge challenge;
-        [JsonProperty("submitted")] public bool submitted;
-        [JsonProperty("reward")] public IVXReward reward;
     }
 }

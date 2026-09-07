@@ -4,15 +4,16 @@ using System.Threading.Tasks;
 namespace IntelliVerseX.Hiro.Systems
 {
     /// <summary>
-    /// Server-authoritative bilateral friend streak system.
-    /// Tracks daily interaction streaks between friend pairs where both players
-    /// must contribute each day to maintain the streak.
+    /// Bilateral friend streaks on prod Nakama:
+    /// <c>friend_streak_get_state</c>, <c>friend_streak_record_contribution</c>,
+    /// <c>friend_streak_send_nudge</c>, <c>friend_streak_repair</c>.
     /// </summary>
     public sealed class IVXFriendStreakSystem
     {
-        private const string RPC_GET = "hiro_friend_streak_get";
-        private const string RPC_INTERACT = "hiro_friend_streak_interact";
-        private const string RPC_CLAIM_MILESTONE = "hiro_friend_streak_claim_milestone";
+        private const string RPC_GET = "friend_streak_get_state";
+        private const string RPC_CONTRIBUTE = "friend_streak_record_contribution";
+        private const string RPC_NUDGE = "friend_streak_send_nudge";
+        private const string RPC_REPAIR = "friend_streak_repair";
 
         private readonly IVXHiroRpcClient _rpc;
 
@@ -21,39 +22,36 @@ namespace IntelliVerseX.Hiro.Systems
             _rpc = rpc ?? throw new ArgumentNullException(nameof(rpc));
         }
 
-        /// <summary>
-        /// Get all friend streaks for the authenticated user.
-        /// </summary>
+        /// <summary>Get all friend streaks for the authenticated user.</summary>
         public async Task<IVXFriendStreakState> GetAsync()
         {
             var r = await _rpc.CallAsync<IVXFriendStreakState>(RPC_GET);
-            return r.success ? r.data : new IVXFriendStreakState();
+            return r.success ? (r.data ?? new IVXFriendStreakState()) : new IVXFriendStreakState();
         }
 
-        /// <summary>
-        /// Record a daily interaction with a friend to maintain or advance the streak.
-        /// Both players must interact each day; the server checks bilateral contribution.
-        /// </summary>
-        /// <param name="friendId">The friend to interact with.</param>
+        /// <summary>Record a daily bilateral contribution with a friend.</summary>
         public async Task<IVXFriendStreakInteractResponse> InteractAsync(string friendId)
         {
             var r = await _rpc.CallAsync<IVXFriendStreakInteractResponse>(
-                RPC_INTERACT,
+                RPC_CONTRIBUTE,
                 new { friendId });
             return r.success ? r.data : null;
         }
 
-        /// <summary>
-        /// Claim a milestone reward for reaching a streak day threshold.
-        /// </summary>
-        /// <param name="streakId">The streak to claim for.</param>
-        /// <param name="day">The milestone day (e.g. 3, 7, 14, 30).</param>
-        public async Task<IVXFriendStreakInteractResponse> ClaimMilestoneAsync(string streakId, int day)
+        /// <summary>Send a nudge to a friend about the streak.</summary>
+        public async Task<bool> SendNudgeAsync(string friendId)
         {
-            var r = await _rpc.CallAsync<IVXFriendStreakInteractResponse>(
-                RPC_CLAIM_MILESTONE,
-                new { streakId, day });
-            return r.success ? r.data : null;
+            var r = await _rpc.CallAsync<object>(RPC_NUDGE, new { friendId });
+            return r.success;
+        }
+
+        /// <summary>Repair a broken streak (prod gem cost applies server-side).</summary>
+        public async Task<bool> RepairAsync(string friendId, string idempotencyKey = null)
+        {
+            var r = await _rpc.CallAsync<object>(
+                RPC_REPAIR,
+                new { friendId, idempotencyKey });
+            return r.success;
         }
     }
 }

@@ -224,7 +224,7 @@ namespace IntelliVerseX.Quiz.WeeklyQuiz
         private void OnFortuneClicked()
         {
             Log("Fortune button clicked");
-            UpdateStatus("Loading Fortune Quiz 🔮...");
+            UpdateStatus("Loading Fortune Quiz...");
             if (playController != null)
             {
                 playController.StartQuiz(IVXWeeklyQuizType.Fortune);
@@ -238,7 +238,7 @@ namespace IntelliVerseX.Quiz.WeeklyQuiz
         private void OnEmojiClicked()
         {
             Log("Emoji button clicked");
-            UpdateStatus("Loading Emoji Quiz 🎉...");
+            UpdateStatus("Loading Emoji Quiz...");
             if (playController != null)
             {
                 playController.StartQuiz(IVXWeeklyQuizType.Emoji);
@@ -254,19 +254,19 @@ namespace IntelliVerseX.Quiz.WeeklyQuiz
             Log("Prediction button clicked");
             if (playController != null)
             {
-                UpdateStatus("Loading Prediction Quiz ⚽...");
+                UpdateStatus("Loading Prediction Quiz...");
                 playController.StartQuiz(IVXWeeklyQuizType.Prediction);
             }
             else
             {
-                UpdateStatus("Prediction Quiz coming soon! ⚽");
+                UpdateStatus("Prediction Quiz coming soon!");
             }
         }
 
         private void OnHealthClicked()
         {
             Log("Health button clicked");
-            UpdateStatus("Loading Health Quiz 💧...");
+            UpdateStatus("Loading Health Quiz...");
             if (playController != null)
             {
                 playController.StartQuiz(IVXWeeklyQuizType.Health);

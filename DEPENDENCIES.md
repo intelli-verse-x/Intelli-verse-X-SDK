@@ -34,7 +34,7 @@ These are automatically installed with the SDK if using UPM. For .unitypackage i
 | Package | UPM ID | Purpose |
 |---------|--------|---------|
 | Newtonsoft.Json | `com.unity.nuget.newtonsoft-json` | JSON serialization |
-| TextMeshPro | `com.unity.textmeshpro` | UI text rendering |
+| Unity UI + TextMeshPro | `com.unity.ugui` | UI + TMP (Unity 6+; standalone `com.unity.textmeshpro` is not installable) |
 
 ### Installation via Package Manager
 

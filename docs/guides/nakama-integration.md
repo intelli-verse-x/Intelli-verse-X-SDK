@@ -455,7 +455,25 @@ initializer.registerRpc("claim_daily_reward", rpcClaimDailyReward);
 |-------|----------|
 | Connection timeout | Check server URL, firewall |
 | Session expired | Call refresh or re-authenticate |
-| RPC not found | Verify function registered on server |
+| RPC not found | Verify function registered on server; re-run `tools/probe-prod-rpcs.ps1` against prod |
 | Socket won't connect | Authenticate first, then connect socket |
+| Friend battle / quest broken | Do **not** call `hiro_friend_battle_send` / `hiro_friend_quest_*` aliases — use `send_friend_challenge`, `friend_quest_get_state` (see [nakama-rpc-prod-audit.md](nakama-rpc-prod-audit.md)) |
 
-See [Backend Configuration](../configuration/backend-config.md) for server setup.
+---
+
+## Production RPC contract (nakama-mcp)
+
+Prod MCP: `https://nakama-mcp.intelli-verse-x.ai/` (tools: `nakama_health`, `nakama_rpc`, …).
+
+```powershell
+powershell -File tools/probe-prod-rpcs.ps1
+powershell -File tools/generate-rpc-index.ps1
+```
+
+Canonical social RPCs on prod (2026-09):
+
+- Challenges: `send_friend_challenge`, `accept_friend_challenge`, `list_pending_friend_challenges`, …
+- Streaks: `friend_streak_get_state`, `friend_streak_record_contribution`, …
+- Quests: `friend_quest_get_state`, `friend_quest_complete`
+
+See [Backend Configuration](../configuration/backend-config.md) for server setup and [nakama-rpc-prod-audit.md](nakama-rpc-prod-audit.md) for the full probe.

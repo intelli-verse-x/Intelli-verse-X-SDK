@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using IntelliVerseX.Core;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -327,10 +328,7 @@ namespace IntelliVerseX.Quiz.WeeklyQuiz
         private void UpdateQuestionUI(string question, string[] options, string hint)
         {
             if (quizTypeText != null)
-            {
-                string emoji = GetQuizEmoji(_currentQuizType);
-                quizTypeText.text = $"{emoji} {_currentQuizType} Quiz";
-            }
+                quizTypeText.text = $"{_currentQuizType} Quiz";
 
             if (questionText != null)
                 questionText.text = question;
@@ -361,18 +359,6 @@ namespace IntelliVerseX.Quiz.WeeklyQuiz
 
             if (progressFill != null)
                 progressFill.fillAmount = _totalQuestions > 0 ? (float)(_currentQuestionIndex + 1) / _totalQuestions : 0f;
-        }
-
-        private string GetQuizEmoji(IVXWeeklyQuizType type)
-        {
-            return type switch
-            {
-                IVXWeeklyQuizType.Fortune => "🔮",
-                IVXWeeklyQuizType.Emoji => "🎉",
-                IVXWeeklyQuizType.Prediction => "⚽",
-                IVXWeeklyQuizType.Health => "💧",
-                _ => "❓"
-            };
         }
 
         #endregion
@@ -563,7 +549,16 @@ namespace IntelliVerseX.Quiz.WeeklyQuiz
                 resultTitleText.text = title;
 
             if (resultEmojiText != null)
-                resultEmojiText.text = emoji;
+            {
+                // LiberationSans has no emoji glyphs; only keep TMP sprite tags when conversion succeeds.
+                string converted = IVXEmojiTextUtility.ConvertUnicodeToSpriteTags(
+                    emoji,
+                    TMP_Settings.defaultSpriteAsset,
+                    includeFallbackAssets: true,
+                    keepUnsupportedUnicode: false,
+                    replacementCharacter: ' ');
+                resultEmojiText.text = converted.Trim();
+            }
 
             if (resultDescriptionText != null)
                 resultDescriptionText.text = description;

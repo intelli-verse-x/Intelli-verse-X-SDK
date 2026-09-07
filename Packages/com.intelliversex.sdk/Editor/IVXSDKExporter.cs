@@ -49,7 +49,7 @@ namespace IntelliVerseX.Editor
             public bool includeIntroScene = true;
             
             public string exportPath = "";
-            public string version = "5.9.0";
+            public string version = "5.11.0";
         }
 
         private ExportConfig config = new ExportConfig();
@@ -83,13 +83,13 @@ namespace IntelliVerseX.Editor
             // Required dependencies
             new DependencyInfo
             {
-                name = "TextMeshPro",
-                packageId = "com.unity.textmeshpro",
-                version = "3.0.6",
+                name = "Unity UI (uGUI + TMP)",
+                packageId = "com.unity.ugui",
+                version = "2.0.0",
                 source = "UPM",
                 isRequired = true,
-                installUrl = "com.unity.textmeshpro",
-                notes = "Required for UI text rendering"
+                installUrl = "com.unity.ugui",
+                notes = "Required for UI + TextMeshPro (Unity 6+; com.unity.textmeshpro is obsolete)"
             },
             new DependencyInfo
             {
@@ -254,6 +254,11 @@ namespace IntelliVerseX.Editor
             }
 
             EditorGUILayout.Space(5);
+
+            if (!dependenciesScanned)
+            {
+                EditorGUILayout.HelpBox("Click Refresh Dependencies to scan the project.", MessageType.None);
+            }
 
             if (GUILayout.Button("🔄 Refresh Dependencies", GUILayout.Height(25)))
             {

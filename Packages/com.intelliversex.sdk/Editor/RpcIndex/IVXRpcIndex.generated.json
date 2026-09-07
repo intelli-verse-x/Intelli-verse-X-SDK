@@ -1,10 +1,65 @@
 ﻿{
-    "generatedAt":  "2026-09-07T18:17:12.6681944Z",
+    "generatedAt":  "2026-09-07T20:15:17.7731026Z",
     "generator":  "tools/generate-rpc-index.ps1",
-    "count":  162,
+    "count":  190,
     "rpcs":  [
                  {
+                     "id":  "accept_friend_challenge",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "achievements_claim_reward",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "achievements_get_all",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "achievements_track_progress",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "badges_check_unlock",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "badges_equip",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "badges_get_all",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
                      "id":  "calculate_score_reward",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "cancel_friend_challenge",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "character_get_state",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "character_set_active",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "character_unlock",
                      "module":  "platform",
                      "authRequired":  true
                  },
@@ -64,6 +119,11 @@
                      "authRequired":  true
                  },
                  {
+                     "id":  "decline_friend_challenge",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
                      "id":  "fortune_wheel_get_config",
                      "module":  "liveops",
                      "authRequired":  true
@@ -76,6 +136,46 @@
                  {
                      "id":  "fortune_wheel_spin",
                      "module":  "liveops",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "friend_quest_complete",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "friend_quest_get_state",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "friend_streak_get_broken_log",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "friend_streak_get_state",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "friend_streak_record_contribution",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "friend_streak_repair",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "friend_streak_send_nudge",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "friends_spectate",
+                     "module":  "platform",
                      "authRequired":  true
                  },
                  {
@@ -240,56 +340,6 @@
                  },
                  {
                      "id":  "hiro_event_lb_submit",
-                     "module":  "hiro",
-                     "authRequired":  true
-                 },
-                 {
-                     "id":  "hiro_friend_battle_accept",
-                     "module":  "hiro",
-                     "authRequired":  true
-                 },
-                 {
-                     "id":  "hiro_friend_battle_get",
-                     "module":  "hiro",
-                     "authRequired":  true
-                 },
-                 {
-                     "id":  "hiro_friend_battle_send",
-                     "module":  "hiro",
-                     "authRequired":  true
-                 },
-                 {
-                     "id":  "hiro_friend_battle_submit",
-                     "module":  "hiro",
-                     "authRequired":  true
-                 },
-                 {
-                     "id":  "hiro_friend_quest_accept",
-                     "module":  "hiro",
-                     "authRequired":  true
-                 },
-                 {
-                     "id":  "hiro_friend_quest_get",
-                     "module":  "hiro",
-                     "authRequired":  true
-                 },
-                 {
-                     "id":  "hiro_friend_quest_progress",
-                     "module":  "hiro",
-                     "authRequired":  true
-                 },
-                 {
-                     "id":  "hiro_friend_streak_claim_milestone",
-                     "module":  "hiro",
-                     "authRequired":  true
-                 },
-                 {
-                     "id":  "hiro_friend_streak_get",
-                     "module":  "hiro",
-                     "authRequired":  true
-                 },
-                 {
-                     "id":  "hiro_friend_streak_interact",
                      "module":  "hiro",
                      "authRequired":  true
                  },
@@ -654,6 +704,21 @@
                      "authRequired":  true
                  },
                  {
+                     "id":  "list_pending_friend_challenges",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "monthly_milestones_get",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "monthly_milestones_update_progress",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
                      "id":  "mp_create_match",
                      "module":  "multiplayer",
                      "authRequired":  true
@@ -691,6 +756,16 @@
                  {
                      "id":  "push_send_event",
                      "module":  "liveops",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "retention_check_in",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "retention_get_state",
+                     "module":  "platform",
                      "authRequired":  true
                  },
                  {
@@ -774,6 +849,31 @@
                      "authRequired":  true
                  },
                  {
+                     "id":  "season_pass_add_xp",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "season_pass_claim_reward",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "season_pass_get_state",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "season_pass_purchase_premium",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "send_friend_challenge",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
                      "id":  "submit_mission_progress",
                      "module":  "platform",
                      "authRequired":  true
@@ -781,6 +881,26 @@
                  {
                      "id":  "submit_score_and_sync",
                      "module":  "leaderboard",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "tournament_get_active",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "tournament_get_leaderboard",
+                     "module":  "leaderboard",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "tournament_join",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "tournament_submit_score",
+                     "module":  "platform",
                      "authRequired":  true
                  },
                  {
@@ -801,6 +921,26 @@
                  {
                      "id":  "wallet_update_game_wallet",
                      "module":  "wallet",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "weekly_goals_get",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "weekly_goals_update_progress",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "winback_claim_offer",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "winback_get_offer",
+                     "module":  "platform",
                      "authRequired":  true
                  },
                  {

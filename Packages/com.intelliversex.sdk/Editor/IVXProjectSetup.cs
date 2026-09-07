@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.Build;
 
 namespace IntelliVerseX.Editor
 {
@@ -20,7 +21,7 @@ namespace IntelliVerseX.Editor
     {
         #region Constants
         
-        private const string SDK_VERSION = "5.9.0";
+        private const string SDK_VERSION = "5.11.0";
         private const string PREFS_SETUP_COMPLETE = "IVX_ProjectSetupComplete";
         private const string PREFS_SETUP_VERSION = "IVX_ProjectSetupVersion";
         
@@ -72,7 +73,6 @@ namespace IntelliVerseX.Editor
         private List<ValidationResult> _validationResults = new List<ValidationResult>();
         private Vector2 _scrollPosition;
         private bool _isValidating = false;
-        private bool _setupComplete = false;
         
         #endregion
         
@@ -329,7 +329,7 @@ namespace IntelliVerseX.Editor
             results.Add(ValidateDependency("Newtonsoft.Json", "Newtonsoft.Json.JsonConvert, Newtonsoft.Json", 
                 "Required for JSON serialization", "com.unity.nuget.newtonsoft-json"));
             results.Add(ValidateDependency("TextMeshPro", "TMPro.TextMeshProUGUI, Unity.TextMeshPro", 
-                "Required for UI text", "com.unity.textmeshpro"));
+                "Required for UI text (bundled in com.unity.ugui on Unity 6+)", "com.unity.ugui"));
             
             // 3. Check external dependencies (warnings only)
             results.Add(ValidateExternalDependency("Nakama SDK", "Nakama.IClient, Nakama", 
@@ -468,8 +468,8 @@ namespace IntelliVerseX.Editor
         
         private static ValidationResult ValidateScriptingDefines()
         {
-            var buildTarget = EditorUserBuildSettings.selectedBuildTargetGroup;
-            var defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTarget);
+            var namedTarget = NamedBuildTarget.FromBuildTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            var defines = PlayerSettings.GetScriptingDefineSymbols(namedTarget);
             var defineList = defines.Split(';').ToList();
             
             var missing = REQUIRED_DEFINES.Where(d => !defineList.Contains(d)).ToList();
@@ -499,7 +499,8 @@ namespace IntelliVerseX.Editor
         
         private static ValidationResult ValidateApiCompatibility()
         {
-            var api = PlayerSettings.GetApiCompatibilityLevel(EditorUserBuildSettings.selectedBuildTargetGroup);
+            var namedTarget = NamedBuildTarget.FromBuildTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            var api = PlayerSettings.GetApiCompatibilityLevel(namedTarget);
             
             // Check for .NET Standard 2.1 or .NET Framework (acceptable for most use cases)
             // The specific enum values vary by Unity version, so we check by name
@@ -627,8 +628,8 @@ namespace IntelliVerseX.Editor
         
         private static void AddScriptingDefines(List<string> defines)
         {
-            var buildTarget = EditorUserBuildSettings.selectedBuildTargetGroup;
-            var currentDefines = PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTarget);
+            var namedTarget = NamedBuildTarget.FromBuildTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            var currentDefines = PlayerSettings.GetScriptingDefineSymbols(namedTarget);
             var defineList = currentDefines.Split(';').Where(d => !string.IsNullOrEmpty(d)).ToList();
             
             bool changed = false;
@@ -644,7 +645,7 @@ namespace IntelliVerseX.Editor
             
             if (changed)
             {
-                PlayerSettings.SetScriptingDefineSymbolsForGroup(buildTarget, string.Join(";", defineList));
+                PlayerSettings.SetScriptingDefineSymbols(namedTarget, string.Join(";", defineList));
             }
         }
         

@@ -16,37 +16,42 @@ namespace IntelliVerseX.Social
     }
 
     /// <summary>
-    /// Represents an interaction streak with a friend.
+    /// Represents an interaction streak with a friend (prod: <c>friend_streak_get_state</c>).
     /// </summary>
     [Serializable]
     public class IVXFriendStreak
     {
-        [JsonProperty("friend_id")] public string friendId;
-        [JsonProperty("friend_name")] public string friendName;
-        [JsonProperty("current_streak")] public int currentStreak;
+        [JsonProperty("friendId")] public string friendId;
+        [JsonProperty("friendDisplayName")] public string friendName;
+        [JsonProperty("streakDays")] public int currentStreak;
         [JsonProperty("longest_streak")] public int longestStreak;
-        [JsonProperty("last_interaction_at")] public string lastInteractionAt;
-        [JsonProperty("streak_expires_at")] public string streakExpiresAt;
+        [JsonProperty("lastInteractionAt")] public string lastInteractionAt;
+        [JsonProperty("hoursUntilBreak")] public float hoursRemaining;
+        [JsonProperty("myContributionToday")] public bool myContributionToday;
+        [JsonProperty("friendContributionToday")] public bool friendContributionToday;
+        [JsonProperty("isAtRisk")] public bool isAtRisk;
     }
 
     /// <summary>
-    /// A cooperative quest completed with friends.
+    /// A cooperative quest completed with friends (prod: <c>friend_quest_get_state</c>).
     /// </summary>
     [Serializable]
     public class IVXFriendQuest
     {
-        [JsonProperty("quest_id")] public string questId;
+        [JsonProperty("id")] public string questId;
         [JsonProperty("title")] public string title;
         [JsonProperty("description")] public string description;
-        [JsonProperty("target_progress")] public int targetProgress;
-        [JsonProperty("current_progress")] public int currentProgress;
+        [JsonProperty("type")] public string type;
+        [JsonProperty("target")] public int targetProgress;
+        [JsonProperty("progress")] public int currentProgress;
         [JsonProperty("completed")] public bool completed;
-        [JsonProperty("expires_at")] public string expiresAt;
+        [JsonProperty("completedAt")] public string completedAt;
+        [JsonProperty("expiresAt")] public string expiresAt;
         [JsonProperty("reward")] public IVXFriendQuestReward reward;
     }
 
     /// <summary>
-    /// Response wrapper for friend streaks.
+    /// Response wrapper for friend streaks (prod: <c>friend_streak_get_state</c>).
     /// </summary>
     [Serializable]
     public class IVXFriendStreakListResponse
@@ -55,7 +60,7 @@ namespace IntelliVerseX.Social
     }
 
     /// <summary>
-    /// Response wrapper for active friend quests.
+    /// Response wrapper for active friend quests (prod: <c>friend_quest_get_state</c>).
     /// </summary>
     [Serializable]
     public class IVXFriendQuestListResponse
@@ -69,16 +74,16 @@ namespace IntelliVerseX.Social
     [Serializable]
     public class IVXFriendInteractionRequest
     {
-        [JsonProperty("friend_id")] public string friendId;
+        [JsonProperty("friendId")] public string friendId;
     }
 
     /// <summary>
-    /// Request payload for contributing to a friend quest.
+    /// Request payload for completing a friend quest.
     /// </summary>
     [Serializable]
     public class IVXFriendQuestContributeRequest
     {
-        [JsonProperty("quest_id")] public string questId;
-        [JsonProperty("progress")] public int progress;
+        [JsonProperty("questId")] public string questId;
+        [JsonProperty("quest_id")] public string quest_id;
     }
 }

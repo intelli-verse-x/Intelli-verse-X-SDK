@@ -23,7 +23,8 @@ namespace IntelliVerseX.Editor
         private static readonly string[] RequiredUpmPackages =
         {
             "com.unity.nuget.newtonsoft-json",
-            "com.unity.textmeshpro"
+            // Unity 6+: TMP ships inside com.unity.ugui (com.unity.textmeshpro is not installable on 6000.3).
+            "com.unity.ugui"
         };
 
         private static readonly string[] OptionalUpmPackages =
@@ -211,7 +212,7 @@ namespace IntelliVerseX.Editor
             report.AppendLine("=== IntelliVerseX dependency validation ===");
             var s = GetStatus();
             AppendCheck(report, "Newtonsoft.Json", s.Newtonsoft, "UPM: com.unity.nuget.newtonsoft-json");
-            AppendCheck(report, "TextMeshPro", s.TextMeshPro, "UPM: com.unity.textmeshpro");
+            AppendCheck(report, "TextMeshPro", s.TextMeshPro, "UPM: com.unity.ugui (TMP is bundled in Unity 6+)");
             AppendCheck(report, "Nakama", s.Nakama, "Asset Store or GitHub heroiclabs/nakama-unity");
             AppendCheck(report, "Native Share (optional)", s.NativeShare, "Git: yasirkula/UnityNativeShare");
             AppendCheck(report, "Unity Purchasing (optional)", s.Purchasing, "UPM: com.unity.purchasing");
@@ -269,8 +270,14 @@ namespace IntelliVerseX.Editor
 
             foreach (var pkg in RequiredUpmPackages)
             {
-                if (!installed.Contains(pkg))
-                    _packagesToInstall.Enqueue(pkg);
+                if (installed.Contains(pkg))
+                    continue;
+
+                // Unity 6 already has TMP via ugui — never try to Add com.unity.textmeshpro.
+                if (pkg == "com.unity.ugui" && GetStatus().TextMeshPro)
+                    continue;
+
+                _packagesToInstall.Enqueue(pkg);
             }
 
             foreach (var kvp in GitUrlPackages)
@@ -324,7 +331,14 @@ namespace IntelliVerseX.Editor
             EditorApplication.update -= OnInstallProgress;
 
             if (_addRequest.Status == StatusCode.Failure)
-                Debug.LogError("[IVX] Install failed: " + _addRequest.Error.message);
+            {
+                string err = _addRequest.Error != null ? _addRequest.Error.message : "unknown";
+                // Soft-skip obsolete TMP package id on Unity 6+
+                if (err.IndexOf("com.unity.textmeshpro", StringComparison.OrdinalIgnoreCase) >= 0)
+                    Debug.LogWarning("[IVX] Skipped obsolete TextMeshPro package id (use com.unity.ugui on Unity 6+): " + err);
+                else
+                    Debug.LogError("[IVX] Install failed: " + err);
+            }
             else
                 Debug.Log("[IVX] Installed: " + _addRequest.Result.name);
 

@@ -58,7 +58,7 @@
     "url": "https://intelliversex.com"
   },
   "dependencies": {
-    "com.unity.textmeshpro": "3.0.6",
+    "com.unity.ugui": "2.0.0",
     "com.unity.nuget.newtonsoft-json": "3.2.2"
   },
   "samples": [

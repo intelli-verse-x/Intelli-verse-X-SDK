@@ -241,7 +241,7 @@ namespace IntelliVerseX.Bootstrap.Editor
                 lines.Add("WARNING: Required dependencies missing!");
                 lines.Add("Install via Package Manager:");
                 lines.Add("  - com.unity.nuget.newtonsoft-json");
-                lines.Add("  - com.unity.textmeshpro");
+                lines.Add("  - com.unity.ugui (includes TextMeshPro on Unity 6+)");
             }
             else if (!HasNakama)
             {

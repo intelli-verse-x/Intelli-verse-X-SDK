@@ -112,24 +112,26 @@ namespace IntelliVerseX.Bootstrap
         #endregion
 
         /// <summary>
-        /// Validates critical fields and logs warnings/errors. Called both from OnValidate (Editor)
-        /// and at runtime during bootstrap initialization.
+        /// Validates critical fields. Logs warnings at <paramref name="logWarnings"/> time
+        /// (runtime bootstrap / Control Center). Inspector OnValidate stays quiet to avoid spam.
         /// </summary>
-        public bool Validate()
+        public bool Validate(bool logWarnings = true)
         {
             bool valid = true;
             if (string.IsNullOrWhiteSpace(_gameId))
             {
-                Debug.LogWarning("[IVXBootstrapConfig] Game ID is empty. Get yours from https://intelli-verse-x.ai/developers or POST to msapi.intelli-verse-x.io/api/games/game/info");
+                if (logWarnings)
+                    Debug.LogWarning("[IVXBootstrapConfig] Game ID is empty. Get yours from https://intelli-verse-x.ai/developers or POST to msapi.intelli-verse-x.io/api/games/game/info");
                 valid = false;
             }
-            if (_serverHost == "127.0.0.1" || _serverHost == "localhost")
+            if (logWarnings && (_serverHost == "127.0.0.1" || _serverHost == "localhost"))
                 Debug.LogWarning($"[IVXBootstrapConfig] Server host is '{_serverHost}'. Change this before shipping to production.");
-            if (_serverKey == "defaultkey")
+            if (logWarnings && _serverKey == "defaultkey")
                 Debug.LogWarning("[IVXBootstrapConfig] Using default Nakama server key. Change this before shipping to production.");
             if (_serverPort <= 0 || _serverPort > 65535)
             {
-                Debug.LogError($"[IVXBootstrapConfig] Invalid server port: {_serverPort}. Must be 1-65535.");
+                if (logWarnings)
+                    Debug.LogError($"[IVXBootstrapConfig] Invalid server port: {_serverPort}. Must be 1-65535.");
                 valid = false;
             }
             return valid;
@@ -138,7 +140,8 @@ namespace IntelliVerseX.Bootstrap
         #if UNITY_EDITOR
         private void OnValidate()
         {
-            Validate();
+            // Silent structural check only — do not spam Console while selecting the asset.
+            Validate(logWarnings: false);
         }
         #endif
     }
