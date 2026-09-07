@@ -123,7 +123,7 @@ namespace IntelliVerseX.Core
 
         [Header("WebGL / AppLixir (Only for WebGL builds)")]
         [Tooltip("Enable AppLixir for WebGL rewarded ads")]
-        public bool enableAppLixir = true;
+        public bool enableAppLixir = false;
 
         [Tooltip("AppLixir Zone ID (get from AppLixir dashboard)")]
         public string appLixirZoneId = "";

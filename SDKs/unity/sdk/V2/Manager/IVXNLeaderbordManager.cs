@@ -42,6 +42,13 @@ namespace IntelliVerseX.Backend.Nakama
 
             try
             {
+                if (!mgr.IsIdentitySynced)
+                {
+                    LogError("SubmitScoreAsync aborted: identity not synced. " +
+                             "Wait for create_or_sync_user (IVXNManager.InitializeForCurrentUserAsync) to succeed.");
+                    return null;
+                }
+
                 if (!await mgr.EnsureValidSessionAsync())
                 {
                     LogError("SubmitScoreAsync aborted: failed to ensure valid Nakama session.");
@@ -69,7 +76,7 @@ namespace IntelliVerseX.Backend.Nakama
 
                 if (string.IsNullOrEmpty(gameId))
                 {
-                    LogError("SubmitScoreAsync: GameId on IVXNManager is empty. Check your IntelliVerseXConfig.");
+                    LogError("SubmitScoreAsync: GameId on IVXNManager is empty. Check IVXBootstrapConfig (Control Center).");
                     return null;
                 }
 
@@ -123,10 +130,31 @@ namespace IntelliVerseX.Backend.Nakama
                 var jsonPayload = JsonConvert.SerializeObject(payload);
                 Log($"SubmitScoreAsync JSON → {jsonPayload}");
 
-                var rpcResponse = await mgr.Client.RpcAsync(mgr.Session, RPC_SUBMIT_SCORE_AND_SYNC, jsonPayload);
-                Log($"SubmitScoreAsync RPC payload raw → {rpcResponse.Payload}");
+                var bus = await IVXRequestBus.ExecuteAsync(
+                    RPC_SUBMIT_SCORE_AND_SYNC,
+                    async token =>
+                    {
+                        var rpc = await mgr.Client.RpcAsync(
+                            mgr.Session, RPC_SUBMIT_SCORE_AND_SYNC, jsonPayload,
+                            retryConfiguration: null, canceller: token);
+                        return rpc != null ? rpc.Payload : null;
+                    },
+                    isSuccessPayload: p =>
+                    {
+                        var parsed = JsonConvert.DeserializeObject<IVXScoreSubmissionResponse>(p);
+                        return parsed != null && parsed.success;
+                    }).ConfigureAwait(false);
 
-                var result = JsonConvert.DeserializeObject<IVXScoreSubmissionResponse>(rpcResponse.Payload);
+                if (string.IsNullOrEmpty(bus.Payload))
+                {
+                    LogError($"SubmitScoreAsync: RequestBus failed ({bus.ErrorCode}): {bus.Error}");
+                    _currentWinStreak = 0;
+                    return null;
+                }
+
+                Log($"SubmitScoreAsync RPC payload raw → {bus.Payload}");
+
+                var result = JsonConvert.DeserializeObject<IVXScoreSubmissionResponse>(bus.Payload);
 
                 if (result == null)
                 {
@@ -165,6 +193,13 @@ namespace IntelliVerseX.Backend.Nakama
 
             try
             {
+                if (!mgr.IsIdentitySynced)
+                {
+                    LogError("GetAllLeaderboardsAsync aborted: identity not synced. " +
+                             "Wait for create_or_sync_user (IVXNManager.InitializeForCurrentUserAsync) to succeed.");
+                    return null;
+                }
+
                 if (!await mgr.EnsureValidSessionAsync())
                 {
                     LogError("GetAllLeaderboardsAsync aborted: failed to ensure valid Nakama session.");
@@ -191,7 +226,7 @@ namespace IntelliVerseX.Backend.Nakama
 
                 if (string.IsNullOrEmpty(gameId))
                 {
-                    LogError("GetAllLeaderboardsAsync: GameId on IVXNManager is empty. Check your IntelliVerseXConfig.");
+                    LogError("GetAllLeaderboardsAsync: GameId on IVXNManager is empty. Check IVXBootstrapConfig (Control Center).");
                     return null;
                 }
 
@@ -224,10 +259,30 @@ namespace IntelliVerseX.Backend.Nakama
                 var jsonPayload = JsonConvert.SerializeObject(payload);
                 Log($"GetAllLeaderboardsAsync JSON → {jsonPayload}");
 
-                var rpcResponse = await mgr.Client.RpcAsync(mgr.Session, RPC_GET_ALL_LEADERBOARDS, jsonPayload);
-                Log($"GetAllLeaderboardsAsync RPC payload raw → {rpcResponse.Payload}");
+                var bus = await IVXRequestBus.ExecuteAsync(
+                    RPC_GET_ALL_LEADERBOARDS,
+                    async token =>
+                    {
+                        var rpc = await mgr.Client.RpcAsync(
+                            mgr.Session, RPC_GET_ALL_LEADERBOARDS, jsonPayload,
+                            retryConfiguration: null, canceller: token);
+                        return rpc != null ? rpc.Payload : null;
+                    },
+                    isSuccessPayload: p =>
+                    {
+                        var parsed = JsonConvert.DeserializeObject<IVXAllLeaderboardsResponse>(p);
+                        return parsed != null && parsed.success;
+                    }).ConfigureAwait(false);
 
-                var result = JsonConvert.DeserializeObject<IVXAllLeaderboardsResponse>(rpcResponse.Payload);
+                if (string.IsNullOrEmpty(bus.Payload))
+                {
+                    LogError($"GetAllLeaderboardsAsync: RequestBus failed ({bus.ErrorCode}): {bus.Error}");
+                    return null;
+                }
+
+                Log($"GetAllLeaderboardsAsync RPC payload raw → {bus.Payload}");
+
+                var result = JsonConvert.DeserializeObject<IVXAllLeaderboardsResponse>(bus.Payload);
 
                 if (result == null)
                 {

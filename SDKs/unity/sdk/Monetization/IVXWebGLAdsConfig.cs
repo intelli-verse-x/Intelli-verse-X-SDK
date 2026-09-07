@@ -55,8 +55,8 @@ namespace IntelliVerseX.Monetization
         [Tooltip("Enable Google AdSense (display, native, in-feed ads)")]
         public bool enableAdSense = true;
 
-        [Tooltip("Enable Applixir (rewarded video, optimized for WebGL)")]
-        public bool enableApplixir = true;
+        [Tooltip("Enable Applixir (rewarded video). Off by default — enable only for WebGL samples that need it (define/sample path).")]
+        public bool enableApplixir = false;
 
         [Tooltip("Only initialize on WebGL builds (recommended)")]
         public bool webGLOnly = true;

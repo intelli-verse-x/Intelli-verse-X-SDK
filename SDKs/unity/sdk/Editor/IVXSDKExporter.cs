@@ -132,7 +132,7 @@ namespace IntelliVerseX.Editor
                 source = "AssetStore",
                 isRequired = false,
                 installUrl = "https://assetstore.unity.com/packages/tools/network/pun-2-free-119922",
-                notes = "Optional - for multiplayer features"
+                notes = "Sandbox/optional only — never ships inside com.intelliversex.sdk UPM package"
             },
             new DependencyInfo
             {
@@ -170,7 +170,7 @@ namespace IntelliVerseX.Editor
 
         #region Menu Items
 
-        [MenuItem("IntelliVerseX/Export SDK/Export Wizard", false, 500)]
+        [MenuItem("IntelliVerseX/Maintainers/Export SDK", false, 500)]
         public static void ShowWindow()
         {
             var window = GetWindow<IVXSDKExporter>("SDK Exporter");
@@ -178,7 +178,7 @@ namespace IntelliVerseX.Editor
             window.Show();
         }
 
-        [MenuItem("IntelliVerseX/Export SDK/Check Export Dependencies", false, 501)]
+        [MenuItem("IntelliVerseX/Maintainers/Check Export Dependencies", false, 501)]
         public static void CheckDependenciesMenu()
         {
             var result = CheckAllDependencies();
@@ -808,7 +808,7 @@ namespace IntelliVerseX.Editor
             sb.AppendLine();
             sb.AppendLine("1. Copy this folder to your Unity project's `Assets/` folder");
             sb.AppendLine("2. Install required dependencies (see below)");
-            sb.AppendLine("3. Open `IntelliVerseX → SDK Setup Wizard`");
+            sb.AppendLine("3. Open `IntelliVerseX → Control Center` (or Advanced Setup)");
             sb.AppendLine("4. Click 'Setup All Modules'");
             sb.AppendLine();
             sb.AppendLine("## Required Dependencies");
@@ -824,7 +824,7 @@ namespace IntelliVerseX.Editor
 
             sb.AppendLine("## Configuration");
             sb.AppendLine();
-            sb.AppendLine("1. Create a configuration asset: `IntelliVerseX → SDK Setup Wizard → Settings → Create Configuration Asset`");
+            sb.AppendLine("1. Create a configuration asset: `IntelliVerseX → Control Center → Create connection file`");
             sb.AppendLine("2. Set your Game ID and other settings");
             sb.AppendLine("3. Configure your Nakama server credentials if using a custom backend");
 
@@ -838,7 +838,7 @@ namespace IntelliVerseX.Editor
                 "1. Click 'Export as Unity Package' to create a .unitypackage file\n" +
                 "2. In your new project, import the package via Assets → Import Package\n" +
                 "3. Install all required dependencies (see dependency list)\n" +
-                "4. Open IntelliVerseX → SDK Setup Wizard\n" +
+                "4. Open IntelliVerseX → Control Center\n" +
                 "5. Configure your game settings\n" +
                 "6. Click 'Setup All Modules' to auto-wire everything\n\n" +
                 "For detailed instructions, see INTEGRATION_GUIDE.md",

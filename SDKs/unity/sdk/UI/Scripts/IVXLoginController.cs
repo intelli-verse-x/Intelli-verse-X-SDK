@@ -341,27 +341,20 @@ namespace IntelliVerseX.UI
         {
             try
             {
-                // Initialize SDK if not already initialized
-                if (IntelliVerseXManager.Instance == null)
-                {
-                    Debug.Log("[IVX Login] Initializing SDK...");
-                    IntelliVerseXManager.Initialize(config);
-                    await Task.Delay(100); // Wait for initialization
-                }
-                
+                // Canonical init is IVXBootstrap (Control Center) — do not call IntelliVerseXManager.
                 var identity = IntelliVerseXIdentity.Instance;
                 if (identity == null)
                 {
-                    Debug.LogError("[IVX Login] IntelliVerseXIdentity not available");
+                    Debug.LogError("[IVX Login] IntelliVerseXIdentity not available. Ensure IVXBootstrap ran first.");
                     return false;
                 }
                 
-                // Authenticate with device ID
+                string gameId = config != null ? config.gameId : "";
                 var user = new IntelliVerseXUser
                 {
                     DeviceId = deviceId,
                     Username = $"Player_{deviceId.Substring(0, 8)}",
-                    GameId = config.gameId
+                    GameId = gameId
                 };
                 
                 IntelliVerseXIdentity.SetCurrentUser(user);

@@ -14,6 +14,17 @@
 .DS_Store
 **/.DS_Store
 
+# Agent knowledge graphs — never ship inside the UPM package path
+**/graphify-out/
+graphify-out/
+
+# Agent knowledge graphs — never ship inside the UPM package path
+**/graphify-out/
+graphify-out/
+
+# P1: heavy sandbox boilerplate (171MB) — not part of com.intelliversex.sdk
+tools/boilerplate/
+
 # Hub sandbox: Control Center output, Addressables, VS plugin
 SDKs/unity/editor/[Aa]ssets/IntelliVerseX/Generated/
 SDKs/unity/editor/[Aa]ssets/IntelliVerseX/Generated.meta
@@ -199,3 +210,8 @@ node_modules
 # INC-2026-08-29: dotenv rules restored - a tracked .env carrying a C2 address was committed here.
 .env
 .env.*
+
+# Local unity test XML dumps (sandbox)
+SDKs/unity/editor/*test-results*.xml
+SDKs/unity/editor/ivx-*.xml
+SDKs/unity/editor/.vscode/

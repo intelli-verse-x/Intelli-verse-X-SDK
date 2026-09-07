@@ -1,233 +1,70 @@
+using IntelliVerseX.Bootstrap;
 using UnityEngine;
-using IntelliVerseX.Core;
-using IntelliVerseX.Localization;
-using IntelliVerseX.Monetization;
+using UnityEngine.SceneManagement;
 
 namespace IntelliVerseX.Examples
 {
     /// <summary>
-    /// Complete example of game bootstrap using IntelliVerse-X SDK.
-    /// 
-    /// Instructions:
-    /// 1. Create empty GameObject in your first scene (e.g., "Bootstrap")
-    /// 2. Attach this script
-    /// 3. Create IntelliVerseXConfig asset (Assets → Create → IntelliVerse-X → SDK Config)
-    /// 4. Assign config to inspector
-    /// 5. Run scene
-    /// 
-    /// The SDK will:
-    /// - Initialize all modules
-    /// - Auto-detect device language
-    /// - Generate user identity
-    /// - Initialize ads (if enabled)
-    /// - Call OnSDKReady() when complete
+    /// Example bootstrap: requires <see cref="IVXBootstrap"/> + <see cref="IVXBootstrapConfig"/>.
+    /// Do not use IntelliVerseXManager.
     /// </summary>
     public class CompleteGameBootstrap : MonoBehaviour
     {
         [Header("SDK Configuration")]
-        [SerializeField] 
-        [Tooltip("Create via: Assets → Create → IntelliVerse-X → SDK Config")]
-        private IntelliVerseXConfig sdkConfig;
+        [SerializeField]
+        [Tooltip("Create via Control Center or Assets → Create → IntelliVerseX → Bootstrap Config")]
+        private IVXBootstrapConfig bootstrapConfig;
 
         [Header("Scene Management")]
-        [SerializeField] 
-        [Tooltip("Scene to load after SDK initialization")]
-        private string mainMenuSceneName = "MainMenu";
+        [SerializeField] private string mainMenuSceneName = "MainMenu";
 
         [Header("Debug")]
         [SerializeField] private bool showDebugLogs = true;
 
-        private void Awake()
+        private async void Awake()
         {
-            // Validate configuration
-            if (sdkConfig == null)
+            if (bootstrapConfig == null)
             {
-                Debug.LogError("[Bootstrap] SDK Config is not assigned! Please assign it in the inspector.");
+                Debug.LogError("[Bootstrap] Assign IVXBootstrapConfig (IntelliVerseX → Control Center).");
                 return;
             }
 
-            if (!sdkConfig.IsValid())
+            if (!bootstrapConfig.Validate())
             {
-                Debug.LogError("[Bootstrap] SDK Config is invalid! Check Game ID and Game Name.");
+                Debug.LogError("[Bootstrap] IVXBootstrapConfig invalid — paste a Game ID.");
                 return;
             }
 
-            // Initialize SDK
-            InitializeSDK();
-        }
+            var bootstrap = FindObjectOfType<IVXBootstrap>();
+            if (bootstrap == null)
+            {
+                var go = new GameObject("IVXBootstrap");
+                bootstrap = go.AddComponent<IVXBootstrap>();
+                DontDestroyOnLoad(go);
+            }
 
-        private void InitializeSDK()
-        {
-            if (showDebugLogs)
-                Debug.Log($"[Bootstrap] Initializing IntelliVerse-X SDK for '{sdkConfig.gameName}'...");
-
-            // Initialize SDK with configuration
-            IntelliVerseXManager.Initialize(sdkConfig);
-
-            // Subscribe to events
-            IntelliVerseXManager.Instance.OnReady += OnSDKReady;
-            IntelliVerseXManager.Instance.OnError += OnSDKError;
+            bootstrap.ApplyConfig(bootstrapConfig);
 
             if (showDebugLogs)
-                Debug.Log("[Bootstrap] SDK initialization started. Waiting for ready event...");
+                Debug.Log("[Bootstrap] Starting IVXBootstrap.InitializeAsync for '" + bootstrapConfig.GameName + "'...");
+
+            bool ok = await bootstrap.InitializeAsync();
+            if (ok)
+                OnSDKReady();
+            else
+                Debug.LogError("[Bootstrap] IVXBootstrap failed (offline or auth error). Check Advanced Setup → Dependencies.");
         }
 
         private void OnSDKReady()
         {
             if (showDebugLogs)
+                Debug.Log("[Bootstrap] SDK ready. GameId=" + bootstrapConfig.GameId);
+
+            if (!string.IsNullOrEmpty(mainMenuSceneName)
+                && Application.CanStreamedLevelBeLoaded(mainMenuSceneName))
             {
-                Debug.Log("[Bootstrap] ✅ SDK Ready!");
-                LogSDKStatus();
+                SceneManager.LoadScene(mainMenuSceneName);
             }
-
-            // Optional: Subscribe to language changes
-            IVXLanguageManager.OnLanguageChanged += OnLanguageChanged;
-
-            // Optional: Show debug info
-            if (showDebugLogs)
-            {
-                ShowWelcomeMessage();
-            }
-
-            // Load main menu
-            LoadMainMenu();
-        }
-
-        private void OnSDKError(string errorMessage)
-        {
-            Debug.LogError($"[Bootstrap] ❌ SDK Initialization Error: {errorMessage}");
-            
-            // Optional: Show error UI to user
-            // ShowErrorScreen(errorMessage);
-        }
-
-        private void OnLanguageChanged(string newLanguage)
-        {
-            if (showDebugLogs)
-                Debug.Log($"[Bootstrap] Language changed to: {IVXLanguageManager.GetLanguageName(newLanguage)} ({newLanguage})");
-
-            // Reload UI, update texts, etc.
-        }
-
-        private void LoadMainMenu()
-        {
-            if (showDebugLogs)
-                Debug.Log($"[Bootstrap] Loading main menu scene: {mainMenuSceneName}");
-
-            if (!string.IsNullOrEmpty(mainMenuSceneName))
-            {
-                UnityEngine.SceneManagement.SceneManager.LoadScene(mainMenuSceneName);
-            }
-            else
-            {
-                Debug.LogWarning("[Bootstrap] Main menu scene name is not set!");
-            }
-        }
-
-        private void LogSDKStatus()
-        {
-            Debug.Log("=== IntelliVerse-X SDK Status ===");
-            Debug.Log($"SDK Version: {IntelliVerseXManager.SDKVersion}");
-            Debug.Log($"Game: {sdkConfig.gameName} ({sdkConfig.gameId})");
-            Debug.Log($"SDK Version: {IntelliVerseXConfig.version}");
-            Debug.Log("");
-            
-            Debug.Log("--- User Identity ---");
-            // Debug.Log($"User ID: {IntelliVerseXIdentity.UserId}"); // Instance-based, not static
-            Debug.Log($"Username: {IntelliVerseXIdentity.Username}");
-            Debug.Log($"Device ID: {IntelliVerseXIdentity.DeviceId}");
-            Debug.Log("");
-
-            Debug.Log("--- Localization ---");
-            Debug.Log($"Current Language: {IVXLanguageManager.GetLanguageName(IVXLanguageManager.CurrentLanguage)} ({IVXLanguageManager.CurrentLanguage})");
-            Debug.Log($"Supported Languages: {string.Join(", ", IVXLanguageManager.SupportedLanguages)}");
-            Debug.Log("");
-
-            Debug.Log("--- Modules ---");
-            Debug.Log($"Ads Enabled: {sdkConfig.enableAds}");
-            Debug.Log($"IAP Enabled: {sdkConfig.enableIAP}");
-            Debug.Log($"Multiplayer Enabled: {sdkConfig.enablePhotonMultiplayer}");
-            Debug.Log($"Backend Configured: {!string.IsNullOrEmpty(sdkConfig.nakamaHost)}");
-            Debug.Log("=================================");
-        }
-
-        private void ShowWelcomeMessage()
-        {
-            string language = IVXLanguageManager.GetLanguageName(IVXLanguageManager.CurrentLanguage);
-            Debug.Log($"[GAME] Welcome to {sdkConfig.gameName}!");
-            Debug.Log($"[USER] Playing as: {IntelliVerseXIdentity.Username}");
-            Debug.Log($"[LANG] Language: {language}");
-        }
-
-        private void OnDestroy()
-        {
-            // Cleanup event subscriptions
-            if (IntelliVerseXManager.Instance != null)
-            {
-                IntelliVerseXManager.Instance.OnReady -= OnSDKReady;
-                IntelliVerseXManager.Instance.OnError -= OnSDKError;
-            }
-
-            IVXLanguageManager.OnLanguageChanged -= OnLanguageChanged;
-        }
-
-        // === PUBLIC API FOR TESTING ===
-
-        /// <summary>
-        /// Test language switching (call from debug UI)
-        /// </summary>
-        public void TestLanguageSwitch(string languageCode)
-        {
-            IVXLanguageManager.SetLanguage(languageCode);
-        }
-
-        /// <summary>
-        /// Test interstitial ad (call from debug UI)
-        /// </summary>
-        public void TestShowInterstitial()
-        {
-            if (!sdkConfig.enableAds)
-            {
-                Debug.LogWarning("[Bootstrap] Ads are disabled in SDK config!");
-                return;
-            }
-
-            IVXAdsManager.ShowInterstitialAd(success =>
-            {
-                Debug.Log($"[Bootstrap] Interstitial ad result: {success}");
-            });
-        }
-
-        /// <summary>
-        /// Test rewarded ad (call from debug UI)
-        /// </summary>
-        public void TestShowRewarded()
-        {
-            if (!sdkConfig.enableAds)
-            {
-                Debug.LogWarning("[Bootstrap] Ads are disabled in SDK config!");
-                return;
-            }
-
-            IVXAdsManager.ShowRewardedAd((success, reward) =>
-            {
-                Debug.Log($"[Bootstrap] Rewarded ad result - Success: {success}, Reward: {reward}");
-                if (success && reward > 0)
-                {
-                    Debug.Log("[Bootstrap] User watched ad. Apply reward logic here.");
-                }
-            });
-        }
-
-        /// <summary>
-        /// Get SDK info (for debug UI)
-        /// </summary>
-        public string GetSDKInfo()
-        {
-            if (!IntelliVerseXManager.IsInitialized)
-                return "SDK not initialized";
-
-            return IntelliVerseXManager.GetSDKInfo();
         }
     }
 }

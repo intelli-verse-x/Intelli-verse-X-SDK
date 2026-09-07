@@ -43,6 +43,7 @@ namespace IntelliVerseX.Backend
     ///       protected override string GetLogPrefix() => "[MYGAME]";
     ///   }
     /// </summary>
+    [Obsolete("Prefer IVXNManager + IVXBootstrapConfig (V2). This abstract base remains for older game subclasses only.")]
     public abstract class IVXNakamaManager : MonoBehaviour, IIVXNakamaRealtimeProvider
     {
         [Header("SDK Configuration")]
