@@ -147,12 +147,14 @@ namespace IntelliVerseX.Core
         }
         
         /// <summary>
-        /// Get Photon configuration (hardcoded at SDK level for all games).
-        /// Returns Photon App ID for Realtime (PUN2).
+        /// Photon App ID helper — obsolete; Photon is not part of the core install path.
         /// </summary>
+        [Obsolete("Photon is optional/sandbox-only. Core multiplayer uses Nakama. See docs/OPTIONAL_MODULES.md.")]
         public static string GetPhotonAppId()
         {
+#pragma warning disable CS0618
             return IVXPhotonConfig.GetAppId();
+#pragma warning restore CS0618
         }
         
         // Tokens

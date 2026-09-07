@@ -218,3 +218,8 @@ SDKs/unity/editor/.vscode/
 
 test-results.xml
 
+# Local IDE / brainstorming (not part of the SDK product)
+docs/brainstorming/
+*.code-workspace
+intllviersersdk.code-workspace
+

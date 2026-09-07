@@ -59,8 +59,18 @@ Ads / IAP / Photon / Discord are optional — enable only when you need them.
 |-------|-------------|
 | `IntelliVerseXManager` | `IVXBootstrap` |
 | `IntelliVerseXConfig` | `IVXBootstrapConfig` |
-| `IVXGLeaderboardManager` | `IVXNLeaderbordManager` |
+| `IVXWalletManager` | `IVXNWalletManager` |
+| `IVXGLeaderboardManager` / `IVXGLeaderboard` | `IVXNLeaderbordManager` |
+| `IVXPhotonConfig` / Photon App ID helpers | Optional sandbox Photon only — not required for Control Center → Play |
 | Device-only `InitializeDevice` as “SDK ready” | Control Center + Bootstrap |
+
+## Canonical public types
+
+| Domain | Type |
+|--------|------|
+| Wallet | `IVXNWalletManager` |
+| Leaderboard | `IVXNLeaderbordManager` |
+| Session / RPC | `IVXNManager` + `IVXRequestBus` |
 
 ## Verify
 

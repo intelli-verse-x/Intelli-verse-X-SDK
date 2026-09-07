@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net.Sockets;
 using IntelliVerseX.Bootstrap;
+using IntelliVerseX.Core;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -10,33 +11,62 @@ using UnityEngine.SceneManagement;
 namespace IntelliVerseX.Editor
 {
     /// <summary>
-    /// Canonical first-run editor window for the IntelliVerseX SDK (Check → Connect → Play).
-    /// Paste Game ID onto <see cref="IVXBootstrapConfig"/>; do not use legacy setup wizards as first-run.
-    /// Advanced module/dependency work stays on <see cref="IVXAdvancedSetup"/>.
+    /// Canonical first-run editor window (Home / Traffic / APIs).
+    /// Paste Game ID onto <see cref="IVXBootstrapConfig"/>; advanced work stays on <see cref="IVXAdvancedSetup"/>.
     /// </summary>
     public sealed class IVXControlCenter : EditorWindow
     {
+        private enum Tab
+        {
+            Home = 0,
+            Traffic = 1,
+            Apis = 2
+        }
+
         private const string WindowTitle = "IntelliVerseX";
         private const string GeneratedConfigFolder = "Assets/IntelliVerseX/Generated";
         private const string GeneratedConfigPath = GeneratedConfigFolder + "/IVXBootstrapConfig.asset";
 
+        private static readonly string[] TabLabels = { "Home", "Traffic", "APIs" };
+
+        private static readonly string[] FacadeRpcCatalog =
+        {
+            "create_or_sync_user",
+            "wallet_get_balances",
+            "wallet_update_game_wallet",
+            "submit_score_and_sync",
+            "get_all_leaderboards",
+            "nakama_js_health"
+        };
+
         private IVXBootstrapConfig _config;
         private SerializedObject _configSo;
         private Vector2 _scroll;
+        private Vector2 _trafficScroll;
+        private Vector2 _apiScroll;
         private string _serverPing = "";
         private MessageType _serverPingType = MessageType.None;
+        private Tab _tab = Tab.Home;
+        private string _apiFilter = "";
+        private double _nextTrafficRepaint;
 
         [MenuItem("IntelliVerseX/Control Center", false, -10)]
         public static void ShowWindow()
         {
             var window = GetWindow<IVXControlCenter>(WindowTitle);
-            window.minSize = new Vector2(520, 560);
+            window.minSize = new Vector2(560, 600);
             window.Show();
         }
 
         private void OnEnable()
         {
             FindOrLoadConfig();
+            EditorApplication.update += OnEditorUpdate;
+        }
+
+        private void OnDisable()
+        {
+            EditorApplication.update -= OnEditorUpdate;
         }
 
         private void OnFocus()
@@ -44,15 +74,45 @@ namespace IntelliVerseX.Editor
             FindOrLoadConfig();
         }
 
+        private void OnEditorUpdate()
+        {
+            if (_tab != Tab.Traffic)
+                return;
+            if (EditorApplication.timeSinceStartup < _nextTrafficRepaint)
+                return;
+            _nextTrafficRepaint = EditorApplication.timeSinceStartup + 0.5d;
+            Repaint();
+        }
+
         private void OnGUI()
         {
-            _scroll = EditorGUILayout.BeginScrollView(_scroll);
-
+            EditorGUILayout.Space(6);
+            _tab = (Tab)GUILayout.Toolbar((int)_tab, TabLabels, GUILayout.Height(28));
             EditorGUILayout.Space(8);
+
+            _scroll = EditorGUILayout.BeginScrollView(_scroll);
+            switch (_tab)
+            {
+                case Tab.Home:
+                    DrawHome();
+                    break;
+                case Tab.Traffic:
+                    DrawTraffic();
+                    break;
+                case Tab.Apis:
+                    DrawApis();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            EditorGUILayout.EndScrollView();
+        }
+
+        private void DrawHome()
+        {
             EditorGUILayout.LabelField("IntelliVerseX", EditorStyles.boldLabel);
-            EditorGUILayout.LabelField(
-                "Three steps. Then press Play.",
-                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField("Three steps. Then press Play.", EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.Space(12);
 
             DrawCheck();
@@ -62,8 +122,93 @@ namespace IntelliVerseX.Editor
             DrawPlay();
             EditorGUILayout.Space(16);
             DrawFooter();
+        }
+
+        private void DrawTraffic()
+        {
+            EditorGUILayout.LabelField("Traffic", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox(
+                "Live IVXRequestBus activity (last " + IVXRequestBus.MaxTrafficHistory +
+                "). In-flight: " + IVXRequestBus.GetInFlightCount() + ".",
+                MessageType.Info);
+
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Clear history", GUILayout.Height(24)))
+                IVXRequestBus.ClearTrafficHistory();
+            if (GUILayout.Button("Refresh", GUILayout.Height(24)))
+                Repaint();
+            EditorGUILayout.EndHorizontal();
+
+            var rows = IVXRequestBus.GetRecentTraffic();
+            if (rows.Length == 0)
+            {
+                EditorGUILayout.HelpBox(
+                    "No RPCs recorded yet. Press Play or call managers that use IVXRequestBus.",
+                    MessageType.None);
+                return;
+            }
+
+            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+            GUILayout.Label("UTC", GUILayout.Width(70));
+            GUILayout.Label("RPC", GUILayout.Width(180));
+            GUILayout.Label("#", GUILayout.Width(28));
+            GUILayout.Label("Status", GUILayout.Width(70));
+            GUILayout.Label("ms", GUILayout.Width(48));
+            GUILayout.Label("Error / retry");
+            EditorGUILayout.EndHorizontal();
+
+            _trafficScroll = EditorGUILayout.BeginScrollView(_trafficScroll, GUILayout.MinHeight(280));
+            for (int i = 0; i < rows.Length; i++)
+            {
+                var e = rows[i];
+                EditorGUILayout.BeginHorizontal();
+                GUILayout.Label(e.Utc.ToString("HH:mm:ss"), GUILayout.Width(70));
+                GUILayout.Label(e.RpcId ?? "", GUILayout.Width(180));
+                GUILayout.Label(e.Attempt.ToString(), GUILayout.Width(28));
+                GUILayout.Label(e.Status ?? "", GUILayout.Width(70));
+                GUILayout.Label(e.LatencyMs.ToString(), GUILayout.Width(48));
+                string detail = e.Error ?? "";
+                if (e.RetryAfterMs.HasValue)
+                    detail = (string.IsNullOrEmpty(detail) ? "" : detail + " · ") + "retry_after_ms=" + e.RetryAfterMs.Value;
+                GUILayout.Label(detail);
+                EditorGUILayout.EndHorizontal();
+            }
 
             EditorGUILayout.EndScrollView();
+        }
+
+        private void DrawApis()
+        {
+            EditorGUILayout.LabelField("APIs", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox(
+                "Shipped facade RPC ids used by IVXNManager / wallet / leaderboard. " +
+                "Full generated index (RPC_INDEX_GENERATED) can replace this catalog later.",
+                MessageType.Info);
+
+            _apiFilter = EditorGUILayout.TextField("Filter", _apiFilter);
+
+            _apiScroll = EditorGUILayout.BeginScrollView(_apiScroll, GUILayout.MinHeight(280));
+            string filter = (_apiFilter ?? "").Trim().ToLowerInvariant();
+            for (int i = 0; i < FacadeRpcCatalog.Length; i++)
+            {
+                string id = FacadeRpcCatalog[i];
+                if (!string.IsNullOrEmpty(filter) && id.IndexOf(filter, StringComparison.OrdinalIgnoreCase) < 0)
+                    continue;
+
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.SelectableLabel(id, GUILayout.Height(18));
+                if (GUILayout.Button("Copy", GUILayout.Width(52)))
+                    EditorGUIUtility.systemCopyBuffer = id;
+                EditorGUILayout.EndHorizontal();
+            }
+
+            EditorGUILayout.EndScrollView();
+
+            EditorGUILayout.Space(8);
+            EditorGUILayout.LabelField("Canonical public types", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Wallet → IVXNWalletManager");
+            EditorGUILayout.LabelField("Leaderboard → IVXNLeaderbordManager");
+            EditorGUILayout.LabelField("Avoid → IVXWalletManager / IVXGLeaderboardManager (obsolete)");
         }
 
         private void DrawCheck()
@@ -77,14 +222,13 @@ namespace IntelliVerseX.Editor
             for (int i = 0; i < validation.Count; i++)
             {
                 if (!validation[i].Passed && !validation[i].IsWarning)
-                {
                     failed++;
-                }
             }
 
             DrawStatusRow("JSON (Newtonsoft)", newtonsoft);
             DrawStatusRow("Nakama client", nakama);
             DrawStatusRow("Project settings", failed == 0);
+            DrawStatusRow("Photon (optional)", TypeExists("Photon.Pun.PhotonNetwork"));
 
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Fix project settings", GUILayout.Height(28)))
@@ -99,9 +243,7 @@ namespace IntelliVerseX.Editor
             }
 
             if (GUILayout.Button("Install dependencies", GUILayout.Height(28)))
-            {
                 IVXAdvancedSetup.ShowWindow();
-            }
             EditorGUILayout.EndHorizontal();
         }
 
@@ -115,17 +257,12 @@ namespace IntelliVerseX.Editor
             if (_config == null)
             {
                 if (GUILayout.Button("Create connection file", GUILayout.Height(32)))
-                {
                     CreateConfigAsset();
-                }
-
                 return;
             }
 
             if (_configSo == null)
-            {
                 _configSo = new SerializedObject(_config);
-            }
 
             _configSo.Update();
             EditorGUILayout.PropertyField(_configSo.FindProperty("_gameId"), new GUIContent("Game ID"));
@@ -135,18 +272,13 @@ namespace IntelliVerseX.Editor
             EditorGUILayout.PropertyField(_configSo.FindProperty("_serverKey"), new GUIContent("Server key"));
             EditorGUILayout.PropertyField(_configSo.FindProperty("_useSSL"), new GUIContent("Use SSL"));
             if (_configSo.ApplyModifiedProperties())
-            {
                 EditorUtility.SetDirty(_config);
-            }
 
             EditorGUILayout.ObjectField("Config asset", _config, typeof(IVXBootstrapConfig), false);
 
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Ping server", GUILayout.Height(28)))
-            {
                 PingServer();
-            }
-
             if (GUILayout.Button("Select config", GUILayout.Height(28)))
             {
                 Selection.activeObject = _config;
@@ -155,13 +287,13 @@ namespace IntelliVerseX.Editor
             EditorGUILayout.EndHorizontal();
 
             if (!string.IsNullOrEmpty(_serverPing))
-            {
                 EditorGUILayout.HelpBox(_serverPing, _serverPingType);
-            }
 
             if (string.IsNullOrWhiteSpace(_config.GameId))
             {
-                EditorGUILayout.HelpBox("Game ID is empty. The SDK will not initialize until you paste one.", MessageType.Warning);
+                EditorGUILayout.HelpBox(
+                    "Game ID is empty. The SDK will not initialize until you paste one.",
+                    MessageType.Warning);
             }
         }
 
@@ -173,24 +305,17 @@ namespace IntelliVerseX.Editor
             DrawStatusRow("Bootstrap in this scene", hasBootstrap);
 
             if (GUILayout.Button("Add bootstrap to this scene", GUILayout.Height(32)))
-            {
                 AddBootstrapToScene();
-            }
 
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Install demo scenes", GUILayout.Height(28)))
-            {
                 IVXConsumerAssetInstaller.InstallDemoScenesOnly();
-            }
-
             if (GUILayout.Button("Advanced setup", GUILayout.Height(28)))
-            {
                 IVXAdvancedSetup.ShowWindow();
-            }
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.HelpBox(
-                "Press Unity Play. You should see bootstrap complete in the Console. Use Advanced setup only for ads, IAP, or extra modules.",
+                "Press Unity Play. Traffic tab shows IVXRequestBus calls. Photon is optional and not required.",
                 MessageType.None);
         }
 
@@ -206,7 +331,7 @@ namespace IntelliVerseX.Editor
         private static void DrawStatusRow(string label, bool ok)
         {
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField(ok ? "Ready" : "Needs work", GUILayout.Width(88));
+            EditorGUILayout.LabelField(ok ? "Ready" : (label.Contains("Photon") ? "Optional" : "Needs work"), GUILayout.Width(88));
             EditorGUILayout.LabelField(label);
             EditorGUILayout.EndHorizontal();
         }
@@ -229,14 +354,10 @@ namespace IntelliVerseX.Editor
         private void CreateConfigAsset()
         {
             if (!AssetDatabase.IsValidFolder("Assets/IntelliVerseX"))
-            {
                 AssetDatabase.CreateFolder("Assets", "IntelliVerseX");
-            }
 
             if (!AssetDatabase.IsValidFolder(GeneratedConfigFolder))
-            {
                 AssetDatabase.CreateFolder("Assets/IntelliVerseX", "Generated");
-            }
 
             var asset = CreateInstance<IVXBootstrapConfig>();
             AssetDatabase.CreateAsset(asset, GeneratedConfigPath);
@@ -329,9 +450,7 @@ namespace IntelliVerseX.Editor
                 try
                 {
                     if (assembly.GetType(fullTypeName, false) != null)
-                    {
                         return true;
-                    }
                 }
                 catch (FileNotFoundException)
                 {

@@ -6,13 +6,15 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+#pragma warning disable CS0618 // Legacy G-leaderboard UI still calls obsolete managers
+
 namespace IntelliVerseX.Games.Leaderboard.UI
 {
     /// <summary>
-    /// Main UI controller for displaying leaderboards in IntelliVerseX Games SDK.
-    /// Supports Daily, Weekly, Monthly, and All-time leaderboard periods.
-    /// Production-ready with retry logic, proper error handling, and mobile compatibility.
+    /// Legacy leaderboard UI bound to <see cref="IVXGLeaderboardManager"/>.
+    /// Prefer <see cref="IntelliVerseX.Backend.Nakama.IVXNLeaderbordManager"/> + your own UI.
     /// </summary>
+    [Obsolete("Use IVXNLeaderbordManager; this UI still calls the obsolete G-manager.")]
     [DisallowMultipleComponent]
     public class IVXGLeaderboardUI : MonoBehaviour
     {

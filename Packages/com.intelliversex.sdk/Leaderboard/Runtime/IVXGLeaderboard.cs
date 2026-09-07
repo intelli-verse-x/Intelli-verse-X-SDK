@@ -3,13 +3,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
+#pragma warning disable CS0618 // Legacy G-leaderboard stack intentionally still wired together
+
 namespace IntelliVerseX.Games.Leaderboard
 {
     /// <summary>
-    /// IVXGLeaderboard - Production-Ready Runtime Leaderboard Manager for IntelliVerseX Games SDK.
-    /// Provides MonoBehaviour-based access to the static IVXGLeaderboardManager.
-    /// Fixed for Android/iOS compatibility with main thread callbacks and proper error handling.
+    /// IVXGLeaderboard - legacy MonoBehaviour bridge to <see cref="IVXGLeaderboardManager"/>.
+    /// Prefer <see cref="IntelliVerseX.Backend.Nakama.IVXNLeaderbordManager"/> for new code.
     /// </summary>
+    [Obsolete("Use IVXNLeaderbordManager for leaderboard RPCs.")]
     [DisallowMultipleComponent]
     public class IVXGLeaderboard : MonoBehaviour
     {

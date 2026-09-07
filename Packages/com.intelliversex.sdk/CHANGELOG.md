@@ -13,6 +13,17 @@ _(no unreleased changes)_
 
 ---
 
+## [5.10.1] - 2026-09-07
+
+### Changed — Definition of Done (wallet / Photon / Control Center)
+
+- Canonical wallet/leaderboard: `IVXNWalletManager` / `IVXNLeaderbordManager`; `IVXWalletManager`, `IVXGLeaderboard`, and `IVXGLeaderboardUI` marked obsolete.
+- `IVXPhotonConfig` rewritten without ExitGames; empty `SHARED_APP_ID_*`; `IntelliVerseXIdentity.GetPhotonAppId` obsolete.
+- Control Center Home / Traffic / APIs tabs; `IVXRequestBus` traffic history for the Traffic tab.
+- EditMode DoD tests (`IVXPDoDEditorTests`) in sandbox + `Tests~`; Leaderboard asmdef references for test assemblies.
+- Docs: `INSTALLATION.md` canonical types; `docs/OPTIONAL_MODULES.md`; ignore `docs/brainstorming/` and `*.code-workspace`.
+
+---
 ## [5.10.0] - 2026-09-07
 
 ### Changed â€” UPM extract (P4)

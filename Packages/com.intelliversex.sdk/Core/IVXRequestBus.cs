@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -14,6 +16,7 @@ namespace IntelliVerseX.Core
     {
         public const int DefaultRpcTimeoutMs = 8000;
         public const int DefaultAuthTimeoutMs = 15000;
+        public const int MaxTrafficHistory = 50;
 
         public struct Result
         {
@@ -25,11 +28,57 @@ namespace IntelliVerseX.Core
             public int Attempts;
         }
 
+        /// <summary>One Traffic-tab row (Control Center).</summary>
+        public struct TrafficEntry
+        {
+            public DateTime Utc;
+            public string RpcId;
+            public int Attempt;
+            public string Status;
+            public long LatencyMs;
+            public string Error;
+            public int? RetryAfterMs;
+            public bool InFlight;
+        }
+
+        private static readonly object TrafficLock = new object();
+        private static readonly List<TrafficEntry> TrafficHistory = new List<TrafficEntry>(MaxTrafficHistory);
+        private static int InFlightCount;
+
+        /// <summary>In-flight RPC count for the Traffic tab.</summary>
+        public static int GetInFlightCount()
+        {
+            lock (TrafficLock)
+            {
+                return InFlightCount;
+            }
+        }
+
+        /// <summary>Newest-first copy of the last <see cref="MaxTrafficHistory"/> traffic rows.</summary>
+        public static TrafficEntry[] GetRecentTraffic()
+        {
+            lock (TrafficLock)
+            {
+                var copy = new TrafficEntry[TrafficHistory.Count];
+                for (int i = 0; i < TrafficHistory.Count; i++)
+                    copy[i] = TrafficHistory[TrafficHistory.Count - 1 - i];
+                return copy;
+            }
+        }
+
+        public static void ClearTrafficHistory()
+        {
+            lock (TrafficLock)
+            {
+                TrafficHistory.Clear();
+            }
+        }
+
         /// <summary>
         /// Executes an async RPC invoke with timeout and retries.
         /// Retries on timeout, exceptions, and when the payload reports <c>retry_after_ms</c>.
         /// </summary>
-        /// <param name="rpcId">RPC id for logging / future Traffic tab.</param>
+        /// <param name="rpcId">RPC id for logging / Traffic tab.</param>
         /// <param name="invoke">Returns the raw payload string. Throw on transport failure.</param>
         /// <param name="isSuccessPayload">Optional: return false to treat a 200 payload as a soft failure.</param>
         /// <param name="shouldRetrySoftFailure">Optional: when soft-failed, return false to stop retrying (non-retryable server codes).</param>
@@ -61,6 +110,8 @@ namespace IntelliVerseX.Core
             for (int attempt = 1; attempt <= maxAttempts; attempt++)
             {
                 cancellationToken.ThrowIfCancellationRequested();
+                BeginInFlight();
+                var sw = Stopwatch.StartNew();
 
                 using (var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
                 {
@@ -68,6 +119,7 @@ namespace IntelliVerseX.Core
                     try
                     {
                         string payload = await invoke(timeoutCts.Token).ConfigureAwait(false);
+                        sw.Stop();
                         int? retryAfter = TryParseRetryAfterMs(payload);
                         bool ok = isSuccessPayload == null || isSuccessPayload(payload);
 
@@ -80,6 +132,9 @@ namespace IntelliVerseX.Core
                             RetryAfterMs = retryAfter,
                             Attempts = attempt
                         };
+
+                        RecordTraffic(rpcId, attempt, ok ? "ok" : "soft_fail", sw.ElapsedMilliseconds, last.Error, retryAfter);
+                        EndInFlight();
 
                         if (ok)
                             return last;
@@ -103,6 +158,7 @@ namespace IntelliVerseX.Core
                     }
                     catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
                     {
+                        sw.Stop();
                         last = new Result
                         {
                             Success = false,
@@ -110,6 +166,8 @@ namespace IntelliVerseX.Core
                             ErrorCode = "TIMEOUT",
                             Attempts = attempt
                         };
+                        RecordTraffic(rpcId, attempt, "timeout", sw.ElapsedMilliseconds, last.Error, null);
+                        EndInFlight();
                         if (attempt < maxAttempts)
                         {
                             float delay = baseDelaySeconds * (float)Math.Pow(2, attempt - 1);
@@ -118,6 +176,7 @@ namespace IntelliVerseX.Core
                     }
                     catch (Exception ex)
                     {
+                        sw.Stop();
                         last = new Result
                         {
                             Success = false,
@@ -125,6 +184,8 @@ namespace IntelliVerseX.Core
                             ErrorCode = "EXCEPTION",
                             Attempts = attempt
                         };
+                        RecordTraffic(rpcId, attempt, "error", sw.ElapsedMilliseconds, last.Error, null);
+                        EndInFlight();
                         if (attempt >= maxAttempts)
                             return last;
 
@@ -135,6 +196,51 @@ namespace IntelliVerseX.Core
             }
 
             return last;
+        }
+
+        private static void BeginInFlight()
+        {
+            lock (TrafficLock)
+            {
+                InFlightCount++;
+            }
+        }
+
+        private static void EndInFlight()
+        {
+            lock (TrafficLock)
+            {
+                if (InFlightCount > 0)
+                    InFlightCount--;
+            }
+        }
+
+        private static void RecordTraffic(
+            string rpcId,
+            int attempt,
+            string status,
+            long latencyMs,
+            string error,
+            int? retryAfterMs)
+        {
+            var entry = new TrafficEntry
+            {
+                Utc = DateTime.UtcNow,
+                RpcId = rpcId,
+                Attempt = attempt,
+                Status = status,
+                LatencyMs = latencyMs,
+                Error = error,
+                RetryAfterMs = retryAfterMs,
+                InFlight = false
+            };
+
+            lock (TrafficLock)
+            {
+                TrafficHistory.Add(entry);
+                while (TrafficHistory.Count > MaxTrafficHistory)
+                    TrafficHistory.RemoveAt(0);
+            }
         }
 
         /// <summary>
