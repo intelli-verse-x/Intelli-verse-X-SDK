@@ -57,11 +57,16 @@ jobs:
           
           echo "🔍 Validating package.json..."
           
-          # Check if valid JSON
-          if ! python -m json.tool "$PACKAGE_PATH/package.json" > /dev/null 2>&1; then
-            echo "::error::package.json is not valid JSON"
-            exit 1
-          fi
+          # Strip UTF-8 BOM if present (Windows editors / Unity exports often add it;
+          # Python's default json decoder rejects BOM as invalid JSON).
+          python -c "
+import json, pathlib
+p = pathlib.Path('$PACKAGE_PATH/package.json')
+text = p.read_text(encoding='utf-8-sig')
+json.loads(text)
+p.write_text(text, encoding='utf-8', newline='\n')
+print('Valid JSON')
+"
           
           echo "✅ Valid JSON format"
       

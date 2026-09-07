@@ -67,17 +67,17 @@ jobs:
             exit 1
           fi
           
-          # Validate JSON syntax
-          if ! python3 -m json.tool "$PACKAGE_FILE" > /dev/null 2>&1; then
+          # Validate JSON (utf-8-sig tolerates accidental BOM from Windows editors)
+          if ! python3 -c "import json,pathlib; json.loads(pathlib.Path('$PACKAGE_FILE').read_text(encoding='utf-8-sig'))"; then
             echo "::error::package.json is not valid JSON"
             echo "valid=false" >> $GITHUB_OUTPUT
             exit 1
           fi
           
           # Check required fields
-          NAME=$(python3 -c "import json; print(json.load(open('$PACKAGE_FILE')).get('name', ''))")
-          VERSION=$(python3 -c "import json; print(json.load(open('$PACKAGE_FILE')).get('version', ''))")
-          UNITY=$(python3 -c "import json; print(json.load(open('$PACKAGE_FILE')).get('unity', ''))")
+          NAME=$(python3 -c "import json,pathlib; print(json.loads(pathlib.Path('$PACKAGE_FILE').read_text(encoding='utf-8-sig')).get('name', ''))")
+          VERSION=$(python3 -c "import json,pathlib; print(json.loads(pathlib.Path('$PACKAGE_FILE').read_text(encoding='utf-8-sig')).get('version', ''))")
+          UNITY=$(python3 -c "import json,pathlib; print(json.loads(pathlib.Path('$PACKAGE_FILE').read_text(encoding='utf-8-sig')).get('unity', ''))")
           
           echo "Package: $NAME v$VERSION (Unity $UNITY+)"
           
