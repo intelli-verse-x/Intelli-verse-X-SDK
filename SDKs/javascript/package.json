@@ -21,7 +21,7 @@
     "build": "tsup src/index.ts --format cjs,esm && tsc -p tsconfig.build.json",
     "build:prod": "tsup src/index.ts --format cjs,esm --minify && tsc -p tsconfig.build.json",
     "dev": "tsup src/index.ts --format cjs,esm --watch",
-    "test": "vitest run",
+    "test": "vitest run && node --test examples/kiosk-screen/server.integration.mjs",
     "test:watch": "vitest",
     "prepublishOnly": "npm run build:prod",
     "validate-publish": "npm run build:prod && npm publish --dry-run",
