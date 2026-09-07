@@ -143,3 +143,6 @@ export type {
   IVXAppChannel, IVXAppCapability, IVXPhygitalManifest, IVXAppIntent,
   IVXPhygitalRequest, IVXPhygitalResult, IVXPhygitalAdapter,
 } from './IVXPhygitalApp';
+
+export { IVXKioskPublisher, validateIVXKioskExperience } from './IVXKioskPublisher';
+export type { IVXKioskExperience, IVXKioskPublication, IVXKioskPublisherOptions } from './IVXKioskPublisher';

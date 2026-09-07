@@ -351,3 +351,8 @@ See [`Assets/Intelli-verse-X-SDK/CHANGELOG.md`](Assets/Intelli-verse-X-SDK/CHANG
 ---
 
 For the Unity UPM package changelog, see [Assets/Intelli-verse-X-SDK/CHANGELOG.md](Assets/Intelli-verse-X-SDK/CHANGELOG.md).
+
+## Unreleased — kiosk screen publishing
+
+- Add server-side IVXKioskPublisher, v1 experience manifest validation, revision-aware publishing and disabling.
+- Add runnable two-screen web example and coordinated cloud/operator/ZHZN release guide. Included in the pending JavaScript 5.9.0 feature release; no Unity public API changes.

@@ -395,3 +395,7 @@ npm publish --access public
 ## License
 
 MIT License — see [LICENSE](../../LICENSE)
+
+## Publish beyond the phone
+
+Build a kiosk-only app or pair a phone controller with a smart kiosk display. The coordinated preview includes a typed KioskX publisher and a runnable two-screen example. [Follow the screen publishing guide](../../docs/guides/kiosk-screen-publishing.md).

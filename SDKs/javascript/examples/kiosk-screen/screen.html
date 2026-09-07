@@ -1,0 +1,13 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Intelliverse · Two-screen experience</title>
+<style>body{margin:0;background:#140d2b;color:white;font:20px system-ui;text-align:center;padding:7vh 5vw}h1{font-size:clamp(28px,5vw,64px)}#track{position:relative;height:180px;background:#2a1c48;border-radius:24px;margin:40px 0}#dot{position:absolute;top:65px;left:50%;width:50px;height:50px;background:#c4ff57;border-radius:50%;transform:translateX(-50%)}button{padding:30px;margin:8px;font:30px system-ui;border:0;border-radius:16px;background:#c4ff57;color:#140d2b}p{color:#c4b9df}#status{min-height:30px}</style>
+<h1 id="heading">One experience. Two screens.</h1><p id="intro"></p><div id="track"><div id="dot"></div></div><div id="controls" hidden><button id="left" aria-label="Move left">←</button><button id="right" aria-label="Move right">→</button></div><p id="status" role="status">Connecting…</p><p>Example interaction only. No prizes, payments or verified scores.</p>
+<script>
+const room=new URLSearchParams(location.search).get('room');
+const controller=location.pathname==='/controller';
+document.getElementById('controls').hidden=!controller;
+document.getElementById('intro').textContent=controller?'Your phone moves the dot on the kiosk screen.':'Scan the native player’s QR to use your phone as the controller.';
+let busy=false;
+async function move(direction){if(busy)return;busy=true;try{const r=await fetch('/api/input?room='+encodeURIComponent(room),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({direction})});if(!r.ok)throw new Error();}catch{document.getElementById('status').textContent='Move was not delivered. Try again.';}finally{busy=false;}}
+document.getElementById('left').onclick=()=>move(-1);document.getElementById('right').onclick=()=>move(1);
+async function poll(){try{const r=await fetch('/api/state?room='+encodeURIComponent(room));if(!r.ok)throw new Error();const s=await r.json();document.getElementById('dot').style.left=s.x+'%';document.getElementById('status').textContent=s.moves+' moves · connected';}catch{document.getElementById('status').textContent='Connection lost. Waiting to reconnect…';}setTimeout(poll,500);}poll();
+</script></html>

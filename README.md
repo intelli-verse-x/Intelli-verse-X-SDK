@@ -1115,3 +1115,7 @@ MIT License — see [LICENSE](LICENSE)
 ---
 
 <p align="center">Made with care by <a href="https://intelliversex.com">IntelliVerse-X</a></p>
+
+## Publish beyond the phone
+
+Build a kiosk-only app or pair a phone controller with a smart kiosk display. The coordinated preview includes a typed KioskX publisher and a runnable two-screen example. [Follow the screen publishing guide](docs/guides/kiosk-screen-publishing.md).

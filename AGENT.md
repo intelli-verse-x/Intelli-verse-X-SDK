@@ -256,3 +256,6 @@ Logs/
 ---
 
 *For detailed workflows, see `AGENTS.md`*
+
+### Kiosk publishing preview
+`SDKs/javascript/src/IVXKioskPublisher.ts`: server-side machine mapping client; guide at `docs/guides/kiosk-screen-publishing.md`. Requires matching cloud and ZHZN player releases.
