@@ -39,7 +39,7 @@ namespace IntelliVerseX.Editor
         /// <summary>
         /// Opens the emoji support setup and validation window.
         /// </summary>
-        [MenuItem("IntelliVerseX/Tools/Emoji/Setup & Validate", priority = 65)]
+        [MenuItem("IntelliVerseX/Maintainers/Emoji/Setup & Validate", priority = 550)]
         public static void ShowWindow()
         {
             var window = GetWindow<IVXEmojiSupportSetupWindow>(WindowTitle);
@@ -50,7 +50,7 @@ namespace IntelliVerseX.Editor
         /// <summary>
         /// Applies production-safe emoji setup using the built-in TMP EmojiOne sprite asset.
         /// </summary>
-        [MenuItem("IntelliVerseX/Tools/Emoji/Apply Production Defaults", priority = 66)]
+        [MenuItem("IntelliVerseX/Maintainers/Emoji/Apply Production Defaults", priority = 551)]
         public static void ApplyProductionDefaultsMenu()
         {
             TMP_SpriteAsset defaultAsset = AssetDatabase.LoadAssetAtPath<TMP_SpriteAsset>(DefaultEmojiOneAssetPath);
@@ -67,7 +67,7 @@ namespace IntelliVerseX.Editor
         /// <summary>
         /// Validates emoji setup using the built-in TMP EmojiOne sprite asset.
         /// </summary>
-        [MenuItem("IntelliVerseX/Tools/Emoji/Validate Production Defaults", priority = 67)]
+        [MenuItem("IntelliVerseX/Maintainers/Emoji/Validate Production Defaults", priority = 552)]
         public static void ValidateProductionDefaultsMenu()
         {
             TMP_SpriteAsset defaultAsset = AssetDatabase.LoadAssetAtPath<TMP_SpriteAsset>(DefaultEmojiOneAssetPath);

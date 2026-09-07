@@ -4,21 +4,10 @@ using UnityEngine;
 namespace IntelliVerseX.Core
 {
     /// <summary>
-    /// Configuration ScriptableObject for IntelliVerse-X SDK.
-    /// Create one per game with unique Game ID.
-    /// 
-    /// Menu: Assets → Create → IntelliVerse-X → Game Configuration
-    /// 
-    /// Example:
-    ///   QuizVerseConfig.asset:
-    ///     Game ID: "126bf539-dae2-4bcf-964d-316c0fa1f92b"
-    ///     Game Name: "QuizVerse"
-    ///   
-    ///   TerminalRushConfig.asset:
-    ///     Game ID: "abc-123-def-456"
-    ///     Game Name: "Terminal Rush"
+    /// Legacy serialized config fields (ads/Photon toggles on old assets).
+    /// Do not create new assets — use <c>IVXBootstrapConfig</c>.
     /// </summary>
-    [CreateAssetMenu(fileName = "GameConfig", menuName = "IntelliVerse-X/Game Configuration", order = 0)]
+    [Obsolete("Use IVXBootstrapConfig with IVXBootstrap. Do not create new IntelliVerseXConfig assets.")]
     public class IntelliVerseXConfig : ScriptableObject
     {
         /// <summary>

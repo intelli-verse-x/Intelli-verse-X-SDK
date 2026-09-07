@@ -14,6 +14,17 @@
 .DS_Store
 **/.DS_Store
 
+# Agent knowledge graphs — never ship inside the UPM package path
+**/graphify-out/
+graphify-out/
+
+# Agent knowledge graphs — never ship inside the UPM package path
+**/graphify-out/
+graphify-out/
+
+# P1: heavy sandbox boilerplate (171MB) — not part of com.intelliversex.sdk
+tools/boilerplate/
+
 # Hub sandbox: Control Center output, Addressables, VS plugin
 SDKs/unity/editor/[Aa]ssets/IntelliVerseX/Generated/
 SDKs/unity/editor/[Aa]ssets/IntelliVerseX/Generated.meta
@@ -174,7 +185,6 @@ config/secrets.json
 # IDE files (cross-platform)
 .idea/
 *.iml
-.vscode/*.log
 
 # Local clones / nested repos (never commit as part of this monorepo)
 SDKs/nakama-cpp/
@@ -197,5 +207,9 @@ SDKs/nakama-cpp/
 # INC-2026-08-29: config.bat (the carrier script) must NOT be ignored - it has to stay visible to `git status`.
 node_modules
 # INC-2026-08-29: dotenv rules restored - a tracked .env carrying a C2 address was committed here.
-.env
-.env.*
+
+# Local unity test XML dumps (sandbox)
+SDKs/unity/editor/*test-results*.xml
+SDKs/unity/editor/ivx-*.xml
+SDKs/unity/editor/.vscode/
+config.bat

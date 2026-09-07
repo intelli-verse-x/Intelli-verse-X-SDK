@@ -32,7 +32,7 @@ namespace IntelliVerseX.Examples
         #region Serialized Fields
 
         [Header("Config")]
-        [SerializeField] private IntelliVerseXConfig configAsset;
+        [SerializeField] private IVXWebGLAdsConfig webGlAdsConfig;
         [SerializeField] private bool autoFindUI = true;
         [SerializeField] private bool verboseLogging = true;
 
@@ -73,10 +73,10 @@ namespace IntelliVerseX.Examples
             SetupButtonListeners();
             SubscribeToEvents();
             
-            // Auto-load config if not assigned
-            if (configAsset == null)
+            // Auto-load WebGL ads config if not assigned
+            if (webGlAdsConfig == null)
             {
-                configAsset = Resources.Load<IntelliVerseXConfig>("IntelliVerseX/GameConfig");
+                webGlAdsConfig = Resources.Load<IVXWebGLAdsConfig>("IntelliVerseX/IVXWebGLAdsConfig");
             }
 
             // Start status update coroutine

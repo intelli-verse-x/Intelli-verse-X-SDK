@@ -1,8 +1,9 @@
 {
     "name": "IntelliVerseX.Examples",
     "rootNamespace": "IntelliVerseX.Examples",
-"references": [
+    "references": [
     "IntelliVerseX.Core",
+    "IntelliVerseX.Bootstrap",
     "IntelliVerseX.Backend",
     "IntelliVerseX.V2",
     "IntelliVerseX.Identity",

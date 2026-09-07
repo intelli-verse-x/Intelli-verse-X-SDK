@@ -162,10 +162,9 @@ namespace IntelliVerseX.Monetization
         #region Initialization
 
         /// <summary>
-        /// Initialize WebGL ads system from IntelliVerseXConfig (recommended).
-        /// Reads AppLixir/AdSense settings from the centralized config.
+        /// Initialize WebGL ads from legacy <see cref="IntelliVerseXConfig"/>. Prefer <see cref="Initialize(IVXWebGLAdsConfig)"/>.
         /// </summary>
-        /// <param name="gameConfig">Main game configuration</param>
+        [Obsolete("Pass IVXWebGLAdsConfig (or build one from IVXAdsConfig). IntelliVerseXConfig init is retired.")]
         public static void Initialize(IntelliVerseXConfig gameConfig)
         {
             if (gameConfig == null)
@@ -181,9 +180,19 @@ namespace IntelliVerseX.Monetization
                 return;
             }
 
-            // Create runtime config from IntelliVerseXConfig
-            var runtimeConfig = CreateRuntimeConfigFromGameConfig(adsConfig);
-            Initialize(runtimeConfig);
+            Initialize(CreateRuntimeConfigFromGameConfig(adsConfig));
+        }
+
+        /// <summary>Initialize WebGL ads from core <see cref="IVXAdsConfig"/> (no legacy game config).</summary>
+        public static void Initialize(IVXAdsConfig adsConfig)
+        {
+            if (adsConfig == null)
+            {
+                Debug.LogError($"{LOG_PREFIX} Ads config cannot be null");
+                return;
+            }
+
+            Initialize(CreateRuntimeConfigFromGameConfig(adsConfig));
         }
 
         /// <summary>
@@ -250,7 +259,8 @@ namespace IntelliVerseX.Monetization
             
             config.webGLOnly = true;
             config.enableWaterfall = adsConfig.enableMediation;
-            config.prioritizeApplixir = true;
+            // Prefer AdSense/LevelPlay path; Applixir only when explicitly enabled on source config
+            config.prioritizeApplixir = config.enableApplixir;
             config.enableAnalytics = true;
             
             return config;

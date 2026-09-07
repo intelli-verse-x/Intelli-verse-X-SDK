@@ -11,7 +11,7 @@ namespace IntelliVerseX.Editor
     /// </summary>
     public static class IVXLocalDataWiperTool
     {
-        [MenuItem("IntelliVerseX/Tools/Wipe Local SDK Data %#k", false, 350)]
+        [MenuItem("IntelliVerseX/Maintainers/Wipe Local SDK Data %#k", false, 540)]
         public static void WipeLocalSdkData()
         {
             if (!EditorUtility.DisplayDialog(

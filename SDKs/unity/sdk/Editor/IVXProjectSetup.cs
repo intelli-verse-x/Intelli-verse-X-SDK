@@ -96,7 +96,7 @@ namespace IntelliVerseX.Editor
             }
             else
             {
-                Debug.LogWarning($"[IVX] Project validation: {passed} passed, {failed} failed, {warnings} warnings. Run IntelliVerseX > Project Setup for details.");
+                Debug.LogWarning($"[IVX] Project validation: {passed} passed, {failed} failed, {warnings} warnings. Open Advanced Setup → Project.");
             }
         }
         
@@ -694,7 +694,7 @@ namespace IntelliVerseX.Editor
                     }
                     else if (setupVersion != SDK_VERSION)
                     {
-                        Debug.Log($"[IVX] SDK updated to {SDK_VERSION}. Run IntelliVerseX > SDK Setup Wizard to apply new settings.");
+                        Debug.Log($"[IVX] SDK updated to {SDK_VERSION}. Open IntelliVerseX > Control Center (Advanced Setup for modules).");
                     }
                 };
             }
