@@ -36,7 +36,7 @@ const server = http.createServer(async (req, res) => {
   }
   res.writeHead(404).end();
 });
-server.listen(port, '0.0.0.0', () => {
+server.listen(port, () => {
   if (!process.env.PUBLIC_ORIGIN) origin = new URL(`http://localhost:${server.address().port}`);
   const manifest = {schemaVersion:1, appId:'two-screen-demo', name:'Move beyond mobile',
     kioskUrl:`${origin.origin}/display?room=${room}`, controllerUrl:`${origin.origin}/controller?room=${room}`, sessionSeconds:180};
