@@ -1,4 +1,5 @@
-// Copyright (c) 2026 Intelliverse. MIT License.
+// Copyright (c) 2026 Intelli-verse-X
+// MIT License — see LICENSE in the project root.
 
 /** Places where a host application can expose the same app. These are adapter labels, not bundled integrations. */
 export type IVXAppChannel = 'mobile' | 'web' | 'kiosk' | 'whatsapp' | 'chat' | 'voice';

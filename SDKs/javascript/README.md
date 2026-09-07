@@ -14,7 +14,7 @@ npm run example:phygital
 
 The example is local-only and makes no network calls. See the [complete Phygital guide](../../docs/guides/phygital-apps.md) for capabilities, backend responsibilities, and contribution opportunities. Source availability does not imply a new npm release.
 
-## Existing features (v5.8.0)
+## Core features (retained in v5.9.0)
 
 ### AI Voice & Host (`IVXAIClient`)
 
@@ -73,7 +73,7 @@ const offers = await hiro.getOfferwallState();
 await hiro.startFriendBattle(friendId, 'quiz_duel');
 ```
 
-**Also in v5.8.0:**
+**Additional core features:**
 
 - Discord Social SDK integration (Rich Presence, friends, lobbies, voice, invites, DMs, moderation)
 - Satori Analytics (events, feature flags, A/B experiments, live events)

@@ -1,4 +1,6 @@
 /// <reference types="webxr" preserve="true" />
+// TypeScript 5.5+ requires preserve for this reference to reach consumer declarations.
+// https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-5.html#simplified-reference-directive-declaration-emit
 // Copyright (c) 2026 Intelli-verse-X
 // MIT License — see LICENSE in the project root.
 
