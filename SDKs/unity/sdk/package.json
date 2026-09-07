@@ -2,12 +2,12 @@
   "name": "com.intelliversex.sdk",
   "version": "5.9.0",
   "displayName": "IntelliVerseX SDK",
-  "description": "Complete game SDK: Bootstrap (one-drop init), 33 Hiro live-ops systems, 7 AI/LLM subsystems (NPC dialog, assistant, moderation, content gen, profiling, voice services, personas), 11 Discord Social subsystems, multiplayer, analytics, 16 demo UIs. 10-platform support. Battle-tested in production.",
+  "description": "IntelliVerseX game SDK: IVXBootstrap + Control Center (paste Game ID), Nakama backend, wallet, leaderboards, ads/IAP, social, optional Hiro/AI/Discord modules.",
   "unity": "6000.3",
   "unityRelease": "6f1",
-  "documentationUrl": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK#readme",
-  "changelogUrl": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/blob/main/Assets/Intelli-verse-X-SDK/CHANGELOG.md",
-  "licensesUrl": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/blob/main/Assets/Intelli-verse-X-SDK/LICENSE",
+  "documentationUrl": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/blob/main/SDKs/unity/sdk/README.md",
+  "changelogUrl": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/blob/main/SDKs/unity/sdk/CHANGELOG.md",
+  "licensesUrl": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/blob/main/SDKs/unity/sdk/LICENSE",
   "hideInEditor": false,
   "type": "library",
   "keywords": [
@@ -25,15 +25,10 @@
     "networking",
     "storage",
     "nakama",
-    "photon",
     "multiplayer",
     "backend",
     "ads",
-    "appodeal",
     "levelplay",
-    "ironsource",
-    "admob",
-    "dotween",
     "leaderboard",
     "social",
     "friends",
@@ -41,8 +36,6 @@
     "webgl",
     "mobile",
     "crossplatform",
-    "emoji",
-    "textmeshpro",
     "ai",
     "llm",
     "nlp",
@@ -55,7 +48,9 @@
     "matchmaking",
     "local-multiplayer",
     "pvp",
-    "coop"
+    "coop",
+    "bootstrap",
+    "wallet"
   ],
   "author": {
     "name": "IntelliVerse-X",
@@ -69,7 +64,7 @@
   "samples": [
     {
       "displayName": "Getting Started",
-      "description": "Basic SDK setup and initialization example with demo scene",
+      "description": "Scripts-only starter hooks. Prefer Control Center + Bootstrap; import Test Scenes for full demos.",
       "path": "Samples~/GettingStarted"
     },
     {
@@ -114,13 +109,13 @@
   },
   "license": "MIT",
   "_ivx_externalDependencies": {
-    "_comment": "These dependencies must be installed separately. Use Window > IntelliVerseX > Dependency Manager or run the Project Setup Wizard.",
+    "_comment": "Optional/required extras for the *sandbox or consumer project*, not UPM auto-deps. Package ships only TMP + Newtonsoft. Photon/Appodeal stay out of com.intelliversex.sdk. Default ads path: LevelPlay (optional). Applixir is opt-in WebGL only.",
     "external-dependency-manager": {
       "version": "1.2.186",
-      "required": true,
+      "required": false,
       "installMethod": "tarball",
       "localPath": "com.google.external-dependency-manager-1.2.186.tgz",
-      "description": "Required for Android/iOS dependency resolution. Must be installed before Appodeal."
+      "description": "Needed when using Appodeal/Android native deps \u2014 not required for Bootstrap-only installs."
     },
     "appodeal": {
       "version": "3.12.0",
@@ -129,7 +124,7 @@
       "installMethod": "gitUrl",
       "packageId": "com.appodeal.mediation",
       "defineSymbol": "APPODEAL",
-      "description": "Ad mediation platform with 70+ ad networks. Requires EDM first."
+      "description": "Optional alternate mediation. Prefer LevelPlay for the default ads adapter."
     },
     "nakama-unity": {
       "version": "3.13.0",
@@ -143,7 +138,7 @@
       "url": "https://assetstore.unity.com/packages/tools/network/pun-2-free-119922",
       "required": false,
       "installMethod": "assetStore",
-      "description": "Real-time multiplayer networking (optional)"
+      "description": "Optional sandbox multiplayer only. Never part of the UPM package path."
     },
     "dotween": {
       "version": "1.2.765+",
@@ -174,7 +169,24 @@
       "installMethod": "upm",
       "packageId": "com.unity.services.levelplay",
       "defineSymbol": "IRONSOURCE",
-      "description": "Unity LevelPlay (IronSource) ad mediation for monetization"
+      "description": "Preferred optional ads mediation for mobile. Not auto-installed with the package."
+    },
+    "_package_boundary": {
+      "ships_in_upm": [
+        "SDKs/unity/sdk/**"
+      ],
+      "sandbox_only": [
+        "SDKs/unity/editor/Assets/Photon",
+        "SDKs/unity/editor/Assets/AppleAuth",
+        "SDKs/unity/editor/Assets/Appodeal",
+        "SDKs/unity/editor/Assets/LevelPlay",
+        "SDKs/unity/editor/Assets/Nakama",
+        "tools/boilerplate"
+      ],
+      "not_in_package": [
+        "TMP Examples & Extras (removed)",
+        "MCP/2D/Visual Scripting (not in package deps)"
+      ]
     }
   }
 }

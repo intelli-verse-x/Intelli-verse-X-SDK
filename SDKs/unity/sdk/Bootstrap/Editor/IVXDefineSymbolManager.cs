@@ -207,7 +207,7 @@ namespace IntelliVerseX.Bootstrap.Editor
         /// <summary>
         /// Forces a refresh of all define symbols.
         /// </summary>
-        [MenuItem("IntelliVerseX/SDK Tools/Reapply Define Symbols", false, 200)]
+        [MenuItem("IntelliVerseX/Maintainers/Reapply Define Symbols", false, 560)]
         public static void ForceReapplyDefines()
         {
             EditorPrefs.DeleteKey(EDITORPREFS_SYMBOLS_HASH_KEY);
@@ -218,7 +218,7 @@ namespace IntelliVerseX.Bootstrap.Editor
         /// <summary>
         /// Shows current define symbol status.
         /// </summary>
-        [MenuItem("IntelliVerseX/SDK Tools/Show Define Symbol Status", false, 201)]
+        [MenuItem("IntelliVerseX/Maintainers/Show Define Symbol Status", false, 561)]
         public static void ShowDefineStatus()
         {
             var expected = GetExpectedDefines();

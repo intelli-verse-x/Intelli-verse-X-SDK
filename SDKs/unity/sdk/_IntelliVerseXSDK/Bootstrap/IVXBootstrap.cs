@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using IntelliVerseX.Core;
 using IntelliVerseX.Identity;
 using UnityEngine;
 
@@ -54,6 +55,18 @@ namespace IntelliVerseX.Bootstrap
         public bool IsInitializing => _isInitializing;
         /// <summary>The bootstrap configuration.</summary>
         public IVXBootstrapConfig Config => _config;
+
+        /// <summary>Assign config before <see cref="InitializeAsync"/> (example bootstraps / tests).</summary>
+        public void ApplyConfig(IVXBootstrapConfig config)
+        {
+            if (config == null)
+            {
+                Debug.LogError("[IVXBootstrap] ApplyConfig called with null.");
+                return;
+            }
+            _config = config;
+        }
+
         /// <summary>The authenticated user ID (after init).</summary>
         public string UserId => _userId;
         /// <summary>The authenticated user name (after init).</summary>
@@ -138,6 +151,8 @@ namespace IntelliVerseX.Bootstrap
             }
 
             _config.Validate();
+
+            IVXConfigBroadcast.NotifyBootstrapConfig(_config);
 
             if (!string.IsNullOrWhiteSpace(_config.GameId))
             {

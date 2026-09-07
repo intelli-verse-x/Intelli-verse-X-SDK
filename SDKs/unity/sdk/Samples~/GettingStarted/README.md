@@ -1,81 +1,27 @@
 # Getting Started Sample
 
-This sample demonstrates the basic setup and usage of the IntelliVerseX SDK.
+Honest status for SDK **5.9.0**: this sample currently ships **scripts only**.
 
-## Contents
+## What you get
 
-- **Scripts/**
-  - `IVXGettingStartedDemo.cs` - Main demo script showing SDK initialization
-  - `IVXGettingStartedUI.cs` - Simple UI to display SDK status
-  
-- **Scenes/**
-  - `GettingStartedScene.unity` - Demo scene with SDK setup
-  
-- **Prefabs/**
-  - `IVXDemoManager.prefab` - Pre-configured SDK manager
+- `Scripts/IVXGettingStartedDemo.cs` — demo glue (legacy identity helpers may appear; prefer Bootstrap)
+- `Scripts/IVXGettingStartedUI.cs` — simple status UI hooks
 
-## Setup
+There is **no** `Scenes/GettingStartedScene.unity` or `Prefabs/IVXDemoManager.prefab` in this folder yet.
 
-1. Import this sample via Package Manager
-2. Open `Scenes/GettingStartedScene.unity`
-3. Press Play to see the SDK initialize
+## Recommended first-run (everyone)
 
-## What This Sample Demonstrates
+1. Install `com.intelliversex.sdk`
+2. Open **IntelliVerseX → Control Center**
+3. Paste **Game ID** → **Add bootstrap to this scene** → Play
+4. For richer demos, import the **Test Scenes** sample from Package Manager
 
-1. **SDK Initialization**: How to initialize the SDK in your game
-2. **Device Identity**: Automatic device-based user identification
-3. **Logging**: Using the IVXLogger for debug output
-4. **Backend Connection**: Optional backend connectivity (requires Nakama)
-5. **Configuration**: Setting up SDK configuration
+## Optional: use these scripts
 
-## Code Overview
-
-### Basic Initialization
-
-```csharp
-using IntelliVerseX.Core;
-using IntelliVerseX.Identity;
-
-public class MyGameManager : MonoBehaviour
-{
-    void Start()
-    {
-        // Initialize device identity
-        IntelliVerseXUserIdentity.InitializeDevice();
-        
-        IVXLogger.Log("SDK initialized!");
-    }
-}
-```
-
-### With Backend Connection
-
-```csharp
-using IntelliVerseX.Backend;
-
-async void Start()
-{
-    // Initialize and connect
-    IntelliVerseXUserIdentity.InitializeDevice();
-    
-    var backend = IVXBackendService.Instance;
-    if (backend != null)
-    {
-        bool connected = await backend.InitializeAsync();
-        IVXLogger.Log($"Backend connected: {connected}");
-    }
-}
-```
+Attach `IVXGettingStartedDemo` / `IVXGettingStartedUI` to a scene that already has `IVXBootstrap` + `IVXBootstrapConfig`. Do not treat device-only init as the canonical path.
 
 ## Requirements
 
-- IntelliVerseX SDK installed
-- Newtonsoft.Json package
-- (Optional) Nakama Unity SDK for backend features
-
-## Next Steps
-
-After completing this sample, try:
-- **Quiz Demo**: Full quiz game implementation
-- **Localization**: Multi-language support
-- **IAP Integration**: In-app purchases
+- Unity **6000.3** (see package `unity` field)
+- Newtonsoft.Json (UPM dependency)
+- Nakama Unity package for backend features

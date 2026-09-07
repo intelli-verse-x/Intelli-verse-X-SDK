@@ -162,7 +162,7 @@ namespace IntelliVerseX.Editor
                     Debug.Log("[IVX SDK] Skipped demo asset installation. You can install them later via Window > IntelliVerseX > SDK Setup Wizard.");
                     break;
                 case 2: // Open Wizard
-                    IVXSDKSetupWizard.ShowWindow();
+                    IVXAdvancedSetup.ShowWindow();
                     break;
             }
         }
@@ -637,7 +637,7 @@ namespace IntelliVerseX.Editor
             switch (choice)
             {
                 case 0:
-                    IVXSDKSetupWizard.ShowWindow();
+                    IVXAdvancedSetup.ShowWindow();
                     break;
                 case 2:
                     OpenDemoScenesFolder();

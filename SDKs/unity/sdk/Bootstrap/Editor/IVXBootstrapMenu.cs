@@ -15,30 +15,30 @@ namespace IntelliVerseX.Bootstrap.Editor
     /// </summary>
     public static class IVXBootstrapMenu
     {
-        private const string MENU_ROOT = "IntelliVerseX/";
+        private const string MENU_ROOT = "IntelliVerseX/Maintainers/";
         private const string DOCS_URL = "https://intelliversex.github.io/intelliversex-unity-sdk/";
         
         #region Documentation Menu
         
-        [MenuItem(MENU_ROOT + "Documentation/Open Online Docs", false, 0)]
+        [MenuItem(MENU_ROOT + "Documentation/Open Online Docs", false, 510)]
         private static void OpenOnlineDocs()
         {
             Application.OpenURL(DOCS_URL);
         }
         
-        [MenuItem(MENU_ROOT + "Documentation/Getting Started", false, 1)]
+        [MenuItem(MENU_ROOT + "Documentation/Getting Started", false, 511)]
         private static void OpenGettingStarted()
         {
             Application.OpenURL(DOCS_URL + "getting-started/installation/");
         }
         
-        [MenuItem(MENU_ROOT + "Documentation/API Reference", false, 2)]
+        [MenuItem(MENU_ROOT + "Documentation/API Reference (Bootstrap)", false, 512)]
         private static void OpenAPIReference()
         {
             Application.OpenURL(DOCS_URL + "api-reference/");
         }
         
-        [MenuItem(MENU_ROOT + "Documentation/Dependency Setup Guide", false, 3)]
+        [MenuItem(MENU_ROOT + "Documentation/Dependency Setup Guide", false, 513)]
         private static void OpenDependencyGuide()
         {
             Application.OpenURL(DOCS_URL + "getting-started/requirements/");
@@ -48,7 +48,7 @@ namespace IntelliVerseX.Bootstrap.Editor
         
         #region Dependency Status Menu
         
-        [MenuItem(MENU_ROOT + "SDK Status/Check Dependencies", false, 100)]
+        [MenuItem(MENU_ROOT + "SDK Status/Check Dependencies", false, 570)]
         private static void CheckDependencies()
         {
             var status = new DependencyStatus();
@@ -60,13 +60,13 @@ namespace IntelliVerseX.Bootstrap.Editor
             );
         }
         
-        [MenuItem(MENU_ROOT + "SDK Status/Open Package Manager", false, 101)]
+        [MenuItem(MENU_ROOT + "SDK Status/Open Package Manager", false, 571)]
         private static void OpenPackageManager()
         {
             EditorApplication.ExecuteMenuItem("Window/Package Manager");
         }
         
-        [MenuItem(MENU_ROOT + "SDK Status/Refresh Symbols", false, 102)]
+        [MenuItem(MENU_ROOT + "SDK Status/Refresh Symbols", false, 572)]
         private static void RefreshSymbols()
         {
             IVXDefineSymbolManager.ForceReapplyDefines();
@@ -76,7 +76,7 @@ namespace IntelliVerseX.Bootstrap.Editor
         
         #region Quick Actions Menu
         
-        [MenuItem(MENU_ROOT + "Quick Actions/Create SDK Settings", false, 200)]
+        [MenuItem(MENU_ROOT + "Quick Actions/Create SDK Settings", false, 580)]
         private static void CreateSDKSettings()
         {
             // Find or create settings asset
@@ -95,7 +95,7 @@ namespace IntelliVerseX.Bootstrap.Editor
             }
         }
         
-        [MenuItem(MENU_ROOT + "Quick Actions/Locate SDK Folder", false, 201)]
+        [MenuItem(MENU_ROOT + "Quick Actions/Locate SDK Folder", false, 581)]
         private static void LocateSDKFolder()
         {
             string sdkPath = "Assets/Intelli-verse-X-SDK";
@@ -116,7 +116,7 @@ namespace IntelliVerseX.Bootstrap.Editor
         
         #region About Menu
         
-        [MenuItem(MENU_ROOT + "About IntelliVerseX SDK", false, 1000)]
+        [MenuItem(MENU_ROOT + "About IntelliVerseX SDK", false, 590)]
         private static void ShowAbout()
         {
             IVXAboutWindow.ShowWindow();
@@ -304,7 +304,7 @@ namespace IntelliVerseX.Bootstrap.Editor
                 "A comprehensive Unity SDK for building games with backend services, " +
                 "authentication, analytics, monetization, and multiplayer networking.\n\n" +
                 "Install optional dependencies (Nakama, Photon, DOTween) to unlock " +
-                "additional features. Use IntelliVerseX > SDK Status to check what's available.",
+                "additional features. Use Advanced Setup or Maintainers → SDK Status to check what's available.",
                 MessageType.Info
             );
             

@@ -3,6 +3,7 @@
     "rootNamespace": "IntelliVerseX.V2",
     "references": [
         "IntelliVerseX.Core",
+        "IntelliVerseX.Bootstrap",
         "IntelliVerseX.Backend",
         "IntelliVerseX.Identity",
         "IntelliVerseX.Hiro",

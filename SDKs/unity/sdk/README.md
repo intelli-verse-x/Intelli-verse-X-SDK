@@ -2,7 +2,7 @@
 
 > **Complete modular game development SDK for Unity**
 
-[![Unity](https://img.shields.io/badge/Unity-2023.3%2B-black.svg)](https://unity.com/)
+[![Unity](https://img.shields.io/badge/Unity-6000.3-black.svg)](https://unity.com/)
 [![Unity 6](https://img.shields.io/badge/Unity%206-Supported-blue.svg)](https://unity.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/Version-5.9.0-orange.svg)](CHANGELOG.md)
@@ -71,64 +71,41 @@ Add to your `Packages/manifest.json`:
 
 ## 🚀 Quick Start
 
-### 1. Run Project Setup
+**Canonical path:** Control Center → Bootstrap Config → Play.
 
-After installation:
-1. Go to **IntelliVerseX > Project Setup & Validation**
-2. Click **Apply All Required Settings**
+### 1. Open Control Center
 
-### 2. Initialize SDK
+After install: **IntelliVerseX → Control Center**
+
+1. **Connect** — paste your Game ID (creates `IVXBootstrapConfig` if needed)
+2. **Play** — **Add bootstrap to this scene**
+3. Press Play in the Editor
+
+Optional modules / deps: **IntelliVerseX → Advanced Setup** (not first-run).
+
+### 2. Code init (optional)
 
 ```csharp
 using UnityEngine;
-using IntelliVerseX.Core;
-using IntelliVerseX.Identity;
+using IntelliVerseX.Bootstrap;
 
 public class GameInitializer : MonoBehaviour
 {
-    void Start()
+    [SerializeField] IVXBootstrap bootstrap;
+
+    async void Start()
     {
-        // Initialize device identity
-        IntelliVerseXUserIdentity.InitializeDevice();
-        
-        IVXLogger.Log("IntelliVerseX SDK Ready!");
+        // Prefer AutoInitialize on IVXBootstrap in the scene.
+        await bootstrap.InitializeAsync();
     }
 }
 ```
 
-### 3. (Optional) Connect to Backend
+Do **not** use obsolete `IntelliVerseXManager` / `IntelliVerseXConfig` / device-only init as the public story.
 
-```csharp
-using IntelliVerseX.Backend;
+### 3. Samples
 
-async void Start()
-{
-    IntelliVerseXUserIdentity.InitializeDevice();
-    
-    bool connected = await IVXBackendService.Instance.InitializeAsync();
-    Debug.Log($"Backend: {(connected ? "Connected" : "Offline")}");
-}
-```
-
-### 4. (Optional) Enable Emoji Support
-
-```csharp
-using IntelliVerseX.Core;
-using TMPro;
-
-public class EmojiTextSample : MonoBehaviour
-{
-    public TMP_Text uiLabel;
-    public TMP_SpriteAsset emojiSpriteAsset;
-
-    void Start()
-    {
-        uiLabel.SetTextWithEmojiSprites("Welcome 😀 ❤️ 🚀", emojiSpriteAsset);
-    }
-}
-```
-
-Use `IntelliVerseX > Emoji > Setup & Validate` to configure emoji atlas texture settings for production platforms.
+Import **Test Scenes** for Auth, Wallet, Leaderboard, Ads. Getting Started is scripts-only today — use Control Center for real setup.
 
 ---
 
@@ -138,10 +115,9 @@ Use `IntelliVerseX > Emoji > Setup & Validate` to configure emoji atlas texture 
 
 | Version | Status |
 |---------|--------|
-| **Unity 6000.x** | ✅ Fully Supported |
-| **Unity 2023.3 LTS** | ✅ Fully Supported |
-| Unity 2022.x | ⚠️ May work, untested |
-| Unity 2021.x | ❌ Not Supported |
+| **Unity 6000.3** (package pin) | ✅ Supported |
+| Unity 6000.x | ✅ Expected to work |
+| Unity 2023.3 / older | ❌ Not the package target |
 
 ### Platforms
 

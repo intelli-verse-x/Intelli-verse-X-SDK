@@ -4,104 +4,64 @@ using UnityEngine;
 namespace IntelliVerseX.Editor
 {
     /// <summary>
-    /// Provides menu items for accessing IntelliVerseX SDK documentation.
+    /// Maintainer documentation shortcuts (revamp P3 — not first-run).
     /// </summary>
     public static class IVXDocumentationMenu
     {
-        #region Constants
-        
-        private const string DOCS_URL = "https://intelli-verse-x.github.io/Intelli-verse-X-SDK/";
-        private const string QUICKSTART_URL = DOCS_URL + "getting-started/quickstart/";
-        private const string API_REFERENCE_URL = DOCS_URL + "api/core/";
-        private const string TROUBLESHOOTING_URL = DOCS_URL + "troubleshooting/faq/";
-        private const string CHANGELOG_URL = DOCS_URL + "changelog/";
-        private const string GITHUB_URL = "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK";
-        private const string ISSUES_URL = GITHUB_URL + "/issues";
-        
-        #endregion
+        private const string DocsUrl = "https://intelli-verse-x.github.io/Intelli-verse-X-SDK/";
+        private const string QuickstartUrl = DocsUrl + "getting-started/quickstart/";
+        private const string ApiReferenceUrl = DocsUrl + "api/core/";
+        private const string TroubleshootingUrl = DocsUrl + "troubleshooting/faq/";
+        private const string ChangelogUrl = DocsUrl + "changelog/";
+        private const string GithubUrl = "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK";
+        private const string IssuesUrl = GithubUrl + "/issues";
 
-        #region Menu Items
-        
-        /// <summary>
-        /// Opens the main documentation website.
-        /// </summary>
-        [MenuItem("IntelliVerseX/📖 Open Documentation", false, 0)]
+        [MenuItem("IntelliVerseX/Maintainers/Documentation/Open Site", false, 520)]
         public static void OpenDocumentation()
         {
-            Application.OpenURL(DOCS_URL);
-            Debug.Log("[IVX] Opened documentation: " + DOCS_URL);
+            Application.OpenURL(DocsUrl);
         }
-        
-        /// <summary>
-        /// Opens the Quick Start guide.
-        /// </summary>
-        [MenuItem("IntelliVerseX/Documentation/Quick Start Guide", false, 100)]
+
+        [MenuItem("IntelliVerseX/Maintainers/Documentation/Quick Start Guide", false, 521)]
         public static void OpenQuickStart()
         {
-            Application.OpenURL(QUICKSTART_URL);
+            Application.OpenURL(QuickstartUrl);
         }
-        
-        /// <summary>
-        /// Opens the API Reference documentation.
-        /// </summary>
-        [MenuItem("IntelliVerseX/Documentation/API Reference", false, 101)]
+
+        [MenuItem("IntelliVerseX/Maintainers/Documentation/API Reference", false, 522)]
         public static void OpenAPIReference()
         {
-            Application.OpenURL(API_REFERENCE_URL);
+            Application.OpenURL(ApiReferenceUrl);
         }
-        
-        /// <summary>
-        /// Opens the Troubleshooting guide.
-        /// </summary>
-        [MenuItem("IntelliVerseX/Documentation/Troubleshooting", false, 102)]
+
+        [MenuItem("IntelliVerseX/Maintainers/Documentation/Troubleshooting", false, 523)]
         public static void OpenTroubleshooting()
         {
-            Application.OpenURL(TROUBLESHOOTING_URL);
+            Application.OpenURL(TroubleshootingUrl);
         }
-        
-        /// <summary>
-        /// Opens the Changelog.
-        /// </summary>
-        [MenuItem("IntelliVerseX/Documentation/Changelog", false, 103)]
+
+        [MenuItem("IntelliVerseX/Maintainers/Documentation/Changelog", false, 524)]
         public static void OpenChangelog()
         {
-            Application.OpenURL(CHANGELOG_URL);
+            Application.OpenURL(ChangelogUrl);
         }
-        
-        [MenuItem("IntelliVerseX/Documentation/", false, 199)]
-        public static void Separator() { }
-        
-        /// <summary>
-        /// Opens the GitHub repository.
-        /// </summary>
-        [MenuItem("IntelliVerseX/GitHub Repository", false, 200)]
+
+        [MenuItem("IntelliVerseX/Maintainers/Documentation/GitHub Repository", false, 530)]
         public static void OpenGitHub()
         {
-            Application.OpenURL(GITHUB_URL);
+            Application.OpenURL(GithubUrl);
         }
-        
-        /// <summary>
-        /// Opens the GitHub Issues page for reporting bugs.
-        /// </summary>
-        [MenuItem("IntelliVerseX/Report Issue", false, 201)]
+
+        [MenuItem("IntelliVerseX/Maintainers/Documentation/Report Issue", false, 531)]
         public static void ReportIssue()
         {
-            Application.OpenURL(ISSUES_URL);
+            Application.OpenURL(IssuesUrl);
         }
-        
-        #endregion
-        
-        #region Help Menu Integration
-        
-        /// <summary>
-        /// Also adds documentation to Help menu for discoverability.
-        /// </summary>
+
         [MenuItem("Help/IntelliVerseX Documentation", false, 1000)]
         public static void OpenDocumentationFromHelp()
         {
             OpenDocumentation();
         }
-        
-        #endregion
     }
 }

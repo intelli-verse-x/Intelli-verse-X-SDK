@@ -1,14 +1,5 @@
 {
   "dependencies": {
-    "com.appodeal.mediation": {
-      "version": "https://github.com/appodeal/appodeal-unity-plugin-upm.git#v3.12.0",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.google.external-dependency-manager": "1.2.175"
-      },
-      "hash": "68c0c1729f50de1fa66b9be62843c75d6d3a8f00"
-    },
     "com.boxqkrtm.ide.cursor": {
       "version": "https://github.com/boxqkrtm/com.unity.ide.cursor.git",
       "depth": 0,
@@ -23,6 +14,15 @@
       "depth": 0,
       "source": "local-tarball",
       "dependencies": {}
+    },
+    "com.intelliversex.sdk": {
+      "version": "file:../../sdk",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {
+        "com.unity.textmeshpro": "3.0.6",
+        "com.unity.nuget.newtonsoft-json": "3.2.2"
+      }
     },
     "com.unity.asset-store-tools": {
       "version": "file:com.unity.asset-store-tools",
@@ -214,6 +214,14 @@
         "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
+    },
+    "com.unity.textmeshpro": {
+      "version": "5.0.0",
+      "depth": 1,
+      "source": "builtin",
+      "dependencies": {
+        "com.unity.ugui": "2.0.0"
+      }
     },
     "com.unity.ugui": {
       "version": "2.0.0",

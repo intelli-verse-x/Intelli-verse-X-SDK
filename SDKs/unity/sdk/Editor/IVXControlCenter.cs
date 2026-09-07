@@ -10,8 +10,9 @@ using UnityEngine.SceneManagement;
 namespace IntelliVerseX.Editor
 {
     /// <summary>
-    /// Canonical first-run editor window: Check, Connect, Play.
-    /// Paste Game ID on the Connect step. Advanced module setup stays on <see cref="IVXSDKSetupWizard"/>.
+    /// Canonical first-run editor window for the IntelliVerseX SDK (Check → Connect → Play).
+    /// Paste Game ID onto <see cref="IVXBootstrapConfig"/>; do not use legacy setup wizards as first-run.
+    /// Advanced module/dependency work stays on <see cref="IVXAdvancedSetup"/>.
     /// </summary>
     public sealed class IVXControlCenter : EditorWindow
     {
@@ -99,7 +100,7 @@ namespace IntelliVerseX.Editor
 
             if (GUILayout.Button("Install dependencies", GUILayout.Height(28)))
             {
-                IVXSDKSetupWizard.ShowWindow();
+                IVXAdvancedSetup.ShowWindow();
             }
             EditorGUILayout.EndHorizontal();
         }
@@ -184,7 +185,7 @@ namespace IntelliVerseX.Editor
 
             if (GUILayout.Button("Advanced setup", GUILayout.Height(28)))
             {
-                IVXSDKSetupWizard.ShowWindow();
+                IVXAdvancedSetup.ShowWindow();
             }
             EditorGUILayout.EndHorizontal();
 

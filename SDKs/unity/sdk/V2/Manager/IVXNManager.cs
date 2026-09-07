@@ -1,4 +1,5 @@
 using IntelliVerseX.Backend;
+using IntelliVerseX.Bootstrap;
 using IntelliVerseX.Core;
 using IntelliVerseX.Storage;
 using Nakama;
@@ -17,8 +18,9 @@ namespace IntelliVerseX.Backend.Nakama
 {
     /// <summary>
     /// Canonical Nakama client for the IntelliVerseX SDK.
-    /// Reads host and Game ID from the bootstrap config (IVXBootstrapConfig).
+    /// Reads host and Game ID from <see cref="IVXBootstrapConfig"/> only (revamp P2).
     /// Wallet and leaderboard RPCs require <see cref="IsIdentitySynced"/> after <c>create_or_sync_user</c>.
+    /// Network RPCs go through <see cref="IVXRequestBus"/>.
     /// </summary>
     public sealed class IVXNManager : MonoBehaviour, IIVXNakamaRealtimeProvider
     {
@@ -33,8 +35,9 @@ namespace IntelliVerseX.Backend.Nakama
             Instance = null;
         }
 
-        [Header("SDK Configuration")]
-        [SerializeField] private IntelliVerseXConfig sdkConfig;
+        [Header("Bootstrap Configuration (canonical)")]
+        [Tooltip("Paste Game ID / host via Assets → Create → IntelliVerseX → Bootstrap Config (or Control Center).")]
+        [SerializeField] private IVXBootstrapConfig bootstrapConfig;
 
         [Header("Behaviour")]
         [SerializeField] private bool initializeOnAwake = false;
@@ -84,6 +87,16 @@ namespace IntelliVerseX.Backend.Nakama
         public string NakamaUsername => _session?.Username;
         public long NakamaExpireTimeUnix => _session?.ExpireTime ?? 0;
 
+        /// <summary>
+        /// Throws if identity sync has not completed. Used by wallet (and tests) as the P2 identity gate.
+        /// </summary>
+        public void EnsureIdentitySyncedOrThrow()
+        {
+            if (!_identitySyncSucceeded)
+                throw new InvalidOperationException(
+                    "Identity sync required before wallet operations. Ensure create_or_sync_user succeeded.");
+        }
+
         public event Action<bool> OnInitialized;
         public event Action<string> OnMetadataSyncFailed;
         public event Action OnMetadataSyncSuccess;
@@ -131,6 +144,8 @@ namespace IntelliVerseX.Backend.Nakama
             }
             DontDestroyOnLoad(gameObject);
 
+            IVXConfigBroadcast.BootstrapConfigAvailable += HandleBootstrapConfigBroadcast;
+
             try
             {
                 LoadConfig();
@@ -158,6 +173,13 @@ namespace IntelliVerseX.Backend.Nakama
             }
         }
 
+        private void HandleBootstrapConfigBroadcast(object configObj)
+        {
+            var cfg = configObj as IVXBootstrapConfig;
+            if (cfg != null)
+                ApplyBootstrapConfig(cfg);
+        }
+
         private void OnApplicationQuit()
         {
             _isQuitting = true;
@@ -165,6 +187,8 @@ namespace IntelliVerseX.Backend.Nakama
 
         private void OnDestroy()
         {
+            IVXConfigBroadcast.BootstrapConfigAvailable -= HandleBootstrapConfigBroadcast;
+
             DisconnectRealtimeSocketSync();
 
             IVXNProfileManager.OnProfileLoaded -= HandleProfileLoaded;
@@ -195,44 +219,97 @@ namespace IntelliVerseX.Backend.Nakama
 
         #region Config & Client
 
-        private void LoadConfig()
+        /// <summary>
+        /// Applies the canonical bootstrap config (Control Center / IVXBootstrap) and rebuilds the client if needed.
+        /// </summary>
+        public void ApplyBootstrapConfig(IVXBootstrapConfig config)
         {
-            if (sdkConfig == null)
+            if (config == null)
             {
-                const string defaultPath = "IntelliVerseX/GameConfig";
-                sdkConfig = UnityEngine.Resources.Load<IntelliVerseXConfig>(defaultPath);
-
-                if (sdkConfig == null)
-                {
-                    Log($"IntelliVerseXConfig not found at Resources/{defaultPath}.", isError: true);
-                    return;
-                }
+                Log("ApplyBootstrapConfig called with null config.", isError: true);
+                return;
             }
 
-            _scheme = sdkConfig.nakamaScheme;
-            _host = sdkConfig.nakamaHost;
-            _port = sdkConfig.nakamaPort;
-            _serverKey = sdkConfig.nakamaServerKey;
-            _gameId = sdkConfig.gameId;
-
-            // Validate configuration
-            if (string.IsNullOrWhiteSpace(_gameId) || !IsValidGuid(_gameId))
-            {
-                Log($"Invalid gameId in config: {_gameId}. Must be valid UUID.", isError: true);
-            }
-
-            Log($"Config loaded: gameId={_gameId}, endpoint={_scheme}://{_host}:{_port}");
+            bootstrapConfig = config;
+            LoadConfig();
+            // Force client recreate when host/key changes
+            _client = null;
+            CreateClientIfNeeded();
         }
 
+        private void LoadConfig()
+        {
+            if (bootstrapConfig == null)
+            {
+                bootstrapConfig = Resources.Load<IVXBootstrapConfig>("IntelliVerseX/IVXBootstrapConfig");
+            }
 
-private void CreateClientIfNeeded()
+            if (bootstrapConfig != null)
+            {
+                _scheme = bootstrapConfig.UseSSL ? "https" : "http";
+                _host = bootstrapConfig.ServerHost;
+                _port = bootstrapConfig.ServerPort;
+                _serverKey = bootstrapConfig.ServerKey;
+                _gameId = bootstrapConfig.GameId;
+
+                if (!bootstrapConfig.Validate())
+                    Log("IVXBootstrapConfig.Validate() failed (empty Game ID or bad port).", isError: true);
+                else if (string.IsNullOrWhiteSpace(_gameId) || !IsValidGuid(_gameId))
+                    Log($"Invalid gameId in bootstrap config: {_gameId}. Must be valid UUID.", isError: true);
+
+                Log($"Config loaded from IVXBootstrapConfig: gameId={_gameId}, endpoint={_scheme}://{_host}:{_port}");
+                return;
+            }
+
+            Log("No IVXBootstrapConfig found. Create one via Control Center or Resources/IntelliVerseX/IVXBootstrapConfig.", isError: true);
+        }
+
+        /// <summary>
+        /// Runs a Nakama RPC through <see cref="IVXRequestBus"/> (timeout, jitter retry, retry_after_ms).
+        /// </summary>
+        private async Task<string> RpcViaBusAsync(
+            string rpcId,
+            string jsonPayload,
+            CancellationToken ct = default,
+            int timeoutMs = IVXRequestBus.DefaultRpcTimeoutMs,
+            Func<string, bool> isSuccessPayload = null,
+            Func<string, bool> shouldRetrySoftFailure = null)
+        {
+            if (_client == null || _session == null)
+                throw new Exception("Nakama client or session is null");
+
+            var busResult = await IVXRequestBus.ExecuteAsync(
+                rpcId,
+                async token =>
+                {
+                    var rpc = await _client.RpcAsync(_session, rpcId, jsonPayload, retryConfiguration: null, canceller: token);
+                    return rpc != null ? rpc.Payload : null;
+                },
+                maxAttempts: Mathf.Max(1, maxRetryAttempts),
+                timeoutMs: timeoutMs,
+                baseDelaySeconds: retryBaseDelaySeconds,
+                isSuccessPayload: isSuccessPayload,
+                shouldRetrySoftFailure: shouldRetrySoftFailure,
+                cancellationToken: ct).ConfigureAwait(false);
+
+            if (!busResult.Success)
+            {
+                throw new Exception(string.IsNullOrEmpty(busResult.Error)
+                    ? ("RPC " + rpcId + " failed (" + busResult.ErrorCode + ")")
+                    : busResult.Error);
+            }
+
+            return busResult.Payload;
+        }
+
+        private void CreateClientIfNeeded()
         {
             if (_client != null) return;
 
             if (string.IsNullOrWhiteSpace(_host) || string.IsNullOrWhiteSpace(_scheme) ||
                 _port <= 0 || string.IsNullOrWhiteSpace(_serverKey))
             {
-                Log("Invalid Nakama config. Please check IntelliVerseXConfig.", isError: true);
+                Log("Invalid Nakama config. Assign IVXBootstrapConfig (Control Center).", isError: true);
                 return;
             }
 
@@ -853,87 +930,11 @@ private void CreateClientIfNeeded()
         }
 
         /// <summary>
-        /// Call create_or_sync_user RPC with retry logic
+        /// Call create_or_sync_user RPC via <see cref="IVXRequestBus"/> (timeout / jitter / retry_after_ms).
         /// </summary>
         private async Task<CreateOrSyncUserResponse> CallCreateOrSyncUserWithRetryAsync(
-    global::UserSessionManager.UserSession userSession,
-    string deviceId)
-        {
-            CreateOrSyncUserResponse lastResult = null;
-
-            for (int attempt = 1; attempt <= maxRetryAttempts; attempt++)
-            {
-                try
-                {
-                    LogVerbose($"[CreateOrSyncUser] Attempt {attempt}/{maxRetryAttempts} starting...");
-
-                    var result = await CallCreateOrSyncUserRPCAsync(userSession, deviceId);
-                    lastResult = result;
-
-                    LogVerbose($"[CreateOrSyncUser] Attempt {attempt} result: " +
-                               $"success={result.success}, errorCode={result.errorCode}, error='{result.error}'");
-
-                    if (result.success)
-                    {
-                        Log($"[CreateOrSyncUser] Success on attempt {attempt}.");
-                        return result;
-                    }
-
-                    if (IsNonRetryableError(result.errorCode))
-                    {
-                        Log($"[CreateOrSyncUser] Non-retryable error on attempt {attempt}: " +
-                            $"{result.errorCode} - {result.error}", isWarning: true);
-                        return result;
-                    }
-
-                    Log($"[CreateOrSyncUser] Attempt {attempt}/{maxRetryAttempts} failed with " +
-                        $"errorCode={result.errorCode}, error='{result.error}'", isWarning: true);
-
-                    // backoff
-                    if (attempt < maxRetryAttempts)
-                    {
-                        var delay = retryBaseDelaySeconds * Math.Pow(2, attempt - 1);
-                        LogVerbose($"[CreateOrSyncUser] Retrying in {delay:F1}s...");
-                        await Task.Delay((int)(delay * 1000));
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log($"[CreateOrSyncUser] Attempt {attempt}/{maxRetryAttempts} threw exception: {ex}", isWarning: true);
-
-                    if (attempt >= maxRetryAttempts)
-                    {
-                        return new CreateOrSyncUserResponse
-                        {
-                            success = false,
-                            error = ex.ToString(),
-                            errorCode = "EXCEPTION"
-                        };
-                    }
-
-                    var delay = retryBaseDelaySeconds * Math.Pow(2, attempt - 1);
-                    await Task.Delay((int)(delay * 1000));
-                }
-            }
-
-            // All attempts failed
-            var finalError = lastResult != null
-                ? $"LastErrorCode={lastResult.errorCode}, LastError='{lastResult.error}'"
-                : "No response received";
-
-            Log($"[CreateOrSyncUser] Max retry attempts exceeded. {finalError}", isError: true);
-
-            return new CreateOrSyncUserResponse
-            {
-                success = false,
-                error = "Max retry attempts exceeded. " + finalError,
-                errorCode = "MAX_RETRIES_EXCEEDED"
-            };
-        }
-
-        private async Task<CreateOrSyncUserResponse> CallCreateOrSyncUserRPCAsync(
-    global::UserSessionManager.UserSession userSession,
-    string deviceId)
+            global::UserSessionManager.UserSession userSession,
+            string deviceId)
         {
             if (_client == null || _session == null)
             {
@@ -945,73 +946,77 @@ private void CreateClientIfNeeded()
                 };
             }
 
-            try
+            var request = new CreateOrSyncUserRequest
             {
-                var request = new CreateOrSyncUserRequest
+                username = BuildUsername(userSession),
+                device_id = deviceId,
+                game_id = _gameId,
+                cognito_user_id = userSession.userId,
+                email = userSession.email,
+                first_name = userSession.firstName,
+                last_name = userSession.lastName,
+                role = userSession.role,
+                login_type = userSession.loginType,
+                idp_username = userSession.idpUsername,
+                account_status = userSession.accountStatus,
+                wallet_address = userSession.walletAddress,
+                is_adult = userSession.isAdult.ToString()
+            };
+
+            string json = JsonConvert.SerializeObject(request);
+            LogVerbose($"[CreateOrSyncUser] RPC payload: {json}");
+
+            var busResult = await IVXRequestBus.ExecuteAsync(
+                "create_or_sync_user",
+                async token =>
                 {
-                    username = BuildUsername(userSession),
-                    device_id = deviceId,
-                    game_id = _gameId,
-                    cognito_user_id = userSession.userId,
-                    email = userSession.email,
-                    first_name = userSession.firstName,
-                    last_name = userSession.lastName,
-                    role = userSession.role,
-                    login_type = userSession.loginType,
-                    idp_username = userSession.idpUsername,
-                    account_status = userSession.accountStatus,
-                    wallet_address = userSession.walletAddress,
-                    is_adult = userSession.isAdult.ToString()
-                };
-
-                string json = JsonConvert.SerializeObject(request);
-                LogVerbose($"[CreateOrSyncUser] RPC payload: {json}");
-
-                IApiRpc rpcResult;
-                try
+                    var rpc = await _client.RpcAsync(_session, "create_or_sync_user", json, retryConfiguration: null, canceller: token);
+                    return rpc != null ? rpc.Payload : null;
+                },
+                maxAttempts: Mathf.Max(1, maxRetryAttempts),
+                timeoutMs: IVXRequestBus.DefaultRpcTimeoutMs,
+                baseDelaySeconds: retryBaseDelaySeconds,
+                isSuccessPayload: payload =>
                 {
-                    rpcResult = await _client.RpcAsync(_session, "create_or_sync_user", json);
-                }
-                catch (ApiResponseException apiEx)
+                    var parsed = JsonConvert.DeserializeObject<CreateOrSyncUserResponse>(payload);
+                    return parsed != null && parsed.success;
+                },
+                shouldRetrySoftFailure: payload =>
                 {
-                    // Nakama server responded with a specific HTTP/gRPC error
-                    Log($"[CreateOrSyncUser] ApiResponseException: status={apiEx.StatusCode}, " +
-                        $"grpc={apiEx.GrpcStatusCode}, message={apiEx.Message}", isWarning: true);
+                    var parsed = JsonConvert.DeserializeObject<CreateOrSyncUserResponse>(payload);
+                    if (parsed == null)
+                        return true;
+                    return !IsNonRetryableError(parsed.errorCode);
+                }).ConfigureAwait(false);
 
-                    return new CreateOrSyncUserResponse
-                    {
-                        success = false,
-                        error = apiEx.Message,
-                        errorCode = $"HTTP_{apiEx.StatusCode}_GRPC_{apiEx.GrpcStatusCode}"
-                    };
-                }
-
-                LogVerbose($"[CreateOrSyncUser] RPC response: {rpcResult.Payload}");
-
-                var response = JsonConvert.DeserializeObject<CreateOrSyncUserResponse>(rpcResult.Payload);
-
-                if (response == null)
-                {
-                    return new CreateOrSyncUserResponse
-                    {
-                        success = false,
-                        error = "Failed to deserialize response",
-                        errorCode = "DESERIALIZATION_FAILED"
-                    };
-                }
-
-                return response;
-            }
-            catch (Exception ex)
+            if (!string.IsNullOrEmpty(busResult.Payload))
             {
-                Log($"[CreateOrSyncUser] RPC_EXCEPTION: {ex}", isWarning: true);
-                return new CreateOrSyncUserResponse
+                var response = JsonConvert.DeserializeObject<CreateOrSyncUserResponse>(busResult.Payload);
+                if (response != null)
                 {
-                    success = false,
-                    error = ex.ToString(),
-                    errorCode = "RPC_EXCEPTION"
-                };
+                    if (response.success)
+                        Log($"[CreateOrSyncUser] Success via RequestBus (attempts={busResult.Attempts}).");
+                    else
+                        Log($"[CreateOrSyncUser] Soft fail via RequestBus: {response.errorCode} {response.error}", isWarning: true);
+                    return response;
+                }
             }
+
+            Log($"[CreateOrSyncUser] RequestBus failed: {busResult.ErrorCode} {busResult.Error}", isError: true);
+            return new CreateOrSyncUserResponse
+            {
+                success = false,
+                error = busResult.Error ?? "create_or_sync_user failed",
+                errorCode = busResult.ErrorCode ?? "REQUEST_BUS_FAILED"
+            };
+        }
+
+        private async Task<CreateOrSyncUserResponse> CallCreateOrSyncUserRPCAsync(
+            global::UserSessionManager.UserSession userSession,
+            string deviceId)
+        {
+            // Kept for call-sites / clarity — bus path is CallCreateOrSyncUserWithRetryAsync.
+            return await CallCreateOrSyncUserWithRetryAsync(userSession, deviceId).ConfigureAwait(false);
         }
 
 
@@ -1320,24 +1325,23 @@ private void CreateClientIfNeeded()
 
         private async Task<IVXNWalletManager.WalletSnapshot> RefreshWalletFromServerAsync(CancellationToken ct)
         {
-            if (!_identitySyncSucceeded)
-                throw new Exception("Identity sync required before wallet operations. Ensure create_or_sync_user succeeded.");
+            EnsureIdentitySyncedOrThrow();
 
             bool ok = await EnsureValidSessionAsync();
             if (!ok || _client == null || _session == null)
                 throw new Exception("Nakama session not ready for wallet refresh.");
 
             if (string.IsNullOrWhiteSpace(_gameId))
-                throw new Exception("GameId is not configured in IntelliVerseXConfig.");
+                throw new Exception("GameId is not configured in IVXBootstrapConfig (Control Center).");
 
             var request = new { gameId = _gameId };
             string json = JsonConvert.SerializeObject(request);
             Log($"[Wallet] Calling RPC '{RPC_WALLET_REFRESH}' with payload: {json}");
 
-            var rpc = await _client.RpcAsync(_session, RPC_WALLET_REFRESH, json, retryConfiguration: null, canceller: ct);
-            Log($"[Wallet] RPC '{RPC_WALLET_REFRESH}' responded with: {rpc.Payload}");
+            var payload = await RpcViaBusAsync(RPC_WALLET_REFRESH, json, ct).ConfigureAwait(false);
+            Log($"[Wallet] RPC '{RPC_WALLET_REFRESH}' responded with: {payload}");
 
-            var dto = JsonConvert.DeserializeObject<WalletRefreshResultDto>(rpc.Payload);
+            var dto = JsonConvert.DeserializeObject<WalletRefreshResultDto>(payload);
             if (dto == null)
                 throw new Exception("WalletRefreshResultDto deserialization failed.");
 
@@ -1381,15 +1385,14 @@ private void CreateClientIfNeeded()
         private async Task<IVXNWalletManager.WalletSnapshot> ApplyWalletOperationOnServerAsync(
             IVXNWalletManager.WalletOperation op, CancellationToken ct)
         {
-            if (!_identitySyncSucceeded)
-                throw new Exception("Identity sync required before wallet operations. Ensure create_or_sync_user succeeded.");
+            EnsureIdentitySyncedOrThrow();
 
             bool ok = await EnsureValidSessionAsync();
             if (!ok || _client == null || _session == null)
                 throw new Exception("Nakama session not ready for wallet operation.");
 
             if (string.IsNullOrWhiteSpace(_gameId))
-                throw new Exception("GameId is not configured in IntelliVerseXConfig.");
+                throw new Exception("GameId is not configured in IVXBootstrapConfig (Control Center).");
 
             var snapshotBefore = IVXNWalletManager.Snapshot;
 
@@ -1441,10 +1444,10 @@ private void CreateClientIfNeeded()
             string json = JsonConvert.SerializeObject(request);
             Log($"[Wallet] Calling RPC '{RPC_WALLET_APPLY_DELTA}' with payload: {json}");
 
-            var rpc = await _client.RpcAsync(_session, RPC_WALLET_APPLY_DELTA, json, retryConfiguration: null, canceller: ct);
-            Log($"[Wallet] RPC '{RPC_WALLET_APPLY_DELTA}' responded with: {rpc.Payload}");
+            var payload = await RpcViaBusAsync(RPC_WALLET_APPLY_DELTA, json, ct).ConfigureAwait(false);
+            Log($"[Wallet] RPC '{RPC_WALLET_APPLY_DELTA}' responded with: {payload}");
 
-            var dto = JsonConvert.DeserializeObject<WalletOperationResultDto>(rpc.Payload);
+            var dto = JsonConvert.DeserializeObject<WalletOperationResultDto>(payload);
             if (dto == null)
                 throw new Exception("WalletOperationResultDto deserialization failed.");
 
@@ -2445,20 +2448,20 @@ private void CreateClientIfNeeded()
                 string json = JsonConvert.SerializeObject(payload);
                 LogVerbose($"[Geolocation] RPC 'check_geo_and_update_profile' payload: {json}");
 
-                IApiRpc rpcResult;
+                string rpcPayload;
                 try
                 {
-                    rpcResult = await _client.RpcAsync(_session, "check_geo_and_update_profile", json);
+                    rpcPayload = await RpcViaBusAsync("check_geo_and_update_profile", json).ConfigureAwait(false);
                 }
-                catch (ApiResponseException apiEx)
+                catch (Exception apiEx)
                 {
-                    Log($"[Geolocation] API error: status={apiEx.StatusCode}, message={apiEx.Message}", isWarning: true);
+                    Log($"[Geolocation] RPC bus error: {apiEx.Message}", isWarning: true);
                     return geoData;
                 }
 
-                LogVerbose($"[Geolocation] RPC response: {rpcResult.Payload}");
+                LogVerbose($"[Geolocation] RPC response: {rpcPayload}");
 
-                var response = JsonConvert.DeserializeObject<GeolocationResponse>(rpcResult.Payload);
+                var response = JsonConvert.DeserializeObject<GeolocationResponse>(rpcPayload);
 
                 if (response == null)
                 {
@@ -2633,29 +2636,29 @@ private void CreateClientIfNeeded()
 
                 LogVerbose($"[PlayerMetadata] RPC payload: {json}");
 
-                IApiRpc rpcResult;
+                string rpcPayload;
                 try
                 {
-                    rpcResult = await _client.RpcAsync(_session, "rpc_update_player_metadata", json);
+                    rpcPayload = await RpcViaBusAsync("rpc_update_player_metadata", json).ConfigureAwait(false);
                 }
-                catch (ApiResponseException apiEx)
+                catch (Exception apiEx)
                 {
-                    Log($"[PlayerMetadata] API error: status={apiEx.StatusCode}, grpc={apiEx.GrpcStatusCode}, message={apiEx.Message}", isWarning: true);
+                    Log($"[PlayerMetadata] RPC bus error: {apiEx.Message}", isWarning: true);
 
                     return new PlayerMetadataResponse
                     {
                         success = false,
                         error = apiEx.Message,
-                        error_code = $"HTTP_{apiEx.StatusCode}"
+                        error_code = "REQUEST_BUS_FAILED"
                     };
                 }
 
-                LogVerbose($"[PlayerMetadata] RPC response: {rpcResult.Payload}");
+                LogVerbose($"[PlayerMetadata] RPC response: {rpcPayload}");
 
                 PlayerMetadataResponse response;
                 try
                 {
-                    response = JsonConvert.DeserializeObject<PlayerMetadataResponse>(rpcResult.Payload);
+                    response = JsonConvert.DeserializeObject<PlayerMetadataResponse>(rpcPayload);
                 }
                 catch (Exception desEx)
                 {
