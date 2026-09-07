@@ -57,16 +57,11 @@ jobs:
           
           echo "🔍 Validating package.json..."
           
-          # Strip UTF-8 BOM if present (Windows editors / Unity exports often add it;
-          # Python's default json decoder rejects BOM as invalid JSON).
-          python -c "
-import json, pathlib
-p = pathlib.Path('$PACKAGE_PATH/package.json')
-text = p.read_text(encoding='utf-8-sig')
-json.loads(text)
-p.write_text(text, encoding='utf-8', newline='\n')
-print('Valid JSON')
-"
+          # utf-8-sig tolerates accidental BOM from Windows editors
+          if ! python -c "import json,pathlib; json.loads(pathlib.Path('$PACKAGE_PATH/package.json').read_text(encoding='utf-8-sig'))"; then
+            echo "::error::package.json is not valid JSON"
+            exit 1
+          fi
           
           echo "✅ Valid JSON format"
       
@@ -80,7 +75,7 @@ print('Valid JSON')
           REQUIRED_FIELDS=("name" "version" "displayName" "description" "unity")
           
           for field in "${REQUIRED_FIELDS[@]}"; do
-            VALUE=$(python -c "import json; print(json.load(open('$PACKAGE_PATH/package.json')).get('$field', ''))" 2>/dev/null)
+            VALUE=$(python -c "import json,pathlib; print(json.loads(pathlib.Path('$PACKAGE_PATH/package.json').read_text(encoding='utf-8-sig')).get('$field', ''))" 2>/dev/null)
             if [ -z "$VALUE" ]; then
               echo "::error::Missing required field: $field"
               exit 1
