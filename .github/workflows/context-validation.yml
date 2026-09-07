@@ -8,8 +8,7 @@ on:
     branches: [main, develop]
     paths:
       - '.cursor/**'
-      - 'Assets/_IntelliVerseXSDK/**'
-      - 'Assets/Intelli-verse-X-SDK/**'
+      - 'Packages/com.intelliversex.sdk/**'
       - 'docs/**'
       - 'AGENT.md'
       - 'AGENTS.md'

@@ -21,7 +21,7 @@ on:
         type: boolean
 
 env:
-  PACKAGE_PATH: Assets/Intelli-verse-X-SDK
+  PACKAGE_PATH: Packages/com.intelliversex.sdk
 
 jobs:
   validate-and-release:
@@ -138,7 +138,7 @@ jobs:
           printf '4. Click **Add**\n\n' >> release_notes.md
           printf '## 📋 Requirements\n\n' >> release_notes.md
           printf '- **Unity:** 2023.3 LTS or Unity 6\n' >> release_notes.md
-          printf '- See [INSTALLATION.md](Assets/Intelli-verse-X-SDK/INSTALLATION.md) for full setup guide\n' >> release_notes.md
+          printf '- See [INSTALLATION.md](Packages/com.intelliversex.sdk/INSTALLATION.md) for full setup guide\n' >> release_notes.md
           
           echo "✅ Release notes prepared"
       

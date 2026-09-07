@@ -8,16 +8,16 @@ on:
   push:
     branches: [main, develop]
     paths:
-      - 'Assets/_IntelliVerseXSDK/**'
-      - 'Assets/Intelli-verse-X-SDK/**'
-      - 'Assets/Editor/**'
+      - 'Packages/com.intelliversex.sdk/**'
+      - 'Packages/com.intelliversex.sdk.*/**'
+      - 'SDKs/unity/editor/**'
       - '.github/workflows/unity-tests.yml'
   pull_request:
     branches: [main, develop]
     paths:
-      - 'Assets/_IntelliVerseXSDK/**'
-      - 'Assets/Intelli-verse-X-SDK/**'
-      - 'Assets/Editor/**'
+      - 'Packages/com.intelliversex.sdk/**'
+      - 'Packages/com.intelliversex.sdk.*/**'
+      - 'SDKs/unity/editor/**'
       - '.github/workflows/unity-tests.yml'
   workflow_dispatch:
     inputs:
@@ -27,7 +27,7 @@ on:
         type: string
 
 env:
-  PACKAGE_PATH: Assets/Intelli-verse-X-SDK
+  PACKAGE_PATH: Packages/com.intelliversex.sdk
 
 jobs:
   # Job 1: Validate package structure and check secrets before running tests
@@ -40,7 +40,7 @@ jobs:
     
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       
       - name: Check Unity License
         id: check-license
@@ -68,21 +68,27 @@ jobs:
           fi
           
           # Validate JSON syntax
-          if ! python -m json.tool "$PACKAGE_FILE" > /dev/null 2>&1; then
+          if ! python3 -m json.tool "$PACKAGE_FILE" > /dev/null 2>&1; then
             echo "::error::package.json is not valid JSON"
             echo "valid=false" >> $GITHUB_OUTPUT
             exit 1
           fi
           
           # Check required fields
-          NAME=$(python -c "import json; print(json.load(open('$PACKAGE_FILE')).get('name', ''))")
-          VERSION=$(python -c "import json; print(json.load(open('$PACKAGE_FILE')).get('version', ''))")
-          UNITY=$(python -c "import json; print(json.load(open('$PACKAGE_FILE')).get('unity', ''))")
+          NAME=$(python3 -c "import json; print(json.load(open('$PACKAGE_FILE')).get('name', ''))")
+          VERSION=$(python3 -c "import json; print(json.load(open('$PACKAGE_FILE')).get('version', ''))")
+          UNITY=$(python3 -c "import json; print(json.load(open('$PACKAGE_FILE')).get('unity', ''))")
           
           echo "Package: $NAME v$VERSION (Unity $UNITY+)"
           
           if [ -z "$NAME" ] || [ -z "$VERSION" ] || [ -z "$UNITY" ]; then
             echo "::error::Missing required fields in package.json"
+            echo "valid=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          if [ "$NAME" != "com.intelliversex.sdk" ]; then
+            echo "::error::Expected package name com.intelliversex.sdk, got '$NAME'"
             echo "valid=false" >> $GITHUB_OUTPUT
             exit 1
           fi
@@ -106,11 +112,10 @@ jobs:
       - name: Cache Library
         uses: actions/cache@v4
         with:
-          path: Library
-          key: Library-Test-2023-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          path: SDKs/unity/editor/Library
+          key: Library-Test-2023-${{ hashFiles('Packages/com.intelliversex.sdk/**', 'SDKs/unity/editor/Packages/**', 'SDKs/unity/editor/ProjectSettings/**') }}
           restore-keys: |
             Library-Test-2023-
-            Library-
       
       - name: Run EditMode Tests (Unity 2023)
         uses: game-ci/unity-test-runner@v4
@@ -120,6 +125,7 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
+          projectPath: SDKs/unity/editor
           unityVersion: 2023.3.0f1
           testMode: EditMode
           checkName: EditMode Tests (2023)
@@ -135,6 +141,7 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
+          projectPath: SDKs/unity/editor
           unityVersion: 2023.3.0f1
           testMode: PlayMode
           checkName: PlayMode Tests (2023)
@@ -170,11 +177,10 @@ jobs:
       - name: Cache Library
         uses: actions/cache@v4
         with:
-          path: Library
-          key: Library-Test-Unity6-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          path: SDKs/unity/editor/Library
+          key: Library-Test-Unity6-${{ hashFiles('Packages/com.intelliversex.sdk/**', 'SDKs/unity/editor/Packages/**', 'SDKs/unity/editor/ProjectSettings/**') }}
           restore-keys: |
             Library-Test-Unity6-
-            Library-
       
       - name: Run EditMode Tests (Unity 6)
         uses: game-ci/unity-test-runner@v4
@@ -184,6 +190,7 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
+          projectPath: SDKs/unity/editor
           unityVersion: 6000.2.8f1
           testMode: EditMode
           checkName: EditMode Tests (Unity 6)
@@ -198,6 +205,7 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
+          projectPath: SDKs/unity/editor
           unityVersion: 6000.2.8f1
           testMode: PlayMode
           checkName: PlayMode Tests (Unity 6)
@@ -244,12 +252,11 @@ jobs:
       - name: Cache Library
         uses: actions/cache@v4
         with:
-          path: Library
-          key: Library-Build-${{ matrix.unity-version }}-${{ matrix.target-platform }}-${{ hashFiles('Assets/**', 'Packages/**') }}
+          path: SDKs/unity/editor/Library
+          key: Library-Build-${{ matrix.unity-version }}-${{ matrix.target-platform }}-${{ hashFiles('Packages/com.intelliversex.sdk/**', 'SDKs/unity/editor/Packages/**') }}
           restore-keys: |
             Library-Build-${{ matrix.unity-version }}-${{ matrix.target-platform }}-
             Library-Build-${{ matrix.unity-version }}-
-            Library-
       
       - name: Build Validation (${{ matrix.unity-version }} - ${{ matrix.target-platform }})
         uses: game-ci/unity-builder@v4
@@ -258,6 +265,7 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
+          projectPath: SDKs/unity/editor
           unityVersion: ${{ matrix.unity-version }}
           targetPlatform: ${{ matrix.target-platform }}
           allowDirtyBuild: true

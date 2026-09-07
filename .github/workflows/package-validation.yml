@@ -7,15 +7,15 @@ on:
   push:
     branches: [main, develop]
     paths:
-      - 'Assets/_IntelliVerseXSDK/**'
-      - 'Assets/Intelli-verse-X-SDK/**'
-      - 'package.json'
+      - 'Packages/com.intelliversex.sdk/**'
+      - 'Packages/com.intelliversex.sdk.*/**'
+      - '.github/workflows/package-validation.yml'
   pull_request:
     branches: [main, develop]
     paths:
-      - 'Assets/_IntelliVerseXSDK/**'
-      - 'Assets/Intelli-verse-X-SDK/**'
-      - 'package.json'
+      - 'Packages/com.intelliversex.sdk/**'
+      - 'Packages/com.intelliversex.sdk.*/**'
+      - '.github/workflows/package-validation.yml'
 
 jobs:
   validate-package:
@@ -29,20 +29,22 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
       
       - name: Find Package Root
         id: find-package
         run: |
-          # Check common package locations
-          if [ -f "package.json" ]; then
+          # Canonical UPM product path (post P4 extract)
+          if [ -f "Packages/com.intelliversex.sdk/package.json" ]; then
+            PACKAGE_PATH="Packages/com.intelliversex.sdk"
+          elif [ -f "package.json" ]; then
             PACKAGE_PATH="."
-          elif [ -f "Assets/_IntelliVerseXSDK/package.json" ]; then
-            PACKAGE_PATH="Assets/_IntelliVerseXSDK"
           elif [ -f "Assets/Intelli-verse-X-SDK/package.json" ]; then
             PACKAGE_PATH="Assets/Intelli-verse-X-SDK"
+          elif [ -f "Assets/_IntelliVerseXSDK/package.json" ]; then
+            PACKAGE_PATH="Assets/_IntelliVerseXSDK"
           else
-            echo "::error::No package.json found!"
+            echo "::error::No package.json found under Packages/com.intelliversex.sdk"
             exit 1
           fi
           
