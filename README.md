@@ -787,7 +787,7 @@ pip install Pillow jsonschema
 
 ### Project Boilerplate & Integration
 
-Generate a **complete, runnable game project** or **wire into an existing project** for any of the 11 supported engines with every Intelliverse SDK feature wired up. 
+Generate a **complete, runnable game project** or **wire into an existing project** for any of the 11 supported engines with every Intelliverse SDK feature wired up.
 
 #### Mode 1: From Scratch
 Creates a brand new project with all 18 features (Auth, Economy, Store, Achievements, Daily Rewards, Energy, Leaderboards, Progression, Settings, FTUE, Retention, Analytics) fully implemented and compiling. All 11 engine templates produce **100% compilable, functional projects** out of the box using local SDK stubs.
