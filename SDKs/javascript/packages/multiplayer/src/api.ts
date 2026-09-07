@@ -48,6 +48,24 @@ export interface IIVXMultiplayer {
   /** Create a new match via the kernel `mp_create_match` RPC. */
   createMatch(req: IVXCreateMatchRequest): Promise<IVXCreateMatchResponse>;
 
+  /** List server-registered multiplayer templates via `mp_list_templates`. */
+  listTemplates(): Promise<IVXListTemplatesResponse>;
+
+  /** Read a persisted match result via `mp_read_match_result`. */
+  readMatchResult(matchId: string): Promise<IVXMatchResultEnvelope>;
+
+  /** List registered AI-agent personas via `mp_agent_list_personas`. */
+  listAgentPersonas(): Promise<IVXListAgentPersonasResponse>;
+
+  /** Spawn an AI-agent presence into a match via `mp_agent_spawn`. */
+  spawnAgent(req: IVXAgentSpawnRequest): Promise<IVXAgentSpawnResponse>;
+
+  /** Remove an AI-agent presence from a match via `mp_agent_despawn`. */
+  despawnAgent(req: IVXAgentDespawnRequest): Promise<IVXAgentDespawnResponse>;
+
+  /** Ask an AI-agent to speak via `mp_agent_speak`. */
+  agentSpeak(req: IVXAgentSpeakRequest): Promise<IVXAgentSpeakResponse>;
+
   /** Join an existing match by id. Returns a live session handle. */
   joinMatch(matchId: string, options?: IVXJoinOptions): Promise<IIVXMatchSession>;
 
@@ -120,8 +138,101 @@ export interface IVXCreateMatchRequest {
 export interface IVXCreateMatchResponse {
   match_id: string;
   template_id: string;
+  game_id?: string;
   region?: string;
+  server_unix_ms?: number;
   expires_unix_ms?: number;
+}
+
+export interface IVXTemplateDescriptor {
+  id: string;
+  from: number;
+  to: number;
+}
+
+export interface IVXListTemplatesResponse {
+  templates: IVXTemplateDescriptor[];
+}
+
+export interface IVXMatchResultEnvelope {
+  match_id?: string;
+  template_id?: string;
+  game_id?: string;
+  end_reason?: string;
+  duration_ms?: number;
+  started_unix_ms?: number;
+  ended_unix_ms?: number;
+  result_payload?: unknown;
+  [key: string]: unknown;
+}
+
+export interface IVXAgentPersonaConstraints {
+  max_response_tokens: number;
+  max_responses_per_minute: number;
+  max_seconds_speaking_per_minute: number;
+  max_concurrent_matches: number;
+  allow_proactive_speak: boolean;
+  allow_tools: boolean;
+  cost_budget_usd_micros_per_match: number;
+  locale_allowlist_csv: string;
+}
+
+export interface IVXAgentPersona {
+  persona_id: string;
+  display_name: string;
+  avatar_url: string;
+  voice_id: string;
+  llm_provider: string;
+  llm_model: string;
+  system_prompt_ref: string;
+  constraints: IVXAgentPersonaConstraints;
+  version_major: number;
+  version_minor: number;
+}
+
+export interface IVXListAgentPersonasResponse {
+  personas: IVXAgentPersona[];
+}
+
+export interface IVXAgentSpawnRequest {
+  match_id: string;
+  persona_id: string;
+  spawned_by_user?: string;
+  spawn_reason?: string;
+  agent_id?: string;
+}
+
+export interface IVXAgentSpawnResponse {
+  agent_id: string;
+  rejected_reason?: string;
+}
+
+export interface IVXAgentDespawnRequest {
+  match_id: string;
+  agent_id: string;
+  reason?: string;
+}
+
+export interface IVXAgentDespawnResponse {
+  ok: boolean;
+}
+
+export interface IVXAgentSpeakRequest {
+  match_id: string;
+  agent_id: string;
+  text: string;
+  locale?: string;
+  is_proactive?: boolean;
+  silent_transcript?: boolean;
+}
+
+export interface IVXAgentSpeakResponse {
+  accepted: boolean;
+  rejected_reason?: string;
+  transcript_text?: string;
+  cost_usd_micros?: number;
+  ttfa_ms?: number;
+  moderated?: boolean;
 }
 
 export interface IVXJoinOptions {

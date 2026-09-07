@@ -41,6 +41,7 @@ local native = (rawget(_G, "intelliversex_mp_kernel") or
     create_match   = function(_, cb)        cb(false, { error_message = "ext_unavailable" }) end,
     join_match     = function(_, cb)        cb(false, nil)                        end,
     create_and_join= function(_, cb)        cb(false, nil)                        end,
+    rpc            = function(_, _, cb)     cb(false, { error_message = "ext_unavailable" }) end,
     state          = function()             return 0                              end,
     -- Per-session methods routed by match_id from Lua.
     session_subscribe       = function(_, _, _) return -1   end,
@@ -177,6 +178,49 @@ function M.create_match(req, cb)
     }, function(ok, resp)
         cb(ok and true or false, resp or {})
     end)
+end
+
+local function rpc_dict(rpc_id, payload, cb)
+    assert(type(rpc_id) == "string" and #rpc_id > 0, "rpc_id required")
+    assert(type(cb) == "function", "cb required")
+    native.rpc(rpc_id, payload or {}, function(ok, resp)
+        cb(ok and true or false, resp or {})
+    end)
+end
+
+function M.list_templates(cb)
+    rpc_dict("mp_list_templates", {}, cb)
+end
+
+function M.read_match_result(match_id, cb)
+    assert(type(match_id) == "string" and #match_id > 0, "match_id required")
+    rpc_dict("mp_read_match_result", { match_id = match_id }, cb)
+end
+
+function M.list_agent_personas(cb)
+    rpc_dict("mp_agent_list_personas", {}, cb)
+end
+
+function M.spawn_agent(req, cb)
+    assert(type(req) == "table", "req required")
+    assert(type(req.match_id) == "string" and #req.match_id > 0, "match_id required")
+    assert(type(req.persona_id) == "string" and #req.persona_id > 0, "persona_id required")
+    rpc_dict("mp_agent_spawn", req, cb)
+end
+
+function M.despawn_agent(req, cb)
+    assert(type(req) == "table", "req required")
+    assert(type(req.match_id) == "string" and #req.match_id > 0, "match_id required")
+    assert(type(req.agent_id) == "string" and #req.agent_id > 0, "agent_id required")
+    rpc_dict("mp_agent_despawn", req, cb)
+end
+
+function M.agent_speak(req, cb)
+    assert(type(req) == "table", "req required")
+    assert(type(req.match_id) == "string" and #req.match_id > 0, "match_id required")
+    assert(type(req.agent_id) == "string" and #req.agent_id > 0, "agent_id required")
+    assert(type(req.text) == "string" and #req.text > 0, "text required")
+    rpc_dict("mp_agent_speak", req, cb)
 end
 
 --- Join an existing match. cb(ok, session).

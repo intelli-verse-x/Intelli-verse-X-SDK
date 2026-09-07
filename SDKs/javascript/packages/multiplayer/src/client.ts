@@ -27,14 +27,29 @@ import {
   type IIVXMatchSession,
   type IVXCreateMatchRequest,
   type IVXCreateMatchResponse,
+  type IVXAgentDespawnRequest,
+  type IVXAgentDespawnResponse,
+  type IVXAgentSpeakRequest,
+  type IVXAgentSpeakResponse,
+  type IVXAgentSpawnRequest,
+  type IVXAgentSpawnResponse,
   type IVXJoinOptions,
   type IVXKernelEvent,
+  type IVXListAgentPersonasResponse,
+  type IVXListTemplatesResponse,
+  type IVXMatchResultEnvelope,
   type IVXSubscription,
 } from "./api";
 import type { IVXError } from "./wire/envelope";
 import { IVXMatchSession } from "./session";
 
 const RPC_CREATE_MATCH = "mp_create_match";
+const RPC_LIST_TEMPLATES = "mp_list_templates";
+const RPC_READ_MATCH_RESULT = "mp_read_match_result";
+const RPC_AGENT_SPAWN = "mp_agent_spawn";
+const RPC_AGENT_DESPAWN = "mp_agent_despawn";
+const RPC_AGENT_LIST_PERSONAS = "mp_agent_list_personas";
+const RPC_AGENT_SPEAK = "mp_agent_speak";
 
 export interface IVXNakamaClientOptions {
   /** Default outbound ops/sec limit applied to sessions that don't override. */
@@ -113,19 +128,53 @@ export class IVXNakamaMultiplayer implements IIVXMultiplayer {
       region:        req.region ?? "",
       template_init: req.templateInit ?? {},
     };
-    const resp = await this._client.rpc(this._session, RPC_CREATE_MATCH, payload);
-    let parsed: IVXCreateMatchResponse;
-    try {
-      parsed = (typeof resp.payload === "string"
-        ? JSON.parse(resp.payload)
-        : resp.payload) as IVXCreateMatchResponse;
-    } catch (e) {
-      throw new Error(`[IVXNakamaMultiplayer] mp_create_match decode failed: ${(e as Error).message}`);
-    }
+    const parsed = await this._rpc<IVXCreateMatchResponse>(RPC_CREATE_MATCH, payload);
     if (!parsed?.match_id) {
       throw new Error("[IVXNakamaMultiplayer] mp_create_match returned empty match_id");
     }
     return parsed;
+  }
+
+  async listTemplates(): Promise<IVXListTemplatesResponse> {
+    this._ensureReady();
+    const parsed = await this._rpc<IVXListTemplatesResponse>(RPC_LIST_TEMPLATES, {});
+    return { templates: Array.isArray(parsed?.templates) ? parsed.templates : [] };
+  }
+
+  async readMatchResult(matchId: string): Promise<IVXMatchResultEnvelope> {
+    this._ensureReady();
+    if (!matchId) throw new Error("[IVXNakamaMultiplayer] matchId required");
+    return this._rpc<IVXMatchResultEnvelope>(RPC_READ_MATCH_RESULT, { match_id: matchId });
+  }
+
+  async listAgentPersonas(): Promise<IVXListAgentPersonasResponse> {
+    this._ensureReady();
+    const parsed = await this._rpc<IVXListAgentPersonasResponse>(RPC_AGENT_LIST_PERSONAS, {});
+    return { personas: Array.isArray(parsed?.personas) ? parsed.personas : [] };
+  }
+
+  async spawnAgent(req: IVXAgentSpawnRequest): Promise<IVXAgentSpawnResponse> {
+    this._ensureReady();
+    if (!req?.match_id || !req.persona_id) {
+      throw new Error("[IVXNakamaMultiplayer] match_id and persona_id required");
+    }
+    return this._rpc<IVXAgentSpawnResponse>(RPC_AGENT_SPAWN, req);
+  }
+
+  async despawnAgent(req: IVXAgentDespawnRequest): Promise<IVXAgentDespawnResponse> {
+    this._ensureReady();
+    if (!req?.match_id || !req.agent_id) {
+      throw new Error("[IVXNakamaMultiplayer] match_id and agent_id required");
+    }
+    return this._rpc<IVXAgentDespawnResponse>(RPC_AGENT_DESPAWN, req);
+  }
+
+  async agentSpeak(req: IVXAgentSpeakRequest): Promise<IVXAgentSpeakResponse> {
+    this._ensureReady();
+    if (!req?.match_id || !req.agent_id || !req.text) {
+      throw new Error("[IVXNakamaMultiplayer] match_id, agent_id, and text required");
+    }
+    return this._rpc<IVXAgentSpeakResponse>(RPC_AGENT_SPEAK, req);
   }
 
   async joinMatch(matchId: string, options?: IVXJoinOptions): Promise<IIVXMatchSession> {
@@ -246,5 +295,16 @@ export class IVXNakamaMultiplayer implements IIVXMultiplayer {
   private _ensureReady(): void {
     if (this._disposed) throw new Error("[IVXNakamaMultiplayer] disposed");
     if (!this._initialized) throw new Error("[IVXNakamaMultiplayer] call initialize() first");
+  }
+
+  private async _rpc<T>(id: string, payload: object): Promise<T> {
+    const resp = await this._client.rpc(this._session, id, payload);
+    try {
+      return (typeof resp.payload === "string"
+        ? JSON.parse(resp.payload || "{}")
+        : resp.payload) as T;
+    } catch (e) {
+      throw new Error(`[IVXNakamaMultiplayer] ${id} decode failed: ${(e as Error).message}`);
+    }
   }
 }

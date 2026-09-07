@@ -162,7 +162,7 @@ export class IVXWebXRAdapter {
     this._refSpace = null;
     this._viewerSpace = null;
     for (const s of this._subs) {
-      try { s.unsubscribe(); } catch { /* ignore */ }
+      try { s.dispose(); } catch { /* ignore */ }
     }
     this._subs.length = 0;
   }

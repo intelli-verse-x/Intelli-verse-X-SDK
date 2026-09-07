@@ -9,7 +9,7 @@
     "run:script": "ts-node src/runner.ts"
   },
   "dependencies": {
-    "@intelliversex/multiplayer": "workspace:*",
+    "@intelliversex/multiplayer": "file:../../../SDKs/javascript/packages/multiplayer",
     "yaml": "^2.5.0"
   },
   "devDependencies": {

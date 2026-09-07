@@ -162,8 +162,8 @@ export class IVXHiroSystems {
   async spinWheel(wheelId = 'default'): Promise<IVXSpinWheelReward> {
     const result = await this.callRpc('hiro_spin_wheel', JSON.stringify({ wheel_id: wheelId }));
     const reward: IVXSpinWheelReward = {
-      rewardId: result.reward_id ?? '',
-      type: result.type ?? '',
+      rewardId: String(result.reward_id ?? ''),
+      type: String(result.type ?? ''),
       amount: Number(result.amount ?? 0),
       metadata: result.metadata as Record<string, unknown> | undefined,
     };
@@ -382,10 +382,11 @@ export class IVXHiroSystems {
   // Internal
   // ---------------------------------------------------------------------------
 
-  private async callRpc(rpcId: string, payload = '{}'): Promise<Record<string, unknown>> {
+  private async callRpc(rpcId: string, payload: string | object = {}): Promise<Record<string, unknown>> {
     this.ensureConfigured();
     try {
-      const result = await this._client!.rpc(this._session!, rpcId, payload);
+      const body = typeof payload === 'string' ? this.safeParseJson(payload) : payload;
+      const result = await this._client!.rpc(this._session!, rpcId, body);
       this.log(`RPC ${rpcId} response received`);
       return result.payload ? this.safeParseJson(result.payload) : {};
     } catch (e: unknown) {

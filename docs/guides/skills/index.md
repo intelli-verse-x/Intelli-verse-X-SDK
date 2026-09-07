@@ -10,6 +10,11 @@ Skills are structured markdown guides (`SKILL.md`) that AI coding agents read to
 
 **No code execution. No hidden calls. Just guided integration.**
 
+For live in-game AI-agent RPC support by language and platform, see the
+[Agent Skills Game-ID Platform Matrix](agent-skills-game-id-platform-matrix.md).
+For a skill-by-skill map from Agent Skills to concrete SDK code paths, see the
+[Agent Skill Code Reference](agent-skill-code-reference.md).
+
 ---
 
 ## Available Skills

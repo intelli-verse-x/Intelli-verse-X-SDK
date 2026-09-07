@@ -1,0 +1,12 @@
+name: smoke_synthetic
+template_id: sync-turn-v1
+duration_sec: 1
+tick_rate_hz: 2
+bots:
+  - kind: realtime
+    count: 1
+expectations:
+  - expression: "tick_overrun_ratio < 1"
+    description: "synthetic harness loop should not overrun every tick"
+  - expression: "rtt_p95_ms < 100"
+    description: "synthetic RTT model remains under the smoke threshold"
