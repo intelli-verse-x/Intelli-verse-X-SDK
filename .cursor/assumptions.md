@@ -303,3 +303,7 @@ When making decisions, verify:
 ---
 
 *When in doubt about an assumption, document it here. Explicit assumptions prevent implicit drift.*
+
+## 2026-09-07 — Phygital channel adapters
+
+The user requested Phygital support and the omnipresent app vision. The first additive runtime is JavaScript, using host-owned adapters and no new server endpoints. A channel declaration is not a live integration. Kiosk campaigns/quests, WhatsApp and calls require their respective providers. Reward authority stays server-side. See the Phygital ADR for implementation and version planning.

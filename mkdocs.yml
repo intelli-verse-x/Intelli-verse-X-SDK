@@ -57,6 +57,7 @@ nav:
     - getting-started/index.md
     - Installation: getting-started/installation.md
     - Quick Start: getting-started/quickstart.md
+    - Phygital Apps: guides/phygital-apps.md
     - Requirements: getting-started/requirements.md
     - Project Setup: getting-started/project-setup.md
   - Platform SDKs:

@@ -29,6 +29,15 @@
 
 ---
 
+## Phygital apps (JavaScript reference implementation)
+
+- Runtime: `SDKs/javascript/src/IVXPhygitalApp.ts`
+- Tests: `SDKs/javascript/src/__tests__/IVXPhygitalApp.test.ts`
+- Local demo: `SDKs/javascript/examples/phygital-app.mjs`
+- Guide: `docs/guides/phygital-apps.md`
+- Decision: `docs/architecture/adr/ADR-20260907-phygital-adapter-contract.md`
+- Host adapters own provider integrations, identity, evidence verification and reward/campaign side effects.
+
 ## PLATFORM SDKs
 
 | Platform | Location | Language | Nakama Client |

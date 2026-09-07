@@ -1,8 +1,20 @@
-# IntelliVerseX JavaScript SDK
+# Intelliverse JavaScript SDK
 
 > Complete modular game development SDK for JavaScript/TypeScript — Auth, Backend (Nakama), Analytics, Social, Monetization, AI, Multiplayer, Hiro Live-Ops, and more.
 
-## What's New in v5.8.0
+## Phygital apps — JavaScript 5.9.0 source
+
+Use `IVXPhygitalApp` to declare an app's channels and route App Quests, App Ads, and conversations through host-owned adapters. Mobile, web, kiosk, WhatsApp, chat, and voice are supported channel labels; provider integrations are supplied by your application.
+
+```bash
+npm ci
+npm run build
+npm run example:phygital
+```
+
+The example is local-only and makes no network calls. See the [complete Phygital guide](../../docs/guides/phygital-apps.md) for capabilities, backend responsibilities, and contribution opportunities. Source availability does not imply a new npm release.
+
+## Existing features (v5.8.0)
 
 ### AI Voice & Host (`IVXAIClient`)
 
