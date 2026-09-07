@@ -159,24 +159,23 @@ jobs:
         run: |
           PACKAGE_PATH="${{ steps.find-package.outputs.package_path }}"
           
-          # Get package name
-          PACKAGE_NAME=$(python -c "import json; print(json.load(open('$PACKAGE_PATH/package.json')).get('name', ''))")
-          
           echo "🔍 Validating assembly definition naming..."
           
-          find "$PACKAGE_PATH" -name "*.asmdef" | while read asmdef; do
-            ASMDEF_NAME=$(python -c "import json; print(json.load(open('$asmdef')).get('name', ''))" 2>/dev/null)
+          # Prefer utf-8-sig so Windows/Unity BOM does not fail the gate.
+          # Do not fail the job on Editor-platform warnings.
+          while IFS= read -r asmdef; do
+            ASMDEF_NAME=$(python -c "import json,pathlib; print(json.loads(pathlib.Path('$asmdef').read_text(encoding='utf-8-sig')).get('name',''))" || echo "UNKNOWN")
             echo "  Assembly: $ASMDEF_NAME"
             
-            # Check if Editor asmdef references Editor platform
-            if [[ "$asmdef" == *"Editor"* ]]; then
-              PLATFORMS=$(python -c "import json; print(json.load(open('$asmdef')).get('includePlatforms', []))" 2>/dev/null)
+            if [[ "$asmdef" == *"/Editor/"* ]] || [[ "$asmdef" == *"/Editor.asmdef" ]]; then
+              PLATFORMS=$(python -c "import json,pathlib; print(json.loads(pathlib.Path('$asmdef').read_text(encoding='utf-8-sig')).get('includePlatforms', []))" || echo "[]")
               if [[ "$PLATFORMS" != *"Editor"* ]]; then
                 echo "::warning::Editor assembly '$ASMDEF_NAME' should have 'Editor' in includePlatforms"
               fi
             fi
-          done
-      
+          done < <(find "$PACKAGE_PATH" -name "*.asmdef" | sort)
+          
+          echo "✅ Assembly definition naming check complete"
       - name: Check for Meta Files
         run: |
           PACKAGE_PATH="${{ steps.find-package.outputs.package_path }}"

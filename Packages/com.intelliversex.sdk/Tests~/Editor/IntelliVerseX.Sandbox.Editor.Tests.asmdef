@@ -1,4 +1,4 @@
-﻿{
+{
     "name":  "IntelliVerseX.Sandbox.Editor.Tests",
     "rootNamespace":  "IntelliVerseX.Tests.Editor",
     "references":  [
