@@ -27,10 +27,10 @@ namespace IntelliVerseX.Tests.Editor
         [Test]
         public void PackageJson_DependenciesExcludePhotonAndAppodeal()
         {
-            // Sandbox layout: Assets/ → editor/ → unity/ → sdk/package.json
+            // Sandbox: Assets/ → editor/ → unity/ → SDKs/ → repo → Packages/com.intelliversex.sdk
             string packageJson = Path.GetFullPath(
-                Path.Combine(Application.dataPath, "..", "..", "sdk", "package.json"));
-            Assert.IsTrue(File.Exists(packageJson), "Expected sdk/package.json at " + packageJson);
+                Path.Combine(Application.dataPath, "..", "..", "..", "..", "Packages", "com.intelliversex.sdk", "package.json"));
+            Assert.IsTrue(File.Exists(packageJson), "Expected Packages/com.intelliversex.sdk/package.json at " + packageJson);
 
             string json = File.ReadAllText(packageJson);
             int depsStart = json.IndexOf("\"dependencies\"");

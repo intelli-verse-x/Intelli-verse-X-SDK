@@ -7,7 +7,7 @@ Unity **6000.3** · package `com.intelliversex.sdk` **5.9.0**
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=SDKs/unity/sdk"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk"
   }
 }
 ```

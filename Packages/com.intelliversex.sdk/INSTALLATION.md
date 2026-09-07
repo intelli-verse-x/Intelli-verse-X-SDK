@@ -1,6 +1,6 @@
 # IntelliVerseX SDK Installation
 
-Package: `com.intelliversex.sdk` **5.9.0** · Unity **6000.3**
+Package: `com.intelliversex.sdk` **5.10.0** · Unity **6000.3**
 
 ## Install (Git URL)
 
@@ -9,7 +9,7 @@ Add to `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=SDKs/unity/sdk"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk"
   }
 }
 ```
@@ -17,16 +17,16 @@ Add to `Packages/manifest.json`:
 Pin a tag when shipping:
 
 ```json
-"com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=SDKs/unity/sdk#v5.9.0"
+"com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk#v5.10.0"
 ```
 
 Or Package Manager → **+** → **Add package from git URL** with the same URL.
 
-Local sandbox (this repo): the `editor` project uses `"com.intelliversex.sdk": "file:../../sdk"` (relative to `Packages/manifest.json` → `SDKs/unity/sdk`).
+Local sandbox (this repo): the `editor` project uses `"com.intelliversex.sdk": "file:../../../../Packages/com.intelliversex.sdk"` (relative to `Packages/manifest.json` → `Packages/com.intelliversex.sdk`).
 
 ## Package vs sandbox (P1 boundary)
 
-| Ships in UPM (`path=SDKs/unity/sdk`) | Stays in sandbox (`SDKs/unity/editor`) |
+| Ships in UPM (`path=Packages/com.intelliversex.sdk`) | Stays in sandbox (`SDKs/unity/editor`) |
 |--------------------------------------|----------------------------------------|
 | Bootstrap, V2 Nakama facades, Auth/UI modules, Samples~ | Photon (~35 MB), vendored Nakama/AppleAuth, LevelPlay/Appodeal copies |
 | UPM deps: TMP + Newtonsoft only | Cursor IDE package, pipeline, purchasing (project toys OK) |

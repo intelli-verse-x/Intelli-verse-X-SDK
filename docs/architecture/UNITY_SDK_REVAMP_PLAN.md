@@ -214,7 +214,7 @@ Breaking public APIs is a **major version**. Wrappers keep 5.x compiling.
 - Add UGS as a second backend.
 - “Clean up” by rewriting all 50 managers at once.
 
-**Next code slice:** P0 obsolete list + `package.json` Unity version + Control Center Game ID path (Phase A of the control-plane plan), then `unity pipeline install` so tests can run.
+**Status:** P0–P3 shipped on `main`. **P4 done:** package at `Packages/com.intelliversex.sdk`; sandbox `file:` consumes it. Dual-tree GUID merge and optional Photon/Discord/AI package splits remain follow-ups (see `docs/OPTIONAL_MODULES.md`).
 
 ---
 

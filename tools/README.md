@@ -6,4 +6,4 @@
 | Other folders | Internal scripts / QA — repo tooling only |
 
 Sandbox Unity project: `SDKs/unity/editor` (vendors: Photon, Nakama, ads SDKs).  
-Shippable package: `SDKs/unity/sdk`.
+Shippable package: `Packages/com.intelliversex.sdk`.

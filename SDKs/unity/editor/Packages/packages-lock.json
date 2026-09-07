@@ -16,7 +16,7 @@
       "dependencies": {}
     },
     "com.intelliversex.sdk": {
-      "version": "file:../../sdk",
+      "version": "file:../../../../Packages/com.intelliversex.sdk",
       "depth": 0,
       "source": "local",
       "dependencies": {

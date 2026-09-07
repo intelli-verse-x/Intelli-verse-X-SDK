@@ -44,7 +44,7 @@ Choose your installation method:
     ```json
     {
       "dependencies": {
-        "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=SDKs/unity/sdk"
+        "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk"
       }
     }
     ```

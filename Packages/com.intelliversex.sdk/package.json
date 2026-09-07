@@ -1,13 +1,13 @@
 {
   "name": "com.intelliversex.sdk",
-  "version": "5.9.0",
+  "version": "5.10.0",
   "displayName": "IntelliVerseX SDK",
   "description": "IntelliVerseX game SDK: IVXBootstrap + Control Center (paste Game ID), Nakama backend, wallet, leaderboards, ads/IAP, social, optional Hiro/AI/Discord modules.",
   "unity": "6000.3",
   "unityRelease": "6f1",
-  "documentationUrl": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/blob/main/SDKs/unity/sdk/README.md",
-  "changelogUrl": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/blob/main/SDKs/unity/sdk/CHANGELOG.md",
-  "licensesUrl": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/blob/main/SDKs/unity/sdk/LICENSE",
+  "documentationUrl": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/blob/main/Packages/com.intelliversex.sdk/README.md",
+  "changelogUrl": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/blob/main/Packages/com.intelliversex.sdk/CHANGELOG.md",
+  "licensesUrl": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/blob/main/Packages/com.intelliversex.sdk/LICENSE",
   "hideInEditor": false,
   "type": "library",
   "keywords": [
@@ -173,7 +173,7 @@
     },
     "_package_boundary": {
       "ships_in_upm": [
-        "SDKs/unity/sdk/**"
+        "Packages/com.intelliversex.sdk/**"
       ],
       "sandbox_only": [
         "SDKs/unity/editor/Assets/Photon",

@@ -1,50 +1,31 @@
-# Repo layout: `SDKs/<platform>/`
+# Repo layout: `SDKs/<platform>/` + Unity UPM at `Packages/`
 
-**Status:** Hub project and UPM package live under `SDKs/unity/`. Open Hub at `SDKs/unity/editor`. Do not open the git root as a Unity project.  
-**Related:** [ADR-002](adr/ADR-002-dual-tree-layout.md), [UNITY_SDK_REVAMP_PLAN.md](UNITY_SDK_REVAMP_PLAN.md)
+**Status (P4):** UPM product is `Packages/com.intelliversex.sdk`. Open the Hub sandbox at `SDKs/unity/editor`. Do **not** open the git root as a Unity project.  
+**Related:** [ADR-002](adr/ADR-002-dual-tree-layout.md), [UNITY_SDK_REVAMP_PLAN.md](UNITY_SDK_REVAMP_PLAN.md), [OPTIONAL_MODULES.md](../OPTIONAL_MODULES.md)
 
-Every engine lives under **one parent**: `SDKs/`. Unity is not special at git root. It is `SDKs/unity/`, next to `SDKs/javascript/` and `SDKs/unreal/`.
-
----
-
-## Before this change
-
-```text
-Intelli-verse-X-SDK/          ← git root looks like a Unity game
-  Assets/                     ← Unity project
-  Packages/
-  ProjectSettings/
-  SDKs/
-    javascript/               ← other engines hidden here
-    unreal/
-    godot/
-    …
-```
-
-Unity sat **outside** `SDKs/`. GitHub UPM used `?path=Assets/Intelli-verse-X-SDK` and **missed** Bootstrap in `_IntelliVerseXSDK`.
+Every engine lives under **one parent**: `SDKs/`. Unity is special only because the **shippable package** sits at the UPM-standard repo path `Packages/com.intelliversex.sdk`, while the **sandbox Editor project** stays under `SDKs/unity/editor`.
 
 ---
 
-## Target (same shape for every platform)
+## Current shape
 
 ```text
-Intelli-verse-X-SDK/                 git root — docs, CI, tools only
+Intelli-verse-X-SDK/                 git root — docs, CI, tools, UPM package
   README.md
   docs/
   tools/
   .github/
+  Packages/
+    com.intelliversex.sdk/           UPM package (what GitHub installs)
+      package.json                   name: com.intelliversex.sdk
+      Runtime modules / Editor / Samples~ / Tests~
   SDKs/
     unity/
-      sdk/                           UPM package (what GitHub installs)
-        package.json                 name: com.intelliversex.sdk
-        Runtime/
-        Editor/
-        Samples~/
       editor/                        Unity Hub project (you open this)
-        Assets/                      Photon, scenes, vendors — not in sdk/
-        Packages/manifest.json       file:../sdk
+        Assets/                      Photon, scenes, vendors — not in package
+        Packages/manifest.json       file:../../../../Packages/com.intelliversex.sdk
         ProjectSettings/
-    javascript/                      already here — npm @intelliversex/sdk
+    javascript/                      npm @intelliversex/sdk
     web3/
     unreal/
     godot/
@@ -57,7 +38,7 @@ Intelli-verse-X-SDK/                 git root — docs, CI, tools only
     visionos/
 ```
 
-**How to read it:** `SDKs/<engine>/` is that engine’s SDK. Unity has two subfolders because Unity needs a **package** (GitHub) and an **Editor project** (Hub). Other engines only need the package folder.
+**How to read it:** consumers install only the UPM folder. Contributors open `SDKs/unity/editor` to dogfood the package via a local `file:` dependency.
 
 ---
 
@@ -65,7 +46,7 @@ Intelli-verse-X-SDK/                 git root — docs, CI, tools only
 
 | Platform | Install | Update |
 |----------|---------|--------|
-| **Unity** | `"com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=SDKs/unity/sdk#v5.9.0"` | bump `#vX.Y.Z` |
+| **Unity** | `"com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk#v5.10.0"` | bump `#vX.Y.Z` |
 | **JavaScript** | `npm install @intelliversex/sdk` (publish from `SDKs/javascript`) | `npm update` |
 | **Flutter** | `pubspec.yaml` git url + `path: SDKs/flutter` | bump git `ref` |
 | **Unreal** | add `SDKs/unreal` as a plugin | pull |
@@ -73,31 +54,13 @@ Intelli-verse-X-SDK/                 git root — docs, CI, tools only
 
 npm has no Unity `?path=`. Do not `npm install` the whole repo.
 
----
-
-## How to move (when the Editor is closed)
-
-Do this in **one dedicated PR**. Close Unity Hub / Editor first. Do not drag folders in Explorer while Pipeline is connected.
-
-1. Create `SDKs/unity/sdk/` and copy **only** shippable SDK code (`Intelli-verse-X-SDK` + `_IntelliVerseXSDK` public API, `package.json`). This is the GitHub UPM folder. Do not GUID-merge the two trees in this step.
-2. Create `SDKs/unity/editor/` and **git mv** the current Unity project into it: `Assets`, `Packages`, `ProjectSettings`. Leave `Library/`, `Temp/`, `Logs/` behind (gitignored; Unity recreates them).
-3. Point `SDKs/unity/editor/Packages/manifest.json` at the package:
-
-   ```json
-   "com.intelliversex.sdk": "file:../sdk"
-   ```
-
-   Then remove duplicate SDK copies from `editor/Assets/` once the file: reference compiles (second PR).
-4. Open Hub → **Add** → `…/Intelli-verse-X-SDK/SDKs/unity/editor`.
-5. Change README install to `?path=SDKs/unity/sdk`.
-6. Leave existing `SDKs/javascript`, `unreal`, … where they are. They are already in the right parent.
-
-Until step 1 exists, the public Git URL is still incomplete.
+Blank Unity **6000.3** project path: add the git URL above → **IntelliVerseX → Control Center** → paste Game ID → Play.
 
 ---
 
 ## What not to do
 
-- Do not put Photon, ads vendor copies, or `tools/` inside `SDKs/unity/sdk`.
-- Do not `git mv` `Assets/` while this Editor is running.
-- Do not make the **git root** the Unity package (that hides every other engine again).
+- Do not put Photon Asset Store copies, ads vendor trees, or `tools/` inside `Packages/com.intelliversex.sdk`.
+- Do not GUID-merge dual trees (`Intelli-verse-X-SDK` vs `_IntelliVerseXSDK`) in the same change as a path move.
+- Do not make the **git root** itself the only Unity package root in a way that hides other engines (keep non-Unity SDKs under `SDKs/`).
+- Do not open `Packages/com.intelliversex.sdk` alone as a Hub project — open `SDKs/unity/editor`.

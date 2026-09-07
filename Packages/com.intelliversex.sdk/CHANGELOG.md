@@ -13,6 +13,19 @@ _(no unreleased changes)_
 
 ---
 
+## [5.10.0] - 2026-09-07
+
+### Changed — UPM extract (P4)
+
+- Canonical package path is now **`Packages/com.intelliversex.sdk`** (was `SDKs/unity/sdk`).
+- Consumer install URL: `https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk`
+- Sandbox Hub project `SDKs/unity/editor` consumes the package via `file:../../../../Packages/com.intelliversex.sdk`.
+- Optional Photon / Discord / AI modules documented in `docs/OPTIONAL_MODULES.md` (not split into separate packages yet; no dual-tree GUID merge).
+
+**Migration:** update `Packages/manifest.json` `?path=` from `SDKs/unity/sdk` to `Packages/com.intelliversex.sdk`.
+
+---
+
 ## [5.9.0] - 2026-04-26
 
 ### 🌐 New Feature: Shared 3D Worlds — Avatar Replication + LiveKit Voice/Lip-sync
