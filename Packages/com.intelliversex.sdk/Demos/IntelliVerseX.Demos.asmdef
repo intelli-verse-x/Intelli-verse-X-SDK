@@ -1,0 +1,37 @@
+﻿{
+    "name":  "IntelliVerseX.Demos",
+    "rootNamespace":  "IntelliVerseX.Demos",
+    "references":  [
+                       "IntelliVerseX.Bootstrap",
+                       "IntelliVerseX.Core",
+                       "IntelliVerseX.Hiro",
+                       "IntelliVerseX.GameModes",
+                       "IntelliVerseX.Platform",
+                       "IntelliVerseX.Satori",
+                       "Unity.TextMeshPro",
+                       "Newtonsoft.Json"
+                   ],
+    "includePlatforms":  [
+
+                         ],
+    "excludePlatforms":  [
+
+                         ],
+    "allowUnsafeCode":  false,
+    "overrideReferences":  false,
+    "precompiledReferences":  [
+
+                              ],
+    "autoReferenced":  true,
+    "defineConstraints":  [
+
+                          ],
+    "versionDefines":  [
+                           {
+                               "name":  "com.heroiclabs.nakama-unity",
+                               "expression":  "",
+                               "define":  "INTELLIVERSEX_HAS_NAKAMA"
+                           }
+                       ],
+    "noEngineReferences":  false
+}

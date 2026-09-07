@@ -1,0 +1,18 @@
+{
+  "name": "com.intelliversex.sdk.discord",
+  "version": "5.11.0",
+  "displayName": "IntelliVerseX SDK — Discord",
+  "description": "Optional Discord Social SDK integration for IntelliVerseX. Requires com.intelliversex.sdk and Discord Social SDK when available.",
+  "unity": "6000.3",
+  "unityRelease": "6f1",
+  "documentationUrl": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK/blob/main/Packages/com.intelliversex.sdk.discord/README.md",
+  "license": "MIT",
+  "author": {
+    "name": "IntelliVerse-X",
+    "url": "https://intelliversex.com"
+  },
+  "dependencies": {
+    "com.intelliversex.sdk": "5.11.0"
+  },
+  "keywords": ["intelliversex", "discord", "social"]
+}

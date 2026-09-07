@@ -20,41 +20,6 @@ namespace IntelliVerseX.Demos
         private static readonly DemoCardSpec[] DemoCards =
         {
             new DemoCardSpec(
-                "Discord Social",
-                "Account linking, presence, friends, DMs, lobbies, voice, invites, moderation",
-                new Color32(0x58, 0x65, 0xF2, 0xFF),
-                typeof(IVXDiscordSocialDemo)),
-            new DemoCardSpec(
-                "AI Voice Chat",
-                "AI persona conversations with voice and text",
-                new Color32(0x3B, 0x82, 0xF6, 0xFF),
-                typeof(IVXAIVoiceChatDemo)),
-            new DemoCardSpec(
-                "AI Host",
-                "AI game host and live commentary",
-                new Color32(0x8B, 0x5C, 0xF6, 0xFF),
-                typeof(IVXAIHostDemo)),
-            new DemoCardSpec(
-                "AI NPC Dialog",
-                "Dynamic NPC conversations with branching and actions",
-                new Color32(0xEC, 0x48, 0x99, 0xFF),
-                typeof(IVXAINPCDemo)),
-            new DemoCardSpec(
-                "AI Assistant",
-                "In-game help, hints, tutorials powered by LLM",
-                new Color32(0x14, 0xB8, 0xA6, 0xFF),
-                typeof(IVXAIAssistantDemo)),
-            new DemoCardSpec(
-                "AI Moderation",
-                "Content classification, filtering, custom rules",
-                new Color32(0xF5, 0x9E, 0x0B, 0xFF),
-                typeof(IVXAIModerationDemo)),
-            new DemoCardSpec(
-                "AI Content Gen",
-                "Quest, story, item, dialogue generation",
-                new Color32(0x10, 0xB9, 0x81, 0xFF),
-                typeof(IVXAIContentGenDemo)),
-            new DemoCardSpec(
                 "Spin Wheel",
                 "Daily spin wheel with rewards",
                 new Color32(0xEF, 0x44, 0x44, 0xFF),
@@ -89,16 +54,6 @@ namespace IntelliVerseX.Demos
                 "Score submission, rankings, player ranks",
                 new Color32(0xFF, 0xD7, 0x00, 0xFF),
                 typeof(IVXLeaderboardDemo)),
-            new DemoCardSpec(
-                "AI Profiler",
-                "Player behavior tracking, cohorts, churn prediction",
-                new Color32(0xE0, 0x4F, 0x5F, 0xFF),
-                typeof(IVXAIProfilerDemo)),
-            new DemoCardSpec(
-                "AI Voice Services",
-                "Standalone STT, TTS, language detection",
-                new Color32(0x00, 0xBF, 0xA5, 0xFF),
-                typeof(IVXAIVoiceServicesDemo)),
         };
 
         #endregion

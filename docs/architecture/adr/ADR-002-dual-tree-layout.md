@@ -1,8 +1,8 @@
-# ADR-002: Dual-Tree Unity Asset Layout
+﻿# ADR-002: Dual-Tree Unity Asset Layout
 
 ## Status
 
-Accepted
+**Superseded** by [ADR-003](ADR-003-package-source-of-truth.md) for package layout. Kept for history.
 
 ## Context
 

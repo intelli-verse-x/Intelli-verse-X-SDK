@@ -24,6 +24,30 @@
         "com.unity.nuget.newtonsoft-json": "3.2.2"
       }
     },
+    "com.intelliversex.sdk.ai": {
+      "version": "file:../../../../Packages/com.intelliversex.sdk.ai",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {
+        "com.intelliversex.sdk": "5.11.0"
+      }
+    },
+    "com.intelliversex.sdk.discord": {
+      "version": "file:../../../../Packages/com.intelliversex.sdk.discord",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {
+        "com.intelliversex.sdk": "5.11.0"
+      }
+    },
+    "com.intelliversex.sdk.photon": {
+      "version": "file:../../../../Packages/com.intelliversex.sdk.photon",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {
+        "com.intelliversex.sdk": "5.11.0"
+      }
+    },
     "com.unity.asset-store-tools": {
       "version": "file:com.unity.asset-store-tools",
       "depth": 0,

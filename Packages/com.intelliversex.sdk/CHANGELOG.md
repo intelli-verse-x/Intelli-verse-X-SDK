@@ -13,9 +13,25 @@ _(no unreleased changes)_
 
 ---
 
+## [5.11.0] - 2026-09-07
+
+### Added ? Optional UPM packages + RPC index + dual-tree flatten
+
+- Optional packages: `com.intelliversex.sdk.ai`, `com.intelliversex.sdk.discord`, `com.intelliversex.sdk.photon` under `Packages/`.
+- Generated `Editor/RpcIndex/IVXRpcIndex.generated.json` (~162 RPCs); Control Center **APIs** tab loads it (`tools/generate-rpc-index.ps1`).
+- ADR-003: package root is source of truth; non-colliding `_IntelliVerseXSDK` modules flattened (GUIDs preserved via `git mv`).
+- Bootstrap soft-loads AI/Discord via reflection (core compiles without optional packages).
+
+### Changed
+
+- Sandbox `manifest.json` optionally depends on ai / discord / photon packages.
+- Demo hub lists core demos only; AI/Discord demos ship under optional package `Samples~`.
+
+---
+
 ## [5.10.1] - 2026-09-07
 
-### Changed � Definition of Done (wallet / Photon / Control Center)
+### Changed ? Definition of Done (wallet / Photon / Control Center)
 
 - Canonical wallet/leaderboard: `IVXNWalletManager` / `IVXNLeaderbordManager`; `IVXWalletManager`, `IVXGLeaderboard`, and `IVXGLeaderboardUI` marked obsolete.
 - `IVXPhotonConfig` rewritten without ExitGames; empty `SHARED_APP_ID_*`; `IntelliVerseXIdentity.GetPhotonAppId` obsolete.
@@ -26,7 +42,7 @@ _(no unreleased changes)_
 ---
 ## [5.10.0] - 2026-09-07
 
-### Changed — UPM extract (P4)
+### Changed ? UPM extract (P4)
 
 - Canonical package path is now **`Packages/com.intelliversex.sdk`** (was `SDKs/unity/sdk`).
 - Consumer install URL: `https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk`
@@ -39,39 +55,39 @@ _(no unreleased changes)_
 
 ## [5.9.0] - 2026-04-26
 
-### 🌐 New Feature: Shared 3D Worlds — Avatar Replication + LiveKit Voice/Lip-sync
+### ?? New Feature: Shared 3D Worlds ? Avatar Replication + LiveKit Voice/Lip-sync
 
-This release closes the last critical-path client gap for the LiveKit migration (Phases 1–4). Unity, Unreal, JS, Godot, and visionOS clients can now run **shared 3D rooms** where every human avatar replicates head + hand poses on the same wire, voice flows through LiveKit, lip-sync rides on the `viseme.v1` data channel, and AI avatars from the LiveKit Agents worker join the same room.
+This release closes the last critical-path client gap for the LiveKit migration (Phases 1?4). Unity, Unreal, JS, Godot, and visionOS clients can now run **shared 3D rooms** where every human avatar replicates head + hand poses on the same wire, voice flows through LiveKit, lip-sync rides on the `viseme.v1` data channel, and AI avatars from the LiveKit Agents worker join the same room.
 
-### Added — Multiplayer Kernel (Unity)
+### Added ? Multiplayer Kernel (Unity)
 
-- **`IVXAvatarReplicator` (`MultiplayerKernel/Avatar/IVXAvatarReplicator.cs`)** — drop-in `MonoBehaviour` for remote-human pose replication. Publishes local head + hand transforms with idle suppression + 1 Hz heartbeat; subscribes to `HEAD_POSE`/`LEFT_HAND_POSE`/`RIGHT_HAND_POSE`/`BLENDSHAPES`/`FINGER_CURLS`/`AVATAR_DESCRIPTOR`/`LOD_HINT`/`PEER_LEFT`/`AVATAR_FALLBACK` (opcodes `0xF000`–`0xF008`); applies inbound poses to `IIVXAvatar` instances or fires events for engine-bypass scene graphs.
-- **`IVXAvatarOp` constants (`MultiplayerKernel/Wire/IVXWireConstants.cs`)** — canonical opcode range `0xF000`–`0xF008` for avatar replication, mirroring the JS/Swift/Go server constants bit-for-bit.
-- **`IVXLiveKitVisemeBinder` (`MultiplayerKernel/Voice/IVXLiveKitVisemeBinder.cs`)** — auto-wires `LiveKit.Room.DataReceived` → `IVXLiveKitVisemeReceiver` for the `viseme.v1` topic. One-line lip-sync wiring.
-- **`IVXVoiceTokenClient` (`MultiplayerKernel/Voice/IVXVoiceTokenClient.cs`)** — typed wrapper around `mp_voice_token` Nakama RPC; mints LiveKit URLs/tokens with optional spatial-audio flag.
-- **`IVXARFoundationAnchorProvider` (`MultiplayerKernel/Anchor/IVXARFoundationAnchorProvider.cs`)** — first-class anchor offer for ARFoundation iOS/Android (including ARCore Geospatial opt-in for global co-presence).
+- **`IVXAvatarReplicator` (`MultiplayerKernel/Avatar/IVXAvatarReplicator.cs`)** ? drop-in `MonoBehaviour` for remote-human pose replication. Publishes local head + hand transforms with idle suppression + 1 Hz heartbeat; subscribes to `HEAD_POSE`/`LEFT_HAND_POSE`/`RIGHT_HAND_POSE`/`BLENDSHAPES`/`FINGER_CURLS`/`AVATAR_DESCRIPTOR`/`LOD_HINT`/`PEER_LEFT`/`AVATAR_FALLBACK` (opcodes `0xF000`?`0xF008`); applies inbound poses to `IIVXAvatar` instances or fires events for engine-bypass scene graphs.
+- **`IVXAvatarOp` constants (`MultiplayerKernel/Wire/IVXWireConstants.cs`)** ? canonical opcode range `0xF000`?`0xF008` for avatar replication, mirroring the JS/Swift/Go server constants bit-for-bit.
+- **`IVXLiveKitVisemeBinder` (`MultiplayerKernel/Voice/IVXLiveKitVisemeBinder.cs`)** ? auto-wires `LiveKit.Room.DataReceived` ? `IVXLiveKitVisemeReceiver` for the `viseme.v1` topic. One-line lip-sync wiring.
+- **`IVXVoiceTokenClient` (`MultiplayerKernel/Voice/IVXVoiceTokenClient.cs`)** ? typed wrapper around `mp_voice_token` Nakama RPC; mints LiveKit URLs/tokens with optional spatial-audio flag.
+- **`IVXARFoundationAnchorProvider` (`MultiplayerKernel/Anchor/IVXARFoundationAnchorProvider.cs`)** ? first-class anchor offer for ARFoundation iOS/Android (including ARCore Geospatial opt-in for global co-presence).
 
-### Added — Documentation
+### Added ? Documentation
 
-- **`docs/multiplayer/AVATAR_REPLICATION_INTEGRATION_GUIDE.md`** — canonical cross-engine, cross-platform integration guide. Covers Unity, Unreal, JS, Godot, visionOS, mobile-2D, Roblox; per-platform input + anchor playbook (Vision Pro / Quest / PSVR2 / iOS-AR / Android-AR / WebXR / PCVR); Phase-5 vision opt-in; bandwidth budget + tuning; QA bot harness; troubleshooting.
-- **`docs/multiplayer/UNITY_3D_WORLD_E2E_ANALYSIS.md`** — Unity-developer end-to-end dry run (mobile + visionOS + Quest + 3D VR + AR).
-- **`docs/multiplayer/CROSS_ENGINE_3D_WORLD_E2E_ANALYSIS.md`** — Unreal / Three.js / Godot / Cocos / Defold / Flutter / Java / native C++ / Web3 / Roblox parity matrix + edge cases.
-- **`Assets/Intelli-verse-X-SDK/MultiplayerKernel/Avatar/README.md`** — focused 5-minute Unity prefab recipe for `IVXAvatarReplicator`.
-- **`Assets/Intelli-verse-X-SDK/Documentation~/admin-liveops-analytics-game-agnostic.md`** — game-agnostic admin LiveOps proofcheck doc.
+- **`docs/multiplayer/AVATAR_REPLICATION_INTEGRATION_GUIDE.md`** ? canonical cross-engine, cross-platform integration guide. Covers Unity, Unreal, JS, Godot, visionOS, mobile-2D, Roblox; per-platform input + anchor playbook (Vision Pro / Quest / PSVR2 / iOS-AR / Android-AR / WebXR / PCVR); Phase-5 vision opt-in; bandwidth budget + tuning; QA bot harness; troubleshooting.
+- **`docs/multiplayer/UNITY_3D_WORLD_E2E_ANALYSIS.md`** ? Unity-developer end-to-end dry run (mobile + visionOS + Quest + 3D VR + AR).
+- **`docs/multiplayer/CROSS_ENGINE_3D_WORLD_E2E_ANALYSIS.md`** ? Unreal / Three.js / Godot / Cocos / Defold / Flutter / Java / native C++ / Web3 / Roblox parity matrix + edge cases.
+- **`Assets/Intelli-verse-X-SDK/MultiplayerKernel/Avatar/README.md`** ? focused 5-minute Unity prefab recipe for `IVXAvatarReplicator`.
+- **`Assets/Intelli-verse-X-SDK/Documentation~/admin-liveops-analytics-game-agnostic.md`** ? game-agnostic admin LiveOps proofcheck doc.
 
-### Added — JavaScript SDK
+### Added ? JavaScript SDK
 
-- **`@intelliversex/multiplayer/voice/token-client`** — TypeScript wrapper around `mp_voice_token` for browser/Node clients.
+- **`@intelliversex/multiplayer/voice/token-client`** ? TypeScript wrapper around `mp_voice_token` for browser/Node clients.
 
-### Added — Godot SDK
+### Added ? Godot SDK
 
-- `addons/intelliversex/multiplayer/ivx_voice_token_client.gd`, `ivx_livekit_viseme_receiver.gd`, `ivx_multiplayer_kernel.gd` — Godot 4 GDScript bindings for the voice + viseme stack.
+- `addons/intelliversex/multiplayer/ivx_voice_token_client.gd`, `ivx_livekit_viseme_receiver.gd`, `ivx_multiplayer_kernel.gd` ? Godot 4 GDScript bindings for the voice + viseme stack.
 
-### Added — Unreal SDK
+### Added ? Unreal SDK
 
-- `IVXLiveKitVisemeStream` + `IVXVoiceTokenClient` — UCLASS bindings for voice token minting and ARKit-52 morph driving. (`UIVXAvatarReplicator` UCLASS is on the Phase-6 backlog.)
+- `IVXLiveKitVisemeStream` + `IVXVoiceTokenClient` ? UCLASS bindings for voice token minting and ARKit-52 morph driving. (`UIVXAvatarReplicator` UCLASS is on the Phase-6 backlog.)
 
-### Added — Other engine bindings (kernel adapters parity)
+### Added ? Other engine bindings (kernel adapters parity)
 
 - Cocos2d-x: `Classes/IntelliVerseX/IVXMultiplayerKernel.h`.
 - Defold: `intelliversex/multiplayer_kernel.lua`.
@@ -80,28 +96,28 @@ This release closes the last critical-path client gap for the LiveKit migration 
 - C++ native: `include/intelliversex/ivx_multiplayer_kernel.h`, platform notes.
 - Web3: `src/IVXMultiplayerKernelWeb3.ts`.
 - Roblox: `src/Multiplayer/`, `examples/conversational_party.lua`.
-- `SDKs/MULTIPLAYER_KERNEL_ADAPTERS.md` — parity matrix.
+- `SDKs/MULTIPLAYER_KERNEL_ADAPTERS.md` ? parity matrix.
 
-### Added — Game-agnostic LiveOps
+### Added ? Game-agnostic LiveOps
 
-- **Game-agnostic admin LiveOps proofcheck** — SDK documentation showing how any game built with the SDK can wire analytics, Hiro, and Satori into the production admin dashboard using a stable `game_id`, Satori event metadata, and `ivx_qa_<game_id>_*` QA fixtures.
-- **Configurable analytics RPC IDs** — `IVXAnalyticsManager` now supports `ConfigureRpcIds(...)` and `SetGameRpcPrefix(...)` so new SDK-built games are not forced to use QuizVerse RPC names. QuizVerse defaults remain unchanged for backward compatibility.
+- **Game-agnostic admin LiveOps proofcheck** ? SDK documentation showing how any game built with the SDK can wire analytics, Hiro, and Satori into the production admin dashboard using a stable `game_id`, Satori event metadata, and `ivx_qa_<game_id>_*` QA fixtures.
+- **Configurable analytics RPC IDs** ? `IVXAnalyticsManager` now supports `ConfigureRpcIds(...)` and `SetGameRpcPrefix(...)` so new SDK-built games are not forced to use QuizVerse RPC names. QuizVerse defaults remain unchanged for backward compatibility.
 
 ### Fixed
 
-- **Analytics event-name guard** — `IVXAnalyticsManager.TrackEvent` now rejects null, empty, or `"unknown"` event names before emitting to Nakama.
+- **Analytics event-name guard** ? `IVXAnalyticsManager.TrackEvent` now rejects null, empty, or `"unknown"` event names before emitting to Nakama.
 
 ### Server-side prerequisites (already deployed)
 
 - Nakama Goja kernel template `avatar-replication-v1` (`data/modules/avatar_replication/`) registered.
 - LiveKit SFU running; `mp_voice_token` RPC mints tokens.
 - LiveKit Agents worker (`Intelliverse-X-AI/services/livekit-agent-worker/`) joins matches as `agent-${persona_id}`.
-- Feature flags `IVX_LIVEKIT_MULTIPLAYER_VOICE`, `IVX_LIVEKIT_MULTI_HUMAN_AI`, `IVX_LIVEKIT_AVATAR_ENABLED` enabled per the Phase-1–4 runbook (`Intelliverse-X-AI/docs/livekit/MIGRATION_FINAL_SIGNOFF.md`). Phase-5 vision is opt-in via `IVX_LIVEKIT_VISION_ENABLED`.
+- Feature flags `IVX_LIVEKIT_MULTIPLAYER_VOICE`, `IVX_LIVEKIT_MULTI_HUMAN_AI`, `IVX_LIVEKIT_AVATAR_ENABLED` enabled per the Phase-1?4 runbook (`Intelliverse-X-AI/docs/livekit/MIGRATION_FINAL_SIGNOFF.md`). Phase-5 vision is opt-in via `IVX_LIVEKIT_VISION_ENABLED`.
 
 ### Migration notes
 
 - **No breaking changes.** Existing games continue to work without picking up the avatar replicator. Drop `IVXAvatarReplicator` on a player root only when you want shared-3D-world presence.
-- **No client deployment changes required for voice or viseme** — those have been live since Phase-2 / Phase-4. This release adds the human-pose replication piece.
+- **No client deployment changes required for voice or viseme** ? those have been live since Phase-2 / Phase-4. This release adds the human-pose replication piece.
 
 ---
 
@@ -109,9 +125,9 @@ This release closes the last critical-path client gap for the LiveKit migration 
 
 ### Fixed
 
-- **Examples / GameBootstrap UPM compile** — `Examples/GameBootstrap.cs` no longer references **`IntelliVerseX.AI`** or **`IntelliVerseX.Bootstrap`** (those assemblies are not published in the Git UPM subtree; they remain in the monorepo under `Assets/_IntelliVerseXSDK`). The sample now initializes via **`IntelliVerseX.Core`** (`IntelliVerseXManager` + `IntelliVerseXConfig`) and keeps optional **Hiro** examples (`IVXHiroCoordinator`).
-- **IntelliVerseX.Examples.asmdef** — Removed invalid assembly references to **`IntelliVerseX.AI`**, **`IntelliVerseX.Bootstrap`**, and **`IntelliVerseX.Discord`** (not present as runtime assemblies in the UPM package).
-- **Reported SDK version vs `package.json`** — **`IntelliVerseXManager.SDKVersion`** and related constants were still **4.0.0**; **`IntelliVerseXConfig.version`**, editor wizards, and several UI labels still showed **5.8.0**. These now match **`5.8.2`** so the Console, Package Manager, and **IntelliVerseX →** menus agree with **`com.intelliversex.sdk` / `package.json`**.
+- **Examples / GameBootstrap UPM compile** ? `Examples/GameBootstrap.cs` no longer references **`IntelliVerseX.AI`** or **`IntelliVerseX.Bootstrap`** (those assemblies are not published in the Git UPM subtree; they remain in the monorepo under `Assets/_IntelliVerseXSDK`). The sample now initializes via **`IntelliVerseX.Core`** (`IntelliVerseXManager` + `IntelliVerseXConfig`) and keeps optional **Hiro** examples (`IVXHiroCoordinator`).
+- **IntelliVerseX.Examples.asmdef** ? Removed invalid assembly references to **`IntelliVerseX.AI`**, **`IntelliVerseX.Bootstrap`**, and **`IntelliVerseX.Discord`** (not present as runtime assemblies in the UPM package).
+- **Reported SDK version vs `package.json`** ? **`IntelliVerseXManager.SDKVersion`** and related constants were still **4.0.0**; **`IntelliVerseXConfig.version`**, editor wizards, and several UI labels still showed **5.8.0**. These now match **`5.8.2`** so the Console, Package Manager, and **IntelliVerseX ?** menus agree with **`com.intelliversex.sdk` / `package.json`**.
 
 ---
 
@@ -119,17 +135,17 @@ This release closes the last critical-path client gap for the LiveKit migration 
 
 ### Fixed
 
-- **UPM self-contained Hiro + Satori** — The Git UPM path `Assets/Intelli-verse-X-SDK` now includes **`IntelliVerseX.Hiro`** and **`IntelliVerseX.Satori`** assemblies (`Hiro/`, `Satori/` with `.asmdef` files). This resolves **CS0234 / CS0246** when `IntelliVerseX.V2`, **Social** (e.g. Friend Streak), and other modules reference `IVXHiroRpcClient`, `IVXHiroCoordinator`, `IVXSatoriClient`, etc., but those assemblies were previously missing from the published package subtree.
+- **UPM self-contained Hiro + Satori** ? The Git UPM path `Assets/Intelli-verse-X-SDK` now includes **`IntelliVerseX.Hiro`** and **`IntelliVerseX.Satori`** assemblies (`Hiro/`, `Satori/` with `.asmdef` files). This resolves **CS0234 / CS0246** when `IntelliVerseX.V2`, **Social** (e.g. Friend Streak), and other modules reference `IVXHiroRpcClient`, `IVXHiroCoordinator`, `IVXSatoriClient`, etc., but those assemblies were previously missing from the published package subtree.
 
 ### Changed
 
-- **Canonical Hiro/Satori location for consumers** — Hiro and Satori sources were moved from `Assets/_IntelliVerseXSDK/` into **`Assets/Intelli-verse-X-SDK/`** so a single Unity project does not register duplicate `IntelliVerseX.Hiro` / `IntelliVerseX.Satori` assemblies. Monorepo modules under `_IntelliVerseXSDK` still reference the same assembly **names**; resolution uses the copy inside the UPM root.
+- **Canonical Hiro/Satori location for consumers** ? Hiro and Satori sources were moved from `Assets/_IntelliVerseXSDK/` into **`Assets/Intelli-verse-X-SDK/`** so a single Unity project does not register duplicate `IntelliVerseX.Hiro` / `IntelliVerseX.Satori` assemblies. Monorepo modules under `_IntelliVerseXSDK` still reference the same assembly **names**; resolution uses the copy inside the UPM root.
 
 ---
 
 ## [5.2.0] - 2026-04-01
 
-### 🏰 New Feature: Clan System
+### ?? New Feature: Clan System
 
 Full-featured clan/group management powered by Nakama Groups.
 
@@ -195,7 +211,7 @@ Full-featured clan/group management powered by Nakama Groups.
 
 ## [5.1.0] - 2026-03-02
 
-### 🚀 New Feature: IP-Based Geolocation System
+### ?? New Feature: IP-Based Geolocation System
 
 Fast, reliable geolocation without requiring GPS permissions.
 
@@ -204,7 +220,7 @@ Fast, reliable geolocation without requiring GPS permissions.
 #### IP Geolocation Service (New)
 - **IVXIPGeolocationService** - Ultra-optimized IP-based geolocation with 6 free API providers
   - Parallel fetching for fastest response (typically <500ms)
-  - Intelligent tiered fallback: ip-api.com → ipapi.co → GeoJS → geoPlugin → ipinfo.io → Country.is
+  - Intelligent tiered fallback: ip-api.com ? ipapi.co ? GeoJS ? geoPlugin ? ipinfo.io ? Country.is
   - Configurable caching (default: 1 hour TTL)
   - Thread-safe singleton pattern
   - Zero-allocation hot paths where possible
@@ -241,7 +257,7 @@ Fast, reliable geolocation without requiring GPS permissions.
 
 ## [5.0.0] - 2026-02-27
 
-### 🎯 Major Release - Friends System & Social Features
+### ?? Major Release - Friends System & Social Features
 
 Complete friends system with real-time social features.
 
@@ -267,7 +283,7 @@ Complete friends system with real-time social features.
 
 ## [4.0.0] - 2026-02-23
 
-### 🎯 Major Release - Production Ready SDK
+### ?? Major Release - Production Ready SDK
 
 Complete production-ready release with enhanced authentication, ads integration, weekly quiz system, and test scenes.
 
@@ -336,7 +352,7 @@ Complete production-ready release with enhanced authentication, ads integration,
 
 ## [3.0.0] - 2026-01-20
 
-### 🎯 Major Release - Platform Support & Version Management
+### ?? Major Release - Platform Support & Version Management
 
 Production-ready release with improved platform support, version management, and stability fixes.
 
@@ -364,7 +380,7 @@ Production-ready release with improved platform support, version management, and
 
 ### Changed
 
-- Package version: **2.5.0 → 3.0.0**
+- Package version: **2.5.0 ? 3.0.0**
 - Updated all SDK version constants to 3.0.0
 - Improved singleton lifecycle management across SDK
 - Changed `FindObjectOfType` to `FindFirstObjectByType` (Unity best practice)
@@ -383,7 +399,7 @@ Production-ready release with improved platform support, version management, and
 
 ## [2.5.0] - 2026-01-13
 
-### 🔐 Authentication & Ads Overhaul - Production Ready
+### ?? Authentication & Ads Overhaul - Production Ready
 
 Complete authentication module with full UI system and production-ready ad mediation.
 
@@ -411,7 +427,7 @@ Complete authentication module with full UI system and production-ready ad media
 
 ### Changed
 
-- Package version: **2.0.0 → 2.5.0**
+- Package version: **2.0.0 ? 2.5.0**
 - Updated manifest.json with proper EDM4U tarball path
 - External Dependency Manager now uses local tarball (no more path issues)
 - Appodeal uses official git URL: `https://github.com/appodeal/appodeal-unity-plugin-upm.git#v3.12.0`
@@ -447,7 +463,7 @@ Updated manifest with proper dependency order:
 
 ## [2.0.0] - 2026-01-13
 
-### 🚀 Major Release - Production-Ready UPM Package
+### ?? Major Release - Production-Ready UPM Package
 
 Complete restructuring as a world-class Unity Package Manager (UPM) package for easy distribution via GitHub URL. Now supports Unity 2023.3 LTS through Unity 6.
 
@@ -511,16 +527,16 @@ Complete restructuring as a world-class Unity Package Manager (UPM) package for 
 
 | Unity Version | Status |
 |---------------|--------|
-| Unity 6000.x | ✅ Fully Supported |
-| Unity 2023.3.x LTS | ✅ Fully Supported |
-| Unity 2022.x | ⚠️ May work, not officially tested |
-| Unity 2021.x | ❌ Not Supported |
+| Unity 6000.x | ? Fully Supported |
+| Unity 2023.3.x LTS | ? Fully Supported |
+| Unity 2022.x | ?? May work, not officially tested |
+| Unity 2021.x | ? Not Supported |
 
 ---
 
 ## [1.0.0] - 2025-11-17
 
-### 🎉 Initial Release
+### ?? Initial Release
 
 Complete SDK extraction from QuizVerse with 12 modular packages.
 
@@ -537,7 +553,7 @@ Complete SDK extraction from QuizVerse with 12 modular packages.
 #### Networking Package
 - `IVXNetworkRequest` - HTTP requests with retry logic
 - `IVXRetryPolicy` - Configurable retry policies
-- Exponential backoff (1s → 30s)
+- Exponential backoff (1s ? 30s)
 - Offline detection and network type checking
 
 #### Storage Package
@@ -582,9 +598,9 @@ Complete SDK extraction from QuizVerse with 12 modular packages.
 
 ### Performance Improvements
 
-- Network success rate: 70% → **95%** (retry logic)
+- Network success rate: 70% ? **95%** (retry logic)
 - Memory savings: **~50MB** (ResourcePool)
-- New game setup: 2-3 weeks → **2-3 days** (SDK reuse)
+- New game setup: 2-3 weeks ? **2-3 days** (SDK reuse)
 
 ---
 

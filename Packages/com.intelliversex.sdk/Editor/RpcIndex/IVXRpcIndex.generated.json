@@ -1,0 +1,817 @@
+﻿{
+    "generatedAt":  "2026-09-07T18:17:12.6681944Z",
+    "generator":  "tools/generate-rpc-index.ps1",
+    "count":  162,
+    "rpcs":  [
+                 {
+                     "id":  "calculate_score_reward",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "check_geo_and_update_profile",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "claim_mission_reward",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "create_game_group",
+                     "module":  "social",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "create_or_sync_user",
+                     "module":  "identity",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "daily_missions_claim",
+                     "module":  "liveops",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "daily_missions_get",
+                     "module":  "liveops",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "daily_missions_update_progress",
+                     "module":  "liveops",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "daily_rewards_claim",
+                     "module":  "liveops",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "daily_rewards_get_calendar",
+                     "module":  "liveops",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "daily_rewards_get_state",
+                     "module":  "liveops",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "daily_rewards_get_status",
+                     "module":  "liveops",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "fortune_wheel_get_config",
+                     "module":  "liveops",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "fortune_wheel_get_state",
+                     "module":  "liveops",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "fortune_wheel_spin",
+                     "module":  "liveops",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "get_all_leaderboards",
+                     "module":  "leaderboard",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "get_daily_missions",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "get_time_period_leaderboard",
+                     "module":  "leaderboard",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "get_user_groups",
+                     "module":  "social",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "get_wallet_balance",
+                     "module":  "wallet",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_achievements_claim",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_achievements_list",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_achievements_progress",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_ad_revenue_get_config",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_ad_revenue_record_impression",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_appointment_claim",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_appointment_get",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_auctions_bid",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_auctions_create",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_auctions_list",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_auctions_resolve",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_challenges_claim",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_challenges_create",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_challenges_join",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_challenges_submit",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_daily_content_claim",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_daily_content_get",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_economy_donation_claim",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_economy_donation_give",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_economy_donation_request",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_economy_rewarded_video",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_energy_add_modifier",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_energy_get",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_energy_refill",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_energy_spend",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_event_lb_claim",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_event_lb_list",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_event_lb_submit",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_friend_battle_accept",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_friend_battle_get",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_friend_battle_send",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_friend_battle_submit",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_friend_quest_accept",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_friend_quest_get",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_friend_quest_progress",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_friend_streak_claim_milestone",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_friend_streak_get",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_friend_streak_interact",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_iap_history",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_iap_trigger_convert",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_iap_trigger_dismiss",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_iap_trigger_evaluate",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_iap_validate",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_incentives_apply_referral",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_incentives_referral_code",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_incentives_return_bonus",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_inventory_consume",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_inventory_grant",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_inventory_list",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_leaderboards_list",
+                     "module":  "leaderboard",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_leaderboards_records",
+                     "module":  "leaderboard",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_leaderboards_submit",
+                     "module":  "leaderboard",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_mailbox_claim",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_mailbox_claim_all",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_mailbox_delete",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_mailbox_list",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_offerwall_claim",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_offerwall_complete",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_offerwall_get",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_personalizer_get_overrides",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_personalizer_preview",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_personalizer_remove_override",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_personalizer_set_override",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_progression_add_xp",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_progression_get",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_retention_claim_comeback",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_retention_complete_onboarding",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_retention_get",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_retention_heartbeat",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_reward_bucket_get",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_reward_bucket_progress",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_reward_bucket_unlock",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_session_booster_activate",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_session_booster_claim_free",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_session_booster_get",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_smart_ad_timer_can_show",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_smart_ad_timer_get",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_smart_ad_timer_record",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_social_pressure_get",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_spin_wheel_get",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_spin_wheel_spin",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_stats_get",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_stats_update",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_store_list",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_store_purchase",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_streak_shield_activate",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_streak_shield_get",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_streak_shield_replenish",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_streaks_claim",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_streaks_get",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_streaks_update",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_teams_achievements",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_teams_get",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_teams_stats",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_teams_wallet_get",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_teams_wallet_update",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_tutorials_advance",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_tutorials_get",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_unlockables_buy_slot",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_unlockables_claim",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_unlockables_get",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "hiro_unlockables_start",
+                     "module":  "hiro",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "ivx_quest_claim",
+                     "module":  "liveops",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "ivx_quest_config",
+                     "module":  "liveops",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "ivx_quest_get",
+                     "module":  "liveops",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "ivx_quest_progress",
+                     "module":  "liveops",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "league_get_leaderboard",
+                     "module":  "leaderboard",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "league_get_state",
+                     "module":  "liveops",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "league_process_season",
+                     "module":  "liveops",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "league_submit_points",
+                     "module":  "liveops",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "mp_create_match",
+                     "module":  "multiplayer",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "mp_voice_token",
+                     "module":  "multiplayer",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "nakama_js_health",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "personalization_get",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "personalization_get_for_mode",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "push_get_endpoints",
+                     "module":  "liveops",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "push_register_token",
+                     "module":  "liveops",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "push_send_event",
+                     "module":  "liveops",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "satori_audiences_get_memberships",
+                     "module":  "satori",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "satori_event",
+                     "module":  "satori",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "satori_events_batch",
+                     "module":  "satori",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "satori_experiments_get",
+                     "module":  "satori",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "satori_experiments_get_variant",
+                     "module":  "satori",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "satori_flags_get",
+                     "module":  "satori",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "satori_flags_get_all",
+                     "module":  "satori",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "satori_identity_get",
+                     "module":  "satori",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "satori_identity_update_properties",
+                     "module":  "satori",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "satori_live_events_claim",
+                     "module":  "satori",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "satori_live_events_join",
+                     "module":  "satori",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "satori_live_events_list",
+                     "module":  "satori",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "satori_messages_delete",
+                     "module":  "satori",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "satori_messages_list",
+                     "module":  "satori",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "satori_messages_read",
+                     "module":  "satori",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "satori_metrics_query",
+                     "module":  "satori",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "submit_mission_progress",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "submit_score_and_sync",
+                     "module":  "leaderboard",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "update_game_reward_config",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "update_wallet_balance",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "wallet_get_balances",
+                     "module":  "wallet",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "wallet_update_game_wallet",
+                     "module":  "wallet",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "xsell_pick",
+                     "module":  "platform",
+                     "authRequired":  true
+                 },
+                 {
+                     "id":  "xsell_record",
+                     "module":  "platform",
+                     "authRequired":  true
+                 }
+             ]
+}

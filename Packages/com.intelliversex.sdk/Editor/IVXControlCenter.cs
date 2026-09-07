@@ -29,16 +29,6 @@ namespace IntelliVerseX.Editor
 
         private static readonly string[] TabLabels = { "Home", "Traffic", "APIs" };
 
-        private static readonly string[] FacadeRpcCatalog =
-        {
-            "create_or_sync_user",
-            "wallet_get_balances",
-            "wallet_update_game_wallet",
-            "submit_score_and_sync",
-            "get_all_leaderboards",
-            "nakama_js_health"
-        };
-
         private IVXBootstrapConfig _config;
         private SerializedObject _configSo;
         private Vector2 _scroll;
@@ -180,25 +170,44 @@ namespace IntelliVerseX.Editor
         private void DrawApis()
         {
             EditorGUILayout.LabelField("APIs", EditorStyles.boldLabel);
+            var entries = IVXRpcIndex.GetEntries();
+            string source = IVXRpcIndex.LoadedFrom;
             EditorGUILayout.HelpBox(
-                "Shipped facade RPC ids used by IVXNManager / wallet / leaderboard. " +
-                "Full generated index (RPC_INDEX_GENERATED) can replace this catalog later.",
-                MessageType.Info);
+                entries.Length > 0
+                    ? "Generated RPC index (" + entries.Length + " ids). Filter by name or module."
+                    : "RPC index missing — run tools/generate-rpc-index.ps1 from the repo root.",
+                entries.Length > 0 ? MessageType.Info : MessageType.Warning);
 
+            if (!string.IsNullOrEmpty(source))
+                EditorGUILayout.LabelField("Source", source, EditorStyles.miniLabel);
+
+            EditorGUILayout.BeginHorizontal();
             _apiFilter = EditorGUILayout.TextField("Filter", _apiFilter);
+            if (GUILayout.Button("Reload", GUILayout.Width(64)))
+            {
+                IVXRpcIndex.Invalidate();
+                entries = IVXRpcIndex.GetEntries();
+            }
+            EditorGUILayout.EndHorizontal();
 
             _apiScroll = EditorGUILayout.BeginScrollView(_apiScroll, GUILayout.MinHeight(280));
             string filter = (_apiFilter ?? "").Trim().ToLowerInvariant();
-            for (int i = 0; i < FacadeRpcCatalog.Length; i++)
+            for (int i = 0; i < entries.Length; i++)
             {
-                string id = FacadeRpcCatalog[i];
-                if (!string.IsNullOrEmpty(filter) && id.IndexOf(filter, StringComparison.OrdinalIgnoreCase) < 0)
+                var e = entries[i];
+                if (e == null || string.IsNullOrEmpty(e.id))
+                    continue;
+                if (!string.IsNullOrEmpty(filter)
+                    && e.id.IndexOf(filter, StringComparison.OrdinalIgnoreCase) < 0
+                    && (e.module == null || e.module.IndexOf(filter, StringComparison.OrdinalIgnoreCase) < 0))
                     continue;
 
                 EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.SelectableLabel(id, GUILayout.Height(18));
+                EditorGUILayout.SelectableLabel(e.id, GUILayout.Height(18), GUILayout.Width(260));
+                GUILayout.Label(e.module ?? "", GUILayout.Width(90));
+                GUILayout.Label(e.authRequired ? "auth" : "open", GUILayout.Width(40));
                 if (GUILayout.Button("Copy", GUILayout.Width(52)))
-                    EditorGUIUtility.systemCopyBuffer = id;
+                    EditorGUIUtility.systemCopyBuffer = e.id;
                 EditorGUILayout.EndHorizontal();
             }
 
@@ -208,7 +217,7 @@ namespace IntelliVerseX.Editor
             EditorGUILayout.LabelField("Canonical public types", EditorStyles.boldLabel);
             EditorGUILayout.LabelField("Wallet → IVXNWalletManager");
             EditorGUILayout.LabelField("Leaderboard → IVXNLeaderbordManager");
-            EditorGUILayout.LabelField("Avoid → IVXWalletManager / IVXGLeaderboardManager (obsolete)");
+            EditorGUILayout.LabelField("Optional → com.intelliversex.sdk.ai / .discord / .photon");
         }
 
         private void DrawCheck()

@@ -227,14 +227,11 @@ namespace IntelliVerseX.Bootstrap
         {
             Log("Shutting down SDK...");
 
-            #if INTELLIVERSEX_HAS_DISCORD
-            try { IntelliVerseX.Discord.IVXDiscordManager.Instance?.Shutdown(); }
-            catch (Exception e) { Debug.LogWarning($"[IVXBootstrap] Discord shutdown: {e.Message}"); }
-            #endif
-
             #if INTELLIVERSEX_HAS_NAKAMA
             if (_socket != null) { _socket.CloseAsync(); _socket = null; }
             #endif
+
+            IVXOptionalModules.TryShutdownDiscord();
 
             _isInitialized = false;
             Debug.Log("[IVXBootstrap] SDK shutdown complete.");
@@ -375,70 +372,29 @@ namespace IntelliVerseX.Bootstrap
 
         private void InitDiscord()
         {
-            try
+            if (IVXOptionalModules.TryInitDiscord(
+                transform,
+                _config != null ? _config.DiscordConfig : null,
+                Log,
+                EmitModuleFail))
             {
-                Log("Initializing Discord Social SDK...");
-                var mgr = IntelliVerseX.Discord.IVXDiscordManager.Instance;
-                if (mgr == null)
-                {
-                    var go = new GameObject("IVX_Discord");
-                    go.transform.SetParent(transform);
-                    mgr = go.AddComponent<IntelliVerseX.Discord.IVXDiscordManager>();
-                    go.AddComponent<IntelliVerseX.Discord.IVXDiscordPresence>();
-                    go.AddComponent<IntelliVerseX.Discord.IVXDiscordFriends>();
-                    go.AddComponent<IntelliVerseX.Discord.IVXDiscordMessages>();
-                    go.AddComponent<IntelliVerseX.Discord.IVXDiscordLobby>();
-                    go.AddComponent<IntelliVerseX.Discord.IVXDiscordVoice>();
-                    go.AddComponent<IntelliVerseX.Discord.IVXDiscordInvites>();
-                    go.AddComponent<IntelliVerseX.Discord.IVXDiscordLinkedChannels>();
-                    go.AddComponent<IntelliVerseX.Discord.IVXDiscordModeration>();
-                    go.AddComponent<IntelliVerseX.Discord.IVXDiscordDebug>();
-                }
-                var cfg = _config.DiscordConfig as IntelliVerseX.Discord.IVXDiscordConfig;
-                mgr.Initialize(cfg);
                 EmitModuleReady("Discord");
             }
-            catch (Exception e) { EmitModuleFail("Discord", e); }
         }
 
         private void InitAI()
         {
-            try
+            if (IVXOptionalModules.TryInitAI(
+                transform,
+                _config != null ? _config.AIConfig : null,
+                _userId,
+                _userName,
+                _authToken,
+                Log,
+                EmitModuleFail))
             {
-                Log("Initializing AI stack (7 subsystems)...");
-                var aiCfg = _config.AIConfig as IntelliVerseX.AI.IVXAIConfig;
-                if (aiCfg == null)
-                {
-                    Log("No AI config assigned — AI subsystems will not initialize.");
-                    return;
-                }
-
-                EnsureAISingleton<IntelliVerseX.AI.IVXAISessionManager>("IVX_AISessionManager", go => go.AddComponent<AudioSource>());
-                IntelliVerseX.AI.IVXAISessionManager.Instance?.Initialize(_userId, _userName, _authToken);
-
-                EnsureAISingleton<IntelliVerseX.AI.IVXAINPCDialogManager>("IVX_AINPCDialog");
-                IntelliVerseX.AI.IVXAINPCDialogManager.Instance?.Initialize(aiCfg);
-                IntelliVerseX.AI.IVXAINPCDialogManager.Instance?.SetAuthToken(_authToken);
-
-                EnsureAISingleton<IntelliVerseX.AI.IVXAIAssistant>("IVX_AIAssistant");
-                IntelliVerseX.AI.IVXAIAssistant.Instance?.Initialize(aiCfg);
-                IntelliVerseX.AI.IVXAIAssistant.Instance?.SetAuthToken(_authToken);
-
-                EnsureAISingleton<IntelliVerseX.AI.IVXAIModerator>("IVX_AIModerator");
-                IntelliVerseX.AI.IVXAIModerator.Instance?.Initialize(aiCfg);
-
-                EnsureAISingleton<IntelliVerseX.AI.IVXAIContentGenerator>("IVX_AIContentGen");
-                IntelliVerseX.AI.IVXAIContentGenerator.Instance?.Initialize(aiCfg);
-
-                EnsureAISingleton<IntelliVerseX.AI.IVXAIProfiler>("IVX_AIProfiler");
-                IntelliVerseX.AI.IVXAIProfiler.Instance?.Initialize(aiCfg, _userId);
-
-                EnsureAISingleton<IntelliVerseX.AI.IVXAIVoiceServices>("IVX_AIVoiceServices");
-                IntelliVerseX.AI.IVXAIVoiceServices.Instance?.Initialize(aiCfg);
-
                 EmitModuleReady("AI");
             }
-            catch (Exception e) { EmitModuleFail("AI", e); }
         }
 
         private void InitMultiplayer()
@@ -455,15 +411,6 @@ namespace IntelliVerseX.Bootstrap
         #endregion
 
         #region Private Helpers
-
-        private void EnsureAISingleton<T>(string goName, Action<GameObject> extras = null) where T : MonoBehaviour
-        {
-            if (FindFirstObjectByType<T>() != null) return;
-            var go = new GameObject(goName);
-            go.transform.SetParent(transform);
-            extras?.Invoke(go);
-            go.AddComponent<T>();
-        }
 
         private void Log(string msg)
         {

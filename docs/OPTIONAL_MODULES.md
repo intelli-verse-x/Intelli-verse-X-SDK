@@ -1,26 +1,23 @@
-# Optional Unity modules (not in core install)
+﻿# Optional Unity modules
 
-Core package: **`com.intelliversex.sdk`** at `Packages/com.intelliversex.sdk`.
+Core: `com.intelliversex.sdk` at `Packages/com.intelliversex.sdk` (**5.11.0**).
 
-Kid path needs **only** the core package + Nakama client in the consumer project:
+Kid path: **Control Center → Game ID → Play** (core only + Nakama client).
 
-**Control Center → paste Game ID → Play.**
+## Install optional packages
 
-Photon Asset Store copies, AppleAuth samples, Appodeal, and LevelPlay vendor trees belong in **`SDKs/unity/editor`** (sandbox), not in the UPM package path. `IVXPhotonConfig` is obsolete and ships **no** shared App ID.
+```json
+"com.intelliversex.sdk.ai": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk.ai",
+"com.intelliversex.sdk.discord": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk.discord",
+"com.intelliversex.sdk.photon": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk.photon"
+```
 
-These areas may still exist as optional code folders inside the package, but are **not** required for the kid path. Future optional UPM ids (not extracted yet — dual-tree / GUID work is a later ADR):
+| Package | Contains | Notes |
+|---------|----------|--------|
+| `.ai` | LLM / voice / moderation Runtime | Bootstrap soft-loads when present |
+| `.discord` | Discord Social Runtime | Bootstrap soft-loads when present |
+| `.photon` | Room helpers only | Install PUN2 from Asset Store separately |
 
-| Planned package id | What it covers | Today |
-|--------------------|----------------|--------|
-| `com.intelliversex.sdk.photon` | PUN2 / Photon multiplayer helpers | Photon Asset Store copy stays in **sandbox** (`SDKs/unity/editor`). Core package must not require Photon. |
-| `com.intelliversex.sdk.discord` | Discord social / rich presence modules | Code may exist under package `Discord` / related folders; treat as opt-in. |
-| `com.intelliversex.sdk.ai` | LLM / persona / voice host modules | Code may exist under AI folders; treat as opt-in. |
+Sandbox already references all three via `file:` paths.
 
-## Rules
-
-1. Do **not** add Photon / Discord / AI as hard UPM `dependencies` of `com.intelliversex.sdk`.
-2. Sandbox may keep vendors for demos; exporters and docs must say they are optional.
-3. When extracting a real optional package, use a **new** folder under `Packages/` and a new `package.json` — do not GUID-merge dual trees in the same PR.
-4. Control Center marks Photon as **Optional** on the Home checklist; Traffic / APIs tabs cover `IVXRequestBus` without Photon.
-
-See [UNITY_SDK_REVAMP_PLAN.md](architecture/UNITY_SDK_REVAMP_PLAN.md) §4 and [UPM_PACKAGE_TRANSFORMATION_PLAN.md](UPM_PACKAGE_TRANSFORMATION_PLAN.md).
+See [ADR-003](architecture/adr/ADR-003-package-source-of-truth.md).
