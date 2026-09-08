@@ -1,6 +1,6 @@
 # Getting Started Sample
 
-Honest status for SDK **5.9.0**: this sample currently ships **scripts only**.
+Honest status for SDK **6.0.0**: this sample currently ships **scripts only**.
 
 ## What you get
 

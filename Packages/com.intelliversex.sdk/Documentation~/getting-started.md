@@ -1,6 +1,6 @@
 # Getting Started with IntelliVerseX SDK
 
-Unity **6000.3** · package `com.intelliversex.sdk` **5.9.0**
+Unity **6000.3** · package `com.intelliversex.sdk` **6.0.0**
 
 ## Install
 

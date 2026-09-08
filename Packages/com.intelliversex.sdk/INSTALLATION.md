@@ -1,6 +1,6 @@
 # IntelliVerseX SDK Installation
 
-Package: `com.intelliversex.sdk` **5.10.0** · Unity **6000.3**
+Package: `com.intelliversex.sdk` **6.0.0** · Unity **6000.3**
 
 ## Install (Git URL)
 
@@ -17,7 +17,7 @@ Add to `Packages/manifest.json`:
 Pin a tag when shipping:
 
 ```json
-"com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk#v5.10.0"
+"com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk#v6.0.0"
 ```
 
 Or Package Manager → **+** → **Add package from git URL** with the same URL.

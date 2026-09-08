@@ -13,6 +13,19 @@ _(no unreleased changes)_
 
 ---
 
+## [6.0.0] - 2026-09-09
+
+### Changed — Major release
+
+- Package version **`6.0.0`** across `com.intelliversex.sdk` and optional packages (`ai`, `discord`, `photon`).
+- Aligned runtime/editor reported versions (`IntelliVerseXManager.SDKVersion`, `IntelliVerseXConfig`, Control Center / Bootstrap labels, WebGL monetization) with `package.json`.
+- Session local-data hardening: remember-me restore requires both RememberMe and PersistFlag; Control Center sign-out clears `UserSessionManager`.
+- Sandbox cleanup: removed Photon/Appodeal Assets; UITK demo paths preferred; consumer Nakama host/key kept out of Control Center UI.
+
+**Install pin:** `#v6.0.0`
+
+---
+
 ## [5.11.0] - 2026-09-07
 
 ### Added ? Optional UPM packages + RPC index + dual-tree flatten

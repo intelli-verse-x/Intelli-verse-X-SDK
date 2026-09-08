@@ -1,6 +1,6 @@
 {
   "name": "com.intelliversex.sdk.ai",
-  "version": "5.11.0",
+  "version": "6.0.0",
   "displayName": "IntelliVerseX SDK — AI",
   "description": "Optional AI / LLM / voice / moderation modules for IntelliVerseX. Requires com.intelliversex.sdk.",
   "unity": "6000.3",
@@ -12,7 +12,7 @@
     "url": "https://intelliversex.com"
   },
   "dependencies": {
-    "com.intelliversex.sdk": "5.11.0"
+    "com.intelliversex.sdk": "6.0.0"
   },
   "keywords": ["intelliversex", "ai", "llm", "voice"]
 }

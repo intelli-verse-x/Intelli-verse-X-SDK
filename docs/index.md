@@ -84,7 +84,7 @@ Or with a specific version:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk#v5.8.0"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk#v6.0.0"
   }
 }
 ```
@@ -196,7 +196,7 @@ IntelliVerseX SDK is licensed under the [MIT License](https://github.com/Intelli
 
 <div class="grid cards" markdown>
 
--   :material-clock-fast:{ .lg .middle } __Version 5.8.0__
+-   :material-clock-fast:{ .lg .middle } __Version 6.0.0__
 
     ---
 

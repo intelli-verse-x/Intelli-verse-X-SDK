@@ -58,7 +58,7 @@ For production builds, always pin to a specific version tag:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk#v5.8.0"
+    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk#v6.0.0"
   }
 }
 ```
@@ -67,7 +67,7 @@ For production builds, always pin to a specific version tag:
 
 | Version | Release Date | Notes |
 |---------|--------------|-------|
-| `v5.8.0` | — | Latest stable (recommended pin); matches `package.json` |
+| `v6.0.0` | 2026-09-09 | Latest stable (recommended pin); matches `package.json` |
 | `v5.7.0` | — | See [GitHub Releases](https://github.com/intelli-verse-x/Intelli-verse-X-SDK/releases) for changelog |
 | `v5.6.0` | — | See GitHub Releases for changelog |
 | `v5.5.0` | — | See GitHub Releases for changelog |
@@ -94,7 +94,7 @@ Go to **Window > Package Manager** in Unity.
 2. Select **Add package from git URL...**
 3. Enter:
    ```
-   https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk#v5.8.0
+   https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk#v6.0.0
    ```
 4. Click **Add**
 
@@ -214,10 +214,10 @@ com.intelliversex.sdk/          # Package id; content from Assets/Intelli-verse-
 Simply change the version tag in `manifest.json`:
 
 ```json
-"com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk#v5.8.0"
+"com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk#v6.0.0"
 ```
 
-Use the tag you want (for example `#v5.8.0` for the current recommended release).
+Use the tag you want (for example `#v6.0.0` for the current recommended release).
 
 ### Via Package Manager
 

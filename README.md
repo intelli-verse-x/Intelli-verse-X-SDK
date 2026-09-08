@@ -7,7 +7,7 @@ From game design document to live retention — one SDK, any engine, every platf
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License"></a>
-  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/Version-5.9.0-orange.svg" alt="Version"></a>
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/Version-6.0.0-orange.svg" alt="Version"></a>
   <a href="https://intelli-verse-x.github.io/Intelli-verse-X-SDK/"><img src="https://img.shields.io/badge/Docs-Online-blue.svg" alt="Documentation"></a>
   <a href="https://openupm.com/packages/com.intelliversex.sdk"><img src="https://img.shields.io/npm/v/com.intelliversex.sdk?label=openupm&registry_uri=https://package.openupm.com" alt="OpenUPM"></a>
   <a href=".cursor/skills"><img src="https://img.shields.io/badge/AI%20Skills-31-blueviolet" alt="31 AI Skills"></a>

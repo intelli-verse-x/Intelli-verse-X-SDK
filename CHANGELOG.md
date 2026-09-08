@@ -13,6 +13,14 @@ _(no unreleased changes)_
 
 ---
 
+## [6.0.0] — 2026-09-09
+
+Major Unity package release. See [`Packages/com.intelliversex.sdk/CHANGELOG.md`](Packages/com.intelliversex.sdk/CHANGELOG.md) entry `[6.0.0]`.
+
+**UPM pin:** `#v6.0.0`
+
+---
+
 ## [5.9.0] — 2026-04-26
 
 ### 🌐 Shared 3D Worlds — Avatar Replication + LiveKit Voice/Lip-sync

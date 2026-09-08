@@ -10,7 +10,7 @@ namespace IntelliVerseX.Core
     [Obsolete("Removed. Use IVXBootstrap + IVXBootstrapConfig (IntelliVerseX → Control Center).")]
     public class IntelliVerseXManager : MonoBehaviour
     {
-        public const string SDKVersion = "5.9.0";
+        public const string SDKVersion = "6.0.0";
 
         private static IntelliVerseXManager _instance;
         private static IntelliVerseXConfig _config;
