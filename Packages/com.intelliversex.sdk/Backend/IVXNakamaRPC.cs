@@ -111,12 +111,12 @@ namespace IntelliVerseX.Backend
         }
 
         // ============================================================================
-        // COMMON RPCs - Daily Missions
+        // COMMON RPCs - Daily Missions (canonical prod IDs)
         // ============================================================================
 
-        private const string RPC_GET_DAILY_MISSIONS = "get_daily_missions";
-        private const string RPC_SUBMIT_MISSION_PROGRESS = "submit_mission_progress";
-        private const string RPC_CLAIM_MISSION_REWARD = "claim_mission_reward";
+        private const string RPC_GET_DAILY_MISSIONS = "daily_missions_get";
+        private const string RPC_SUBMIT_MISSION_PROGRESS = "daily_missions_update_progress";
+        private const string RPC_CLAIM_MISSION_REWARD = "daily_missions_claim";
 
         /// <summary>
         /// Get today's daily missions for the current game.
@@ -127,13 +127,14 @@ namespace IntelliVerseX.Backend
             ISession session,
             string gameId)
         {
-            var payload = new { gameId };
+            var payload = new { gameId, game_id = gameId };
             return await CallRPC<object, DailyMissionsResponse>(
                 client, session, RPC_GET_DAILY_MISSIONS, payload);
         }
 
         /// <summary>
         /// Submit progress for a specific mission.
+        /// Prod accepts <c>value</c> (and optionally <c>progress</c>).
         /// </summary>
         public static async Task<MissionProgressResponse> SubmitMissionProgress(
             IClient client,
@@ -142,7 +143,15 @@ namespace IntelliVerseX.Backend
             string missionId,
             int progressValue)
         {
-            var payload = new { gameId, missionId, progress = progressValue };
+            var payload = new
+            {
+                gameId,
+                game_id = gameId,
+                missionId,
+                mission_id = missionId,
+                progress = progressValue,
+                value = progressValue
+            };
             return await CallRPC<object, MissionProgressResponse>(
                 client, session, RPC_SUBMIT_MISSION_PROGRESS, payload);
         }
@@ -156,7 +165,7 @@ namespace IntelliVerseX.Backend
             string gameId,
             string missionId)
         {
-            var payload = new { gameId, missionId };
+            var payload = new { gameId, game_id = gameId, missionId, mission_id = missionId };
             return await CallRPC<object, MissionRewardResponse>(
                 client, session, RPC_CLAIM_MISSION_REWARD, payload);
         }

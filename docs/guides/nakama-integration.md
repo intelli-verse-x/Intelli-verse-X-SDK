@@ -475,5 +475,13 @@ Canonical social RPCs on prod (2026-09):
 - Challenges: `send_friend_challenge`, `accept_friend_challenge`, `list_pending_friend_challenges`, …
 - Streaks: `friend_streak_get_state`, `friend_streak_record_contribution`, …
 - Quests: `friend_quest_get_state`, `friend_quest_complete`
+- Clans: `get_user_groups`, `create_game_group` (+ native group join/leave/list)
+- Friends extras: `friends_list`, `friends_remove` (native Add/List/Delete remain primary)
+- Push: `push_register_token`, `push_get_endpoints`, `push_send_event`
+- Referral: `hiro_incentives_referral_code`, `hiro_incentives_apply_referral`
+- Chat: **native Nakama channels** (`IVXSocialChatService`) — no `chat_*` RPCs
 
-See [Backend Configuration](../configuration/backend-config.md) for server setup and [nakama-rpc-prod-audit.md](nakama-rpc-prod-audit.md) for the full probe.
+**Usage recipes:** [social-nakama-usage.md](social-nakama-usage.md)  
+Audits: [nakama-rpc-prod-audit.md](nakama-rpc-prod-audit.md) · [social](nakama-rpc-prod-audit-social.md) · [non-social](nakama-rpc-prod-audit-nonsocial.md)
+
+See [Backend Configuration](../configuration/backend-config.md) for server setup.

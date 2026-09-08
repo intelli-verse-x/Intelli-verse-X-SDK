@@ -96,6 +96,7 @@ namespace IntelliVerseX.Social.UI
         #region Public Methods
     /// <summary>
     /// Load referral data (URL and stats).
+    /// Prefers prod Nakama <c>hiro_incentives_referral_code</c> when a session exists.
     /// </summary>
     public async void LoadReferralData()
     {
@@ -104,7 +105,13 @@ namespace IntelliVerseX.Social.UI
 
         try
         {
-            // Load referral URL
+            if (await TryLoadReferralFromNakamaAsync())
+            {
+                SetStatus("Referral data loaded!", successColor);
+                return;
+            }
+
+            // Fallback: HTTP APIManager
             var urlResponse = await APIManager.GetReferralUrlAsync(null);
             
             if (urlResponse.status && urlResponse.data != null)
@@ -118,7 +125,6 @@ namespace IntelliVerseX.Social.UI
                 return;
             }
 
-            // Load referral stats
             var statsResponse = await APIManager.GetReferralStatsAsync(null);
             
             if (statsResponse.status && statsResponse.data != null)
@@ -139,6 +145,35 @@ namespace IntelliVerseX.Social.UI
         finally
         {
             ShowLoading(false);
+        }
+    }
+
+    private async Task<bool> TryLoadReferralFromNakamaAsync()
+    {
+        try
+        {
+            var t = Type.GetType("IntelliVerseX.Backend.Nakama.IVXNManager, IntelliVerseX.V2");
+            var mgr = t?.GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)?.GetValue(null);
+            if (mgr == null) return false;
+
+            var client = t.GetProperty("Client")?.GetValue(mgr) as Nakama.IClient;
+            var session = t.GetProperty("Session")?.GetValue(mgr) as Nakama.ISession;
+            if (client == null || session == null || session.IsExpired) return false;
+
+            var result = await IVXNakamaReferralService.GetReferralCodeAsync(client, session);
+            if (result == null || string.IsNullOrEmpty(result.ResolvedCode)) return false;
+
+            if (referralCodeText != null)
+                referralCodeText.text = result.ResolvedCode;
+            if (referralUrlText != null && !string.IsNullOrEmpty(result.ResolvedUrl))
+                referralUrlText.text = result.ResolvedUrl;
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"[IVXReferralUI] Nakama referral path skipped: {ex.Message}");
+            return false;
         }
     }
 

@@ -73,4 +73,31 @@ namespace IntelliVerseX.Progression
     {
         [JsonProperty("achievement_id")] public string achievementId;
     }
+
+    /// <summary>
+    /// Prod <c>hiro_achievements_progress</c> may nest the achievement or return counters at root.
+    /// </summary>
+    [Serializable]
+    public class IVXAchievementProgressEnvelope
+    {
+        [JsonProperty("achievement")] public IVXAchievement achievement;
+        [JsonProperty("id")] public string id;
+        [JsonProperty("currentCount")] public int currentCount;
+        [JsonProperty("maxCount")] public int maxCount;
+        [JsonProperty("completed")] public bool completed;
+        [JsonProperty("claimed")] public bool claimed;
+
+        public IVXAchievement ToAchievement(string fallbackId, int progressHint)
+        {
+            if (achievement != null) return achievement;
+            return new IVXAchievement
+            {
+                id = string.IsNullOrEmpty(id) ? fallbackId : id,
+                currentProgress = currentCount > 0 ? currentCount : progressHint,
+                targetProgress = maxCount,
+                unlocked = completed,
+                rewardClaimed = claimed
+            };
+        }
+    }
 }

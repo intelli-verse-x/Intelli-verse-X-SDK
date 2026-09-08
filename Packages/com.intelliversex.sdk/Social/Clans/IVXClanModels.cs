@@ -82,12 +82,14 @@ namespace IntelliVerseX.Social
     internal sealed class IVXGetUserGroupsPayload
     {
         public string gameId;
+        public string game_id;
     }
 
     [Serializable]
     internal sealed class IVXCreateClanPayload
     {
         public string gameId;
+        public string game_id;
         public string name;
         public string description;
         public int maxCount;
@@ -100,12 +102,15 @@ namespace IntelliVerseX.Social
     {
         public bool success;
         public string groupId;
+        public string group_id;
         public string name;
         public string description;
         public bool open;
         public int maxCount;
         public string createdAt;
         public string error;
+
+        public string ResolvedGroupId => !string.IsNullOrEmpty(groupId) ? groupId : group_id;
     }
 
     [Serializable]
@@ -122,14 +127,25 @@ namespace IntelliVerseX.Social
     internal sealed class IVXGroupInfo
     {
         public string groupId;
+        public string group_id;
+        public string id;
         public string name;
         public string description;
         public int memberCount;
+        public int member_count;
         public int maxCount;
+        public int max_count;
         public bool open;
         public int level;
         public int xp;
         public string role;
         public string joinedAt;
+
+        public string ResolvedId =>
+            !string.IsNullOrEmpty(groupId) ? groupId :
+            !string.IsNullOrEmpty(group_id) ? group_id : id;
+
+        public int ResolvedMemberCount => memberCount > 0 ? memberCount : member_count;
+        public int ResolvedMaxCount => maxCount > 0 ? maxCount : max_count;
     }
 }

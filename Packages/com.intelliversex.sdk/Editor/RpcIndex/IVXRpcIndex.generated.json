@@ -1,7 +1,7 @@
-{
-    "generatedAt":  "2026-09-07T20:15:17.7731026Z",
+﻿{
+    "generatedAt":  "2026-09-08T06:46:08.1863321Z",
     "generator":  "tools/generate-rpc-index.ps1",
-    "count":  190,
+    "count":  179,
     "rpcs":  [
                  {
                      "id":  "accept_friend_challenge",
@@ -9,27 +9,7 @@
                      "authRequired":  true
                  },
                  {
-                     "id":  "achievements_claim_reward",
-                     "module":  "platform",
-                     "authRequired":  true
-                 },
-                 {
                      "id":  "achievements_get_all",
-                     "module":  "platform",
-                     "authRequired":  true
-                 },
-                 {
-                     "id":  "achievements_track_progress",
-                     "module":  "platform",
-                     "authRequired":  true
-                 },
-                 {
-                     "id":  "badges_check_unlock",
-                     "module":  "platform",
-                     "authRequired":  true
-                 },
-                 {
-                     "id":  "badges_equip",
                      "module":  "platform",
                      "authRequired":  true
                  },
@@ -65,11 +45,6 @@
                  },
                  {
                      "id":  "check_geo_and_update_profile",
-                     "module":  "platform",
-                     "authRequired":  true
-                 },
-                 {
-                     "id":  "claim_mission_reward",
                      "module":  "platform",
                      "authRequired":  true
                  },
@@ -174,6 +149,16 @@
                      "authRequired":  true
                  },
                  {
+                     "module":  "social",
+                     "id":  "friends_list",
+                     "authRequired":  true
+                 },
+                 {
+                     "module":  "social",
+                     "id":  "friends_remove",
+                     "authRequired":  true
+                 },
+                 {
                      "id":  "friends_spectate",
                      "module":  "platform",
                      "authRequired":  true
@@ -181,11 +166,6 @@
                  {
                      "id":  "get_all_leaderboards",
                      "module":  "leaderboard",
-                     "authRequired":  true
-                 },
-                 {
-                     "id":  "get_daily_missions",
-                     "module":  "platform",
                      "authRequired":  true
                  },
                  {
@@ -709,11 +689,6 @@
                      "authRequired":  true
                  },
                  {
-                     "id":  "monthly_milestones_get",
-                     "module":  "platform",
-                     "authRequired":  true
-                 },
-                 {
                      "id":  "monthly_milestones_update_progress",
                      "module":  "platform",
                      "authRequired":  true
@@ -756,16 +731,6 @@
                  {
                      "id":  "push_send_event",
                      "module":  "liveops",
-                     "authRequired":  true
-                 },
-                 {
-                     "id":  "retention_check_in",
-                     "module":  "platform",
-                     "authRequired":  true
-                 },
-                 {
-                     "id":  "retention_get_state",
-                     "module":  "platform",
                      "authRequired":  true
                  },
                  {
@@ -859,11 +824,6 @@
                      "authRequired":  true
                  },
                  {
-                     "id":  "season_pass_get_state",
-                     "module":  "platform",
-                     "authRequired":  true
-                 },
-                 {
                      "id":  "season_pass_purchase_premium",
                      "module":  "platform",
                      "authRequired":  true
@@ -874,19 +834,14 @@
                      "authRequired":  true
                  },
                  {
-                     "id":  "submit_mission_progress",
-                     "module":  "platform",
-                     "authRequired":  true
-                 },
-                 {
                      "id":  "submit_score_and_sync",
                      "module":  "leaderboard",
                      "authRequired":  true
                  },
                  {
-                     "id":  "tournament_get_active",
                      "module":  "platform",
-                     "authRequired":  true
+                     "id":  "tournament_get",
+                     "authRequired":  false
                  },
                  {
                      "id":  "tournament_get_leaderboard",
@@ -897,6 +852,11 @@
                      "id":  "tournament_join",
                      "module":  "platform",
                      "authRequired":  true
+                 },
+                 {
+                     "module":  "platform",
+                     "id":  "tournament_list",
+                     "authRequired":  false
                  },
                  {
                      "id":  "tournament_submit_score",
@@ -924,22 +884,7 @@
                      "authRequired":  true
                  },
                  {
-                     "id":  "weekly_goals_get",
-                     "module":  "platform",
-                     "authRequired":  true
-                 },
-                 {
                      "id":  "weekly_goals_update_progress",
-                     "module":  "platform",
-                     "authRequired":  true
-                 },
-                 {
-                     "id":  "winback_claim_offer",
-                     "module":  "platform",
-                     "authRequired":  true
-                 },
-                 {
-                     "id":  "winback_get_offer",
                      "module":  "platform",
                      "authRequired":  true
                  },

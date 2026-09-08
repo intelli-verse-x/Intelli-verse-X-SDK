@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Nakama;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace IntelliVerseX.Social
@@ -177,13 +178,15 @@ namespace IntelliVerseX.Social
 
                 var payload = new IVXGetUserGroupsPayload
                 {
-                    gameId = gameId
+                    gameId = gameId,
+                    game_id = gameId
                 };
 
-                var result = await client.RpcAsync(session, RPC_GET_USER_GROUPS, JsonUtility.ToJson(payload));
+                // Prod RPC: get_user_groups (auth required). Prefer Newtonsoft for snake/camel fields.
+                var result = await client.RpcAsync(session, RPC_GET_USER_GROUPS, JsonConvert.SerializeObject(payload));
                 ct.ThrowIfCancellationRequested();
 
-                var response = JsonUtility.FromJson<IVXUserGroupsResponse>(result.Payload);
+                var response = JsonConvert.DeserializeObject<IVXUserGroupsResponse>(result.Payload);
                 if (response == null)
                 {
                     return IVXClanOperationResult.Failure("Clan response payload was empty.");
@@ -244,6 +247,7 @@ namespace IntelliVerseX.Social
                 var payload = new IVXCreateClanPayload
                 {
                     gameId = gameId,
+                    game_id = gameId,
                     name = name.Trim(),
                     description = description ?? string.Empty,
                     maxCount = Mathf.Max(2, maxMembers),
@@ -251,10 +255,11 @@ namespace IntelliVerseX.Social
                     groupType = "guild"
                 };
 
-                var result = await client.RpcAsync(session, RPC_CREATE_GAME_GROUP, JsonUtility.ToJson(payload));
+                // Prod RPC: create_game_group (auth required).
+                var result = await client.RpcAsync(session, RPC_CREATE_GAME_GROUP, JsonConvert.SerializeObject(payload));
                 ct.ThrowIfCancellationRequested();
 
-                var response = JsonUtility.FromJson<IVXCreateClanResponse>(result.Payload);
+                var response = JsonConvert.DeserializeObject<IVXCreateClanResponse>(result.Payload);
                 if (response == null)
                 {
                     return IVXClanOperationResult.Failure("Clan create response payload was empty.");
@@ -269,7 +274,7 @@ namespace IntelliVerseX.Social
 
                 var createdClan = new IVXClanData
                 {
-                    ClanId = response.groupId,
+                    ClanId = response.ResolvedGroupId,
                     Name = response.name,
                     Description = response.description,
                     MemberCount = 1,
@@ -504,11 +509,11 @@ namespace IntelliVerseX.Social
 
             return new IVXClanData
             {
-                ClanId = group.groupId,
+                ClanId = group.ResolvedId,
                 Name = group.name,
                 Description = group.description,
-                MemberCount = group.memberCount,
-                MaxMembers = group.maxCount,
+                MemberCount = group.ResolvedMemberCount,
+                MaxMembers = group.ResolvedMaxCount,
                 Level = group.level,
                 Experience = group.xp,
                 IsOpen = group.open,

@@ -95,63 +95,74 @@ namespace IntelliVerseX.Retention
         }
 
         /// <summary>
-        /// Retrieves the current weekly goals for the player.
+        /// Retrieves current goals. Prod has no <c>weekly_goals_get</c> — uses liveops
+        /// <c>daily_missions_get</c> and maps missions into weekly goal models.
         /// </summary>
-        /// <returns>A list of weekly goals.</returns>
-        public async Task<List<IVXWeeklyGoal>> GetWeeklyGoalsAsync()
+        public async Task<List<IVXWeeklyGoal>> GetWeeklyGoalsAsync(string gameId = null)
         {
-            var rpc = await _rpcClient.CallAsync<IVXWeeklyGoalsResponse>("weekly_goals_get");
-            if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "weekly_goals_get"))
+            object payload = string.IsNullOrEmpty(gameId)
+                ? new { }
+                : new { gameId, game_id = gameId };
+            var rpc = await _rpcClient.CallAsync<IVXDailyMissionsGoalsBridge>("daily_missions_get", payload);
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "daily_missions_get"))
                 return new List<IVXWeeklyGoal>();
+
             OnGoalsRefreshed?.Invoke();
-            return envelope?.goals ?? new List<IVXWeeklyGoal>();
+            return envelope?.ToWeeklyGoals() ?? new List<IVXWeeklyGoal>();
         }
 
         /// <summary>
         /// Updates progress toward a weekly goal.
+        /// Prefers prod <c>weekly_goals_update_progress</c>; also sends <c>value</c> for mission aliases.
         /// </summary>
-        /// <param name="goalId">The goal identifier.</param>
-        /// <param name="progress">The progress increment.</param>
-        /// <returns>The updated weekly goal.</returns>
         public async Task<IVXWeeklyGoal> UpdateWeeklyProgressAsync(string goalId, int progress)
         {
-            var payload = new IVXWeeklyGoalProgressRequest
+            var payload = new
             {
-                goalId = goalId,
-                progress = progress
+                goal_id = goalId,
+                goalId,
+                missionId = goalId,
+                mission_id = goalId,
+                progress,
+                value = progress
             };
             var rpc = await _rpcClient.CallAsync<IVXWeeklyGoal>("weekly_goals_update_progress", payload);
             if (!HiroRpcResponseUtility.TryGetData(rpc, out var goal, "weekly_goals_update_progress"))
-                return null;
+            {
+                // Fallback: canonical daily missions progress (prod note: may be auto-tracked).
+                var missionRpc = await _rpcClient.CallAsync<IVXWeeklyGoal>("daily_missions_update_progress", payload);
+                if (!HiroRpcResponseUtility.TryGetData(missionRpc, out goal, "daily_missions_update_progress"))
+                    return null;
+            }
+
             if (goal != null && goal.completed)
                 OnGoalCompleted?.Invoke(goal);
             return goal;
         }
 
         /// <summary>
-        /// Retrieves the current monthly milestones for the player.
+        /// Monthly milestones: prod has no list RPC. Returns empty and logs once.
+        /// Progress updates still go through <c>monthly_milestones_update_progress</c> when available.
         /// </summary>
-        /// <returns>A list of monthly milestones.</returns>
         public async Task<List<IVXMonthlyMilestone>> GetMonthlyMilestonesAsync()
         {
-            var rpc = await _rpcClient.CallAsync<IVXMonthlyMilestonesResponse>("monthly_milestones_get");
-            if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "monthly_milestones_get"))
-                return new List<IVXMonthlyMilestone>();
-            return envelope?.milestones ?? new List<IVXMonthlyMilestone>();
+            Debug.LogWarning($"[{nameof(IVXGoalsManager)}] monthly_milestones_get is not registered on prod Nakama; returning empty list.");
+            await Task.CompletedTask;
+            return new List<IVXMonthlyMilestone>();
         }
 
         /// <summary>
         /// Updates progress toward a monthly milestone.
+        /// Prod RPC: <c>monthly_milestones_update_progress</c>.
         /// </summary>
-        /// <param name="milestoneId">The milestone identifier.</param>
-        /// <param name="progress">The progress increment.</param>
-        /// <returns>The updated monthly milestone.</returns>
         public async Task<IVXMonthlyMilestone> UpdateMonthlyProgressAsync(string milestoneId, int progress)
         {
-            var payload = new IVXMonthlyMilestoneProgressRequest
+            var payload = new
             {
-                milestoneId = milestoneId,
-                progress = progress
+                milestone_id = milestoneId,
+                milestoneId,
+                progress,
+                value = progress
             };
             var rpc = await _rpcClient.CallAsync<IVXMonthlyMilestone>("monthly_milestones_update_progress", payload);
             if (!HiroRpcResponseUtility.TryGetData(rpc, out var milestone, "monthly_milestones_update_progress"))

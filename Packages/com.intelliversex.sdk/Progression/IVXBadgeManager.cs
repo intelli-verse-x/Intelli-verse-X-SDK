@@ -93,48 +93,52 @@ namespace IntelliVerseX.Progression
 
         /// <summary>
         /// Retrieves all badges for the current player.
+        /// Prod RPC: <c>badges_get_all</c> (requires <c>game_id</c> on session bootstrap / payload).
         /// </summary>
-        /// <returns>A list of badges.</returns>
-        public async Task<List<IVXBadge>> GetAllBadgesAsync()
+        public async Task<List<IVXBadge>> GetAllBadgesAsync(string gameId = null)
         {
             if (!_isInitialized) { Debug.LogError($"[{nameof(IVXBadgeManager)}] Not initialized. Call Initialize() first."); return new List<IVXBadge>(); }
-            var rpc = await _rpcClient.CallAsync<IVXBadgeListResponse>("badges_get_all");
+            object payload = string.IsNullOrEmpty(gameId)
+                ? new { }
+                : new { game_id = gameId, gameId };
+            var rpc = await _rpcClient.CallAsync<IVXBadgeListResponse>("badges_get_all", payload);
             if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "badges_get_all"))
                 return new List<IVXBadge>();
             return envelope?.badges ?? new List<IVXBadge>();
         }
 
         /// <summary>
-        /// Checks and attempts to unlock a badge.
+        /// Resolves badge unlock state from the prod catalog (<c>badges_get_all</c>).
+        /// Prod has no <c>badges_check_unlock</c> RPC — unlock is server-driven.
         /// </summary>
-        /// <param name="badgeId">The badge identifier.</param>
-        /// <returns>The badge if unlocked.</returns>
-        public async Task<IVXBadge> CheckUnlockAsync(string badgeId)
+        public async Task<IVXBadge> CheckUnlockAsync(string badgeId, string gameId = null)
         {
             if (!_isInitialized) { Debug.LogError($"[{nameof(IVXBadgeManager)}] Not initialized. Call Initialize() first."); return null; }
-            var payload = new IVXBadgeRequest { badgeId = badgeId };
-            var rpc = await _rpcClient.CallAsync<IVXBadge>("badges_check_unlock", payload);
-            if (!HiroRpcResponseUtility.TryGetData(rpc, out var badge, "badges_check_unlock"))
-                return null;
+            if (string.IsNullOrEmpty(badgeId)) return null;
+
+            var all = await GetAllBadgesAsync(gameId);
+            var badge = all?.Find(b => b != null && b.badgeId == badgeId);
             if (badge != null && badge.unlocked)
                 OnBadgeUnlocked?.Invoke(badge);
             return badge;
         }
 
         /// <summary>
-        /// Equips a badge for the current player.
+        /// Marks a badge as displayed/equipped locally after confirming it exists unlocked in prod catalog.
+        /// Prod currently exposes no <c>badges_equip</c> RPC; prefer UI "displayed" from <c>badges_get_all</c>.
         /// </summary>
-        /// <param name="badgeId">The badge identifier.</param>
-        /// <returns>The equipped badge.</returns>
-        public async Task<IVXBadge> EquipBadgeAsync(string badgeId)
+        public async Task<IVXBadge> EquipBadgeAsync(string badgeId, string gameId = null)
         {
             if (!_isInitialized) { Debug.LogError($"[{nameof(IVXBadgeManager)}] Not initialized. Call Initialize() first."); return null; }
-            var payload = new IVXBadgeRequest { badgeId = badgeId };
-            var rpc = await _rpcClient.CallAsync<IVXBadge>("badges_equip", payload);
-            if (!HiroRpcResponseUtility.TryGetData(rpc, out var badge, "badges_equip"))
+            var badge = await CheckUnlockAsync(badgeId, gameId);
+            if (badge == null || !badge.unlocked)
+            {
+                Debug.LogWarning($"[{nameof(IVXBadgeManager)}] Cannot equip '{badgeId}' — not unlocked on prod.");
                 return null;
-            if (badge != null)
-                OnBadgeEquipped?.Invoke(badge);
+            }
+
+            badge.displayed = true;
+            OnBadgeEquipped?.Invoke(badge);
             return badge;
         }
 

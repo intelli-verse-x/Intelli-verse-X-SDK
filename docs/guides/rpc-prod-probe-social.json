@@ -1,0 +1,422 @@
+﻿[
+    {
+        "id":  "get_user_groups",
+        "status":  "AUTH",
+        "snippet":  "{ \"success\": false, \"error\": \"AUTH_REQUIRED: User ID is required\", \"code\": 0 }"
+    },
+    {
+        "id":  "create_game_group",
+        "status":  "AUTH",
+        "snippet":  "{ \"success\": false, \"error\": \"AUTH_REQUIRED: User ID is required\", \"code\": 0 }"
+    },
+    {
+        "id":  "list_groups",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "create_group",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "join_group",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "leave_group",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "delete_group",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "update_group",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "list_group_users",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "promote_group_users",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "kick_group_users",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "ban_group_users",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "clan_get",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "clan_create",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "clan_join",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "clan_leave",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "clan_list",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "clan_search",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "get_clan",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "create_clan",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "list_clans",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "search_clans",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "groups_list",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "groups_get_user",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "user_groups_get",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "list_friends",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "add_friend",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "remove_friend",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "block_friend",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "search_friends",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "friend_search",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "friends_list",
+        "status":  "AUTH",
+        "snippet":  "{ \"success\": false, \"error\": \"Authentication required\", \"errorCode\": \"unauthenticated\" }"
+    },
+    {
+        "id":  "friends_add",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "friends_remove",
+        "status":  "AUTH",
+        "snippet":  "{ \"success\": false, \"error\": \"AUTH_REQUIRED: User ID is required\", \"code\": 0 }"
+    },
+    {
+        "id":  "get_friends",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "search_users",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "users_search",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "find_user",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "player_search",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "send_friend_challenge",
+        "status":  "AUTH",
+        "snippet":  "{ \"success\": false, \"error\": \"Authentication required\", \"errorCode\": \"unauthenticated\" }"
+    },
+    {
+        "id":  "accept_friend_challenge",
+        "status":  "AUTH",
+        "snippet":  "{ \"success\": false, \"error\": \"Authentication required\", \"errorCode\": \"unauthenticated\" }"
+    },
+    {
+        "id":  "decline_friend_challenge",
+        "status":  "AUTH",
+        "snippet":  "{ \"success\": false, \"error\": \"Authentication required\", \"errorCode\": \"unauthenticated\" }"
+    },
+    {
+        "id":  "cancel_friend_challenge",
+        "status":  "AUTH",
+        "snippet":  "{ \"success\": false, \"error\": \"Authentication required\", \"errorCode\": \"unauthenticated\" }"
+    },
+    {
+        "id":  "list_pending_friend_challenges",
+        "status":  "AUTH",
+        "snippet":  "{ \"success\": false, \"error\": \"Authentication required\", \"errorCode\": \"unauthenticated\" }"
+    },
+    {
+        "id":  "friend_streak_get_state",
+        "status":  "AUTH",
+        "snippet":  "{ \"success\": false, \"error\": \"User not authenticated\" }"
+    },
+    {
+        "id":  "friend_streak_record_contribution",
+        "status":  "AUTH",
+        "snippet":  "{ \"success\": false, \"error\": \"User not authenticated\" }"
+    },
+    {
+        "id":  "friend_streak_send_nudge",
+        "status":  "AUTH",
+        "snippet":  "{ \"success\": false, \"error\": \"User not authenticated\" }"
+    },
+    {
+        "id":  "friend_streak_repair",
+        "status":  "AUTH",
+        "snippet":  "{ \"success\": false, \"error\": \"User not authenticated\" }"
+    },
+    {
+        "id":  "friend_streak_claim_milestone",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "friend_quest_get_state",
+        "status":  "AUTH",
+        "snippet":  "{ \"success\": false, \"error\": \"User not authenticated\" }"
+    },
+    {
+        "id":  "friend_quest_complete",
+        "status":  "AUTH",
+        "snippet":  "{ \"success\": false, \"error\": \"User not authenticated\" }"
+    },
+    {
+        "id":  "chat_send",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "chat_history",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "chat_list",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "send_chat",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "get_chat",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "dm_send",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "dm_list",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "channel_send",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "channel_history",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "message_send",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "messages_list",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "satori_messages_list",
+        "status":  "AUTH",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requi"
+    },
+    {
+        "id":  "satori_messages_read",
+        "status":  "AUTH",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requi"
+    },
+    {
+        "id":  "hiro_mailbox_list",
+        "status":  "AUTH",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requi"
+    },
+    {
+        "id":  "hiro_mailbox_claim",
+        "status":  "AUTH",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requi"
+    },
+    {
+        "id":  "hiro_mailbox_claim_all",
+        "status":  "AUTH",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requi"
+    },
+    {
+        "id":  "hiro_mailbox_delete",
+        "status":  "AUTH",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requi"
+    },
+    {
+        "id":  "push_register_token",
+        "status":  "AUTH",
+        "snippet":  "{ \"success\": false, \"error\": \"AUTH_REQUIRED: User ID is required\", \"code\": 0 }"
+    },
+    {
+        "id":  "push_send_event",
+        "status":  "SOFT",
+        "snippet":  "{ \"success\": false, \"error\": \"userId required\", \"code\": 0 }"
+    },
+    {
+        "id":  "push_get_endpoints",
+        "status":  "SOFT",
+        "snippet":  "{ \"success\": false, \"error\": \"userId required for a server-key call\", \"code\": 0 }"
+    },
+    {
+        "id":  "notification_list",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "notifications_list",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "list_notifications",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "register_device_token",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "register_push_token",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "fcm_register",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "push_token_register",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "hiro_social_pressure_get",
+        "status":  "AUTH",
+        "snippet":  "{ \"success\": false, \"error\": \"Authentication required\", \"errorCode\": \"unauthenticated\" }"
+    },
+    {
+        "id":  "hiro_incentives_referral_code",
+        "status":  "AUTH",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requi"
+    },
+    {
+        "id":  "hiro_incentives_apply_referral",
+        "status":  "AUTH",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requi"
+    },
+    {
+        "id":  "referral_get",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "referral_apply",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "get_referral_code",
+        "status":  "NOT",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    }
+]

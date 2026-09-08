@@ -36,25 +36,38 @@ IVXFriendsPanel.Instance.Close();
 
 ```
 Social/
-├── Runtime/
-│   ├── IVXFriendsService.cs      # API client (static, uses Nakama)
-│   └── IVXFriendsModels.cs       # Data models
-│
-├── UI/
-│   ├── IVXFriendsPanel.cs        # Main panel controller
-│   ├── IVXFriendSlot.cs          # Friend list item
-│   ├── IVXFriendRequestSlot.cs   # Request list item
-│   ├── IVXFriendSearchSlot.cs    # Search result item
-│   └── IVXFriendsAnimations.cs   # DOTween animations
-│
-├── Prefabs/
-│   ├── IVXFriendsCanvas.prefab   # Complete Friends UI
-│   ├── IVXFriendSlot.prefab      # Friend row prefab
-│   ├── IVXFriendRequestSlot.prefab
-│   └── IVXFriendSearchSlot.prefab
-│
-└── Scenes/
-    └── IVX_FriendsDemo.unity     # Demo scene
+├── Runtime/          # Friends service + models
+├── Friends/          # IVXFriendsManager (native Nakama)
+├── Clans/            # IVXClanService (get_user_groups / create_game_group + native)
+├── Chat/             # IVXSocialChatService (native DM / clan channels)
+├── Referral/         # IVXNakamaReferralService (hiro_incentives_*)
+├── FriendStreak/     # Streaks + friend quests (prod RPCs)
+├── UI/               # Friends / clan / referral panels
+└── Prefabs/ …
+```
+
+**Prod usage guide:** [docs/guides/social-nakama-usage.md](../../../docs/guides/social-nakama-usage.md)
+
+---
+
+## Clans (quick)
+
+```csharp
+await IVXClanService.LoadCurrentClanAsync(client, session, gameId);
+await IVXClanService.CreateClanAsync(client, session, gameId, "Guild", "", true, 50);
+```
+
+## Chat (quick)
+
+```csharp
+var dm = await IVXSocialChatService.JoinDirectAsync(socket, otherUserId);
+await IVXSocialChatService.SendTextAsync(socket, dm.Id, "gg");
+```
+
+## Referral (Nakama)
+
+```csharp
+var code = await IVXNakamaReferralService.GetReferralCodeAsync(client, session);
 ```
 
 ---

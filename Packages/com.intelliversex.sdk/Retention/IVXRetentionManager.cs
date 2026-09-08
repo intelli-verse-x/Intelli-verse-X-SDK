@@ -98,41 +98,46 @@ namespace IntelliVerseX.Retention
 
         /// <summary>
         /// Retrieves the current retention state for the player.
+        /// Prod RPC: <c>hiro_retention_get</c>.
         /// </summary>
-        /// <returns>The player's retention state.</returns>
         public async Task<IVXRetentionState> GetStateAsync()
         {
-            var rpc = await _rpcClient.CallAsync<IVXRetentionStateResponse>("retention_get_state");
-            if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "retention_get_state"))
+            var rpc = await _rpcClient.CallAsync<IVXRetentionState>("hiro_retention_get");
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var state, "hiro_retention_get"))
                 return null;
-            var state = envelope?.state;
             if (state != null)
                 OnRetentionStateUpdated?.Invoke(state);
             return state;
         }
 
         /// <summary>
-        /// Records a daily check-in for the player.
+        /// Records a retention heartbeat / daily check-in.
+        /// Prod RPC: <c>hiro_retention_heartbeat</c>, then refreshes state.
         /// </summary>
-        /// <returns>The updated retention state.</returns>
         public async Task<IVXRetentionState> CheckInAsync()
         {
-            var rpc = await _rpcClient.CallAsync<IVXRetentionState>("retention_check_in");
-            if (!HiroRpcResponseUtility.TryGetData(rpc, out var state, "retention_check_in"))
+            var rpc = await _rpcClient.CallAsync<object>("hiro_retention_heartbeat");
+            if (rpc == null || !rpc.success)
+            {
+                if (rpc != null && !string.IsNullOrEmpty(rpc.error))
+                    Debug.LogWarning($"[{nameof(IVXRetentionManager)}] hiro_retention_heartbeat: {rpc.error}");
                 return null;
+            }
+
+            var state = await GetStateAsync();
             if (state != null)
                 OnCheckInCompleted?.Invoke(state);
             return state;
         }
 
         /// <summary>
-        /// Retrieves an available winback offer for the player.
+        /// Retrieves an available return / winback bonus for the player.
+        /// Prod RPC: <c>hiro_incentives_return_bonus</c>.
         /// </summary>
-        /// <returns>The winback offer, or null if none available.</returns>
         public async Task<IVXWinbackOffer> GetWinbackOfferAsync()
         {
-            var rpc = await _rpcClient.CallAsync<IVXWinbackOffer>("winback_get_offer");
-            if (!HiroRpcResponseUtility.TryGetData(rpc, out var offer, "winback_get_offer"))
+            var rpc = await _rpcClient.CallAsync<IVXWinbackOffer>("hiro_incentives_return_bonus");
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var offer, "hiro_incentives_return_bonus"))
                 return null;
             if (offer != null)
                 OnWinbackOfferAvailable?.Invoke(offer);
@@ -140,15 +145,18 @@ namespace IntelliVerseX.Retention
         }
 
         /// <summary>
-        /// Claims a winback offer by its identifier.
+        /// Claims a comeback / winback bonus.
+        /// Prod RPC: <c>hiro_retention_claim_comeback</c>.
         /// </summary>
-        /// <param name="offerId">The winback offer identifier.</param>
-        /// <returns>The claimed winback offer.</returns>
         public async Task<IVXWinbackOffer> ClaimWinbackAsync(string offerId)
         {
-            var payload = new IVXWinbackClaimRequest { offerId = offerId };
-            var rpc = await _rpcClient.CallAsync<IVXWinbackOffer>("winback_claim_offer", payload);
-            if (!HiroRpcResponseUtility.TryGetData(rpc, out var offer, "winback_claim_offer"))
+            var payload = new IVXWinbackClaimRequest
+            {
+                offerId = offerId,
+                offerIdCamel = offerId
+            };
+            var rpc = await _rpcClient.CallAsync<IVXWinbackOffer>("hiro_retention_claim_comeback", payload);
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var offer, "hiro_retention_claim_comeback"))
                 return null;
             if (offer != null)
                 OnWinbackClaimed?.Invoke(offer);

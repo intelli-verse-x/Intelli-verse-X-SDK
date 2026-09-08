@@ -1,0 +1,1058 @@
+﻿[
+    {
+        "id":  "achievements_claim_reward",
+        "module":  "platform",
+        "status":  "not_found",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "achievements_get_all",
+        "module":  "platform",
+        "status":  "success",
+        "snippet":  "{ \"success\": true, \"achievements\": [], \"stats\": { \"total_achievements\": 0, \"unlocked\": 0, \"total_points\": 0, \"unlocked_points\": 0, \"completion_percentage\": 0 } }"
+    },
+    {
+        "id":  "achievements_track_progress",
+        "module":  "platform",
+        "status":  "not_found",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "badges_check_unlock",
+        "module":  "platform",
+        "status":  "not_found",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "badges_equip",
+        "module":  "platform",
+        "status":  "not_found",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "badges_get_all",
+        "module":  "platform",
+        "status":  "success",
+        "snippet":  "{ \"success\": true, \"badges\": [ { \"badge_id\": \"dashing_debut\", \"title\": \"Dashing Debut\", \"description\": \"Complete your first quiz\", \"icon_url\": \"https://intelli-verse-x-media.s3.us-east-1.amazonaws.com/agent-assets/games/"
+    },
+    {
+        "id":  "calculate_score_reward",
+        "module":  "platform",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"score required\", \"code\": 0 }"
+    },
+    {
+        "id":  "character_get_state",
+        "module":  "platform",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"User not authenticated\" }"
+    },
+    {
+        "id":  "character_set_active",
+        "module":  "platform",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"User not authenticated\" }"
+    },
+    {
+        "id":  "character_unlock",
+        "module":  "platform",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"User not authenticated\" }"
+    },
+    {
+        "id":  "check_geo_and_update_profile",
+        "module":  "platform",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcCheckGeoAndUpdateProfile (index.js:144"
+    },
+    {
+        "id":  "claim_mission_reward",
+        "module":  "platform",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"Missing required fields: missionId\" }"
+    },
+    {
+        "id":  "create_or_sync_user",
+        "module":  "identity",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcCreateOrSyncUser (index.js:144180:46(4"
+    },
+    {
+        "id":  "daily_missions_claim",
+        "module":  "liveops",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"Missing required fields: missionId\" }"
+    },
+    {
+        "id":  "daily_missions_get",
+        "module":  "liveops",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"User not authenticated\" }"
+    },
+    {
+        "id":  "daily_missions_update_progress",
+        "module":  "liveops",
+        "status":  "success",
+        "snippet":  "{ \"success\": true, \"updated\": false, \"note\": \"progress is auto-tracked server-side\" }"
+    },
+    {
+        "id":  "daily_rewards_claim",
+        "module":  "liveops",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"User not authenticated\" }"
+    },
+    {
+        "id":  "daily_rewards_get_calendar",
+        "module":  "liveops",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"User not authenticated\" }"
+    },
+    {
+        "id":  "daily_rewards_get_state",
+        "module":  "liveops",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"User not authenticated\" }"
+    },
+    {
+        "id":  "daily_rewards_get_status",
+        "module":  "liveops",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"User not authenticated\" }"
+    },
+    {
+        "id":  "fortune_wheel_get_config",
+        "module":  "liveops",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"Not authenticated\" }"
+    },
+    {
+        "id":  "fortune_wheel_get_state",
+        "module":  "liveops",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"Not authenticated\" }"
+    },
+    {
+        "id":  "fortune_wheel_spin",
+        "module":  "liveops",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"Not authenticated\" }"
+    },
+    {
+        "id":  "friends_spectate",
+        "module":  "platform",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"Authentication required\", \"errorCode\": \"unauthenticated\" }"
+    },
+    {
+        "id":  "get_all_leaderboards",
+        "module":  "leaderboard",
+        "status":  "success",
+        "snippet":  "{ \"success\": true, \"data\": { \"device_id\": \"unity-sdk-probe-device\", \"game_id\": \"126bf539-dae2-4bcf-964d-316c0fa1f92b\", \"leaderboards\": { \"leaderboard_126bf539-dae2-4bcf-964d-316c0fa1f92b\": { \"leaderboard_id\": \"leaderboar"
+    },
+    {
+        "id":  "get_daily_missions",
+        "module":  "platform",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"User not authenticated\" }"
+    },
+    {
+        "id":  "get_time_period_leaderboard",
+        "module":  "leaderboard",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"period required (daily, weekly, monthly, alltime)\", \"code\": 0 }"
+    },
+    {
+        "id":  "get_wallet_balance",
+        "module":  "wallet",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"expects \u0027userId\u0027 value to be a valid id\", \"code\": 0 }"
+    },
+    {
+        "id":  "hiro_achievements_claim",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcClaim (index.js:126229:46(4))\\n\"},\"mes"
+    },
+    {
+        "id":  "hiro_achievements_list",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcList (index.js:126189:46(4))\\n\"},\"mess"
+    },
+    {
+        "id":  "hiro_achievements_progress",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcProgress (index.js:126219:46(4))\\n\"},\""
+    },
+    {
+        "id":  "hiro_ad_revenue_get_config",
+        "module":  "hiro",
+        "status":  "ok",
+        "snippet":  "{ \"enabled\": false, \"config\": {} }"
+    },
+    {
+        "id":  "hiro_ad_revenue_record_impression",
+        "module":  "hiro",
+        "status":  "success",
+        "snippet":  "{ \"success\": true }"
+    },
+    {
+        "id":  "hiro_appointment_claim",
+        "module":  "hiro",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"appointment system not configured\" }"
+    },
+    {
+        "id":  "hiro_appointment_get",
+        "module":  "hiro",
+        "status":  "ok",
+        "snippet":  "{ \"appointments\": [] }"
+    },
+    {
+        "id":  "hiro_auctions_bid",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcBid (index.js:126339:46(4))\\n\"},\"messa"
+    },
+    {
+        "id":  "hiro_auctions_create",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcCreate (index.js:126311:46(4))\\n\"},\"me"
+    },
+    {
+        "id":  "hiro_auctions_list",
+        "module":  "hiro",
+        "status":  "success",
+        "snippet":  "{ \"success\": true, \"data\": { \"listings\": [], \"cursor\": \"\" } }"
+    },
+    {
+        "id":  "hiro_auctions_resolve",
+        "module":  "hiro",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"listingId required\", \"code\": 0 }"
+    },
+    {
+        "id":  "hiro_challenges_claim",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcClaim (index.js:130113:46(4))\\n\"},\"mes"
+    },
+    {
+        "id":  "hiro_challenges_create",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcCreate (index.js:130032:46(4))\\n\"},\"me"
+    },
+    {
+        "id":  "hiro_challenges_join",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcJoin (index.js:130067:46(4))\\n\"},\"mess"
+    },
+    {
+        "id":  "hiro_challenges_submit",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcSubmit (index.js:130095:46(4))\\n\"},\"me"
+    },
+    {
+        "id":  "hiro_daily_content_claim",
+        "module":  "hiro",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"daily content system not configured\" }"
+    },
+    {
+        "id":  "hiro_daily_content_get",
+        "module":  "hiro",
+        "status":  "ok",
+        "snippet":  "{ \"content\": [] }"
+    },
+    {
+        "id":  "hiro_economy_donation_claim",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcDonationClaim (index.js:130318:46(4))\\"
+    },
+    {
+        "id":  "hiro_economy_donation_give",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcDonationGive (index.js:130276:46(4))\\n"
+    },
+    {
+        "id":  "hiro_economy_donation_request",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcDonationRequest (index.js:130249:46(4)"
+    },
+    {
+        "id":  "hiro_economy_rewarded_video",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcRewardedVideoComplete (index.js:130345"
+    },
+    {
+        "id":  "hiro_energy_add_modifier",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcAddModifier (index.js:130545:46(4))\\n\""
+    },
+    {
+        "id":  "hiro_energy_get",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcGet (index.js:130503:46(4))\\n\"},\"messa"
+    },
+    {
+        "id":  "hiro_energy_refill",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcRefill (index.js:130533:46(4))\\n\"},\"me"
+    },
+    {
+        "id":  "hiro_energy_spend",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcSpend (index.js:130523:46(4))\\n\"},\"mes"
+    },
+    {
+        "id":  "hiro_event_lb_claim",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcClaim (index.js:130797:46(4))\\n\"},\"mes"
+    },
+    {
+        "id":  "hiro_event_lb_list",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcList (index.js:130738:46(4))\\n\"},\"mess"
+    },
+    {
+        "id":  "hiro_event_lb_submit",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcSubmit (index.js:130766:46(4))\\n\"},\"me"
+    },
+    {
+        "id":  "hiro_iap_history",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcGetPurchaseHistory (index.js:129725:46"
+    },
+    {
+        "id":  "hiro_iap_trigger_convert",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"unauthenticated\" }"
+    },
+    {
+        "id":  "hiro_iap_trigger_dismiss",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"unauthenticated\" }"
+    },
+    {
+        "id":  "hiro_iap_trigger_evaluate",
+        "module":  "hiro",
+        "status":  "success",
+        "snippet":  "{ \"success\": true, \"data\": { \"shouldShow\": false, \"reason\": \"not_configured\" } }"
+    },
+    {
+        "id":  "hiro_iap_validate",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcIAPPurchase (index.js:129619:46(4))\\n\""
+    },
+    {
+        "id":  "hiro_incentives_apply_referral",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcApplyReferral (index.js:130924:46(4))\\"
+    },
+    {
+        "id":  "hiro_incentives_referral_code",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcGetReferralCode (index.js:130913:46(4)"
+    },
+    {
+        "id":  "hiro_incentives_return_bonus",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcCheckReturnBonus (index.js:130945:46(4"
+    },
+    {
+        "id":  "hiro_inventory_consume",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcConsume (index.js:131118:46(4))\\n\"},\"m"
+    },
+    {
+        "id":  "hiro_inventory_grant",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcGrant (index.js:131110:46(4))\\n\"},\"mes"
+    },
+    {
+        "id":  "hiro_inventory_list",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcList (index.js:131090:46(4))\\n\"},\"mess"
+    },
+    {
+        "id":  "hiro_leaderboards_list",
+        "module":  "leaderboard",
+        "status":  "success",
+        "snippet":  "{ \"success\": true, \"data\": { \"leaderboards\": [] } }"
+    },
+    {
+        "id":  "hiro_leaderboards_records",
+        "module":  "leaderboard",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"leaderboardId required\", \"code\": 0 }"
+    },
+    {
+        "id":  "hiro_leaderboards_submit",
+        "module":  "leaderboard",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcSubmit (index.js:131151:46(4))\\n\"},\"me"
+    },
+    {
+        "id":  "hiro_mailbox_claim",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcClaim (index.js:131279:46(4))\\n\"},\"mes"
+    },
+    {
+        "id":  "hiro_mailbox_claim_all",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcClaimAll (index.js:131311:46(4))\\n\"},\""
+    },
+    {
+        "id":  "hiro_mailbox_delete",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcDelete (index.js:131301:46(4))\\n\"},\"me"
+    },
+    {
+        "id":  "hiro_mailbox_list",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcList (index.js:131271:46(4))\\n\"},\"mess"
+    },
+    {
+        "id":  "hiro_offerwall_claim",
+        "module":  "hiro",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"no_offerwall_provider_configured\" }"
+    },
+    {
+        "id":  "hiro_offerwall_complete",
+        "module":  "hiro",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"no_offerwall_provider_configured\" }"
+    },
+    {
+        "id":  "hiro_offerwall_get",
+        "module":  "hiro",
+        "status":  "success",
+        "snippet":  "{ \"success\": true, \"data\": { \"offers\": [] } }"
+    },
+    {
+        "id":  "hiro_personalizer_get_overrides",
+        "module":  "hiro",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"userId required\", \"code\": 0 }"
+    },
+    {
+        "id":  "hiro_personalizer_preview",
+        "module":  "hiro",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"userId and system required\", \"code\": 0 }"
+    },
+    {
+        "id":  "hiro_personalizer_remove_override",
+        "module":  "hiro",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"userId, system, and path required\", \"code\": 0 }"
+    },
+    {
+        "id":  "hiro_personalizer_set_override",
+        "module":  "hiro",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"userId, system, and path required\", \"code\": 0 }"
+    },
+    {
+        "id":  "hiro_progression_add_xp",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcAddXp (index.js:131732:46(4))\\n\"},\"mes"
+    },
+    {
+        "id":  "hiro_progression_get",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcGet (index.js:131724:46(4))\\n\"},\"messa"
+    },
+    {
+        "id":  "hiro_retention_claim_comeback",
+        "module":  "hiro",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"expects \u0027userId\u0027 value to be a string\" }"
+    },
+    {
+        "id":  "hiro_retention_complete_onboarding",
+        "module":  "hiro",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"expects \u0027userId\u0027 value to be a string\" }"
+    },
+    {
+        "id":  "hiro_retention_get",
+        "module":  "hiro",
+        "status":  "success",
+        "snippet":  "{ \"success\": true, \"data\": { \"bucket\": \"active\", \"lastSeen\": \"2026-09-08T06:33:20.931Z\" } }"
+    },
+    {
+        "id":  "hiro_retention_heartbeat",
+        "module":  "hiro",
+        "status":  "success",
+        "snippet":  "{ \"success\": true }"
+    },
+    {
+        "id":  "hiro_reward_bucket_get",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcGet (index.js:131892:46(4))\\n\"},\"messa"
+    },
+    {
+        "id":  "hiro_reward_bucket_progress",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcProgress (index.js:131924:46(4))\\n\"},\""
+    },
+    {
+        "id":  "hiro_reward_bucket_unlock",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcUnlock (index.js:131932:46(4))\\n\"},\"me"
+    },
+    {
+        "id":  "hiro_session_booster_activate",
+        "module":  "hiro",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"session booster system not enabled\" }"
+    },
+    {
+        "id":  "hiro_session_booster_claim_free",
+        "module":  "hiro",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"session booster system not enabled\" }"
+    },
+    {
+        "id":  "hiro_session_booster_get",
+        "module":  "hiro",
+        "status":  "ok",
+        "snippet":  "{ \"boosters\": [], \"activeBooster\": null }"
+    },
+    {
+        "id":  "hiro_smart_ad_timer_can_show",
+        "module":  "hiro",
+        "status":  "success",
+        "snippet":  "{ \"success\": true, \"data\": { \"canShow\": true, \"capRemaining\": 999 } }"
+    },
+    {
+        "id":  "hiro_smart_ad_timer_get",
+        "module":  "hiro",
+        "status":  "ok",
+        "snippet":  "{ \"nextShowAt\": 0, \"canShow\": true, \"cooldownSec\": 0 }"
+    },
+    {
+        "id":  "hiro_smart_ad_timer_record",
+        "module":  "hiro",
+        "status":  "success",
+        "snippet":  "{ \"success\": true, \"recorded\": true }"
+    },
+    {
+        "id":  "hiro_social_pressure_get",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"Authentication required\", \"errorCode\": \"unauthenticated\" }"
+    },
+    {
+        "id":  "hiro_spin_wheel_get",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"Not authenticated\" }"
+    },
+    {
+        "id":  "hiro_spin_wheel_spin",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"Not authenticated\" }"
+    },
+    {
+        "id":  "hiro_stats_get",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcGet (index.js:132050:46(4))\\n\"},\"messa"
+    },
+    {
+        "id":  "hiro_stats_update",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcUpdate (index.js:132067:46(4))\\n\"},\"me"
+    },
+    {
+        "id":  "hiro_store_list",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcList (index.js:132096:46(4))\\n\"},\"mess"
+    },
+    {
+        "id":  "hiro_store_purchase",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcPurchase (index.js:132131:46(4))\\n\"},\""
+    },
+    {
+        "id":  "hiro_streak_shield_activate",
+        "module":  "hiro",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"expects \u0027userId\u0027 value to be a string\" }"
+    },
+    {
+        "id":  "hiro_streak_shield_get",
+        "module":  "hiro",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"expects \u0027userId\u0027 value to be a string\" }"
+    },
+    {
+        "id":  "hiro_streak_shield_replenish",
+        "module":  "hiro",
+        "status":  "success",
+        "snippet":  "{ \"success\": true, \"expiryTime\": 1789022035013, \"hoursRemaining\": 48 }"
+    },
+    {
+        "id":  "hiro_streaks_claim",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcClaim (index.js:132258:46(4))\\n\"},\"mes"
+    },
+    {
+        "id":  "hiro_streaks_get",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcGet (index.js:132228:46(4))\\n\"},\"messa"
+    },
+    {
+        "id":  "hiro_streaks_update",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcUpdate (index.js:132250:46(4))\\n\"},\"me"
+    },
+    {
+        "id":  "hiro_teams_achievements",
+        "module":  "hiro",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"groupId required\", \"code\": 0 }"
+    },
+    {
+        "id":  "hiro_teams_get",
+        "module":  "hiro",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"groupId required\", \"code\": 0 }"
+    },
+    {
+        "id":  "hiro_teams_stats",
+        "module":  "hiro",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"groupId and statId required\", \"code\": 0 }"
+    },
+    {
+        "id":  "hiro_teams_wallet_get",
+        "module":  "hiro",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"groupId required\", \"code\": 0 }"
+    },
+    {
+        "id":  "hiro_teams_wallet_update",
+        "module":  "hiro",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"groupId, currencyId, and amount required\", \"code\": 0 }"
+    },
+    {
+        "id":  "hiro_tutorials_advance",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcAdvance (index.js:132393:46(4))\\n\"},\"m"
+    },
+    {
+        "id":  "hiro_tutorials_get",
+        "module":  "hiro",
+        "status":  "exception",
+        "snippet":  "The underlying connection was closed: A connection that was expected to be kept alive was closed by the server."
+    },
+    {
+        "id":  "hiro_unlockables_buy_slot",
+        "module":  "hiro",
+        "status":  "exception",
+        "snippet":  "The remote name could not be resolved: \u0027nakama-mcp.intelli-verse-x.ai\u0027"
+    },
+    {
+        "id":  "hiro_unlockables_claim",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcClaim (index.js:132489:46(4))\\n\"},\"mes"
+    },
+    {
+        "id":  "hiro_unlockables_get",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcGet (index.js:132446:46(4))\\n\"},\"messa"
+    },
+    {
+        "id":  "hiro_unlockables_start",
+        "module":  "hiro",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcStart (index.js:132466:46(4))\\n\"},\"mes"
+    },
+    {
+        "id":  "ivx_quest_claim",
+        "module":  "liveops",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"no_session\" }"
+    },
+    {
+        "id":  "ivx_quest_config",
+        "module":  "liveops",
+        "status":  "success",
+        "snippet":  "{ \"success\": true, \"data\": { \"catalog\": { \"quests\": [ { \"id\": \"ivx_play_3_games\", \"name\": \"Triple Play\", \"description\": \"Complete 3 quizzes/games in any IVX title\", \"type\": \"session_count\", \"target\": 3, \"rewards\": { \"coi"
+    },
+    {
+        "id":  "ivx_quest_get",
+        "module":  "liveops",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"no_session\" }"
+    },
+    {
+        "id":  "ivx_quest_progress",
+        "module":  "liveops",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"no_session\" }"
+    },
+    {
+        "id":  "league_get_leaderboard",
+        "module":  "leaderboard",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"User not authenticated\" }"
+    },
+    {
+        "id":  "league_get_state",
+        "module":  "liveops",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"User not authenticated\" }"
+    },
+    {
+        "id":  "league_process_season",
+        "module":  "liveops",
+        "status":  "success",
+        "snippet":  "{ \"success\": true, \"season\": \"2026-W37\", \"stats\": { \"promoted\": 28, \"demoted\": 28, \"stayed\": 0, \"disqualified\": 767, \"errors\": 0 }, \"timestamp\": \"2026-09-08T06:34:47.521Z\" }"
+    },
+    {
+        "id":  "league_submit_points",
+        "module":  "liveops",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"User not authenticated\" }"
+    },
+    {
+        "id":  "monthly_milestones_get",
+        "module":  "platform",
+        "status":  "not_found",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "monthly_milestones_update_progress",
+        "module":  "platform",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"Not authenticated\" }"
+    },
+    {
+        "id":  "mp_create_match",
+        "module":  "multiplayer",
+        "status":  "error",
+        "snippet":  "Error calling nakama_rpc: 400 Bad Request: {\"code\":3,\"error\":{\"stackTrace\":\"[object Object]\\n\\tat rpcCreateMatch (index.js:152600:13(40))\\n\"},\"message\":\"template_id required\"}"
+    },
+    {
+        "id":  "mp_voice_token",
+        "module":  "multiplayer",
+        "status":  "error",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{},\"message\":\"Could not run Rpc function.\"}"
+    },
+    {
+        "id":  "nakama_js_health",
+        "module":  "platform",
+        "status":  "ok",
+        "snippet":  "{ \"ok\": true, \"runtime\": \"javascript\", \"ts_owned_rpc_count\": 867, \"now\": \"2026-09-08T06:34:51.306Z\" }"
+    },
+    {
+        "id":  "personalization_get",
+        "module":  "platform",
+        "status":  "ok",
+        "snippet":  "{ \"stale\": true, \"error\": \"no_user\" }"
+    },
+    {
+        "id":  "personalization_get_for_mode",
+        "module":  "platform",
+        "status":  "ok",
+        "snippet":  "{ \"stale\": true, \"error\": \"missing_required_fields\" }"
+    },
+    {
+        "id":  "push_get_endpoints",
+        "module":  "liveops",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"userId required for a server-key call\", \"code\": 0 }"
+    },
+    {
+        "id":  "push_register_token",
+        "module":  "liveops",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"AUTH_REQUIRED: User ID is required\", \"code\": 0 }"
+    },
+    {
+        "id":  "push_send_event",
+        "module":  "liveops",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"userId required\", \"code\": 0 }"
+    },
+    {
+        "id":  "retention_check_in",
+        "module":  "platform",
+        "status":  "not_found",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "retention_get_state",
+        "module":  "platform",
+        "status":  "not_found",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "satori_audiences_get_memberships",
+        "module":  "satori",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcGetMemberships (index.js:170414:46(4))"
+    },
+    {
+        "id":  "satori_event",
+        "module":  "satori",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcEvent (index.js:171456:46(4))\\n\"},\"mes"
+    },
+    {
+        "id":  "satori_events_batch",
+        "module":  "satori",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcEventsBatch (index.js:171469:46(4))\\n\""
+    },
+    {
+        "id":  "satori_experiments_get",
+        "module":  "satori",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcGet (index.js:173275:46(4))\\n\"},\"messa"
+    },
+    {
+        "id":  "satori_experiments_get_variant",
+        "module":  "satori",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcGetVariant (index.js:173302:46(4))\\n\"}"
+    },
+    {
+        "id":  "satori_flags_get",
+        "module":  "satori",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcGet (index.js:173363:46(4))\\n\"},\"messa"
+    },
+    {
+        "id":  "satori_flags_get_all",
+        "module":  "satori",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcGetAll (index.js:173371:46(4))\\n\"},\"me"
+    },
+    {
+        "id":  "satori_identity_get",
+        "module":  "satori",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcGet (index.js:173771:46(4))\\n\"},\"messa"
+    },
+    {
+        "id":  "satori_identity_update_properties",
+        "module":  "satori",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcUpdate (index.js:173776:46(4))\\n\"},\"me"
+    },
+    {
+        "id":  "satori_live_events_claim",
+        "module":  "satori",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcClaim (index.js:177344:46(4))\\n\"},\"mes"
+    },
+    {
+        "id":  "satori_live_events_join",
+        "module":  "satori",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcJoin (index.js:177317:46(4))\\n\"},\"mess"
+    },
+    {
+        "id":  "satori_live_events_list",
+        "module":  "satori",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcList (index.js:177274:46(4))\\n\"},\"mess"
+    },
+    {
+        "id":  "satori_messages_delete",
+        "module":  "satori",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcDelete (index.js:178276:46(4))\\n\"},\"me"
+    },
+    {
+        "id":  "satori_messages_list",
+        "module":  "satori",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcList (index.js:178222:46(4))\\n\"},\"mess"
+    },
+    {
+        "id":  "satori_messages_read",
+        "module":  "satori",
+        "status":  "auth_or_perm",
+        "snippet":  "Error calling nakama_rpc: 500 Internal Server Error: {\"code\":13,\"error\":{\"stackTrace\":\"Error: AUTH_REQUIRED: User ID is required\\n\\tat requireUserId (index.js:184248:19(7))\\n\\tat rpcRead (index.js:178247:46(4))\\n\"},\"mess"
+    },
+    {
+        "id":  "satori_metrics_query",
+        "module":  "satori",
+        "status":  "success",
+        "snippet":  "{ \"success\": true, \"data\": { \"metrics\": [ { \"metricId\": \"quiz_completion_rate\", \"value\": 0, \"computedAt\": 1788849305 }, { \"metricId\": \"weak_topic_accuracy_lift\", \"value\": 0, \"computedAt\": 1788849305 }, { \"metricId\": \"str"
+    },
+    {
+        "id":  "season_pass_add_xp",
+        "module":  "platform",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"Not authenticated\" }"
+    },
+    {
+        "id":  "season_pass_claim_reward",
+        "module":  "platform",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"Not authenticated\" }"
+    },
+    {
+        "id":  "season_pass_get_state",
+        "module":  "platform",
+        "status":  "not_found",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "season_pass_purchase_premium",
+        "module":  "platform",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"Not authenticated\" }"
+    },
+    {
+        "id":  "submit_mission_progress",
+        "module":  "platform",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"Missing required fields: missionId, value\" }"
+    },
+    {
+        "id":  "submit_score_and_sync",
+        "module":  "leaderboard",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"Missing: score\", \"code\": 0 }"
+    },
+    {
+        "id":  "tournament_get_active",
+        "module":  "platform",
+        "status":  "not_found",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "tournament_get_leaderboard",
+        "module":  "leaderboard",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"tournament_id is required\" }"
+    },
+    {
+        "id":  "tournament_join",
+        "module":  "platform",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"tournament_id is required\" }"
+    },
+    {
+        "id":  "tournament_submit_score",
+        "module":  "platform",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"tournament_id and score are required\" }"
+    },
+    {
+        "id":  "update_game_reward_config",
+        "module":  "platform",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"config object required\", \"code\": 0 }"
+    },
+    {
+        "id":  "update_wallet_balance",
+        "module":  "platform",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"balance required\", \"code\": 0 }"
+    },
+    {
+        "id":  "wallet_get_balances",
+        "module":  "wallet",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"AUTH_REQUIRED: User ID is required\", \"code\": 0 }"
+    },
+    {
+        "id":  "wallet_update_game_wallet",
+        "module":  "wallet",
+        "status":  "soft_fail",
+        "snippet":  "{ \"success\": false, \"error\": \"Missing: currency, amount, operation\", \"code\": 0 }"
+    },
+    {
+        "id":  "weekly_goals_get",
+        "module":  "platform",
+        "status":  "not_found",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "weekly_goals_update_progress",
+        "module":  "platform",
+        "status":  "auth_or_perm",
+        "snippet":  "{ \"success\": false, \"error\": \"Not authenticated\" }"
+    },
+    {
+        "id":  "winback_claim_offer",
+        "module":  "platform",
+        "status":  "not_found",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "winback_get_offer",
+        "module":  "platform",
+        "status":  "not_found",
+        "snippet":  "Error calling nakama_rpc: 404 Not Found: {\"error\":\"RPC function not found\",\"message\":\"RPC function not found\",\"code\":5}"
+    },
+    {
+        "id":  "xsell_pick",
+        "module":  "platform",
+        "status":  "ok",
+        "snippet":  "{ \"pick\": null, \"error\": \"missing_required_fields\" }"
+    },
+    {
+        "id":  "xsell_record",
+        "module":  "platform",
+        "status":  "ok",
+        "snippet":  "{ \"ok\": false, \"error\": \"missing_required_fields\" }"
+    }
+]

@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using IntelliVerseX.Hiro;
 using Nakama;
 using UnityEngine;
 
@@ -148,7 +149,46 @@ namespace IntelliVerseX.Social
         }
 
         /// <summary>
-        /// Remove friend or decline friend request.
+        /// Get confirmed friends (state 0) via Nakama native API.
+        /// </summary>
+        public async Task<IReadOnlyList<IApiFriend>> GetFriendsAsync(CancellationToken ct = default)
+        {
+            EnsureSession();
+            var result = await _client.ListFriendsAsync(_session, 0, DEFAULT_LIST_LIMIT, null, null, ct);
+            var list = (result?.Friends ?? Enumerable.Empty<IApiFriend>()).ToList();
+            _cache.Update(list);
+            return list;
+        }
+
+        /// <summary>
+        /// Optional enriched friends list from prod custom RPC <c>friends_list</c>.
+        /// Falls back to native <see cref="GetFriendsAsync"/> when the RPC fails.
+        /// Primary gameplay path remains Nakama native friends APIs.
+        /// </summary>
+        public async Task<IReadOnlyList<IApiFriend>> GetFriendsPreferRpcAsync(CancellationToken ct = default)
+        {
+            EnsureSession();
+            try
+            {
+                var rpcClient = new IVXHiroRpcClient(_client, _session);
+                var rpc = await rpcClient.CallAsync<object>("friends_list");
+                if (rpc != null && rpc.success)
+                {
+                    // Server-enriched path succeeded; still refresh native list for IApiFriend UI models.
+                    Debug.Log("[IVXFriends] friends_list RPC ok — syncing native ListFriendsAsync");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[IVXFriends] friends_list RPC skipped: {ex.Message}");
+            }
+
+            return await GetFriendsAsync(ct);
+        }
+
+        /// <summary>
+        /// Remove friend via native API. Prod also exposes <c>friends_remove</c> as an auth RPC
+        /// for server-side side-effects; native delete remains the source of truth for friendship edges.
         /// </summary>
         public async Task RemoveFriendAsync(string userId, CancellationToken ct = default)
         {
@@ -160,6 +200,22 @@ namespace IntelliVerseX.Social
             try
             {
                 await _client.DeleteFriendsAsync(_session, new[] { userId }, null);
+
+                // Best-effort prod side-effect RPC (ignore failure — edge already deleted).
+                try
+                {
+                    var rpcClient = new IVXHiroRpcClient(_client, _session);
+                    await rpcClient.CallAsync<object>("friends_remove", new
+                    {
+                        userId,
+                        user_id = userId
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning($"[IVXFriends] friends_remove RPC side-effect: {ex.Message}");
+                }
+
                 IVXFriendsEvents.RaiseFriendRemoved(userId);
                 await RefreshFriendsAsync(ct);
             }
@@ -228,18 +284,6 @@ namespace IntelliVerseX.Social
 
         /// <summary>Convenience alias for RefreshFriendsAsync.</summary>
         public Task RefreshFriends(CancellationToken ct = default) => RefreshFriendsAsync(ct);
-
-        /// <summary>
-        /// Get confirmed friends (state 0).
-        /// </summary>
-        public async Task<IReadOnlyList<IApiFriend>> GetFriendsAsync(CancellationToken ct = default)
-        {
-            EnsureSession();
-            var result = await _client.ListFriendsAsync(_session, 0, DEFAULT_LIST_LIMIT, null, null, ct);
-            var list = (result?.Friends ?? Enumerable.Empty<IApiFriend>()).ToList();
-            _cache.Update(list);
-            return list;
-        }
 
         /// <summary>
         /// Get incoming friend requests (state 2 = INVITE_RECEIVED).

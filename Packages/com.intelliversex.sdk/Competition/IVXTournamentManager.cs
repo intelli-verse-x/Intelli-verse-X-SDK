@@ -98,27 +98,30 @@ namespace IntelliVerseX.Competition
         }
 
         /// <summary>
-        /// Retrieves all currently active tournaments.
+        /// Retrieves currently listed tournaments.
+        /// Prod RPC: <c>tournament_list</c> (replaces dead <c>tournament_get_active</c>).
         /// </summary>
-        /// <returns>A list of active tournaments.</returns>
         public async Task<List<IVXTournament>> GetActiveTournamentsAsync()
         {
             if (!_isInitialized) { Debug.LogError($"[{nameof(IVXTournamentManager)}] Not initialized. Call Initialize() first."); return new List<IVXTournament>(); }
-            var rpc = await _rpcClient.CallAsync<IVXTournamentListResponse>("tournament_get_active");
-            if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "tournament_get_active"))
+            var rpc = await _rpcClient.CallAsync<IVXTournamentListResponse>("tournament_list");
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "tournament_list"))
                 return new List<IVXTournament>();
             return envelope?.tournaments ?? new List<IVXTournament>();
         }
 
         /// <summary>
-        /// Joins a tournament by its identifier.
+        /// Joins a tournament by slug / tournament id.
+        /// Prod RPC: <c>tournament_join</c> (requires <c>tournament_id</c>).
         /// </summary>
-        /// <param name="tournamentId">The tournament identifier.</param>
-        /// <returns>The joined tournament.</returns>
         public async Task<IVXTournament> JoinAsync(string tournamentId)
         {
             if (!_isInitialized) { Debug.LogError($"[{nameof(IVXTournamentManager)}] Not initialized. Call Initialize() first."); return null; }
-            var payload = new IVXTournamentJoinRequest { tournamentId = tournamentId };
+            var payload = new IVXTournamentJoinRequest
+            {
+                tournamentId = tournamentId,
+                slug = tournamentId
+            };
             var rpc = await _rpcClient.CallAsync<IVXTournament>("tournament_join", payload);
             if (!HiroRpcResponseUtility.TryGetData(rpc, out var tournament, "tournament_join"))
                 return null;
@@ -129,16 +132,15 @@ namespace IntelliVerseX.Competition
 
         /// <summary>
         /// Submits a score to a tournament.
+        /// Prod RPC: <c>tournament_submit_score</c>.
         /// </summary>
-        /// <param name="tournamentId">The tournament identifier.</param>
-        /// <param name="score">The score to submit.</param>
-        /// <returns>The updated tournament with new rank.</returns>
         public async Task<IVXTournament> SubmitScoreAsync(string tournamentId, long score)
         {
             if (!_isInitialized) { Debug.LogError($"[{nameof(IVXTournamentManager)}] Not initialized. Call Initialize() first."); return null; }
             var payload = new IVXTournamentScoreRequest
             {
                 tournamentId = tournamentId,
+                slug = tournamentId,
                 score = score
             };
             var rpc = await _rpcClient.CallAsync<IVXTournament>("tournament_submit_score", payload);
@@ -151,13 +153,16 @@ namespace IntelliVerseX.Competition
 
         /// <summary>
         /// Retrieves the leaderboard for a tournament.
+        /// Prod RPC: <c>tournament_get_leaderboard</c>.
         /// </summary>
-        /// <param name="tournamentId">The tournament identifier.</param>
-        /// <returns>A list of tournament entries.</returns>
         public async Task<List<IVXTournamentEntry>> GetLeaderboardAsync(string tournamentId)
         {
             if (!_isInitialized) { Debug.LogError($"[{nameof(IVXTournamentManager)}] Not initialized. Call Initialize() first."); return new List<IVXTournamentEntry>(); }
-            var payload = new IVXTournamentLeaderboardRequest { tournamentId = tournamentId };
+            var payload = new IVXTournamentLeaderboardRequest
+            {
+                tournamentId = tournamentId,
+                slug = tournamentId
+            };
             var rpc = await _rpcClient.CallAsync<IVXTournamentLeaderboardResponse>("tournament_get_leaderboard", payload);
             if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "tournament_get_leaderboard"))
                 return new List<IVXTournamentEntry>();

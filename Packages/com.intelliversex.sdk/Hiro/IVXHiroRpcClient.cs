@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Nakama;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
@@ -88,13 +89,70 @@ namespace IntelliVerseX.Hiro
                     return new HiroRpcResponse<T> { success = false, error = $"RPC {rpcId}: empty response" };
                 }
 
-                var response = JsonConvert.DeserializeObject<HiroRpcResponse<T>>(result.Payload, _jsonSettings);
-                return response ?? new HiroRpcResponse<T> { success = false, error = "Deserialization failed" };
+                return ParseEnvelope<T>(result.Payload, rpcId);
             }
             catch (Exception ex)
             {
                 Debug.LogError($"{LOG_TAG} {rpcId} failed: {ex.Message}");
                 return new HiroRpcResponse<T> { success = false, error = ex.Message };
+            }
+        }
+
+        /// <summary>
+        /// Parses both Hiro-style <c>{ success, data, error }</c> and flat platform envelopes
+        /// like <c>{ success, badges: [...] }</c> / <c>{ success, achievements: [...] }</c>.
+        /// </summary>
+        private HiroRpcResponse<T> ParseEnvelope<T>(string payload, string rpcId)
+        {
+            try
+            {
+                var token = JToken.Parse(payload);
+                if (token is not JObject root)
+                {
+                    var direct = token.ToObject<T>(JsonSerializer.Create(_jsonSettings));
+                    return new HiroRpcResponse<T> { success = true, data = direct };
+                }
+
+                bool success = root["success"]?.Type switch
+                {
+                    JTokenType.Boolean => root["success"]!.Value<bool>(),
+                    JTokenType.Integer => root["success"]!.Value<int>() != 0,
+                    JTokenType.String => bool.TryParse(root["success"]!.Value<string>(), out var b) && b,
+                    null => true,
+                    _ => true
+                };
+
+                string error = root["error"]?.Type == JTokenType.String
+                    ? root["error"]!.Value<string>()
+                    : root["error"]?.ToString(Formatting.None);
+
+                if (!success)
+                {
+                    return new HiroRpcResponse<T>
+                    {
+                        success = false,
+                        error = string.IsNullOrEmpty(error) ? $"{rpcId} failed" : error
+                    };
+                }
+
+                T data;
+                var dataToken = root["data"];
+                if (dataToken != null && dataToken.Type != JTokenType.Null)
+                {
+                    data = dataToken.ToObject<T>(JsonSerializer.Create(_jsonSettings));
+                }
+                else
+                {
+                    // Flat success payload: deserialize the whole object into T.
+                    data = root.ToObject<T>(JsonSerializer.Create(_jsonSettings));
+                }
+
+                return new HiroRpcResponse<T> { success = true, data = data, error = error };
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"{LOG_TAG} {rpcId} parse failed: {ex.Message}");
+                return new HiroRpcResponse<T> { success = false, error = $"Parse failed: {ex.Message}" };
             }
         }
 

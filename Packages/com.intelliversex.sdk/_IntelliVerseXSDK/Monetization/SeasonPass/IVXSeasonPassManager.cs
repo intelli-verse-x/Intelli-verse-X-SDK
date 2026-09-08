@@ -99,14 +99,14 @@ namespace IntelliVerseX.Monetization
 
         /// <summary>
         /// Retrieves the current season pass state for the player.
+        /// Prod has no <c>season_pass_get_state</c>; claim/purchase/xp RPCs exist when authenticated.
+        /// Returns null until a get RPC is registered — use claim/add XP paths directly.
         /// </summary>
-        /// <returns>The season pass state.</returns>
         public async Task<IVXSeasonPassState> GetStateAsync()
         {
-            var rpc = await _rpcClient.CallAsync<IVXSeasonPassStateResponse>("season_pass_get_state");
-            if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "season_pass_get_state"))
-                return null;
-            return envelope?.state;
+            Debug.LogWarning($"[{nameof(IVXSeasonPassManager)}] season_pass_get_state is not registered on prod Nakama.");
+            await Task.CompletedTask;
+            return null;
         }
 
         /// <summary>

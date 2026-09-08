@@ -50,6 +50,8 @@ QuizVerse game UUID (registry): `126bf539-dae2-4bcf-964d-316c0fa1f92b` (slug `qu
 - `IVXFriendStreakManager` → `friend_streak_*` + `friend_quest_*`  
 - Models aligned to prod JSON field names  
 
+**Follow-up (2026-09-08):** non-Social remaps — [nakama-rpc-prod-audit-nonsocial.md](nakama-rpc-prod-audit-nonsocial.md). Social clans/friends/chat/push/referral — [nakama-rpc-prod-audit-social.md](nakama-rpc-prod-audit-social.md). **Usage:** [social-nakama-usage.md](social-nakama-usage.md). 
+
 ## How to re-probe (CI / local)
 
 ```powershell

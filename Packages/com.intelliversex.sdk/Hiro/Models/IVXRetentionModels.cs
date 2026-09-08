@@ -22,6 +22,10 @@ namespace IntelliVerseX.Hiro
         [JsonProperty("onboardingStep")] public int onboardingStep;
         [JsonProperty("comebackBonusAvailable")] public bool comebackBonusAvailable;
         [JsonProperty("comebackBonusReward")] public IVXReward comebackBonusReward;
+
+        /// <summary>Prod <c>hiro_retention_get</c> compact fields.</summary>
+        [JsonProperty("bucket")] public string bucket;
+        [JsonProperty("lastSeen")] public string lastSeen;
     }
 
     [Serializable]

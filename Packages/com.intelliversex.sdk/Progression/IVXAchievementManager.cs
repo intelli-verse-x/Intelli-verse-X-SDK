@@ -109,21 +109,23 @@ namespace IntelliVerseX.Progression
 
         /// <summary>
         /// Tracks progress toward an achievement.
+        /// Prod RPC: <c>hiro_achievements_progress</c>.
         /// </summary>
-        /// <param name="achievementId">The achievement identifier.</param>
-        /// <param name="progress">The progress increment.</param>
-        /// <returns>The updated achievement.</returns>
         public async Task<IVXAchievement> TrackProgressAsync(string achievementId, int progress)
         {
             if (!_isInitialized) { Debug.LogError($"[{nameof(IVXAchievementManager)}] Not initialized. Call Initialize() first."); return null; }
-            var payload = new IVXAchievementProgressRequest
+            var payload = new
             {
-                achievementId = achievementId,
-                progress = progress
+                achievementId,
+                achievement_id = achievementId,
+                amount = progress,
+                progress
             };
-            var rpc = await _rpcClient.CallAsync<IVXAchievement>("achievements_track_progress", payload);
-            if (!HiroRpcResponseUtility.TryGetData(rpc, out var achievement, "achievements_track_progress"))
+            var rpc = await _rpcClient.CallAsync<IVXAchievementProgressEnvelope>("hiro_achievements_progress", payload);
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var envelope, "hiro_achievements_progress"))
                 return null;
+
+            var achievement = envelope?.achievement ?? envelope?.ToAchievement(achievementId, progress);
             if (achievement != null)
             {
                 OnProgressUpdated?.Invoke(achievement);
@@ -135,18 +137,29 @@ namespace IntelliVerseX.Progression
 
         /// <summary>
         /// Claims the reward for a completed achievement.
+        /// Prod RPC: <c>hiro_achievements_claim</c>.
         /// </summary>
-        /// <param name="achievementId">The achievement identifier.</param>
-        /// <returns>The updated achievement.</returns>
         public async Task<IVXAchievement> ClaimRewardAsync(string achievementId)
         {
             if (!_isInitialized) { Debug.LogError($"[{nameof(IVXAchievementManager)}] Not initialized. Call Initialize() first."); return null; }
-            var payload = new IVXAchievementClaimRequest { achievementId = achievementId };
-            var rpc = await _rpcClient.CallAsync<IVXAchievement>("achievements_claim_reward", payload);
-            if (!HiroRpcResponseUtility.TryGetData(rpc, out var achievement, "achievements_claim_reward"))
-                return null;
-            if (achievement != null)
-                OnRewardClaimed?.Invoke(achievement);
+            var payload = new
+            {
+                achievementId,
+                achievement_id = achievementId
+            };
+            var rpc = await _rpcClient.CallAsync<IVXAchievement>("hiro_achievements_claim", payload);
+            if (!HiroRpcResponseUtility.TryGetData(rpc, out var achievement, "hiro_achievements_claim"))
+            {
+                // Some prod shapes nest under achievement / return only reward — refresh list item.
+                var all = await GetAllAsync();
+                achievement = all?.Find(a => a != null && a.id == achievementId);
+                if (achievement == null)
+                    return null;
+                achievement.rewardClaimed = true;
+                achievement.unlocked = true;
+            }
+
+            OnRewardClaimed?.Invoke(achievement);
             return achievement;
         }
 

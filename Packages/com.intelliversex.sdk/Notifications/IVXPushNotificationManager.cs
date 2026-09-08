@@ -106,17 +106,33 @@ namespace IntelliVerseX.Notifications
 
         /// <summary>
         /// Register a device push token with the backend.
+        /// Prod RPC: <c>push_register_token</c> (auth required).
+        /// Sends both int + string platform forms for server compatibility.
         /// </summary>
-        /// <param name="token">Device push token string.</param>
-        /// <param name="platform">Target push platform.</param>
-        /// <returns>Registration result containing the endpoint ID.</returns>
         public async Task<PushTokenRegistrationResult> RegisterTokenAsync(string token, PushPlatform platform)
         {
             EnsureReady();
 
+            string platformName = platform switch
+            {
+                PushPlatform.APNS => "apns",
+                PushPlatform.HMS => "hms",
+                _ => "fcm"
+            };
+
+            var payload = new
+            {
+                device_token = token,
+                deviceToken = token,
+                token,
+                platform = (int)platform,
+                platform_name = platformName,
+                platformName
+            };
+
             var response = await _rpcClient.CallAsync<PushTokenRegistrationResult>(
                 RPC_REGISTER_TOKEN,
-                new { device_token = token, platform = (int)platform });
+                payload);
 
             if (response.success && response.data != null)
             {
@@ -125,14 +141,22 @@ namespace IntelliVerseX.Notifications
                 return response.data;
             }
 
+            // Flat success without nested data
+            if (response.success)
+            {
+                var flat = new PushTokenRegistrationResult { registered = true };
+                OnTokenRegistered?.Invoke(flat);
+                return flat;
+            }
+
             Debug.LogWarning($"{LOG_TAG} Token registration failed: {response.error}");
             return null;
         }
 
         /// <summary>
         /// Retrieve all registered push endpoints for the current user.
+        /// Prod RPC: <c>push_get_endpoints</c>.
         /// </summary>
-        /// <returns>List of registered push endpoints.</returns>
         public async Task<List<PushEndpoint>> GetEndpointsAsync()
         {
             EnsureReady();
@@ -144,6 +168,52 @@ namespace IntelliVerseX.Notifications
 
             Debug.LogWarning($"{LOG_TAG} Failed to get endpoints: {response.error}");
             return new List<PushEndpoint>();
+        }
+
+        /// <summary>
+        /// Fire a server-side push event for the current user (or targeted user when allowed).
+        /// Prod RPC: <c>push_send_event</c>.
+        /// </summary>
+        public async Task<bool> SendEventAsync(string type, string title, string body, string deepLink = null, string userId = null)
+        {
+            EnsureReady();
+
+            var payload = new
+            {
+                type,
+                title,
+                body,
+                deep_link = deepLink,
+                deepLink,
+                userId,
+                user_id = userId
+            };
+
+            var response = await _rpcClient.CallAsync<object>(RPC_SEND_EVENT, payload);
+            if (!response.success)
+            {
+                Debug.LogWarning($"{LOG_TAG} push_send_event failed: {response.error}");
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// List in-game Nakama notifications (friend requests, etc.) via native API.
+        /// Complements push RPCs — prod has no <c>notification_list</c> custom RPC.
+        /// </summary>
+        public static async Task<IApiNotificationList> ListInGameNotificationsAsync(
+            IClient client,
+            ISession session,
+            int limit = 50,
+            string cursor = null)
+        {
+            if (client == null) throw new ArgumentNullException(nameof(client));
+            if (session == null || session.IsExpired)
+                throw new InvalidOperationException("Nakama session required");
+
+            return await client.ListNotificationsAsync(session, limit, cursor);
         }
 
         /// <summary>

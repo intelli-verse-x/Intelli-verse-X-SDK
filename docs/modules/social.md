@@ -302,39 +302,46 @@ public class FriendsUI : MonoBehaviour
 
 ### Referral System
 
+Prefer prod Nakama incentives RPCs when a session exists (`hiro_incentives_referral_code` / `hiro_incentives_apply_referral`):
+
 ```csharp
-public class ReferralManager : MonoBehaviour
-{
-    private const string REFERRAL_URL = "https://myga.me/ref/";
-    
-    public string GetReferralCode()
-    {
-        return IntelliVerseXUserIdentity.UserId;
-    }
-    
-    public string GetReferralLink()
-    {
-        return REFERRAL_URL + GetReferralCode();
-    }
-    
-    public void ShareReferralLink()
-    {
-        string message = $"Join me in MyGame! Use my referral code: {GetReferralCode()}";
-        IVXShareService.ShareURL(GetReferralLink(), message);
-    }
-    
-    public async Task ApplyReferralCode(string code)
-    {
-        // Validate and apply via backend RPC
-        var response = await nakamaManager.Client.RpcAsync(
-            nakamaManager.Session,
-            "apply_referral",
-            JsonConvert.SerializeObject(new { referralCode = code })
-        );
-        
-        // Handle response
-    }
-}
+using IntelliVerseX.Social;
+
+var code = await IVXNakamaReferralService.GetReferralCodeAsync(client, session);
+IVXNativeShareHelper.ShareReferralCode(code.ResolvedCode, code.ResolvedUrl);
+
+await IVXNakamaReferralService.ApplyReferralCodeAsync(client, session, "FRIEND123");
+```
+
+`IVXReferralUI` tries Nakama first, then falls back to HTTP `APIManager`.
+
+Full recipes (clans, chat, push, friends): [Social Nakama usage](../guides/social-nakama-usage.md).
+
+---
+
+## Clans
+
+```csharp
+using IntelliVerseX.Social;
+
+var result = await IVXClanService.LoadCurrentClanAsync(client, session, gameId);
+await IVXClanService.CreateClanAsync(client, session, gameId, "Guild", "desc", isOpen: true, maxMembers: 50);
+await IVXClanService.BrowseClansAsync(client, session, query: "quiz", limit: 20);
+await IVXClanService.JoinClanAsync(client, session, clanId);
+```
+
+Load/create use prod RPCs `get_user_groups` / `create_game_group`. Browse/join/leave use Nakama native group APIs.
+
+---
+
+## Chat (native channels)
+
+Prod has no `chat_*` RPCs — use `IVXSocialChatService`:
+
+```csharp
+var dm = await IVXSocialChatService.JoinDirectAsync(socket, otherUserId);
+await IVXSocialChatService.SendTextAsync(socket, dm.Id, "Hello");
+var history = await IVXSocialChatService.ListHistoryAsync(client, session, dm.Id);
 ```
 
 ---

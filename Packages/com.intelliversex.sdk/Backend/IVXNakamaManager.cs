@@ -66,8 +66,12 @@ namespace IntelliVerseX.Backend
         protected const string RPC_GET_ALL_LEADERBOARDS = "get_all_leaderboards";
         protected const string RPC_CALCULATE_SCORE_REWARD = "calculate_score_reward";
         protected const string RPC_UPDATE_GAME_REWARD_CONFIG = "update_game_reward_config";
+        /// <summary>Legacy wallet mutate (still registered). Prefer <see cref="RPC_WALLET_UPDATE_GAME"/>.</summary>
         protected const string RPC_UPDATE_WALLET_BALANCE = "update_wallet_balance";
+        /// <summary>Legacy wallet read (still registered). Prefer <see cref="RPC_WALLET_GET_BALANCES"/>.</summary>
         protected const string RPC_GET_WALLET_BALANCE = "get_wallet_balance";
+        protected const string RPC_WALLET_GET_BALANCES = "wallet_get_balances";
+        protected const string RPC_WALLET_UPDATE_GAME = "wallet_update_game_wallet";
 
         // Session storage keys
         protected const string PREF_REFRESH_TOKEN = "nakama_refresh_token";
@@ -568,31 +572,64 @@ namespace IntelliVerseX.Backend
             try
             {
                 var user = IntelliVerseXIdentity.CurrentUser;
+                string currency = string.Equals(walletType, "global", StringComparison.OrdinalIgnoreCase) ? "global" : "game";
+                string operation = string.Equals(changeType, "set", StringComparison.OrdinalIgnoreCase) ? "set"
+                    : string.Equals(changeType, "decrement", StringComparison.OrdinalIgnoreCase) ? "subtract"
+                    : "add";
 
-                var payload = new
+                // Canonical prod path
+                var modernPayload = new
                 {
-                    device_id = user.DeviceId,
+                    device_id = user?.DeviceId,
+                    deviceId = user?.DeviceId,
                     game_id = _gameId,
-                    amount = amount,
-                    wallet_type = walletType,
-                    change_type = changeType
+                    gameId = _gameId,
+                    currency,
+                    amount,
+                    operation
                 };
-
-                var jsonPayload = JsonConvert.SerializeObject(payload);
-                var rpcResponse = await _client.RpcAsync(_session, RPC_UPDATE_WALLET_BALANCE, jsonPayload);
-
-                var response = JsonConvert.DeserializeObject<Dictionary<string, object>>(rpcResponse.Payload);
-
-                if (response != null &&
-                    response.TryGetValue("success", out var successObj) &&
-                    successObj is bool success &&
-                    success)
+                var modernJson = JsonConvert.SerializeObject(modernPayload);
+                var modernRpc = await _client.RpcAsync(_session, RPC_WALLET_UPDATE_GAME, modernJson);
+                var modern = JsonConvert.DeserializeObject<Dictionary<string, object>>(modernRpc.Payload);
+                if (modern != null &&
+                    modern.TryGetValue("success", out var okObj) &&
+                    okObj is bool ok &&
+                    ok)
                 {
-                    Debug.Log($"{GetLogPrefix()} ✓ Wallet updated: {changeType} {amount}");
+                    Debug.Log($"{GetLogPrefix()} ✓ Wallet updated via {RPC_WALLET_UPDATE_GAME}: {operation} {amount}");
                     return true;
                 }
 
-                Debug.LogWarning($"{GetLogPrefix()} Wallet update RPC returned no success flag or success=false.");
+                // Legacy fallback (requires absolute balance on some deployments)
+                long? current = await GetWalletBalance(walletType);
+                long nextBalance = changeType switch
+                {
+                    "set" => amount,
+                    "decrement" => (current ?? 0) - amount,
+                    _ => (current ?? 0) + amount
+                };
+                var legacyPayload = new
+                {
+                    device_id = user?.DeviceId,
+                    game_id = _gameId,
+                    amount,
+                    balance = nextBalance,
+                    wallet_type = walletType,
+                    change_type = changeType
+                };
+                var legacyJson = JsonConvert.SerializeObject(legacyPayload);
+                var legacyRpc = await _client.RpcAsync(_session, RPC_UPDATE_WALLET_BALANCE, legacyJson);
+                var legacy = JsonConvert.DeserializeObject<Dictionary<string, object>>(legacyRpc.Payload);
+                if (legacy != null &&
+                    legacy.TryGetValue("success", out var legacyOk) &&
+                    legacyOk is bool legacySuccess &&
+                    legacySuccess)
+                {
+                    Debug.Log($"{GetLogPrefix()} ✓ Wallet updated via legacy {RPC_UPDATE_WALLET_BALANCE}");
+                    return true;
+                }
+
+                Debug.LogWarning($"{GetLogPrefix()} Wallet update failed on modern + legacy RPCs.");
                 return false;
             }
             catch (Exception ex)
@@ -610,25 +647,48 @@ namespace IntelliVerseX.Backend
             try
             {
                 var user = IntelliVerseXIdentity.CurrentUser;
+                string currency = string.Equals(walletType, "global", StringComparison.OrdinalIgnoreCase) ? "global" : "game";
 
-                var payload = new
+                var modernPayload = new
                 {
-                    device_id = user.DeviceId,
+                    device_id = user?.DeviceId,
+                    deviceId = user?.DeviceId,
                     game_id = _gameId,
-                    wallet_type = walletType
+                    gameId = _gameId,
+                    userId = _session?.UserId
                 };
-
-                var jsonPayload = JsonConvert.SerializeObject(payload);
-                var rpcResponse = await _client.RpcAsync(_session, RPC_GET_WALLET_BALANCE, jsonPayload);
-
-                var response = JsonConvert.DeserializeObject<Dictionary<string, object>>(rpcResponse.Payload);
-
-                if (response != null && response.TryGetValue("balance", out var balObj))
+                var modernJson = JsonConvert.SerializeObject(modernPayload);
+                var modernRpc = await _client.RpcAsync(_session, RPC_WALLET_GET_BALANCES, modernJson);
+                var modern = JsonConvert.DeserializeObject<Dictionary<string, object>>(modernRpc.Payload);
+                if (modern != null && modern.TryGetValue("balances", out var balancesObj) && balancesObj != null)
                 {
-                    return Convert.ToInt64(balObj);
+                    var balances = JsonConvert.DeserializeObject<Dictionary<string, object>>(balancesObj.ToString());
+                    if (balances != null)
+                    {
+                        if (balances.TryGetValue(currency, out var cur) || balances.TryGetValue(walletType, out cur))
+                            return Convert.ToInt64(cur);
+                        if (balances.TryGetValue("coins", out cur))
+                            return Convert.ToInt64(cur);
+                    }
                 }
 
-                Debug.LogWarning($"{GetLogPrefix()} GetWalletBalance: response had no 'balance' field.");
+                if (modern != null && modern.TryGetValue("balance", out var balModern))
+                    return Convert.ToInt64(balModern);
+
+                var legacyPayload = new
+                {
+                    device_id = user?.DeviceId,
+                    game_id = _gameId,
+                    wallet_type = walletType,
+                    userId = _session?.UserId
+                };
+                var legacyJson = JsonConvert.SerializeObject(legacyPayload);
+                var legacyRpc = await _client.RpcAsync(_session, RPC_GET_WALLET_BALANCE, legacyJson);
+                var legacy = JsonConvert.DeserializeObject<Dictionary<string, object>>(legacyRpc.Payload);
+                if (legacy != null && legacy.TryGetValue("balance", out var balObj))
+                    return Convert.ToInt64(balObj);
+
+                Debug.LogWarning($"{GetLogPrefix()} GetWalletBalance: no balance field on modern/legacy responses.");
                 return null;
             }
             catch (Exception ex)
