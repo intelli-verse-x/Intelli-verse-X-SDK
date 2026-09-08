@@ -1,0 +1,3 @@
+.ivx-root > .ivx-panel {
+    min-height: 420px;
+}

@@ -1,0 +1,26 @@
+{
+    "name": "IntelliVerseX.Samples.UIToolkit",
+    "rootNamespace": "IntelliVerseX.Samples.UIToolkit",
+    "references": [
+        "IntelliVerseX.Core",
+        "IntelliVerseX.Identity",
+        "IntelliVerseX.Social",
+        "IntelliVerseX.V2",
+        "IntelliVerseX.Monetization",
+        "IntelliVerseX.Quiz",
+        "IntelliVerseX.Quiz.DailyQuiz",
+        "IntelliVerseX.MoreOfUs",
+        "NakamaRuntime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "INTELLIVERSEX_HAS_NAKAMA"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

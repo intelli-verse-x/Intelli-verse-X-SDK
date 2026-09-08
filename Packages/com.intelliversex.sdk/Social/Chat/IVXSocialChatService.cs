@@ -16,6 +16,8 @@ namespace IntelliVerseX.Social
     public static class IVXSocialChatService
     {
         private const string LOG_TAG = "[IVXSocialChat]";
+        private const int DefaultHistoryLimit = 50;
+        private const int MaxHistoryLimit = 100;
 
         /// <summary>Join (or create) a 1:1 DM channel with another user.</summary>
         public static async Task<IChannel> JoinDirectAsync(
@@ -30,7 +32,7 @@ namespace IntelliVerseX.Social
                 throw new ArgumentException("otherUserId required", nameof(otherUserId));
 
             ct.ThrowIfCancellationRequested();
-            var channel = await socket.JoinChatAsync(otherUserId, ChannelType.DirectMessage, persistence, hidden);
+            var channel = await socket.JoinChatAsync(otherUserId.Trim(), ChannelType.DirectMessage, persistence, hidden);
             Debug.Log($"{LOG_TAG} Joined DM channel {channel?.Id} with {otherUserId}");
             return channel;
         }
@@ -48,27 +50,48 @@ namespace IntelliVerseX.Social
                 throw new ArgumentException("groupId required", nameof(groupId));
 
             ct.ThrowIfCancellationRequested();
-            var channel = await socket.JoinChatAsync(groupId, ChannelType.Group, persistence, hidden);
+            var channel = await socket.JoinChatAsync(groupId.Trim(), ChannelType.Group, persistence, hidden);
             Debug.Log($"{LOG_TAG} Joined clan channel {channel?.Id} for group {groupId}");
             return channel;
         }
 
-        /// <summary>Send a text chat message on an open channel.</summary>
-        public static async Task<IApiChannelMessageAck> SendTextAsync(
+        /// <summary>Send a text chat message on an open channel id.</summary>
+        public static Task<IChannelMessageAck> SendTextAsync(
             ISocket socket,
             string channelId,
             string text,
             CancellationToken ct = default)
         {
-            if (socket == null) throw new ArgumentNullException(nameof(socket));
             if (string.IsNullOrWhiteSpace(channelId))
                 throw new ArgumentException("channelId required", nameof(channelId));
-            if (string.IsNullOrEmpty(text))
-                throw new ArgumentException("text required", nameof(text));
+            return SendContentAsync(socket, channelId.Trim(), BuildTextContent(text), ct);
+        }
 
-            ct.ThrowIfCancellationRequested();
-            string content = JsonConvert.SerializeObject(new { type = "text", text });
-            return await socket.WriteChatMessageAsync(channelId, content);
+        /// <summary>Send a text chat message on a joined channel.</summary>
+        public static Task<IChannelMessageAck> SendTextAsync(
+            ISocket socket,
+            IChannel channel,
+            string text,
+            CancellationToken ct = default)
+        {
+            if (channel == null) throw new ArgumentNullException(nameof(channel));
+            if (string.IsNullOrWhiteSpace(channel.Id))
+                throw new ArgumentException("channel.Id required", nameof(channel));
+            return SendContentAsync(socket, channel.Id, BuildTextContent(text), ct);
+        }
+
+        /// <summary>Send arbitrary JSON content already serialized for the channel.</summary>
+        public static Task<IChannelMessageAck> SendRawContentAsync(
+            ISocket socket,
+            string channelId,
+            string contentJson,
+            CancellationToken ct = default)
+        {
+            if (string.IsNullOrWhiteSpace(channelId))
+                throw new ArgumentException("channelId required", nameof(channelId));
+            if (string.IsNullOrWhiteSpace(contentJson))
+                throw new ArgumentException("contentJson required", nameof(contentJson));
+            return SendContentAsync(socket, channelId.Trim(), contentJson, ct);
         }
 
         /// <summary>List recent messages for a channel (history).</summary>
@@ -76,7 +99,7 @@ namespace IntelliVerseX.Social
             IClient client,
             ISession session,
             string channelId,
-            int limit = 50,
+            int limit = DefaultHistoryLimit,
             bool forward = false,
             string cursor = null,
             CancellationToken ct = default)
@@ -87,17 +110,53 @@ namespace IntelliVerseX.Social
                 throw new ArgumentException("channelId required", nameof(channelId));
 
             ct.ThrowIfCancellationRequested();
-            return await client.ListChannelMessagesAsync(session, channelId, limit, forward, cursor);
+            int clamped = Mathf.Clamp(limit <= 0 ? DefaultHistoryLimit : limit, 1, MaxHistoryLimit);
+            return await client.ListChannelMessagesAsync(session, channelId.Trim(), clamped, forward, cursor);
         }
 
-        /// <summary>
-        /// Leave a previously joined chat channel.
-        /// </summary>
+        /// <summary>Leave a previously joined chat channel.</summary>
         public static async Task LeaveAsync(ISocket socket, IChannel channel, CancellationToken ct = default)
         {
-            if (socket == null || channel == null) return;
+            if (socket == null || channel == null)
+                return;
             ct.ThrowIfCancellationRequested();
             await socket.LeaveChatAsync(channel);
+        }
+
+        /// <summary>Try parse IVX text envelope from a channel message content string.</summary>
+        public static bool TryParseContent(string contentJson, out IVXChatMessageContent content)
+        {
+            content = null;
+            if (string.IsNullOrWhiteSpace(contentJson))
+                return false;
+            try
+            {
+                content = JsonConvert.DeserializeObject<IVXChatMessageContent>(contentJson);
+                return content != null;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"{LOG_TAG} content parse failed: {ex.Message}");
+                return false;
+            }
+        }
+
+        private static string BuildTextContent(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                throw new ArgumentException("text required", nameof(text));
+            return JsonConvert.SerializeObject(new IVXChatMessageContent { type = "text", text = text });
+        }
+
+        private static async Task<IChannelMessageAck> SendContentAsync(
+            ISocket socket,
+            string channelId,
+            string contentJson,
+            CancellationToken ct)
+        {
+            if (socket == null) throw new ArgumentNullException(nameof(socket));
+            ct.ThrowIfCancellationRequested();
+            return await socket.WriteChatMessageAsync(channelId, contentJson);
         }
     }
 

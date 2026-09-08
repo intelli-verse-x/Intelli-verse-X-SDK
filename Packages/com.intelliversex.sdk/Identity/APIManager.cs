@@ -2926,6 +2926,142 @@ Do not include any other top-level keys. Do not include code fences.";
         return resp;
     }
 
+    [Serializable]
+    public class GameIdVerifyResult
+    {
+        public bool localOk;
+        public bool authOk;
+        public bool gameAccepted;
+        public long httpStatus;
+        public string message;
+        public bool OverallOk => localOk && authOk && gameAccepted;
+    }
+
+    /// <summary>
+    /// Authenticated post-create probe: validates UUID, confirms Bearer via <see cref="IVXURLs.GetUserProfile"/>,
+    /// then GETs a game-scoped leaderboard probe. 2xx ⇒ platform accepted the Game ID for routing.
+    /// </summary>
+    public static async Task<GameIdVerifyResult> VerifyGameIdOnlineAsync(
+        string gameId,
+        string accessToken = null,
+        CancellationToken ct = default)
+    {
+        var result = new GameIdVerifyResult();
+        if (string.IsNullOrWhiteSpace(gameId))
+        {
+            result.message = "Game ID is empty.";
+            return result;
+        }
+
+        string id = gameId.Trim();
+        if (!System.Text.RegularExpressions.Regex.IsMatch(
+                id,
+                @"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"))
+        {
+            result.message = "Game ID is not a UUID.";
+            return result;
+        }
+
+        result.localOk = true;
+
+        string token = !string.IsNullOrWhiteSpace(accessToken)
+            ? accessToken.Trim()
+            : UserSessionManager.AccessToken;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            result.message = "Access token required for online Game ID verify.";
+            return result;
+        }
+
+        // 1) Auth ping — proves the Bearer is alive
+        try
+        {
+            long meCode = await GetStatusAsync(IVXURLs.GetUserProfile, token, ct);
+            result.authOk = meCode >= 200 && meCode < 300;
+            if (!result.authOk)
+            {
+                result.httpStatus = meCode;
+                result.message = meCode == 401 || meCode == 403
+                    ? "Auth ping failed — sign in again."
+                    : $"Auth ping failed (HTTP {meCode}).";
+                return result;
+            }
+        }
+        catch (Exception ex)
+        {
+            result.message = "Auth ping network error: " + ex.Message;
+            return result;
+        }
+
+        // 2) Game-scoped probe — leaderboard list with gameId (no dedicated games GET exists)
+        try
+        {
+            string probeUrl = IVXURLs.GetGameIdProbeUrl(id);
+            long code = await GetStatusAsync(probeUrl, token, ct);
+            result.httpStatus = code;
+            if (code >= 200 && code < 300)
+            {
+                result.gameAccepted = true;
+                result.message = "Online verify OK — auth live and Game ID accepted for game APIs.";
+                return result;
+            }
+
+            if (code == 404)
+            {
+                result.message = "Online verify: Game ID not found on platform (HTTP 404).";
+                return result;
+            }
+
+            if (code == 401 || code == 403)
+            {
+                result.authOk = false;
+                result.message = "Online verify unauthorized for game probe — refresh token and retry.";
+                return result;
+            }
+
+            // Some tenants return empty 4xx for brand-new IDs while still routing — treat 400 as soft-accept with warning
+            if (code == 400)
+            {
+                result.gameAccepted = true;
+                result.message = "Online verify soft-OK (HTTP 400 on probe). Game ID is set; platform may still be provisioning.";
+                return result;
+            }
+
+            result.message = $"Online verify inconclusive (HTTP {code}). Local save still applied.";
+            return result;
+        }
+        catch (Exception ex)
+        {
+            result.message = "Game probe network error: " + ex.Message;
+            return result;
+        }
+    }
+
+    private static async Task<long> GetStatusAsync(string url, string bearerToken, CancellationToken ct)
+    {
+        using (var uwr = UnityWebRequest.Get(url))
+        {
+            uwr.SetRequestHeader("accept", "application/json");
+            uwr.SetRequestHeader("Authorization", "Bearer " + bearerToken);
+            uwr.timeout = Mathf.Clamp(RequestTimeoutSeconds, 5, 30);
+
+            var op = uwr.SendWebRequest();
+            float start = Time.realtimeSinceStartup;
+            while (!op.isDone)
+            {
+                if (ct.IsCancellationRequested) { uwr.Abort(); ct.ThrowIfCancellationRequested(); }
+                if (Time.realtimeSinceStartup - start > uwr.timeout)
+                {
+                    uwr.Abort();
+                    throw new TimeoutException($"GET timed out: {url}");
+                }
+                await Task.Yield();
+            }
+
+            return uwr.responseCode;
+        }
+    }
+
     #endregion
 
     #region Auth V2: Guest Signup

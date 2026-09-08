@@ -33,6 +33,7 @@ namespace IntelliVerseX.Core
         [SerializeField] private KeyCode _toggleOverlayKey = KeyCode.F8;
         [SerializeField] private bool _overlayVisible = true;
         [SerializeField] private int _sortingOrder = 500;
+        [SerializeField] private bool _preferUIToolkitScenes = true;
 
         [Header("Links")]
         [SerializeField] private List<SceneLink> _sceneLinks = new List<SceneLink>
@@ -57,6 +58,8 @@ namespace IntelliVerseX.Core
         private void Awake()
         {
             EnsureRequiredLinks();
+            PreferUIToolkitSceneNames();
+            _homeSceneName = ResolvePreferredSceneName(_homeSceneName);
             EnsureEventSystem();
             BuildNavigationUI();
             ApplyVisibility();
@@ -108,6 +111,48 @@ namespace IntelliVerseX.Core
                 ShowOnHome = true,
                 ShowOnFeatureScenes = true
             });
+        }
+
+        /// <summary>
+        /// Prefer UITK sample scenes (e.g. IVX_AuthTest_UITK) when they exist in Build Settings or known editor folders.
+        /// </summary>
+        private void PreferUIToolkitSceneNames()
+        {
+            if (!_preferUIToolkitScenes || _sceneLinks == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < _sceneLinks.Count; i++)
+            {
+                SceneLink link = _sceneLinks[i];
+                link.SceneName = ResolvePreferredSceneName(link.SceneName);
+                _sceneLinks[i] = link;
+            }
+
+            AddLinkIfMissing("UITK Home", "IVX_HomeScreen_UITK");
+            AddLinkIfMissing("UITK Auth", "IVX_AuthTest_UITK");
+        }
+
+        private string ResolvePreferredSceneName(string sceneName)
+        {
+            if (string.IsNullOrWhiteSpace(sceneName))
+            {
+                return sceneName;
+            }
+
+            if (!_preferUIToolkitScenes || sceneName.EndsWith("_UITK", StringComparison.Ordinal))
+            {
+                return sceneName;
+            }
+
+            string uitkName = sceneName + "_UITK";
+            if (IsSceneAvailable(uitkName))
+            {
+                return uitkName;
+            }
+
+            return sceneName;
         }
 
         private void AddBuildSettingsTestSceneLinks()
@@ -451,10 +496,20 @@ namespace IntelliVerseX.Core
             }
 
 #if UNITY_EDITOR
-            string testPath = $"Assets/Scenes/Tests/{sceneName}.unity";
-            if (System.IO.File.Exists(testPath))
+            string[] editorCandidates =
             {
-                return true;
+                $"Assets/Scenes/Tests/{sceneName}.unity",
+                $"Assets/IntelliVerseX UITK Demo Scenes/{sceneName}.unity",
+                $"Assets/IntelliVerseX Demo Scenes/{sceneName}.unity",
+                $"Assets/Samples/IntelliVerseX SDK/UIToolkit/Scenes/{sceneName}.unity"
+            };
+
+            for (int i = 0; i < editorCandidates.Length; i++)
+            {
+                if (System.IO.File.Exists(editorCandidates[i]))
+                {
+                    return true;
+                }
             }
 #endif
             return false;
@@ -463,23 +518,33 @@ namespace IntelliVerseX.Core
         private static bool TryEditorLoadScene(string sceneName)
         {
 #if UNITY_EDITOR
-            string testPath = $"Assets/Scenes/Tests/{sceneName}.unity";
-            if (!System.IO.File.Exists(testPath))
+            string[] editorCandidates =
             {
-                return false;
-            }
+                $"Assets/Scenes/Tests/{sceneName}.unity",
+                $"Assets/IntelliVerseX UITK Demo Scenes/{sceneName}.unity",
+                $"Assets/IntelliVerseX Demo Scenes/{sceneName}.unity",
+                $"Assets/Samples/IntelliVerseX SDK/UIToolkit/Scenes/{sceneName}.unity"
+            };
 
-            var current = SceneManager.GetActiveScene();
-            if (current.isLoaded && current.isDirty)
+            for (int i = 0; i < editorCandidates.Length; i++)
             {
-                EditorSceneManager.SaveScene(current);
-            }
+                string testPath = editorCandidates[i];
+                if (!System.IO.File.Exists(testPath))
+                {
+                    continue;
+                }
 
-            EditorSceneManager.LoadSceneInPlayMode(testPath, new LoadSceneParameters(LoadSceneMode.Single));
-            return true;
-#else
-            return false;
+                var current = SceneManager.GetActiveScene();
+                if (current.isLoaded && current.isDirty)
+                {
+                    EditorSceneManager.SaveScene(current);
+                }
+
+                EditorSceneManager.LoadSceneInPlayMode(testPath, new LoadSceneParameters(LoadSceneMode.Single));
+                return true;
+            }
 #endif
+            return false;
         }
     }
 }

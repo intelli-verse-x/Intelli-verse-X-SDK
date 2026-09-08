@@ -1,0 +1,361 @@
+/* IntelliVerseX Control Center — Editor UI Toolkit */
+
+:root {
+    --ivx-bg: #1e1f24;
+    --ivx-surface: #2a2c33;
+    --ivx-surface-2: #34363f;
+    --ivx-border: #454853;
+    --ivx-text: #e8e9ed;
+    --ivx-muted: #9aa0ab;
+    --ivx-accent: #4da3ff;
+    --ivx-accent-soft: #3a7fc4;
+    --ivx-ok: #5ecf7a;
+    --ivx-warn: #e0b35a;
+    --ivx-err: #e06c75;
+    --ivx-radius: 6px;
+    --ivx-pad: 12px;
+    --ivx-gap: 8px;
+}
+
+.ivx-root {
+    flex-grow: 1;
+    background-color: var(--ivx-bg);
+    color: var(--ivx-text);
+    padding: 10px 12px 12px 12px;
+}
+
+.ivx-title {
+    font-size: 16px;
+    -unity-font-style: bold;
+    margin-bottom: 2px;
+    color: var(--ivx-text);
+}
+
+.ivx-subtitle {
+    font-size: 11px;
+    color: var(--ivx-muted);
+    white-space: normal;
+    margin-bottom: 10px;
+}
+
+.ivx-tabs {
+    flex-direction: row;
+    margin-bottom: 10px;
+}
+
+.ivx-tab {
+    flex-grow: 1;
+    height: 30px;
+    margin-right: 4px;
+    background-color: var(--ivx-surface);
+    border-width: 1px;
+    border-color: var(--ivx-border);
+    border-radius: var(--ivx-radius);
+    color: var(--ivx-muted);
+    transition-property: background-color, color, border-color;
+    transition-duration: 0.18s;
+}
+
+.ivx-tab:last-child {
+    margin-right: 0;
+}
+
+.ivx-tab:hover {
+    background-color: var(--ivx-surface-2);
+    color: var(--ivx-text);
+}
+
+.ivx-tab--active {
+    background-color: var(--ivx-accent-soft);
+    border-color: var(--ivx-accent);
+    color: var(--ivx-text);
+    -unity-font-style: bold;
+}
+
+.ivx-content {
+    flex-grow: 1;
+    position: relative;
+}
+
+.ivx-scroll {
+    flex-grow: 1;
+}
+
+.ivx-panel {
+    flex-grow: 1;
+    opacity: 1;
+    translate: 0 0;
+    transition-property: opacity, translate;
+    transition-duration: 0.22s;
+    transition-timing-function: ease-out;
+}
+
+.ivx-panel--exit {
+    opacity: 0;
+    translate: 0 10px;
+}
+
+.ivx-section {
+    background-color: var(--ivx-surface);
+    border-width: 1px;
+    border-color: var(--ivx-border);
+    border-radius: var(--ivx-radius);
+    padding: var(--ivx-pad);
+    margin-bottom: 10px;
+}
+
+.ivx-section-title {
+    font-size: 13px;
+    -unity-font-style: bold;
+    margin-bottom: 6px;
+    color: var(--ivx-text);
+}
+
+.ivx-hint {
+    font-size: 11px;
+    color: var(--ivx-muted);
+    white-space: normal;
+    margin-bottom: 8px;
+}
+
+.ivx-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.ivx-row > * {
+    margin-right: 6px;
+}
+
+.ivx-row > *:last-child {
+    margin-right: 0;
+}
+
+.ivx-chip {
+    padding: 2px 8px;
+    border-radius: 10px;
+    background-color: var(--ivx-surface-2);
+    color: var(--ivx-muted);
+    font-size: 11px;
+    margin-right: 6px;
+    transition-property: background-color, color;
+    transition-duration: 0.18s;
+}
+
+.ivx-chip--done {
+    background-color: rgba(94, 207, 122, 0.22);
+    color: var(--ivx-ok);
+}
+
+.ivx-status-ok {
+    color: var(--ivx-ok);
+    width: 88px;
+    -unity-font-style: bold;
+}
+
+.ivx-status-bad {
+    color: var(--ivx-warn);
+    width: 88px;
+    -unity-font-style: bold;
+}
+
+.ivx-field-label {
+    min-width: 96px;
+    color: var(--ivx-muted);
+    font-size: 12px;
+}
+
+.ivx-field {
+    flex-grow: 1;
+    min-height: 24px;
+}
+
+.ivx-btn {
+    height: 30px;
+    padding-left: 12px;
+    padding-right: 12px;
+    background-color: var(--ivx-surface-2);
+    border-width: 1px;
+    border-color: var(--ivx-border);
+    border-radius: var(--ivx-radius);
+    color: var(--ivx-text);
+    transition-property: background-color, border-color, scale, opacity;
+    transition-duration: 0.15s;
+}
+
+.ivx-btn:hover {
+    background-color: #3e414c;
+    border-color: var(--ivx-accent);
+}
+
+.ivx-btn:active {
+    scale: 0.98;
+}
+
+.ivx-btn:disabled {
+    opacity: 0.45;
+}
+
+.ivx-btn--primary {
+    background-color: var(--ivx-accent-soft);
+    border-color: var(--ivx-accent);
+}
+
+.ivx-btn--primary:hover {
+    background-color: var(--ivx-accent);
+}
+
+.ivx-btn--success {
+    background-color: rgba(94, 207, 122, 0.28);
+    border-color: var(--ivx-ok);
+}
+
+.ivx-btn--ghost {
+    background-color: rgba(0, 0, 0, 0);
+    border-color: transparent;
+    color: var(--ivx-accent);
+    height: 24px;
+}
+
+.ivx-btn--ghost:hover {
+    background-color: rgba(77, 163, 255, 0.12);
+    border-color: transparent;
+}
+
+.ivx-mode-toggle {
+    flex-direction: row;
+    margin-bottom: 8px;
+}
+
+.ivx-mode-toggle .ivx-btn {
+    flex-grow: 1;
+}
+
+.ivx-help {
+    white-space: normal;
+    margin-bottom: 8px;
+    padding: 8px;
+    border-radius: var(--ivx-radius);
+    background-color: rgba(77, 163, 255, 0.1);
+    border-width: 1px;
+    border-color: rgba(77, 163, 255, 0.35);
+    color: var(--ivx-text);
+    font-size: 11px;
+}
+
+.ivx-help--warn {
+    background-color: rgba(224, 179, 90, 0.12);
+    border-color: rgba(224, 179, 90, 0.4);
+}
+
+.ivx-help--err {
+    background-color: rgba(224, 108, 117, 0.12);
+    border-color: rgba(224, 108, 117, 0.4);
+}
+
+.ivx-help--ok {
+    background-color: rgba(94, 207, 122, 0.12);
+    border-color: rgba(94, 207, 122, 0.4);
+}
+
+.ivx-traffic-header,
+.ivx-traffic-row {
+    flex-direction: row;
+    margin-bottom: 2px;
+}
+
+.ivx-traffic-header > Label,
+.ivx-traffic-row > Label {
+    font-size: 11px;
+    color: var(--ivx-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ivx-col-utc { width: 70px; }
+.ivx-col-rpc { width: 180px; }
+.ivx-col-n { width: 28px; }
+.ivx-col-status { width: 70px; }
+.ivx-col-ms { width: 48px; }
+.ivx-col-err { flex-grow: 1; }
+
+.ivx-api-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 2px;
+}
+
+.ivx-footer {
+    margin-top: 8px;
+    color: var(--ivx-muted);
+    font-size: 11px;
+    white-space: normal;
+}
+
+/* Overlay backdrop + panels */
+.ivx-overlay-host {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: none;
+}
+
+.ivx-overlay-host.ivx-overlay-host--open {
+    display: flex;
+}
+
+.ivx-overlay-backdrop {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(10, 12, 16, 0.62);
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 0.2s;
+}
+
+.ivx-overlay-host--open .ivx-overlay-backdrop {
+    opacity: 1;
+}
+
+.ivx-overlay-card {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    top: 40px;
+    max-height: 85%;
+    background-color: var(--ivx-surface);
+    border-width: 1px;
+    border-color: var(--ivx-border);
+    border-radius: 8px;
+    padding: 14px;
+    opacity: 0;
+    translate: 0 18px;
+    transition-property: opacity, translate;
+    transition-duration: 0.22s;
+    transition-timing-function: ease-out;
+}
+
+.ivx-overlay-card.ivx-overlay--visible {
+    opacity: 1;
+    translate: 0 0;
+}
+
+.ivx-overlay-title {
+    font-size: 14px;
+    -unity-font-style: bold;
+    margin-bottom: 4px;
+}
+
+.ivx-spacer {
+    height: 8px;
+}
+
+.ivx-grow {
+    flex-grow: 1;
+}

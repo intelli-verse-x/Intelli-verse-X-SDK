@@ -73,6 +73,11 @@
       "path": "Samples~/TestScenes"
     },
     {
+      "displayName": "UI Toolkit Demos",
+      "description": "UI Toolkit sample hub and feature demos (Auth, Friends, Clan, Profile, Leaderboard, Wallet, Quizzes, Ads, More Of Us, Share & Rate) with animated USS transitions. Source of truth for UITK demos; sync Assets/IntelliVerseX UITK Demo Scenes from here as needed.",
+      "path": "Samples~/UIToolkit"
+    },
+    {
       "displayName": "Authentication Demo",
       "description": "Complete authentication flow with login, register, OTP, and social auth",
       "path": "Samples~/Authentication"

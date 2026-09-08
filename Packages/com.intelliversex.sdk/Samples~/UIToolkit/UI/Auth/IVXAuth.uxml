@@ -1,0 +1,92 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+  <ui:Style src="../IVXUITKTheme.uss" />
+  <ui:Style src="IVXAuth.uss" />
+  <ui:VisualElement name="root" class="ivx-root">
+    <ui:VisualElement class="ivx-header">
+      <ui:VisualElement>
+        <ui:Label text="IntelliVerseX Auth" class="ivx-title" />
+        <ui:Label text="UI Toolkit login, signup OTP, and password reset" class="ivx-subtitle" />
+      </ui:VisualElement>
+      <ui:Button name="homeButton" text="Home" class="ivx-btn ivx-btn--ghost" />
+    </ui:VisualElement>
+
+    <ui:Label name="statusLabel" text="Ready" class="ivx-status" />
+
+    <ui:VisualElement name="loginPanel" class="ivx-panel">
+      <ui:Label text="Sign In" class="ivx-title" />
+      <ui:VisualElement class="ivx-field">
+        <ui:Label text="Email" />
+        <ui:TextField name="loginEmail" />
+      </ui:VisualElement>
+      <ui:VisualElement class="ivx-field">
+        <ui:Label text="Password" />
+        <ui:TextField name="loginPassword" password="true" />
+      </ui:VisualElement>
+      <ui:Button name="loginButton" text="Login" class="ivx-btn" />
+      <ui:Button name="guestButton" text="Continue as Guest" class="ivx-btn ivx-btn--accent" />
+      <ui:VisualElement class="ivx-row">
+        <ui:Button name="gotoSignupButton" text="Create account" class="ivx-btn ivx-btn--ghost" />
+        <ui:Button name="gotoForgotButton" text="Forgot password" class="ivx-btn ivx-btn--ghost" />
+      </ui:VisualElement>
+    </ui:VisualElement>
+
+    <ui:VisualElement name="signupPanel" class="ivx-panel ivx-panel--hidden">
+      <ui:Label text="Create Account" class="ivx-title" />
+      <ui:VisualElement class="ivx-field">
+        <ui:Label text="Email" />
+        <ui:TextField name="signupEmail" />
+      </ui:VisualElement>
+      <ui:VisualElement class="ivx-field">
+        <ui:Label text="Username" />
+        <ui:TextField name="signupUsername" />
+      </ui:VisualElement>
+      <ui:VisualElement class="ivx-field">
+        <ui:Label text="Password" />
+        <ui:TextField name="signupPassword" password="true" />
+      </ui:VisualElement>
+      <ui:Button name="signupInitiateButton" text="Send OTP" class="ivx-btn" />
+      <ui:Button name="backToLoginFromSignup" text="Back to login" class="ivx-btn ivx-btn--ghost" />
+    </ui:VisualElement>
+
+    <ui:VisualElement name="otpPanel" class="ivx-panel ivx-panel--hidden">
+      <ui:Label text="Confirm OTP" class="ivx-title" />
+      <ui:Label name="otpHint" text="Enter the code sent to your email" class="ivx-subtitle" />
+      <ui:VisualElement class="ivx-field">
+        <ui:Label text="OTP" />
+        <ui:TextField name="otpCode" max-length="8" />
+      </ui:VisualElement>
+      <ui:Button name="otpConfirmButton" text="Confirm signup" class="ivx-btn" />
+      <ui:Button name="otpResendButton" text="Resend OTP" class="ivx-btn ivx-btn--ghost" />
+      <ui:Button name="backToSignupFromOtp" text="Back" class="ivx-btn ivx-btn--ghost" />
+    </ui:VisualElement>
+
+    <ui:VisualElement name="forgotPanel" class="ivx-panel ivx-panel--hidden">
+      <ui:Label text="Forgot Password" class="ivx-title" />
+      <ui:VisualElement class="ivx-field">
+        <ui:Label text="Email" />
+        <ui:TextField name="forgotEmail" />
+      </ui:VisualElement>
+      <ui:Button name="forgotSendButton" text="Send reset OTP" class="ivx-btn" />
+      <ui:Button name="backToLoginFromForgot" text="Back to login" class="ivx-btn ivx-btn--ghost" />
+    </ui:VisualElement>
+
+    <ui:VisualElement name="resetPanel" class="ivx-panel ivx-panel--hidden">
+      <ui:Label text="Reset Password" class="ivx-title" />
+      <ui:VisualElement class="ivx-field">
+        <ui:Label text="OTP" />
+        <ui:TextField name="resetOtp" max-length="8" />
+      </ui:VisualElement>
+      <ui:VisualElement class="ivx-field">
+        <ui:Label text="New password" />
+        <ui:TextField name="resetPassword" password="true" />
+      </ui:VisualElement>
+      <ui:Button name="resetConfirmButton" text="Reset password" class="ivx-btn" />
+      <ui:Button name="backToForgotFromReset" text="Back" class="ivx-btn ivx-btn--ghost" />
+    </ui:VisualElement>
+
+    <ui:VisualElement name="loadingOverlay" class="ivx-loading" picking-mode="Ignore">
+      <ui:VisualElement class="ivx-spinner" />
+      <ui:Label text="Working..." />
+    </ui:VisualElement>
+  </ui:VisualElement>
+</ui:UXML>

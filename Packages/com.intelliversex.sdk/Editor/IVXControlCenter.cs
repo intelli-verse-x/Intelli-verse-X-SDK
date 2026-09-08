@@ -12,7 +12,7 @@ using UnityEngine.SceneManagement;
 namespace IntelliVerseX.Editor
 {
     /// <summary>
-    /// Canonical first-run editor window (Home / Traffic / APIs).
+    /// Canonical first-run editor window (Home / Traffic / APIs) built with UI Toolkit CreateGUI.
     /// Sign in (Auth V2) to create a unique App/Game ID, or paste an existing Game ID onto
     /// <see cref="IVXBootstrapConfig"/>. Advanced work stays on <see cref="IVXAdvancedSetup"/>.
     /// </summary>
@@ -29,11 +29,8 @@ namespace IntelliVerseX.Editor
         private const string GeneratedConfigFolder = "Assets/IntelliVerseX/Generated";
         private const string GeneratedConfigPath = GeneratedConfigFolder + "/IVXBootstrapConfig.asset";
 
-        private static readonly string[] TabLabels = { "Home", "Traffic", "APIs" };
-
         private IVXBootstrapConfig _config;
         private SerializedObject _configSo;
-        private Vector2 _scroll;
         private Vector2 _trafficScroll;
         private Vector2 _apiScroll;
         private string _serverPing = "";
@@ -62,6 +59,11 @@ namespace IntelliVerseX.Editor
             window._focusConnectBanner = true;
             window.Show();
             window.Focus();
+            if (window._uiBuilt)
+            {
+                window.SelectTab(Tab.Home, animate: false);
+                window.NotifyUiChanged();
+            }
         }
 
         private void OnEnable()
@@ -78,12 +80,17 @@ namespace IntelliVerseX.Editor
             EditorApplication.update -= OnEditorUpdate;
             CancelWizardWork();
             _loginPassword = string.Empty;
+            ClearSignupSecrets();
+            ClearForgotSecrets();
+            _uiBuilt = false;
         }
 
         private void OnFocus()
         {
             FindOrLoadConfig();
             TryHydrateWizardSessionFromMemory();
+            if (_uiBuilt)
+                NotifyUiChanged();
         }
 
         private void OnEditorUpdate()
@@ -94,33 +101,18 @@ namespace IntelliVerseX.Editor
             if (EditorApplication.timeSinceStartup < _nextTrafficRepaint)
                 return;
             _nextTrafficRepaint = EditorApplication.timeSinceStartup + (_wizardBusy ? 0.12d : 0.5d);
+            if (_uiBuilt)
+            {
+                if (_wizardBusy)
+                    RefreshBusyUi();
+                if (_tab == Tab.Traffic)
+                    RefreshTrafficUi();
+            }
+
             Repaint();
         }
 
-        private void OnGUI()
-        {
-            EditorGUILayout.Space(6);
-            _tab = (Tab)GUILayout.Toolbar((int)_tab, TabLabels, GUILayout.Height(28));
-            EditorGUILayout.Space(8);
-
-            _scroll = EditorGUILayout.BeginScrollView(_scroll);
-            switch (_tab)
-            {
-                case Tab.Home:
-                    DrawHome();
-                    break;
-                case Tab.Traffic:
-                    DrawTraffic();
-                    break;
-                case Tab.Apis:
-                    DrawApis();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            EditorGUILayout.EndScrollView();
-        }
+        // IMGUI Draw* helpers below are unused after CreateGUI migration; kept for reference / fallback.
 
         private void DrawHome()
         {
@@ -285,11 +277,26 @@ namespace IntelliVerseX.Editor
         {
             EditorGUILayout.LabelField("3. Play", EditorStyles.boldLabel);
 
+            if (_config == null || string.IsNullOrWhiteSpace(_config.GameId))
+            {
+                EditorGUILayout.HelpBox(
+                    "Finish Connect first — the SDK needs a Game ID before Play is useful.",
+                    MessageType.Warning);
+            }
+            else if (!IVXConnectWizardValidation.IsValidUuid(_config.GameId))
+            {
+                EditorGUILayout.HelpBox(
+                    "Game ID does not look like a UUID. Fix it in Connect → Use existing.",
+                    MessageType.Warning);
+            }
+
             bool hasBootstrap = FindBootstrapInOpenScenes() != null;
             DrawStatusRow("Bootstrap in this scene", hasBootstrap);
 
+            EditorGUI.BeginDisabledGroup(_config == null);
             if (GUILayout.Button("Add bootstrap to this scene", GUILayout.Height(32)))
                 AddBootstrapToScene();
+            EditorGUI.EndDisabledGroup();
 
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Install demo scenes", GUILayout.Height(28)))

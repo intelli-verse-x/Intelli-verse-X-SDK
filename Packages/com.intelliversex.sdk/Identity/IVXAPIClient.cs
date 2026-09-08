@@ -133,6 +133,15 @@ namespace IntelliVerseX.Identity
             return APIManager.GetUserAccessTokenAsync(ct);
         }
 
+        /// <summary>Authenticated Game ID probe (Bearer + game-scoped API GET).</summary>
+        public static Task<APIManager.GameIdVerifyResult> VerifyGameIdOnlineAsync(
+            string gameId,
+            string accessToken = null,
+            CancellationToken ct = default)
+        {
+            return APIManager.VerifyGameIdOnlineAsync(gameId, accessToken, ct);
+        }
+
         /// <summary>
         /// Create a guest account (no email/password required).
         /// </summary>

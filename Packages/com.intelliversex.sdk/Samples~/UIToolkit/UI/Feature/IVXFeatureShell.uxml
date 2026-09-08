@@ -1,0 +1,30 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+  <ui:Style src="../IVXUITKTheme.uss" />
+  <ui:Style src="IVXFeatureShell.uss" />
+  <ui:VisualElement name="root" class="ivx-root">
+    <ui:VisualElement class="ivx-header">
+      <ui:VisualElement>
+        <ui:Label name="titleLabel" text="Feature Demo" class="ivx-title" />
+        <ui:Label name="subtitleLabel" text="" class="ivx-subtitle" />
+      </ui:VisualElement>
+      <ui:Button name="homeButton" text="Home" class="ivx-btn ivx-btn--ghost ivx-btn--compact" />
+    </ui:VisualElement>
+
+    <ui:Label name="statusLabel" text="Ready" class="ivx-status" />
+
+    <ui:ScrollView class="ivx-scroll" name="featureScroll">
+      <ui:VisualElement name="mainPanel" class="ivx-panel">
+        <ui:VisualElement name="featureContent">
+          <ui:VisualElement name="fieldsHost" class="ivx-fields-host" />
+          <ui:VisualElement name="actionsHost" class="ivx-actions-host" />
+          <ui:Label name="resultLabel" text="" class="ivx-result" />
+        </ui:VisualElement>
+      </ui:VisualElement>
+    </ui:ScrollView>
+
+    <ui:VisualElement name="loadingOverlay" class="ivx-loading" picking-mode="Ignore">
+      <ui:VisualElement class="ivx-spinner" />
+      <ui:Label text="Working..." />
+    </ui:VisualElement>
+  </ui:VisualElement>
+</ui:UXML>

@@ -83,7 +83,8 @@ ISocket socket = /* connected socket */;
 
 // 1:1 DM
 var dm = await IVXSocialChatService.JoinDirectAsync(socket, otherUserId);
-await IVXSocialChatService.SendTextAsync(socket, dm.Id, "gg");
+await IVXSocialChatService.SendTextAsync(socket, dm, "gg"); // channel overload
+// or: await IVXSocialChatService.SendTextAsync(socket, dm.Id, "gg");
 
 // Clan / group chat
 var clanChat = await IVXSocialChatService.JoinClanChatAsync(socket, groupId);

@@ -1,0 +1,52 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+  <ui:Style src="../IVXUITKTheme.uss" />
+  <ui:Style src="IVXHome.uss" />
+  <ui:VisualElement name="root" class="ivx-root">
+    <ui:VisualElement class="ivx-header">
+      <ui:VisualElement>
+        <ui:Label text="IntelliVerseX" class="ivx-title" />
+        <ui:Label text="UI Toolkit demo hub" class="ivx-subtitle" />
+      </ui:VisualElement>
+    </ui:VisualElement>
+
+    <ui:Label name="statusLabel" text="Pick a feature demo" class="ivx-status" />
+
+    <ui:ScrollView class="ivx-scroll">
+      <ui:VisualElement name="navGrid" class="ivx-nav-grid ivx-nav-grid--enter">
+        <ui:Button name="navAuth" class="ivx-nav-card">
+          <ui:Label text="Auth" />
+        </ui:Button>
+        <ui:Button name="navFriends" class="ivx-nav-card">
+          <ui:Label text="Friends" />
+        </ui:Button>
+        <ui:Button name="navClan" class="ivx-nav-card">
+          <ui:Label text="Clan" />
+        </ui:Button>
+        <ui:Button name="navProfile" class="ivx-nav-card">
+          <ui:Label text="Profile" />
+        </ui:Button>
+        <ui:Button name="navLeaderboard" class="ivx-nav-card">
+          <ui:Label text="Leaderboard" />
+        </ui:Button>
+        <ui:Button name="navWallet" class="ivx-nav-card">
+          <ui:Label text="Wallet" />
+        </ui:Button>
+        <ui:Button name="navWeeklyQuiz" class="ivx-nav-card">
+          <ui:Label text="Weekly Quiz" />
+        </ui:Button>
+        <ui:Button name="navDailyQuiz" class="ivx-nav-card">
+          <ui:Label text="Daily Quiz" />
+        </ui:Button>
+        <ui:Button name="navAds" class="ivx-nav-card">
+          <ui:Label text="Ads" />
+        </ui:Button>
+        <ui:Button name="navMoreOfUs" class="ivx-nav-card">
+          <ui:Label text="More Of Us" />
+        </ui:Button>
+        <ui:Button name="navShareRate" class="ivx-nav-card">
+          <ui:Label text="Share &amp; Rate" />
+        </ui:Button>
+      </ui:VisualElement>
+    </ui:ScrollView>
+  </ui:VisualElement>
+</ui:UXML>

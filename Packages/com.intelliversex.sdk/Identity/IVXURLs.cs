@@ -54,6 +54,14 @@ public static class IVXURLs
     /// </summary>
     public const string UniqueAppId = BaseUrl + "api/games/game/unique-appid";
 
+    /// <summary>
+    /// Cheap authenticated Game ID probe via leaderboard list scoped by <c>gameId</c>.
+    /// GET with user Bearer — 2xx means the platform accepted the Game ID for routing;
+    /// 404 typically means unknown game. There is no dedicated games GET API yet.
+    /// </summary>
+    public static string GetGameIdProbeUrl(string gameId) =>
+        $"{GetLeaderboard}?gameId={UnityWebRequest.EscapeURL(gameId ?? string.Empty)}&limit=1";
+
     /// <summary>Admin login endpoint — returns bearer token for game management APIs.</summary>
     public const string AdminLogin = BaseUrl + "api/admin/auth/login";
 

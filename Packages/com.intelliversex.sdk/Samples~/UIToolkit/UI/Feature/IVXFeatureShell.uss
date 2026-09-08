@@ -1,0 +1,50 @@
+.ivx-fields-host {
+    margin-bottom: 8px;
+}
+
+.ivx-actions-host {
+    margin-top: 4px;
+}
+
+.ivx-result {
+    margin-top: 16px;
+    padding: 12px;
+    font-size: 13px;
+    color: var(--ivx-text);
+    white-space: normal;
+    background-color: var(--ivx-surface-raised);
+    border-radius: 10px;
+    border-width: 1px;
+    border-color: var(--ivx-border);
+    min-height: 24px;
+    transition-duration: 0.28s;
+    transition-timing-function: ease-out;
+    opacity: 1;
+    translate: 0 0;
+}
+
+.ivx-result--flash {
+    border-color: var(--ivx-accent);
+    translate: 0 -4px;
+}
+
+.ivx-btn--compact {
+    height: 36px;
+    min-width: 72px;
+    margin-bottom: 0;
+    padding-left: 14px;
+    padding-right: 14px;
+    font-size: 13px;
+}
+
+.ivx-stagger-item {
+    transition-duration: 0.28s;
+    transition-timing-function: ease-out;
+    opacity: 1;
+    translate: 0 0;
+}
+
+.ivx-nav-card--enter {
+    opacity: 0;
+    translate: 0 16px;
+}
