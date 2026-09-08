@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Sockets;
 using IntelliVerseX.Bootstrap;
 using IntelliVerseX.Core;
+using IntelliVerseX.Identity;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -12,9 +13,10 @@ namespace IntelliVerseX.Editor
 {
     /// <summary>
     /// Canonical first-run editor window (Home / Traffic / APIs).
-    /// Paste Game ID onto <see cref="IVXBootstrapConfig"/>; advanced work stays on <see cref="IVXAdvancedSetup"/>.
+    /// Sign in (Auth V2) to create a unique App/Game ID, or paste an existing Game ID onto
+    /// <see cref="IVXBootstrapConfig"/>. Advanced work stays on <see cref="IVXAdvancedSetup"/>.
     /// </summary>
-    public sealed class IVXControlCenter : EditorWindow
+    public sealed partial class IVXControlCenter : EditorWindow
     {
         private enum Tab
         {
@@ -44,33 +46,54 @@ namespace IntelliVerseX.Editor
         public static void ShowWindow()
         {
             var window = GetWindow<IVXControlCenter>(WindowTitle);
-            window.minSize = new Vector2(560, 600);
+            window.minSize = new Vector2(580, 720);
             window.Show();
+        }
+
+        /// <summary>
+        /// Opens Control Center on Home and highlights Connect when Game ID is missing.
+        /// </summary>
+        public static void ShowWindowFocusConnect()
+        {
+            EditorPrefs.SetBool(IVXConnectWizardValidation.PrefFocusConnect, true);
+            var window = GetWindow<IVXControlCenter>(WindowTitle);
+            window.minSize = new Vector2(580, 720);
+            window._tab = Tab.Home;
+            window._focusConnectBanner = true;
+            window.Show();
+            window.Focus();
         }
 
         private void OnEnable()
         {
             FindOrLoadConfig();
             EditorApplication.update += OnEditorUpdate;
+            LoadConnectWizardPrefs();
+            TryHydrateWizardSessionFromMemory();
+            PrefillCreateGameNameIfEmpty();
         }
 
         private void OnDisable()
         {
             EditorApplication.update -= OnEditorUpdate;
+            CancelWizardWork();
+            _loginPassword = string.Empty;
         }
 
         private void OnFocus()
         {
             FindOrLoadConfig();
+            TryHydrateWizardSessionFromMemory();
         }
 
         private void OnEditorUpdate()
         {
-            if (_tab != Tab.Traffic)
+            bool needRepaint = _wizardBusy || _tab == Tab.Traffic;
+            if (!needRepaint)
                 return;
             if (EditorApplication.timeSinceStartup < _nextTrafficRepaint)
                 return;
-            _nextTrafficRepaint = EditorApplication.timeSinceStartup + 0.5d;
+            _nextTrafficRepaint = EditorApplication.timeSinceStartup + (_wizardBusy ? 0.12d : 0.5d);
             Repaint();
         }
 
@@ -102,7 +125,9 @@ namespace IntelliVerseX.Editor
         private void DrawHome()
         {
             EditorGUILayout.LabelField("IntelliVerseX", EditorStyles.boldLabel);
-            EditorGUILayout.LabelField("Three steps. Then press Play.", EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "Check · Connect (sign in → Game ID) · Play.",
+                EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.Space(12);
 
             DrawCheck();
@@ -256,56 +281,6 @@ namespace IntelliVerseX.Editor
             EditorGUILayout.EndHorizontal();
         }
 
-        private void DrawConnect()
-        {
-            EditorGUILayout.LabelField("2. Connect", EditorStyles.boldLabel);
-            EditorGUILayout.HelpBox(
-                "Paste the Game ID and Nakama host from your dashboard. Leave host as 127.0.0.1 for a local server.",
-                MessageType.Info);
-
-            if (_config == null)
-            {
-                if (GUILayout.Button("Create connection file", GUILayout.Height(32)))
-                    CreateConfigAsset();
-                return;
-            }
-
-            if (_configSo == null)
-                _configSo = new SerializedObject(_config);
-
-            _configSo.Update();
-            EditorGUILayout.PropertyField(_configSo.FindProperty("_gameId"), new GUIContent("Game ID"));
-            EditorGUILayout.PropertyField(_configSo.FindProperty("_gameName"), new GUIContent("Game name"));
-            EditorGUILayout.PropertyField(_configSo.FindProperty("_serverHost"), new GUIContent("Server host"));
-            EditorGUILayout.PropertyField(_configSo.FindProperty("_serverPort"), new GUIContent("Server port"));
-            EditorGUILayout.PropertyField(_configSo.FindProperty("_serverKey"), new GUIContent("Server key"));
-            EditorGUILayout.PropertyField(_configSo.FindProperty("_useSSL"), new GUIContent("Use SSL"));
-            if (_configSo.ApplyModifiedProperties())
-                EditorUtility.SetDirty(_config);
-
-            EditorGUILayout.ObjectField("Config asset", _config, typeof(IVXBootstrapConfig), false);
-
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Ping server", GUILayout.Height(28)))
-                PingServer();
-            if (GUILayout.Button("Select config", GUILayout.Height(28)))
-            {
-                Selection.activeObject = _config;
-                EditorGUIUtility.PingObject(_config);
-            }
-            EditorGUILayout.EndHorizontal();
-
-            if (!string.IsNullOrEmpty(_serverPing))
-                EditorGUILayout.HelpBox(_serverPing, _serverPingType);
-
-            if (string.IsNullOrWhiteSpace(_config.GameId))
-            {
-                EditorGUILayout.HelpBox(
-                    "Game ID is empty. The SDK will not initialize until you paste one.",
-                    MessageType.Warning);
-            }
-        }
-
         private void DrawPlay()
         {
             EditorGUILayout.LabelField("3. Play", EditorStyles.boldLabel);
@@ -353,6 +328,8 @@ namespace IntelliVerseX.Editor
                 string path = AssetDatabase.GUIDToAssetPath(guids[0]);
                 _config = AssetDatabase.LoadAssetAtPath<IVXBootstrapConfig>(path);
                 _configSo = _config != null ? new SerializedObject(_config) : null;
+                if (_config != null && !string.IsNullOrWhiteSpace(_config.GameId))
+                    IVXURLs.GameId = _config.GameId.Trim();
                 return;
             }
 

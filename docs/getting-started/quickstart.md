@@ -25,31 +25,37 @@ Get IntelliVerseX SDK running in your project in under 5 minutes — zero to all
 
 Before writing code, register your game on the IntelliVerseX platform to get a **Game ID** (UUID). This ID connects your game to leaderboards, wallets, analytics, and all backend services.
 
-**Option A — Dashboard (recommended):**
+**Option A — Control Center (recommended):**
+
+1. After installing the package, open **IntelliVerseX → Control Center**
+2. Sign in with your IntelliVerse account (Auth V2)
+3. Enter a game name → **Create unique App ID** — the UUID is saved to Bootstrap Config
+
+**Option B — Dashboard:**
 
 1. Sign in at [intelli-verse-x.ai/developers](https://intelli-verse-x.ai/developers)
 2. Click **New Project** → enter your game title → copy the **Game ID**
 
-**Option B — API:**
+**Option C — unique-appid API:**
 
 ```bash
-# Authenticate
-TOKEN=$(curl -s -X POST 'https://api.intelli-verse-x.ai/api/admin/auth/login' \
+# Auth V2 login
+TOKEN=$(curl -s -X POST 'https://api.intelli-verse-x.ai/api/user/auth_v_2/login' \
   -H 'Content-Type: application/json' \
-  -d '{"email":"you@example.com","password":"your-password"}' \
-  | python3 -c "import sys,json; print(d:=json.load(sys.stdin),d.get('data',{}).get('accessToken',''))")
+  -d '{"email":"you@example.com","password":"your-password","fromDevice":"unity","gameId":"a6bde9e8-ebc5-4c7b-9254-02e9c0e02d74"}' \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('data',{}).get('accessToken',''))")
 
-# Create game
-curl -s -X POST 'https://msapi.intelli-verse-x.io/api/games/game/info' \
+# Create unique App ID
+curl -s -X POST 'https://api.intelli-verse-x.ai/api/games/game/unique-appid' \
   -H "Authorization: Bearer $TOKEN" \
   -H 'Content-Type: application/json' \
-  -d '{"gameTitle": "My Awesome Game"}'
+  -d '{"gameName": "My Awesome Game"}'
 
-# Response → {"status":true,"data":{"gameId":"83e9cbd5-..."}}
+# Response → {"status":true,"data":{"uniqueAppId":"86fe6671-..."}}
 ```
 
 !!! warning "Save your Game ID"
-    You will paste this UUID into the **Game Config** in Step 3. Every API call, leaderboard, wallet, and analytics event is scoped to this ID.
+    You will paste this UUID into the **Game Config** in Step 3 (or let Control Center write it). Every API call, leaderboard, wallet, and analytics event is scoped to this ID.
 
 ---
 

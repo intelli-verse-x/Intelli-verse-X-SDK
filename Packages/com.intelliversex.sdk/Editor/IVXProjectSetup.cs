@@ -269,7 +269,7 @@ namespace IntelliVerseX.Editor
             
             if (GUILayout.Button("Open Setup Wizard", GUILayout.Height(30)))
             {
-                IVXControlCenter.ShowWindow();
+                IVXControlCenter.ShowWindowFocusConnect();
             }
             
             EditorGUILayout.EndHorizontal();
@@ -690,7 +690,7 @@ namespace IntelliVerseX.Editor
                             "Open Control Center to check your project, connect to Nakama, and press Play.",
                             "Open Control Center", "Later"))
                         {
-                            IVXControlCenter.ShowWindow();
+                            IVXControlCenter.ShowWindowFocusConnect();
                         }
                     }
                     else if (setupVersion != SDK_VERSION)

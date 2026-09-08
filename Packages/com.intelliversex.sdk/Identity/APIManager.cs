@@ -1531,12 +1531,36 @@ Do not include any other top-level keys. Do not include code fences.";
             foreach (var kv in headers)
             {
                 if (string.IsNullOrEmpty(kv.Key)) continue;
-                var v = kv.Value ?? "";
+                var v = RedactHeaderValueForLogs(kv.Key, kv.Value);
                 sb.Append(" \\\n  -H '").Append(EscapeForSingleQuotes(kv.Key)).Append(": ").Append(EscapeForSingleQuotes(v)).Append("'");
             }
         }
-        if (!string.IsNullOrEmpty(body)) sb.Append(" \\\n  --data-raw '").Append(EscapeForSingleQuotes(body)).Append("'");
+        if (!string.IsNullOrEmpty(body))
+        {
+            string safeBody = MaskSensitiveFields(body, new[]
+            {
+                "password", "email", "otp", "refreshToken", "accessToken", "idToken", "token", "client_secret", "newPassword"
+            });
+            sb.Append(" \\\n  --data-raw '").Append(EscapeForSingleQuotes(safeBody)).Append("'");
+        }
         return sb.ToString();
+    }
+
+    private static string RedactHeaderValueForLogs(string headerName, string value)
+    {
+        if (string.IsNullOrEmpty(headerName) || string.IsNullOrEmpty(value))
+            return value ?? string.Empty;
+
+        if (headerName.Equals("Authorization", StringComparison.OrdinalIgnoreCase))
+        {
+            if (value.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+                return "Bearer ***";
+            if (value.StartsWith("Basic ", StringComparison.OrdinalIgnoreCase))
+                return "Basic ***";
+            return "***";
+        }
+
+        return value;
     }
 
     private static void PrintCurl(string method, string url, IEnumerable<KeyValuePair<string, string>> headers, string body)
@@ -1567,7 +1591,7 @@ Do not include any other top-level keys. Do not include code fences.";
             foreach (var kv in headers)
             {
                 if (string.IsNullOrEmpty(kv.Key)) continue;
-                var v = kv.Value ?? "";
+                var v = RedactHeaderValueForLogs(kv.Key, kv.Value ?? "");
                 sb.Append(" \\\n  --header '")
                   .Append(EscapeForSingleQuotes(kv.Key))
                   .Append(": ")
@@ -1637,10 +1661,7 @@ Do not include any other top-level keys. Do not include code fences.";
             sb.AppendLine("Headers:");
             foreach (var h in headers)
             {
-                // Redact sensitive headers
-                string value = h.Key.Equals("Authorization", StringComparison.OrdinalIgnoreCase) 
-                    ? (h.Value.Length > 20 ? h.Value.Substring(0, 20) + "..." : "***") 
-                    : h.Value;
+                string value = RedactHeaderValueForLogs(h.Key, h.Value);
                 sb.AppendLine($"  {h.Key}: {value}");
             }
         }
@@ -1688,10 +1709,11 @@ Do not include any other top-level keys. Do not include code fences.";
             {
                 displayBody = displayBody.Substring(0, MaxLogPayloadLength) + $"... (truncated, total {responseBody.Length} chars)";
             }
-            // Redact common sensitive fields in response
-            displayBody = Regex.Replace(displayBody, "(\"accessToken\"\\s*:\\s*\")([^\"]{20})[^\"]*(\")","$1$2...REDACTED$3");
-            displayBody = Regex.Replace(displayBody, "(\"refreshToken\"\\s*:\\s*\")([^\"]{10})[^\"]*(\")","$1$2...REDACTED$3");
-            displayBody = Regex.Replace(displayBody, "(\"token\"\\s*:\\s*\")([^\"]{20})[^\"]*(\")","$1$2...REDACTED$3");
+            // Redact common sensitive fields in response (never print JWTs)
+            displayBody = MaskSensitiveFields(displayBody, new[]
+            {
+                "accessToken", "refreshToken", "idToken", "token", "password", "client_secret"
+            });
             sb.AppendLine($"Body:\n{displayBody}");
         }
         else
@@ -2825,6 +2847,87 @@ Do not include any other top-level keys. Do not include code fences.";
 
     #endregion
 
+    #region Unique App ID (Auth V2 bearer)
+
+    [Serializable]
+    public class UniqueAppIdRequest
+    {
+        public string gameName;
+    }
+
+    [Serializable]
+    public class UniqueAppIdData
+    {
+        public string uniqueAppId;
+    }
+
+    [Serializable]
+    public class UniqueAppIdResponse
+    {
+        public bool status;
+        public string message;
+        public UniqueAppIdData data;
+    }
+
+    /// <summary>
+    /// Creates a unique App/Game ID for <paramref name="gameName"/> using a user Auth V2 access token.
+    /// POST <see cref="IVXURLs.UniqueAppId"/> → <c>data.uniqueAppId</c> (UUID).
+    /// </summary>
+    /// <param name="gameName">Display name for the new game registration.</param>
+    /// <param name="accessToken">
+    /// Bearer access token from <see cref="LoginAsync"/>. When null/empty, uses
+    /// <see cref="UserSessionManager.AccessToken"/> if a session is present.
+    /// </param>
+    /// <param name="ct">Cancellation token.</param>
+    public static async Task<UniqueAppIdResponse> CreateUniqueAppIdAsync(
+        string gameName,
+        string accessToken = null,
+        CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(gameName))
+            throw new ArgumentException("gameName is required.", nameof(gameName));
+
+        string token = !string.IsNullOrWhiteSpace(accessToken)
+            ? accessToken.Trim()
+            : UserSessionManager.AccessToken;
+
+        if (string.IsNullOrWhiteSpace(token))
+            throw new InvalidOperationException(
+                "Access token required. Sign in with Auth V2 (LoginAsync) before creating a unique App ID.");
+
+        var body = JsonUtility.ToJson(new UniqueAppIdRequest { gameName = gameName.Trim() });
+        string raw = await PostJsonAsync(
+            IVXURLs.UniqueAppId,
+            body,
+            "Bearer " + token,
+            redactSecretsInBodyLog: false,
+            ct);
+
+        UniqueAppIdResponse resp = null;
+        try
+        {
+            resp = JsonUtility.FromJson<UniqueAppIdResponse>(raw);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"[APIManager] UniqueAppId JSON parse failed: {ex.Message}");
+        }
+
+        if (resp == null)
+            throw new Exception("unique-appid response was empty or invalid JSON.");
+
+        if (!resp.status || resp.data == null || string.IsNullOrWhiteSpace(resp.data.uniqueAppId))
+        {
+            string msg = string.IsNullOrWhiteSpace(resp.message) ? "uniqueAppId was not returned." : resp.message;
+            throw new Exception(msg);
+        }
+
+        resp.data.uniqueAppId = resp.data.uniqueAppId.Trim();
+        return resp;
+    }
+
+    #endregion
+
     #region Auth V2: Guest Signup
 
     public static string GuestSignupUrl = "https://api.intelli-verse-x.ai/api/user/auth_v_2/guest-signup";
@@ -3715,6 +3818,15 @@ Do not include any other top-level keys. Do not include code fences.";
         return RefreshTokenInternalAsync(ct);
     }
 
+    /// <summary>
+    /// Returns the current user access token, refreshing when needed.
+    /// Requires prior <see cref="ConfigureUserAuth"/> / successful login with user-auth enabled.
+    /// </summary>
+    public static Task<string> GetUserAccessTokenAsync(CancellationToken ct = default)
+    {
+        return EnsureUserAccessTokenAsync(ct);
+    }
+
     // NOTE: Unity error reports referenced this symbol in some versions of the file.
     // Keep it to prevent "missing method" compile failures across merges.
     private static async Task RefreshTokenInternalAsync(CancellationToken ct = default)
@@ -3728,7 +3840,7 @@ Do not include any other top-level keys. Do not include code fences.";
 
         PrintCurl("POST", url, new Dictionary<string, string> {
         { "accept", "application/json" }, { "Content-Type", "application/json" }
-    }, json);
+    }, MaskSensitiveFields(json, new[] { "refreshToken" }));
 
         using (var req = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST))
         {
@@ -3757,7 +3869,7 @@ Do not include any other top-level keys. Do not include code fences.";
         bool ok = !req.isNetworkError && !req.isHttpError && req.responseCode >= 200 && req.responseCode < 300;
 #endif
             string text = req.downloadHandler?.text ?? "";
-            Log($"[UserAuth] refresh ← {req.responseCode} {text}");
+            Log($"[UserAuth] refresh ← {req.responseCode} {(text.Length > 0 ? "(body redacted)" : "")}");
 
             if (!ok) throw new Exception($"Refresh failed: HTTP {req.responseCode} - {req.error} - {text}");
 

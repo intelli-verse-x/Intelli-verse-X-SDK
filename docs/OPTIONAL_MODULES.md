@@ -2,7 +2,7 @@
 
 Core: `com.intelliversex.sdk` at `Packages/com.intelliversex.sdk` (**5.11.0**).
 
-Kid path: **Control Center → Game ID → Play** (core only + Nakama client).
+Kid path: **Control Center → sign in (Auth V2) → create unique App ID (or paste / recent) → Play**. Optional: **IntelliVerseX → Connect (UI Toolkit)** for the same story in UITK.
 
 ## Install optional packages
 

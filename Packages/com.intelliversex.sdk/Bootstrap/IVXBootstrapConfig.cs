@@ -5,7 +5,7 @@ namespace IntelliVerseX.Bootstrap
     /// <summary>
     /// Canonical Game ID and Nakama host config for the IntelliVerseX SDK.
     /// Create via Assets &gt; Create &gt; IntelliVerseX &gt; Bootstrap Config.
-    /// Paste the dashboard Game ID here; <see cref="Validate"/> fails when it is empty.
+    /// Paste or create the Game ID here; <see cref="Validate"/> fails when it is empty.
     /// </summary>
     [CreateAssetMenu(fileName = "IVXBootstrapConfig", menuName = "IntelliVerseX/Bootstrap Config", order = 0)]
     [HelpURL("https://intelli-verse-x.github.io/Intelli-verse-X-SDK/getting-started/quickstart/")]
@@ -14,8 +14,8 @@ namespace IntelliVerseX.Bootstrap
         #region Serialized Fields
 
         [Header("Game Identity")]
-        [Tooltip("Your Game ID (UUID) from the IntelliVerseX dashboard or API. " +
-                 "Obtain via POST https://msapi.intelli-verse-x.io/api/games/game/info")]
+        [Tooltip("Your Game ID (UUID) from IntelliVerseX Control Center (Auth V2 + unique-appid), " +
+                 "the developers dashboard, or the CreateGame API.")]
         [SerializeField] private string _gameId = "";
 
         [Tooltip("Display name for your game (used in analytics and backend metadata)")]

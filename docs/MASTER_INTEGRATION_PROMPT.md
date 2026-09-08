@@ -33,40 +33,32 @@ https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Packages/com.int
 
 Every game needs a **Game ID** (UUID) from the IntelliVerseX platform. This ID links your game to leaderboards, wallets, analytics, ads, and all backend services.
 
-**Option A — Dashboard (recommended):**
+**Option A — Control Center (recommended for Unity):**
+
+1. Open **IntelliVerseX → Control Center**
+2. Sign in with Auth V2 → enter a game name → **Create unique App ID**
+3. The UUID is written into Bootstrap Config automatically
+
+**Option B — Dashboard:**
 
 1. Sign in at [intelli-verse-x.ai/developers](https://intelli-verse-x.ai/developers)
 2. Create a new project → copy the **Game ID** from the project settings
 
-**Option B — API (programmatic):**
+**Option C — unique-appid API (Auth V2 user token):**
 
 ```bash
-# 1. Authenticate — get a bearer token
-TOKEN=$(curl -s -X POST 'https://api.intelli-verse-x.ai/api/admin/auth/login' \
+TOKEN=$(curl -s -X POST 'https://api.intelli-verse-x.ai/api/user/auth_v_2/login' \
   -H 'Content-Type: application/json' \
-  -d '{"email":"your-email@example.com","password":"your-password"}' \
+  -d '{"email":"your-email@example.com","password":"your-password","fromDevice":"unity","gameId":"a6bde9e8-ebc5-4c7b-9254-02e9c0e02d74"}' \
   | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('data',{}).get('accessToken',''))")
 
-# 2. Create your game
-curl -s -X POST 'https://msapi.intelli-verse-x.io/api/games/game/info' \
+curl -s -X POST 'https://api.intelli-verse-x.ai/api/games/game/unique-appid' \
   -H "Authorization: Bearer $TOKEN" \
   -H 'Content-Type: application/json' \
-  -d '{"gameTitle": "My Awesome Game"}'
+  -d '{"gameName": "My Awesome Game"}'
 ```
 
-**Response:**
-
-```json
-{
-  "status": true,
-  "message": "Game created successfully",
-  "data": {
-    "gameId": "83e9cbd5-3883-4fec-8344-0d2d3ca35be3"
-  }
-}
-```
-
-Copy the `gameId` UUID — you will paste it into your config in Step 1.
+**Response:** `{"status":true,"data":{"uniqueAppId":"86fe6671-..."}}` — paste into config in Step 1.
 
 | API | URL | Purpose |
 |-----|-----|---------|

@@ -112,6 +112,28 @@ namespace IntelliVerseX.Identity
         }
 
         /// <summary>
+        /// Create a unique App/Game ID using a logged-in Auth V2 access token.
+        /// </summary>
+        /// <param name="gameName">Game display name sent to unique-appid.</param>
+        /// <param name="accessToken">Optional bearer token; defaults to the current session token.</param>
+        /// <param name="ct">Cancellation token.</param>
+        public static async Task<APIManager.UniqueAppIdResponse> CreateUniqueAppIdAsync(
+            string gameName,
+            string accessToken = null,
+            CancellationToken ct = default)
+        {
+            return await APIManager.CreateUniqueAppIdAsync(gameName, accessToken, ct);
+        }
+
+        /// <summary>
+        /// Returns the current user access token, refreshing when configured credentials allow it.
+        /// </summary>
+        public static Task<string> GetUserAccessTokenAsync(CancellationToken ct = default)
+        {
+            return APIManager.GetUserAccessTokenAsync(ct);
+        }
+
+        /// <summary>
         /// Create a guest account (no email/password required).
         /// </summary>
         /// <param name="role">User role (default: "user")</param>

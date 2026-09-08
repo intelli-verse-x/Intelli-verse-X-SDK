@@ -46,6 +46,14 @@ public static class IVXURLs
     /// </summary>
     public const string CreateGame = MsApiBaseUrl + "api/games/game/info";
 
+    /// <summary>
+    /// Create a unique App/Game ID via POST to <c>api.intelli-verse-x.ai/api/games/game/unique-appid</c>.
+    /// Requires a user Auth V2 access token (<see cref="Login_V2"/>).
+    /// Body: <c>{"gameName":"..."}</c>. Response: <c>{"status":true,"data":{"uniqueAppId":"UUID"}}</c>.
+    /// Preferred path for Control Center / developer onboarding.
+    /// </summary>
+    public const string UniqueAppId = BaseUrl + "api/games/game/unique-appid";
+
     /// <summary>Admin login endpoint — returns bearer token for game management APIs.</summary>
     public const string AdminLogin = BaseUrl + "api/admin/auth/login";
 
@@ -57,8 +65,9 @@ public static class IVXURLs
 
     /// <summary>
     /// Game ID (UUID) for all API calls. Obtain from
-    /// <see href="https://intelli-verse-x.ai/developers">intelli-verse-x.ai/developers</see>
-    /// or via <see cref="CreateGame"/> API. Set this at startup before any backend calls.
+    /// <see href="https://intelli-verse-x.ai/developers">intelli-verse-x.ai/developers</see>,
+    /// Control Center (Auth V2 + <see cref="UniqueAppId"/>), or via <see cref="CreateGame"/> API.
+    /// Set this at startup before any backend calls.
     /// </summary>
     public static string GameId
     {

@@ -8,15 +8,53 @@ The `IntelliVerseXConfig` ScriptableObject controls core SDK behavior and game i
 
 Every game needs a **Game ID** (UUID) from the IntelliVerseX platform. This ID scopes all backend services — leaderboards, wallets, analytics, ads, and economy — to your specific game.
 
-**Option A — Dashboard (recommended):**
+**Option A — Control Center (recommended for Unity):**
+
+1. Open **IntelliVerseX → Control Center** (first-run highlights Connect when Game ID is empty)
+2. Under **Connect**, sign in with your IntelliVerse account (Auth V2)
+3. Enter a **game name** → **Create unique App ID** (or apply a recent ID from this Editor)
+4. The UUID is written into `IVXBootstrapConfig` and applied to `IVXURLs.GameId` immediately
+5. Optional: **IntelliVerseX → Connect (UI Toolkit)** for a UITK companion entry point
+
+Token refresh, Cognito roles, local display-name edit, paste/copy UUID, and post-create smoke checks are built into Connect. Cloud “list my games” / org switcher APIs are not published yet — use the Developers portal for those.
+
+**Option B — Dashboard:**
 
 1. Sign in at [intelli-verse-x.ai/developers](https://intelli-verse-x.ai/developers)
 2. Create a new project → copy the **Game ID** from project settings
 
-**Option B — API:**
+**Option C — unique-appid API (Auth V2 user token):**
 
 ```bash
-# 1. Get bearer token
+# 1. Auth V2 login → accessToken
+TOKEN=$(curl -s -X POST 'https://api.intelli-verse-x.ai/api/user/auth_v_2/login' \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"you@example.com","password":"your-password","fromDevice":"unity","gameId":"a6bde9e8-ebc5-4c7b-9254-02e9c0e02d74"}' \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('data',{}).get('accessToken',''))")
+
+# 2. Create unique App ID
+curl -s -X POST 'https://api.intelli-verse-x.ai/api/games/game/unique-appid' \
+  -H "Authorization: Bearer $TOKEN" \
+  -H 'Content-Type: application/json' \
+  -d '{"gameName": "My Awesome Game"}'
+```
+
+**Response:**
+
+```json
+{
+  "status": true,
+  "message": "uniqueAppId created",
+  "data": { "uniqueAppId": "86fe6671-11e5-4c62-842c-aab377af4fcd" }
+}
+```
+
+Paste this UUID into the Game ID field (or let Control Center write it for you).
+
+**Option D — legacy admin CreateGame API:**
+
+```bash
+# 1. Get admin bearer token
 TOKEN=$(curl -s -X POST 'https://api.intelli-verse-x.ai/api/admin/auth/login' \
   -H 'Content-Type: application/json' \
   -d '{"email":"you@example.com","password":"your-password"}' \
