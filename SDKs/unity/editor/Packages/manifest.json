@@ -5,7 +5,6 @@
     "com.intelliversex.sdk": "file:../../../../Packages/com.intelliversex.sdk",
     "com.intelliversex.sdk.ai": "file:../../../../Packages/com.intelliversex.sdk.ai",
     "com.intelliversex.sdk.discord": "file:../../../../Packages/com.intelliversex.sdk.discord",
-    "com.intelliversex.sdk.photon": "file:../../../../Packages/com.intelliversex.sdk.photon",
     "com.unity.ide.visualstudio": "2.0.27",
     "com.unity.inputsystem": "1.18.0",
     "com.unity.nuget.newtonsoft-json": "3.2.2",

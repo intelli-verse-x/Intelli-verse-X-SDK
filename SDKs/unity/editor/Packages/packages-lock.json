@@ -40,14 +40,6 @@
         "com.intelliversex.sdk": "5.11.0"
       }
     },
-    "com.intelliversex.sdk.photon": {
-      "version": "file:../../../../Packages/com.intelliversex.sdk.photon",
-      "depth": 0,
-      "source": "local",
-      "dependencies": {
-        "com.intelliversex.sdk": "5.11.0"
-      }
-    },
     "com.unity.asset-store-tools": {
       "version": "file:com.unity.asset-store-tools",
       "depth": 0,

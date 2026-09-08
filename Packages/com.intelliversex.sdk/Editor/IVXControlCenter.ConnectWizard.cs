@@ -637,6 +637,12 @@ namespace IntelliVerseX.Editor
             _loginPassword = string.Empty;
             _lastCreatedAppId = string.Empty;
             try { APIManager.ClearUserAuth(); } catch { /* optional */ }
+            try
+            {
+                // Full auth wipe so TryHydrateWizardSessionFromMemory cannot re-hydrate after sign-out.
+                UserSessionManager.ClearAuthSession();
+            }
+            catch { /* optional */ }
             SetWizardStatus("Signed out. Password and tokens cleared from memory.", MessageType.Info);
             NotifyUiChanged();
         }

@@ -46,7 +46,14 @@ namespace IntelliVerseX.Storage
             PlayerPrefs.Save();
 
             if (!remember)
+            {
                 ClearRememberedEmail();
+                SetPersistFlag(false);
+                // Drop persisted auth blob so cold-start cannot restore after remember-me is off.
+                IVXSecureStorage.DeleteKey(IVXLocalDataKeys.UserSession);
+                DeleteLegacySessionFile(
+                    Path.Combine(Application.persistentDataPath, "user_session.json"));
+            }
         }
 
         public static string GetLastEmail()

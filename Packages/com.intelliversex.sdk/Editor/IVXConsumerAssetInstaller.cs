@@ -27,7 +27,7 @@ namespace IntelliVerseX.Editor
         private const string PACKAGE_NAME = "com.intelliversex.sdk";
         
         // Consumer project paths (where assets will be copied)
-        private const string CONSUMER_DEMO_SCENES_FOLDER = "Assets/IntelliVerseX Demo Scenes";
+        private const string CONSUMER_DEMO_SCENES_FOLDER = "Assets/IntelliVerseX UITK Demo Scenes";
         private const string CONSUMER_PREFABS_FOLDER = "Assets/IntelliVerseX/Prefabs";
         private const string CONSUMER_RESOURCES_FOLDER = "Assets/Resources/IntelliVerseX";
         private const string CONSUMER_GENERATED_FOLDER = "Assets/IntelliVerseX/Generated";
@@ -143,7 +143,7 @@ namespace IntelliVerseX.Editor
                 "Welcome to IntelliVerseX SDK!\n\n" +
                 "Would you like to set up demo scenes and sample assets in your project?\n\n" +
                 "This will copy:\n" +
-                "• Demo scenes to 'Assets/IntelliVerseX Demo Scenes'\n" +
+                "• Demo scenes to 'Assets/IntelliVerseX UITK Demo Scenes'\n" +
                 "• Prefabs to 'Assets/IntelliVerseX/Prefabs'\n" +
                 "• Resources to 'Assets/Resources/IntelliVerseX'\n\n" +
                 "You can always do this later via the SDK Setup Wizard.",
@@ -621,7 +621,7 @@ namespace IntelliVerseX.Editor
             
             message += "\n🔧 Next Steps:\n";
             message += "1. Open the SDK Setup Wizard to configure modules\n";
-            message += "2. Test demo scenes in 'IntelliVerseX Demo Scenes' folder\n";
+            message += "2. Test demo scenes in 'IntelliVerseX UITK Demo Scenes' folder\n";
             message += "3. Install required dependencies (Nakama, DOTween, etc.)";
             
             bool hasFailures = results.ScenesFailed > 0 || results.PrefabsFailed > 0;

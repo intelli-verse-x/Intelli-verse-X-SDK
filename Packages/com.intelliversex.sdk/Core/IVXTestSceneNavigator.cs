@@ -498,9 +498,8 @@ namespace IntelliVerseX.Core
 #if UNITY_EDITOR
             string[] editorCandidates =
             {
-                $"Assets/Scenes/Tests/{sceneName}.unity",
                 $"Assets/IntelliVerseX UITK Demo Scenes/{sceneName}.unity",
-                $"Assets/IntelliVerseX Demo Scenes/{sceneName}.unity",
+                $"Assets/Scenes/Tests/{sceneName}.unity",
                 $"Assets/Samples/IntelliVerseX SDK/UIToolkit/Scenes/{sceneName}.unity"
             };
 
@@ -520,9 +519,8 @@ namespace IntelliVerseX.Core
 #if UNITY_EDITOR
             string[] editorCandidates =
             {
-                $"Assets/Scenes/Tests/{sceneName}.unity",
                 $"Assets/IntelliVerseX UITK Demo Scenes/{sceneName}.unity",
-                $"Assets/IntelliVerseX Demo Scenes/{sceneName}.unity",
+                $"Assets/Scenes/Tests/{sceneName}.unity",
                 $"Assets/Samples/IntelliVerseX SDK/UIToolkit/Scenes/{sceneName}.unity"
             };
 

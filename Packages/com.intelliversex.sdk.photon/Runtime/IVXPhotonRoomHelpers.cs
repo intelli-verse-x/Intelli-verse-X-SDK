@@ -11,7 +11,7 @@ namespace IntelliVerseX.Photon
     {
         public const string RoomPropertyGameId = "gameId";
 
-#if INTELLIVERSEX_HAS_PHOTON
+#if INTELLIVERSEX_HAS_PHOTON && PHOTON_UNITY_NETWORKING
         public static ExitGames.Client.Photon.Hashtable CreateBaseRoomProperties(string gameId)
         {
             return new ExitGames.Client.Photon.Hashtable
@@ -36,6 +36,19 @@ namespace IntelliVerseX.Photon
         public static Dictionary<string, string> CreateBaseRoomProperties(string gameId)
         {
             return new Dictionary<string, string> { { RoomPropertyGameId, gameId ?? string.Empty } };
+        }
+
+        public static void AddGameId(Dictionary<string, string> properties, string gameId)
+        {
+            if (properties == null) return;
+            properties[RoomPropertyGameId] = gameId ?? string.Empty;
+        }
+
+        public static bool IsRoomForGame(Dictionary<string, string> roomProperties, string gameId)
+        {
+            if (roomProperties == null || !roomProperties.ContainsKey(RoomPropertyGameId))
+                return false;
+            return roomProperties[RoomPropertyGameId] == gameId;
         }
 #endif
     }

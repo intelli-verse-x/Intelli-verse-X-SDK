@@ -294,14 +294,14 @@ public static class UserSessionManager
     }
 
     /// <summary>
-    /// Startup helper: load persisted session only when remember-me / persist flag allows it.
+    /// Startup helper: load persisted session only when remember-me is on and a persist flag was set.
     /// </summary>
     public static UserSession TryRestorePersistedSession()
     {
         IVXLocalData.EnsureInitialized();
-        if (!RememberMe && !IVXLocalData.GetPersistFlag())
+        // Both gates required — remember-me off must never restore even if PersistFlag is stale.
+        if (!RememberMe || !IVXLocalData.GetPersistFlag())
         {
-            // Stale disk session with remember-me off — drop it.
             if (IVXSecureStorage.HasKey(IVXLocalDataKeys.UserSession))
                 Clear();
             return null;

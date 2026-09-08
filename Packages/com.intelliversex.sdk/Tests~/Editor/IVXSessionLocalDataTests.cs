@@ -53,13 +53,18 @@ namespace IntelliVerseX.Tests.Editor
         }
 
         [Test]
-        public void RememberMe_Off_ClearsLastEmail()
+        public void RememberMe_Off_ClearsLastEmailAndPersistedSession()
         {
+            UserSessionManager.ApplyLoginResponse(MakeLoginResponse(), persist: true);
             IVXLocalData.SetLastEmail("keep@example.com");
             Assert.AreEqual("keep@example.com", IVXLocalData.GetLastEmail());
+            Assert.IsTrue(IVXSecureStorage.HasKey(IVXLocalDataKeys.UserSession));
+            Assert.IsTrue(IVXLocalData.GetPersistFlag());
 
             IVXLocalData.SetRememberMe(false);
             Assert.AreEqual("", IVXLocalData.GetLastEmail());
+            Assert.IsFalse(IVXLocalData.GetPersistFlag());
+            Assert.IsFalse(IVXSecureStorage.HasKey(IVXLocalDataKeys.UserSession));
         }
 
         [Test]
@@ -130,12 +135,30 @@ namespace IntelliVerseX.Tests.Editor
             Assert.IsTrue(IVXSecureStorage.HasKey(IVXLocalDataKeys.UserSession));
 
             UserSessionManager.RememberMe = false;
-            IVXLocalData.SetPersistFlag(false);
 
             var restored = UserSessionManager.TryRestorePersistedSession();
             Assert.IsNull(restored);
             Assert.IsFalse(IVXSecureStorage.HasKey(IVXLocalDataKeys.UserSession),
                 "Stale disk session must be dropped when remember-me is off");
+        }
+
+        [Test]
+        public void TryRestorePersistedSession_FailsWhenRememberMeOffEvenIfPersistFlagStale()
+        {
+            UserSessionManager.ApplyLoginResponse(MakeLoginResponse(access: "stale-gate"), persist: true);
+            UserSessionManager.Current = null;
+
+            // Simulate pre-fix state: remember-me flipped off without clearing PersistFlag / blob.
+            IVXSecureStorage.SetBool(IVXLocalDataKeys.RememberMe, false);
+            PlayerPrefs.SetInt(IVXLocalDataKeys.RememberMeLegacy, 0);
+            PlayerPrefs.Save();
+            IVXLocalData.SetPersistFlag(true);
+            Assert.IsTrue(IVXSecureStorage.HasKey(IVXLocalDataKeys.UserSession));
+
+            var restored = UserSessionManager.TryRestorePersistedSession();
+            Assert.IsNull(restored,
+                "Restore must require RememberMe AND PersistFlag — stale PersistFlag alone is not enough");
+            Assert.IsFalse(IVXSecureStorage.HasKey(IVXLocalDataKeys.UserSession));
         }
 
         [Test]

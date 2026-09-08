@@ -21,7 +21,7 @@ namespace IntelliVerseX.Editor
     public static class IVXSceneImporter
     {
         private const string SCENES_IMPORTED_KEY = "IVX_SCENES_IMPORTED_V5";
-        private const string CONSUMER_SCENES_FOLDER = "Assets/IntelliVerseX Demo Scenes";
+        private const string CONSUMER_SCENES_FOLDER = "Assets/IntelliVerseX UITK Demo Scenes";
         private const string PACKAGE_NAME = "com.intelliversex.sdk";
         
         // All demo scenes to copy to consumer Assets folder.

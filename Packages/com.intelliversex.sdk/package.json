@@ -184,9 +184,7 @@
         "Packages/com.intelliversex.sdk/**"
       ],
       "sandbox_only": [
-        "SDKs/unity/editor/Assets/Photon",
         "SDKs/unity/editor/Assets/AppleAuth",
-        "SDKs/unity/editor/Assets/Appodeal",
         "SDKs/unity/editor/Assets/LevelPlay",
         "SDKs/unity/editor/Assets/Nakama",
         "tools/boilerplate"
