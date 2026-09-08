@@ -24,6 +24,14 @@ Step-by-step tutorials for common integration scenarios.
 
     [:octicons-arrow-right-24: Backend Guide](nakama-integration.md)
 
+-   :material-account-group:{ .lg .middle } **Social Nakama usage**
+
+    ---
+
+    Friends, clans, chat, push, and referral recipes aligned to prod RPCs
+
+    [:octicons-arrow-right-24: Social usage](social-nakama-usage.md)
+
 </div>
 
 ---
