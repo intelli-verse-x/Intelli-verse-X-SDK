@@ -42,7 +42,7 @@ namespace IntelliVerseX.Editor
         [MenuItem("IntelliVerseX/Control Center", false, -10)]
         public static void ShowWindow()
         {
-            var window = GetWindow<IVXControlCenter>(WindowTitle);
+            var window = GetWindow<IVXControlCenter>("Control Center");
             window.minSize = new Vector2(580, 720);
             window.Show();
         }
@@ -53,7 +53,7 @@ namespace IntelliVerseX.Editor
         public static void ShowWindowFocusConnect()
         {
             EditorPrefs.SetBool(IVXConnectWizardValidation.PrefFocusConnect, true);
-            var window = GetWindow<IVXControlCenter>(WindowTitle);
+            var window = GetWindow<IVXControlCenter>("Control Center");
             window.minSize = new Vector2(580, 720);
             window._tab = Tab.Home;
             window._focusConnectBanner = true;

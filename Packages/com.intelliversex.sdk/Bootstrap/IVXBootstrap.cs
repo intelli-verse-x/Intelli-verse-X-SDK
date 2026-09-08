@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using IntelliVerseX.Core;
 using IntelliVerseX.Identity;
+using IntelliVerseX.Storage;
 using UnityEngine;
 
 namespace IntelliVerseX.Bootstrap
@@ -267,14 +268,14 @@ namespace IntelliVerseX.Bootstrap
 
                 var deviceId = SystemInfo.deviceUniqueIdentifier;
                 if (deviceId == SystemInfo.unsupportedIdentifier)
-                    deviceId = PlayerPrefs.GetString("IVX_DeviceId", Guid.NewGuid().ToString());
-                PlayerPrefs.SetString("IVX_DeviceId", deviceId);
+                    deviceId = IVXLocalData.GetSecureOrMigrate(IVXLocalDataKeys.DeviceId, Guid.NewGuid().ToString());
+                IVXLocalData.SetSecureString(IVXLocalDataKeys.DeviceId, deviceId);
 
                 Nakama.ISession session = null;
 
                 if (_config.PersistSession)
                 {
-                    var savedToken = PlayerPrefs.GetString("IVX_SessionToken", "");
+                    var savedToken = IVXLocalData.GetSecureOrMigrate(IVXLocalDataKeys.BootstrapNakamaSession, "");
                     if (!string.IsNullOrEmpty(savedToken))
                     {
                         try
@@ -298,7 +299,7 @@ namespace IntelliVerseX.Bootstrap
                 {
                     session = await client.AuthenticateDeviceAsync(deviceId);
                     if (_config.PersistSession)
-                        PlayerPrefs.SetString("IVX_SessionToken", session.AuthToken);
+                        IVXLocalData.SetSecureString(IVXLocalDataKeys.BootstrapNakamaSession, session.AuthToken);
                 }
 
                 _nakamaClient = client;
@@ -307,7 +308,6 @@ namespace IntelliVerseX.Bootstrap
                 _userName = session.Username;
                 _authToken = session.AuthToken;
 
-                PlayerPrefs.Save();
                 EmitModuleReady("Backend");
                 Log($"Authenticated: {_userName} ({_userId})");
                 return true;

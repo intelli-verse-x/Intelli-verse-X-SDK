@@ -61,6 +61,9 @@
     "com.unity.ugui": "2.0.0",
     "com.unity.nuget.newtonsoft-json": "3.2.2"
   },
+  "testables": [
+    "com.intelliversex.sdk"
+  ],
   "samples": [
     {
       "displayName": "Getting Started",

@@ -5,21 +5,25 @@ using UnityEngine.UIElements;
 namespace IntelliVerseX.Editor
 {
     /// <summary>
-    /// Legacy menu entry — opens the full UI Toolkit Control Center on Connect.
+    /// Legacy docked window type. Menu removed — use Control Center only.
+    /// Restored instances bounce to <see cref="IVXControlCenter"/>.
     /// </summary>
     public sealed class IVXConnectToolkitWindow : EditorWindow
     {
+        // Hide stale menu until domain reload forgets the old item.
+        [MenuItem("IntelliVerseX/Connect (UI Toolkit)", true)]
+        private static bool ShowWindowValidate() => false;
+
         [MenuItem("IntelliVerseX/Connect (UI Toolkit)", false, -9)]
-        public static void ShowWindow()
+        private static void ShowWindowHidden()
         {
             IVXControlCenter.ShowWindowFocusConnect();
         }
 
         public void CreateGUI()
         {
-            // If an old docked instance is restored, bounce to Control Center.
             rootVisualElement.Clear();
-            var note = new Label("Redirecting to IntelliVerseX Control Center…");
+            var note = new Label("This window was replaced by IntelliVerseX → Control Center.");
             note.style.marginTop = 16;
             note.style.marginLeft = 12;
             note.style.whiteSpace = WhiteSpace.Normal;

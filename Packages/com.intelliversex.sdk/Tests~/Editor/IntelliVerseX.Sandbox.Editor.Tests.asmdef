@@ -1,34 +1,30 @@
 {
-    "name":  "IntelliVerseX.Sandbox.Editor.Tests",
-    "rootNamespace":  "IntelliVerseX.Tests.Editor",
-    "references":  [
-                       "GUID:52e4c6c34e75482438e55e9acc65cad9",
-                       "GUID:5c1fee878725af441b64a4b98537ed53",
-                       "GUID:c3965e1d901114144a8f2da2e8746fdd",
-                       "GUID:4abd41da894724c7289d35d305a6aeb8",
-                       "GUID:6b725149c56cc584db63ae3f6c815bd1",
-                       "IntelliVerseX.Leaderboard"
-                   ],
-    "includePlatforms":  [
-                             "Editor"
-                         ],
-    "excludePlatforms":  [
-
-                         ],
-    "allowUnsafeCode":  false,
-    "overrideReferences":  false,
-    "precompiledReferences":  [
-
-                              ],
-    "autoReferenced":  false,
-    "defineConstraints":  [
-                              "UNITY_INCLUDE_TESTS"
-                          ],
-    "versionDefines":  [
-
-                       ],
-    "optionalUnityReferences":  [
-                                    "TestAssemblies"
-                                ],
-    "noEngineReferences":  false
+    "name": "IntelliVerseX.Sandbox.Editor.Tests",
+    "rootNamespace": "IntelliVerseX.Tests.Editor",
+    "references": [
+        "GUID:52e4c6c34e75482438e55e9acc65cad9",
+        "GUID:5c1fee878725af441b64a4b98537ed53",
+        "GUID:c3965e1d901114144a8f2da2e8746fdd",
+        "GUID:4abd41da894724c7289d35d305a6aeb8",
+        "GUID:6b725149c56cc584db63ae3f6c815bd1",
+        "GUID:9da81476d6577524da3bf2ff9010e70e",
+        "GUID:856c4706ce18a45d9b3c8de860a7f467",
+        "IntelliVerseX.Leaderboard"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "noEngineReferences": false
 }

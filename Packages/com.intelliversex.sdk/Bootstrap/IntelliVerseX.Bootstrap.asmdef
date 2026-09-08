@@ -9,6 +9,7 @@
         "IntelliVerseX.Platform",
         "IntelliVerseX.Core",
         "IntelliVerseX.Backend",
+        "IntelliVerseX.Storage",
         "NakamaRuntime",
         "Newtonsoft.Json"
     ],

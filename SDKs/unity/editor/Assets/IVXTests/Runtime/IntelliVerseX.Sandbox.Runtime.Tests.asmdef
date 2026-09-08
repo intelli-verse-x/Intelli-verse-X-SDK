@@ -1,0 +1,20 @@
+﻿{
+    "name": "IntelliVerseX.Sandbox.Runtime.Tests",
+    "rootNamespace": "IntelliVerseX.Tests.Runtime",
+    "references": [
+        "IntelliVerseX.Core",
+        "IntelliVerseX.Identity",
+        "IntelliVerseX.Storage",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": ["nunit.framework.dll"],
+    "autoReferenced": false,
+    "defineConstraints": ["UNITY_INCLUDE_TESTS"],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

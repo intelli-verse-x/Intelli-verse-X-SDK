@@ -1,33 +1,31 @@
 ﻿{
-    "name":  "IntelliVerseX.Sandbox.Editor.Tests",
-    "rootNamespace":  "IntelliVerseX.Tests.Editor",
-    "references":  [
-                       "IntelliVerseX.Editor",
-                       "IntelliVerseX.Bootstrap",
-                       "IntelliVerseX.Core",
-                       "IntelliVerseX.Monetization",
-                       "IntelliVerseX.V2",
-                       "UnityEngine.TestRunner",
-                       "UnityEditor.TestRunner",
-                       "IntelliVerseX.Leaderboard"
-                   ],
-    "includePlatforms":  [
-                             "Editor"
-                         ],
-    "excludePlatforms":  [
-
-                         ],
-    "allowUnsafeCode":  false,
-    "overrideReferences":  true,
-    "precompiledReferences":  [
-                                  "nunit.framework.dll"
-                              ],
-    "autoReferenced":  false,
-    "defineConstraints":  [
-                              "UNITY_INCLUDE_TESTS"
-                          ],
-    "versionDefines":  [
-
-                       ],
-    "noEngineReferences":  false
+    "name": "IntelliVerseX.Sandbox.Editor.Tests",
+    "rootNamespace": "IntelliVerseX.Tests.Editor",
+    "references": [
+        "IntelliVerseX.Editor",
+        "IntelliVerseX.Bootstrap",
+        "IntelliVerseX.Core",
+        "IntelliVerseX.Identity",
+        "IntelliVerseX.Storage",
+        "IntelliVerseX.Monetization",
+        "IntelliVerseX.V2",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "IntelliVerseX.Leaderboard"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

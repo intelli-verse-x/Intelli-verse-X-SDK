@@ -260,7 +260,7 @@ namespace IntelliVerseX.Identity
         /// </summary>
         public static void Logout()
         {
-            UserSessionManager.Clear();
+            UserSessionManager.ClearAuthSession(clearRememberMe: false);
             Debug.Log("[IVXAPIClient] User logged out");
         }
 

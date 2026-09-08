@@ -73,9 +73,9 @@ namespace IntelliVerseX.Backend
         protected const string RPC_WALLET_GET_BALANCES = "wallet_get_balances";
         protected const string RPC_WALLET_UPDATE_GAME = "wallet_update_game_wallet";
 
-        // Session storage keys
-        protected const string PREF_REFRESH_TOKEN = "nakama_refresh_token";
-        protected const string PREF_AUTH_TOKEN = "nakama_auth_token";
+        // Session storage keys (canonical catalog)
+        protected const string PREF_AUTH_TOKEN = IVXLocalDataKeys.NakamaAuthTokenLegacy;
+        protected const string PREF_REFRESH_TOKEN = IVXLocalDataKeys.NakamaRefreshTokenLegacy;
 
         // Nakama client state
         protected IClient _client;

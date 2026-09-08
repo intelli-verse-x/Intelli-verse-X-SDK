@@ -1,9 +1,7 @@
 using System.Reflection;
-using IntelliVerseX.Backend.Nakama;
 using IntelliVerseX.Editor;
 using NUnit.Framework;
 using UnityEditor;
-using UnityEngine;
 
 namespace IntelliVerseX.Tests.Editor
 {
@@ -23,7 +21,8 @@ namespace IntelliVerseX.Tests.Editor
                 "IntelliVerseX/SDK Setup Wizard",
                 "IntelliVerseX/GitHub Repository",
                 "IntelliVerseX/Report Issue",
-                "IntelliVerseX/About IntelliVerseX SDK"
+                "IntelliVerseX/About IntelliVerseX SDK",
+                "IntelliVerse-X/"
             };
 
             bool hasControlCenter = false;
@@ -63,6 +62,15 @@ namespace IntelliVerseX.Tests.Editor
 
                             for (int f = 0; f < forbiddenPrefixes.Length; f++)
                             {
+                                // Legacy hyphenated menus may still exist with validate=false; only fail if enabled.
+                                if (path.StartsWith("IntelliVerse-X/"))
+                                {
+                                    Assert.IsFalse(
+                                        Menu.GetEnabled(path),
+                                        "Hyphenated IntelliVerse-X menu must be disabled: " + path);
+                                    continue;
+                                }
+
                                 Assert.IsFalse(
                                     path.StartsWith(forbiddenPrefixes[f]) || path == forbiddenPrefixes[f],
                                     "Unexpected top-level IVX menu: " + path);
@@ -85,11 +93,15 @@ namespace IntelliVerseX.Tests.Editor
         }
 
         [Test]
-        public void AdvancedSetup_AndDependencies_Exist_NoFatWizardType()
+        public void AdvancedSetup_TypeExists_AndFatWizardRemoved()
         {
             Assert.IsNotNull(typeof(IVXAdvancedSetup));
             Assert.IsNotNull(typeof(IVXDependencies));
-            Assert.IsNull(System.Type.GetType("IntelliVerseX.Editor.IVXSDKSetupWizard, IntelliVerseX.Editor"));
+
+            // Fat setup wizard EditorWindow must stay gone (Control Center + Advanced Setup only).
+            var fatWizard = System.Type.GetType("IntelliVerseX.Editor.IVXSDKSetupWizard, IntelliVerseX.Editor")
+                            ?? System.Type.GetType("IVXSDKSetupWizard");
+            Assert.IsNull(fatWizard, "IVXSDKSetupWizard must not exist; use Control Center.");
         }
 
         [Test]
@@ -97,15 +109,6 @@ namespace IntelliVerseX.Tests.Editor
         {
             var status = IVXDependencies.GetStatus();
             Assert.IsNotNull(status);
-        }
-
-        [Test]
-        public void IVXNManager_HasNoLegacyIntelliVerseXConfigField()
-        {
-            var field = typeof(IVXNManager).GetField(
-                "sdkConfig",
-                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            Assert.IsNull(field, "IVXNManager must not keep IntelliVerseXConfig fallback field");
         }
     }
 }

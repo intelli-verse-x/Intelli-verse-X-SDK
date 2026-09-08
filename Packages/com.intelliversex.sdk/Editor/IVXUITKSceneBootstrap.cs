@@ -39,12 +39,22 @@ namespace IntelliVerseX.Editor
             ("IVX_Share&RateUs_UITK", "IntelliVerseX.Samples.UIToolkit.IVXUITKShareRateDemo", "UI/Feature/IVXFeatureShell.uxml"),
         };
 
-        [MenuItem("IntelliVerse-X/Samples/Create UITK Demo Scenes")]
+        [MenuItem("IntelliVerseX/Samples/Create UITK Demo Scenes")]
         public static void MenuCreate()
         {
             if (File.Exists(MarkerPath))
                 File.Delete(MarkerPath);
             Debug.Log("[IVXUITK] " + Run());
+        }
+
+        // Hide obsolete hyphenated menu (Unity keeps stale MenuItems until domain reload clears them).
+        [MenuItem("IntelliVerse-X/Samples/Create UITK Demo Scenes", true)]
+        private static bool MenuCreateLegacyValidate() => false;
+
+        [MenuItem("IntelliVerse-X/Samples/Create UITK Demo Scenes", false)]
+        private static void MenuCreateLegacy()
+        {
+            MenuCreate();
         }
 
         public static string Run()

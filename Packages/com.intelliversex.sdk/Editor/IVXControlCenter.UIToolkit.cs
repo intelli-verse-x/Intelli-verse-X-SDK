@@ -130,11 +130,7 @@ namespace IntelliVerseX.Editor
 
         private void BuildChrome()
         {
-            var title = new Label("IntelliVerseX") { name = "ivx-title" };
-            title.AddToClassList("ivx-title");
-            _root.Add(title);
-
-            var subtitle = new Label("Check · Connect (sign in → Game ID) · Play.");
+            var subtitle = new Label("Check · Connect · Play");
             subtitle.AddToClassList("ivx-subtitle");
             _root.Add(subtitle);
 
@@ -150,15 +146,15 @@ namespace IntelliVerseX.Editor
 
             _contentHost = new VisualElement { name = "ivx-content" };
             _contentHost.AddToClassList("ivx-content");
-            _contentHost.style.flexGrow = 1;
             _root.Add(_contentHost);
 
             _busyBar = new VisualElement();
-            _busyBar.AddToClassList("ivx-row");
+            _busyBar.AddToClassList("ivx-busy-bar");
             _busyBar.style.display = DisplayStyle.None;
             _busyLabel = new Label();
             _busyLabel.AddToClassList("ivx-hint");
             _busyLabel.style.flexGrow = 1;
+            _busyLabel.style.marginBottom = 0;
             var cancelBtn = MakeButton("Cancel", () =>
             {
                 CancelWizardWork();
@@ -244,7 +240,7 @@ namespace IntelliVerseX.Editor
             // no config
             var noConfig = new VisualElement { name = "no-config" };
             noConfig.Add(MakeHelp(
-                "Create a bootstrap connection file once. Game ID and Nakama settings are stored there.",
+                "Create a bootstrap connection file once. Your Game ID is stored there.",
                 HelpBoxMessageType.Info));
             noConfig.Add(MakeButton("Create connection file", () =>
             {
@@ -254,18 +250,18 @@ namespace IntelliVerseX.Editor
             }, "ivx-btn", "ivx-btn--primary"));
             _connectBody.Add(noConfig);
 
-            // account
-            _accountHost = new VisualElement { name = "account-host" };
-            _connectBody.Add(_accountHost);
-
-            // mode toggle
-            var modeRow = new VisualElement();
+            // Mode first — one path: Create new OR Use existing (not two parallel wizards).
+            var modeRow = new VisualElement { name = "connect-mode-row" };
             modeRow.AddToClassList("ivx-mode-toggle");
             _modeCreateBtn = MakeButton("Create new", () => SetConnectMode(ConnectSourceMode.CreateNew), "ivx-btn");
             _modeExistingBtn = MakeButton("Use existing", () => SetConnectMode(ConnectSourceMode.UseExisting), "ivx-btn");
             modeRow.Add(_modeCreateBtn);
             modeRow.Add(_modeExistingBtn);
             _connectBody.Add(modeRow);
+
+            _accountHost = new VisualElement { name = "account-host" };
+            _accountHost.AddToClassList("ivx-section");
+            _connectBody.Add(_accountHost);
 
             _createHost = new VisualElement { name = "create-host" };
             _createHost.AddToClassList("ivx-section");
@@ -289,14 +285,16 @@ namespace IntelliVerseX.Editor
             _connectBody.Add(_successHost);
 
             _serverHost = new VisualElement { name = "server-host" };
-            _serverHost.AddToClassList("ivx-section");
+            // Intentionally empty — Nakama host/key are not shown in Control Center (security).
+            // Maintainers: Advanced Setup → Backend, or Bootstrap Config inspector foldout.
+            _serverHost.style.display = DisplayStyle.None;
             _connectBody.Add(_serverHost);
 
             BuildAccountUi();
             BuildCreateUi();
             BuildExistingUi();
             BuildSuccessUi();
-            BuildServerUi();
+            // BuildServerUi omitted from consumer Connect surface.
 
             _homeScrollView.Add(connect);
 
@@ -488,63 +486,12 @@ namespace IntelliVerseX.Editor
             _successHost.Add(row);
         }
 
+        /// <summary>
+        /// Intentionally empty — Nakama host/port/key stay out of Control Center.
+        /// Maintainers: Advanced Setup → Backend, or Bootstrap Config inspector.
+        /// </summary>
         private void BuildServerUi()
         {
-            _serverHost.Clear();
-            var title = new Label("Nakama server");
-            title.AddToClassList("ivx-section-title");
-            _serverHost.Add(title);
-
-            _serverHostField = new TextField("Server host");
-            _serverHostField.RegisterValueChangedCallback(evt =>
-            {
-                if (_suppressFieldCallbacks) return;
-                WriteConfigString("_serverHost", evt.newValue);
-            });
-            _serverHost.Add(_serverHostField);
-
-            _serverPortField = new IntegerField("Server port");
-            _serverPortField.RegisterValueChangedCallback(evt =>
-            {
-                if (_suppressFieldCallbacks) return;
-                WriteConfigInt("_serverPort", evt.newValue);
-            });
-            _serverHost.Add(_serverPortField);
-
-            _serverKeyField = new TextField("Server key");
-            _serverKeyField.RegisterValueChangedCallback(evt =>
-            {
-                if (_suppressFieldCallbacks) return;
-                WriteConfigString("_serverKey", evt.newValue);
-            });
-            _serverHost.Add(_serverKeyField);
-
-            _serverSslToggle = new Toggle("Use SSL");
-            _serverSslToggle.RegisterValueChangedCallback(evt =>
-            {
-                if (_suppressFieldCallbacks) return;
-                WriteConfigBool("_useSSL", evt.newValue);
-            });
-            _serverHost.Add(_serverSslToggle);
-
-            var row = new VisualElement();
-            row.AddToClassList("ivx-row");
-            row.Add(MakeButton("Ping server", () =>
-            {
-                PingServer();
-                RefreshServerPingUi();
-            }, "ivx-btn"));
-            row.Add(MakeButton("Select config", () =>
-            {
-                Selection.activeObject = _config;
-                EditorGUIUtility.PingObject(_config);
-            }, "ivx-btn"));
-            _serverHost.Add(row);
-
-            _serverPingLabel = new Label();
-            _serverPingLabel.AddToClassList("ivx-hint");
-            _serverPingLabel.style.whiteSpace = WhiteSpace.Normal;
-            _serverHost.Add(_serverPingLabel);
         }
 
         private void BuildTrafficPanel()
@@ -552,6 +499,9 @@ namespace IntelliVerseX.Editor
             _trafficPanel = new VisualElement { name = "traffic-panel" };
             _trafficPanel.AddToClassList("ivx-panel");
             _trafficPanel.style.display = DisplayStyle.None;
+
+            _trafficScrollView = new ScrollView(ScrollViewMode.Vertical);
+            _trafficScrollView.AddToClassList("ivx-scroll");
 
             var head = MakeSection("Traffic");
             _trafficMeta = new Label();
@@ -576,11 +526,9 @@ namespace IntelliVerseX.Editor
             header.Add(ColLabel("ms", "ivx-col-ms"));
             header.Add(ColLabel("Error / retry", "ivx-col-err"));
             head.Add(header);
-            _trafficPanel.Add(head);
+            _trafficScrollView.Add(head);
 
-            _trafficScrollView = new ScrollView(ScrollViewMode.Vertical);
-            _trafficScrollView.AddToClassList("ivx-scroll");
-            _trafficList = new VisualElement();
+            _trafficList = new VisualElement { name = "traffic-list" };
             _trafficScrollView.Add(_trafficList);
             _trafficPanel.Add(_trafficScrollView);
             _contentHost.Add(_trafficPanel);
@@ -591,6 +539,9 @@ namespace IntelliVerseX.Editor
             _apisPanel = new VisualElement { name = "apis-panel" };
             _apisPanel.AddToClassList("ivx-panel");
             _apisPanel.style.display = DisplayStyle.None;
+
+            _apisScrollView = new ScrollView(ScrollViewMode.Vertical);
+            _apisScrollView.AddToClassList("ivx-scroll");
 
             var head = MakeSection("APIs");
             _apiSourceLabel = new Label();
@@ -613,20 +564,18 @@ namespace IntelliVerseX.Editor
                 RefreshApisUi();
             }, "ivx-btn"));
             head.Add(filterRow);
-            _apisPanel.Add(head);
+            _apisScrollView.Add(head);
 
-            _apisScrollView = new ScrollView(ScrollViewMode.Vertical);
-            _apisScrollView.AddToClassList("ivx-scroll");
-            _apiList = new VisualElement();
+            _apiList = new VisualElement { name = "api-list" };
             _apisScrollView.Add(_apiList);
-            _apisPanel.Add(_apisScrollView);
 
             var canon = MakeSection("Canonical public types");
             canon.Add(MakeHint("Wallet → IVXNWalletManager"));
             canon.Add(MakeHint("Leaderboard → IVXNLeaderbordManager"));
             canon.Add(MakeHint("Optional → com.intelliversex.sdk.ai / .discord / .photon"));
-            _apisPanel.Add(canon);
+            _apisScrollView.Add(canon);
 
+            _apisPanel.Add(_apisScrollView);
             _contentHost.Add(_apisPanel);
         }
 
@@ -777,30 +726,25 @@ namespace IntelliVerseX.Editor
                 return;
 
             _panelTransitionJob?.Pause();
-            if (!animate)
+
+            // Always collapse hidden panels immediately so they don't steal flex space
+            // (that caused empty Traffic/APIs chrome and overlapping section bars).
+            if (!show)
             {
                 panel.RemoveFromClassList("ivx-panel--exit");
-                panel.style.display = show ? DisplayStyle.Flex : DisplayStyle.None;
+                panel.style.display = DisplayStyle.None;
                 return;
             }
 
-            if (show)
+            panel.style.display = DisplayStyle.Flex;
+            if (!animate)
             {
-                panel.style.display = DisplayStyle.Flex;
-                panel.AddToClassList("ivx-panel--exit");
-                panel.schedule.Execute(() => panel.RemoveFromClassList("ivx-panel--exit")).StartingIn(16);
+                panel.RemoveFromClassList("ivx-panel--exit");
+                return;
             }
-            else
-            {
-                panel.AddToClassList("ivx-panel--exit");
-                _panelTransitionJob = panel.schedule.Execute(() =>
-                {
-                    if (_tab == Tab.Home && panel == _homePanel) return;
-                    if (_tab == Tab.Traffic && panel == _trafficPanel) return;
-                    if (_tab == Tab.Apis && panel == _apisPanel) return;
-                    panel.style.display = DisplayStyle.None;
-                }).StartingIn(220);
-            }
+
+            panel.AddToClassList("ivx-panel--exit");
+            panel.schedule.Execute(() => panel.RemoveFromClassList("ivx-panel--exit")).StartingIn(16);
         }
 
         private void OpenSignupOverlay()
@@ -980,13 +924,19 @@ namespace IntelliVerseX.Editor
                 noConfig.style.display = hasConfig ? DisplayStyle.None : DisplayStyle.Flex;
 
             bool showWizard = hasConfig;
-            if (_accountHost != null) _accountHost.style.display = showWizard ? DisplayStyle.Flex : DisplayStyle.None;
+            var modeRow = _connectBody?.Q("connect-mode-row");
+            if (modeRow != null)
+                modeRow.style.display = showWizard ? DisplayStyle.Flex : DisplayStyle.None;
             if (_modeCreateBtn != null)
             {
-                _modeCreateBtn.parent.style.display = showWizard ? DisplayStyle.Flex : DisplayStyle.None;
                 _modeCreateBtn.EnableInClassList("ivx-tab--active", _connectMode == ConnectSourceMode.CreateNew);
                 _modeExistingBtn.EnableInClassList("ivx-tab--active", _connectMode == ConnectSourceMode.UseExisting);
             }
+
+            // Auth is only for Create new; Use existing is paste/recent only.
+            bool showAccount = showWizard && _connectMode == ConnectSourceMode.CreateNew;
+            if (_accountHost != null)
+                _accountHost.style.display = showAccount ? DisplayStyle.Flex : DisplayStyle.None;
 
             if (_createHost != null)
                 _createHost.style.display = showWizard && _connectMode == ConnectSourceMode.CreateNew
@@ -994,8 +944,9 @@ namespace IntelliVerseX.Editor
             if (_existingHost != null)
                 _existingHost.style.display = showWizard && _connectMode == ConnectSourceMode.UseExisting
                     ? DisplayStyle.Flex : DisplayStyle.None;
+            // Never expose Nakama host/port/key on the consumer Control Center surface.
             if (_serverHost != null)
-                _serverHost.style.display = showWizard ? DisplayStyle.Flex : DisplayStyle.None;
+                _serverHost.style.display = DisplayStyle.None;
 
             RefreshAccountUi();
             RefreshCreateEnabled();

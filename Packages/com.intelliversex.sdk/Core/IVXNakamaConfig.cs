@@ -25,9 +25,10 @@ namespace IntelliVerseX.Core
     /// - Shared global wallet across games
     /// 
     /// Security Notes:
-    /// - Server key is safe for client use (it's the default Nakama key)
-    /// - HTTPS ensures encrypted communication
-    /// - Authentication via device ID or Cognito
+    /// - Nakama's client "server key" is not an admin credential; it identifies the client to the API.
+    /// - Still: do not surface custom keys in consumer Control Center UI; keep them in Bootstrap / Advanced Setup.
+    /// - HTTPS ensures encrypted communication.
+    /// - Authentication via device ID or Cognito.
     /// </summary>
     public static class IVXNakamaConfig
     {

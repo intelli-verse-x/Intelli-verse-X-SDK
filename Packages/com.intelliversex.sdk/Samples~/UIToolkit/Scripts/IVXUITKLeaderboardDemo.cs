@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using IntelliVerseX.V2;
+using IntelliVerseX.Backend.Nakama;
 using UnityEngine;
 using UnityEngine.UIElements;
 

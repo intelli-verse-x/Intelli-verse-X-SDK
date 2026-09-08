@@ -1,5 +1,7 @@
+using System.IO;
 using System.Reflection;
 using IntelliVerseX.Bootstrap;
+using IntelliVerseX.Core;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -42,6 +44,21 @@ namespace IntelliVerseX.Tests.Editor
             var config = ScriptableObject.CreateInstance<IVXBootstrapConfig>();
             Assert.IsFalse(config.Validate(), "Empty Game ID must fail validation.");
             Object.DestroyImmediate(config);
+        }
+
+        [Test]
+        public void BootstrapConfig_CloudDefaults_NotLocalhost()
+        {
+            var config = ScriptableObject.CreateInstance<IVXBootstrapConfig>();
+            try
+            {
+                Assert.AreEqual(IVXNakamaConfig.HOST, config.ServerHost);
+                Assert.IsTrue(config.UseSSL);
+            }
+            finally
+            {
+                Object.DestroyImmediate(config);
+            }
         }
     }
 }

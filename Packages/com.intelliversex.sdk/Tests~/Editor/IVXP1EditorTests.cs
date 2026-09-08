@@ -42,6 +42,7 @@ namespace IntelliVerseX.Tests.Editor
             Assert.IsFalse(upmDeps.Contains("photon"), "Photon must not be a UPM package dependency");
             Assert.IsFalse(upmDeps.Contains("appodeal"), "Appodeal must not be a UPM package dependency");
             Assert.IsTrue(upmDeps.Contains("com.unity.nuget.newtonsoft-json"));
+            Assert.IsTrue(json.Contains("\"testables\""), "package.json must declare testables for Tests~ discovery");
         }
     }
 }

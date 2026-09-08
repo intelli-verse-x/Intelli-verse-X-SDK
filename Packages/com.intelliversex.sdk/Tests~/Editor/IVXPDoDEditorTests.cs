@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using IntelliVerseX.Core;
 using IntelliVerseX.Editor;
 using IntelliVerseX.Games.Leaderboard;
+using IntelliVerseX.Identity;
 using NUnit.Framework;
 
 namespace IntelliVerseX.Tests.Editor
@@ -58,6 +59,17 @@ namespace IntelliVerseX.Tests.Editor
         public void ControlCenter_TypeExists()
         {
             Assert.IsNotNull(typeof(IVXControlCenter));
+        }
+
+        [Test]
+        public void SessionFacade_IVXUserSession_ExposesUnifiedLocalDataApi()
+        {
+            Assert.IsNotNull(typeof(IVXUserSession).GetMethod("Clear"));
+            Assert.IsNotNull(typeof(IVXUserSession).GetMethod("ClearAuthSession"));
+            Assert.IsNotNull(typeof(IVXUserSession).GetMethod("ClearAllLocalData"));
+            Assert.IsNotNull(typeof(IVXUserSession).GetProperty("RememberMe"));
+            Assert.IsNotNull(typeof(UserSessionManager).GetMethod("ApplyLoginResponse"));
+            Assert.IsNotNull(typeof(UserSessionManager).GetMethod("TryRestorePersistedSession"));
         }
     }
 }

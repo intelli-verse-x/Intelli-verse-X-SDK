@@ -420,10 +420,11 @@ namespace IntelliVerseX.Storage
         }
 
         /// <summary>
-        /// Deletes all user data (GDPR Article 17 - Right to be forgotten)
+        /// Deletes all registered SDK local data (GDPR Article 17 - Right to be forgotten)
         /// </summary>
         public static void DeleteAllData()
         {
+            IVXLocalData.ClearAllRegisteredKeys();
             IVXSecureStorage.DeleteAll();
             
             // Clear cache directories

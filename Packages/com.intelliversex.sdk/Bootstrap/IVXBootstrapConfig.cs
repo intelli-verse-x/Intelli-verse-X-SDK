@@ -1,4 +1,5 @@
 using UnityEngine;
+using IntelliVerseX.Core;
 
 namespace IntelliVerseX.Bootstrap
 {
@@ -6,6 +7,7 @@ namespace IntelliVerseX.Bootstrap
     /// Canonical Game ID and Nakama host config for the IntelliVerseX SDK.
     /// Create via Assets &gt; Create &gt; IntelliVerseX &gt; Bootstrap Config.
     /// Paste or create the Game ID here; <see cref="Validate"/> fails when it is empty.
+    /// Nakama host/key are for maintainers / self-host only — not shown in Control Center.
     /// </summary>
     [CreateAssetMenu(fileName = "IVXBootstrapConfig", menuName = "IntelliVerseX/Bootstrap Config", order = 0)]
     [HelpURL("https://intelli-verse-x.github.io/Intelli-verse-X-SDK/getting-started/quickstart/")]
@@ -22,17 +24,17 @@ namespace IntelliVerseX.Bootstrap
         [SerializeField] private string _gameName = "";
 
         [Header("Backend (Nakama)")]
-        [Tooltip("Nakama server hostname or IP address. Change from 127.0.0.1 before shipping.")]
-        [SerializeField] private string _serverHost = "127.0.0.1";
+        [Tooltip("Nakama server hostname. Defaults to IntelliVerseX cloud. Change only if you self-host.")]
+        [SerializeField] private string _serverHost = IVXNakamaConfig.HOST;
 
-        [Tooltip("Nakama server gRPC port. Default: 7350")]
-        [SerializeField] private int _serverPort = 7350;
+        [Tooltip("Nakama server port. Cloud default: 443 (HTTPS).")]
+        [SerializeField] private int _serverPort = IVXNakamaConfig.PORT;
 
-        [Tooltip("Nakama server key. Change from 'defaultkey' before shipping.")]
-        [SerializeField] private string _serverKey = "defaultkey";
+        [Tooltip("Nakama server key. Never show this in consumer Control Center UI. Change from cloud default only for self-hosted backends.")]
+        [SerializeField] private string _serverKey = IVXNakamaConfig.SERVER_KEY;
 
         [Tooltip("Enable HTTPS/WSS for production servers")]
-        [SerializeField] private bool _useSSL;
+        [SerializeField] private bool _useSSL = true;
 
         [Tooltip("Automatically authenticate with device ID on startup")]
         [SerializeField] private bool _autoDeviceAuth = true;
@@ -126,8 +128,11 @@ namespace IntelliVerseX.Bootstrap
             }
             if (logWarnings && (_serverHost == "127.0.0.1" || _serverHost == "localhost"))
                 Debug.LogWarning($"[IVXBootstrapConfig] Server host is '{_serverHost}'. Change this before shipping to production.");
-            if (logWarnings && _serverKey == "defaultkey")
-                Debug.LogWarning("[IVXBootstrapConfig] Using default Nakama server key. Change this before shipping to production.");
+            // Shared IntelliVerseX cloud uses the platform defaultkey; only warn when self-hosting with that default.
+            if (logWarnings
+                && _serverKey == "defaultkey"
+                && !string.Equals(_serverHost, IVXNakamaConfig.HOST, System.StringComparison.OrdinalIgnoreCase))
+                Debug.LogWarning("[IVXBootstrapConfig] Using default Nakama server key on a non-cloud host. Change this for self-hosted backends.");
             if (_serverPort <= 0 || _serverPort > 65535)
             {
                 if (logWarnings)

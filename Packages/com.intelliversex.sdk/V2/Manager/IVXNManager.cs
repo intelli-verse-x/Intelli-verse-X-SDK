@@ -70,8 +70,8 @@ namespace IntelliVerseX.Backend.Nakama
         private bool _isInitializing;
         private bool _identitySyncSucceeded;
 
-        private const string PREF_NAKAMA_AUTH_TOKEN = "ivxn.nakama.auth_token";
-        private const string PREF_NAKAMA_REFRESH_TOKEN = "ivxn.nakama.refresh_token";
+        private const string PREF_NAKAMA_AUTH_TOKEN = IVXLocalDataKeys.NakamaAuthTokenV2;
+        private const string PREF_NAKAMA_REFRESH_TOKEN = IVXLocalDataKeys.NakamaRefreshTokenV2;
         private const string PP_REMEMBER = "IVX_auth.remember";
 
         public IClient Client => _client;

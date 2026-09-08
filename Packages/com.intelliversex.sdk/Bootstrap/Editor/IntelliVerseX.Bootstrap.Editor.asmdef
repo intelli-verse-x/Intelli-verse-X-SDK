@@ -1,7 +1,9 @@
 {
     "name": "IntelliVerseX.Bootstrap.Editor",
     "rootNamespace": "IntelliVerseX.Bootstrap.Editor",
-    "references": [],
+    "references": [
+        "IntelliVerseX.Bootstrap"
+    ],
     "includePlatforms": [
         "Editor"
     ],

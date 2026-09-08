@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!29 &1
 OcclusionCullingSettings:
@@ -256,11 +256,17 @@ MonoBehaviour:
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UIElementsModule::UnityEngine.UIElements.UIDocument
-  m_UIDocument: {fileID: 0}
   m_PanelSettings: {fileID: 11400000, guid: 6f3a025902a14a32ae9b4ff639c10c5f, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 8363d06328824ea2b168781e3d112f83, type: 3}
-  m_VisualTreeAsset: {fileID: 9197481963319205126, guid: 8363d06328824ea2b168781e3d112f83, type: 3}
+  m_SortingOrder: 0
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
 --- !u!114 &900000004
 MonoBehaviour:
   m_ObjectHideFlags: 0

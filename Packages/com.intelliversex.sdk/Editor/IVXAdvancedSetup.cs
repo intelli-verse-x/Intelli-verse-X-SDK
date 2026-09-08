@@ -1,5 +1,8 @@
 using IntelliVerseX.Bootstrap;
 using IntelliVerseX.Bootstrap.Editor;
+using IntelliVerseX.Core;
+using System;
+using System.Net.Sockets;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,7 +18,9 @@ namespace IntelliVerseX.Editor
         private const string WindowTitle = "Advanced Setup";
         private Vector2 _scroll;
         private int _tab;
-        private static readonly string[] TabNames = { "Dependencies", "Project", "Extras" };
+        private string _backendPing;
+        private MessageType _backendPingType = MessageType.None;
+        private static readonly string[] TabNames = { "Dependencies", "Project", "Backend", "Extras" };
 
         [MenuItem("IntelliVerseX/Advanced Setup", false, 20)]
         public static void ShowWindow()
@@ -52,6 +57,9 @@ namespace IntelliVerseX.Editor
                     DrawProject();
                     break;
                 case 2:
+                    DrawBackend();
+                    break;
+                case 3:
                     DrawExtras();
                     break;
                 default:
@@ -154,6 +162,106 @@ namespace IntelliVerseX.Editor
             if (GUILayout.Button("Reapply define symbols", GUILayout.Height(28)))
             {
                 IVXDefineSymbolManager.ForceReapplyDefines();
+            }
+        }
+
+        private void DrawBackend()
+        {
+            EditorGUILayout.LabelField("Nakama connection (maintainers)", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox(
+                "Hidden from Control Center on purpose. Most games use IntelliVerseX cloud defaults. " +
+                "Only change these if you self-host Nakama. Never commit production server keys to public repos.",
+                MessageType.Warning);
+
+            string[] guids = AssetDatabase.FindAssets("t:IVXBootstrapConfig");
+            if (guids.Length == 0)
+            {
+                EditorGUILayout.HelpBox("No IVXBootstrapConfig found. Create one from Control Center first.", MessageType.Info);
+                return;
+            }
+
+            var cfg = AssetDatabase.LoadAssetAtPath<IVXBootstrapConfig>(AssetDatabase.GUIDToAssetPath(guids[0]));
+            if (cfg == null)
+                return;
+
+            var so = new SerializedObject(cfg);
+            so.Update();
+
+            EditorGUILayout.ObjectField("Config asset", cfg, typeof(IVXBootstrapConfig), false);
+            EditorGUILayout.PropertyField(so.FindProperty("_serverHost"), new GUIContent("Server host"));
+            EditorGUILayout.PropertyField(so.FindProperty("_serverPort"), new GUIContent("Server port"));
+
+            var keyProp = so.FindProperty("_serverKey");
+            string key = keyProp?.stringValue ?? "";
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.PrefixLabel("Server key");
+            string edited = EditorGUILayout.PasswordField(key);
+            if (edited != key && keyProp != null)
+                keyProp.stringValue = edited;
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.PropertyField(so.FindProperty("_useSSL"), new GUIContent("Use SSL"));
+
+            if (so.ApplyModifiedProperties())
+                EditorUtility.SetDirty(cfg);
+
+            EditorGUILayout.Space(8);
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Ping server", GUILayout.Height(28)))
+                PingBackend(cfg);
+            if (GUILayout.Button("Reset to IntelliVerseX cloud", GUILayout.Height(28)))
+            {
+                so.FindProperty("_serverHost").stringValue = IVXNakamaConfig.HOST;
+                so.FindProperty("_serverPort").intValue = IVXNakamaConfig.PORT;
+                so.FindProperty("_serverKey").stringValue = IVXNakamaConfig.SERVER_KEY;
+                so.FindProperty("_useSSL").boolValue = true;
+                so.ApplyModifiedProperties();
+                EditorUtility.SetDirty(cfg);
+                _backendPing = $"Reset to {IVXNakamaConfig.HOST}:{IVXNakamaConfig.PORT}.";
+                _backendPingType = MessageType.Info;
+            }
+            EditorGUILayout.EndHorizontal();
+
+            if (GUILayout.Button("Select config asset", GUILayout.Height(28)))
+            {
+                Selection.activeObject = cfg;
+                EditorGUIUtility.PingObject(cfg);
+            }
+
+            if (!string.IsNullOrEmpty(_backendPing))
+                EditorGUILayout.HelpBox(_backendPing, _backendPingType);
+
+            EditorGUILayout.HelpBox(
+                "Tip: In the Inspector, Backend fields stay collapsed and the key is masked until you click Reveal.",
+                MessageType.None);
+        }
+
+        private void PingBackend(IVXBootstrapConfig cfg)
+        {
+            string host = cfg.ServerHost;
+            int port = cfg.ServerPort;
+            try
+            {
+                using (var client = new TcpClient())
+                {
+                    var result = client.BeginConnect(host, port, null, null);
+                    bool ok = result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(2));
+                    if (!ok)
+                    {
+                        _backendPing = $"No response from {host}:{port}. Start Nakama or check host/port.";
+                        _backendPingType = MessageType.Warning;
+                        return;
+                    }
+
+                    client.EndConnect(result);
+                    _backendPing = $"Reached {host}:{port}.";
+                    _backendPingType = MessageType.Info;
+                }
+            }
+            catch (Exception ex)
+            {
+                _backendPing = $"Could not reach {host}:{port}. {ex.Message}";
+                _backendPingType = MessageType.Warning;
             }
         }
 

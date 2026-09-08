@@ -1,88 +1,66 @@
 using System;
 using System.IO;
 using System.Text;
+using IntelliVerseX.Core;
 using IntelliVerseX.Storage;
 using UnityEngine;
 
 namespace IntelliVerseX.Identity
 {
     /// <summary>
-    /// Centralized storage for the entire auth payload so you can reference
-    /// refresh/access/id tokens and user details anywhere.
-    /// Provides session persistence, token management, and user identity storage.
+    /// Preferred facade for auth session storage. Backed by <see cref="UserSessionManager"/>
+    /// + <see cref="IVXSecureStorage"/>.
     /// </summary>
-    /// <example>
-    /// <code>
-    /// // Check if user is logged in
-    /// if (IVXUserSession.HasSession)
-    /// {
-    ///     Debug.Log($"Logged in as: {IVXUserSession.Current.email}");
-    /// }
-    /// 
-    /// // Get access token for API calls
-    /// string token = IVXUserSession.AccessToken;
-    /// 
-    /// // Clear session on logout
-    /// IVXUserSession.Clear();
-    /// </code>
-    /// </example>
     public static class IVXUserSession
     {
-        /// <summary>Gets or sets the current user session.</summary>
         public static UserSessionManager.UserSession Current
         {
             get => UserSessionManager.Current;
             set => UserSessionManager.Current = value;
         }
 
-        /// <summary>Gets the current access token, or null if not logged in.</summary>
         public static string AccessToken => UserSessionManager.AccessToken;
-        
-        /// <summary>Returns true if a valid session exists.</summary>
         public static bool HasSession => UserSessionManager.HasSession;
-        
-        /// <summary>Legacy on-disk session file path (pre–secure storage). Used for migration only.</summary>
         public static string SessionPath => UserSessionManager.SessionPath;
-        
-        /// <summary>Saves the session to disk.</summary>
+        public static bool RememberMe
+        {
+            get => UserSessionManager.RememberMe;
+            set => UserSessionManager.RememberMe = value;
+        }
+
         public static void Save(UserSessionManager.UserSession session) => UserSessionManager.Save(session);
-        
-        /// <summary>Loads the session from disk.</summary>
         public static UserSessionManager.UserSession Load() => UserSessionManager.Load();
-        
-        /// <summary>Clears the session from memory and disk.</summary>
         public static void Clear() => UserSessionManager.Clear();
-        
-        /// <summary>Checks if the access token is still valid.</summary>
-        public static bool IsAccessTokenFresh(int skewSeconds = 60) => UserSessionManager.IsAccessTokenFresh(skewSeconds);
+        public static void ClearAuthSession(bool clearRememberMe = false) =>
+            UserSessionManager.ClearAuthSession(clearRememberMe);
+        public static void ClearAllLocalData() => UserSessionManager.ClearAllLocalData();
+        public static bool IsAccessTokenFresh(int skewSeconds = 60) =>
+            UserSessionManager.IsAccessTokenFresh(skewSeconds);
+        public static void ApplyLoginResponse(APIManager.LoginResponse resp, bool persist) =>
+            UserSessionManager.ApplyLoginResponse(resp, persist);
     }
 }
 
 /// <summary>
-/// Centralized storage for the entire auth payload so you can reference
-/// refresh/access/id tokens and user details anywhere.
-/// Swap the storage impl with your BinaryDataManager if you prefer.
-/// 
-/// NOTE: For new code, prefer using IntelliVerseX.Identity.IVXUserSession
+/// Canonical auth session store. Persists encrypted JSON via <see cref="IVXSecureStorage"/>
+/// under <see cref="IVXLocalDataKeys.UserSession"/>. Prefer <see cref="IntelliVerseX.Identity.IVXUserSession"/> in new code.
 /// </summary>
 public static class UserSessionManager
 {
     private const string FileName = "user_session.json";
-    private const string SecureSessionKey = "ivx_user_session";
     private static readonly object _lock = new object();
     private static UserSession _cached;
+    private static bool _temporaryOnly;
 
     [Serializable]
     public class UserSession
     {
-        // Tokens
         public string accessToken;
         public string idToken;
         public string refreshToken;
-        public long accessTokenExpiryEpoch;   // when access token expires (epoch seconds)
-        public int expiresIn;                 // server-provided seconds
+        public long accessTokenExpiryEpoch;
+        public int expiresIn;
 
-        // Identity
         public string idpUsername;
         public string userId;
         public string firstName;
@@ -92,10 +70,8 @@ public static class UserSessionManager
         public string role;
         public bool isAdult;
         public string loginType;
+        public bool isGuest;
 
-        public bool isGuest = false;
-
-        // Misc (keep as raw strings)
         public string walletAddress;
         public string fcmToken;
         public string kycStatus;
@@ -103,22 +79,31 @@ public static class UserSessionManager
         public string createdAt;
         public string updatedAt;
 
-        // For quick checks
         public DateTime SavedAtUtc;
     }
 
-    /// <summary>
-    /// Legacy on-disk path for session JSON before migration to <see cref="IntelliVerseX.Storage.IVXSecureStorage"/>.
-    /// Used only to migrate existing installs; new sessions are stored under the secure key <c>ivx_user_session</c>.
-    /// </summary>
+    /// <summary>Legacy on-disk path (pre–secure storage). Migration only.</summary>
     public static string SessionPath =>
         Path.Combine(Application.persistentDataPath, FileName);
 
-    /// <summary>
-    /// Gets or sets the current user session.
-    /// Setting this will update the in-memory cache but NOT persist to disk.
-    /// Use Save() to persist the session to disk.
-    /// </summary>
+    /// <summary>True when session exists only in memory (remember-me off).</summary>
+    public static bool IsTemporaryOnly
+    {
+        get { lock (_lock) return _temporaryOnly; }
+    }
+
+    public static bool RememberMe
+    {
+        get => IVXLocalData.GetRememberMe(true);
+        set => IVXLocalData.SetRememberMe(value);
+    }
+
+    public static string LastEmail
+    {
+        get => IVXLocalData.GetLastEmail();
+        set => IVXLocalData.SetLastEmail(value);
+    }
+
     public static UserSession Current
     {
         get
@@ -139,61 +124,75 @@ public static class UserSessionManager
         }
     }
 
-    // Convenience accessors
     public static string AccessToken => Current?.accessToken;
     public static bool HasSession => Current != null && !string.IsNullOrWhiteSpace(Current.accessToken);
 
-    /// <summary>
-    /// Creates a session from a LoginResponse and persists it to disk.
-    /// </summary>
-    public static void SaveFromLoginResponse(APIManager.LoginResponse resp)
-    {
-        Save(CreateSessionFromLoginResponse(resp));
-    }
+    public static void SaveFromLoginResponse(APIManager.LoginResponse resp) =>
+        ApplyLoginResponse(resp, persist: true);
+
+    public static void SetTemporaryFromLoginResponse(APIManager.LoginResponse resp) =>
+        ApplyLoginResponse(resp, persist: false);
 
     /// <summary>
-    /// Creates an in-memory session from a LoginResponse without writing to disk.
-    /// Useful when "remember me" is off but runtime systems still need session data.
+    /// Single login handoff: always sets runtime session; persists only when <paramref name="persist"/> is true.
+    /// Also updates remember-me prefs and mirrors profile into <see cref="IntelliVerseXIdentity"/> when available.
     /// </summary>
-    public static void SetTemporaryFromLoginResponse(APIManager.LoginResponse resp)
+    public static void ApplyLoginResponse(APIManager.LoginResponse resp, bool persist)
     {
-        SetTemporary(CreateSessionFromLoginResponse(resp));
+        var session = CreateSessionFromLoginResponse(resp);
+        if (persist)
+        {
+            RememberMe = true;
+            if (!string.IsNullOrWhiteSpace(session.email))
+                LastEmail = session.email;
+            IVXLocalData.SetPersistFlag(true);
+            IVXLocalData.SetAuthUserHint(session.userId, session.loginType);
+            Save(session);
+        }
+        else
+        {
+            IVXLocalData.SetPersistFlag(false);
+            SetTemporary(session);
+        }
+
+        TryMirrorIdentity(session);
     }
 
-    /// <summary>
-    /// Saves the given session to disk and updates the in-memory cache.
-    /// </summary>
+    public static void SaveFromGuestResponse(APIManager.GuestSignupResponse resp)
+    {
+        if (resp == null || resp.data == null || resp.data.user == null)
+            throw new ArgumentException("Invalid guest-signup response to persist.");
+
+        var asLogin = new APIManager.LoginResponse
+        {
+            status = resp.status,
+            message = resp.message,
+            data = resp.data
+        };
+        ApplyLoginResponse(asLogin, persist: true);
+    }
+
     public static void Save(UserSession session)
     {
         if (session == null) throw new ArgumentNullException(nameof(session));
 
+        IVXLocalData.EnsureInitialized();
         var json = JsonUtility.ToJson(session, prettyPrint: false);
 
         lock (_lock)
         {
-            IVXSecureStorage.SetString(SecureSessionKey, json);
-            if (File.Exists(SessionPath))
-            {
-                try
-                {
-                    File.Delete(SessionPath);
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogWarning($"[UserSession] Could not delete legacy session file: {ex.Message}");
-                }
-            }
-
+            IVXSecureStorage.SetString(IVXLocalDataKeys.UserSession, json);
+            IVXLocalData.DeleteLegacySessionFile(SessionPath);
             _cached = session;
+            _temporaryOnly = false;
         }
+
+        TryMirrorIdentity(session);
 #if UNITY_EDITOR
-        Debug.Log($"[UserSession] Saved to secure storage ({SecureSessionKey})");
+        Debug.Log($"[UserSession] Saved to secure storage ({IVXLocalDataKeys.UserSession})");
 #endif
     }
 
-    /// <summary>
-    /// Loads the session from disk and returns it (also updates the cache).
-    /// </summary>
     public static UserSession Load()
     {
         lock (_lock)
@@ -203,53 +202,17 @@ public static class UserSessionManager
         }
     }
 
-    /// <summary>
-    /// Creates a session from a GuestSignupResponse and persists it to disk.
-    /// </summary>
-    public static void SaveFromGuestResponse(APIManager.GuestSignupResponse resp)
-    {
-        if (resp == null || resp.data == null || resp.data.user == null)
-            throw new ArgumentException("Invalid guest-signup response to persist.");
+    public static void ClearPersisted() => Clear();
 
-        // Reuse existing logic by adapting to LoginResponse shape
-        var asLogin = new APIManager.LoginResponse
-        {
-            status = resp.status,
-            message = resp.message,
-            data = resp.data
-        };
-        SaveFromLoginResponse(asLogin);
-    }
-
-    /// <summary>
-    /// Clears the persisted session file and the in-memory cache.
-    /// </summary>
-    public static void ClearPersisted()
-    {
-        // Alias for clarity - clears the cached session and the persisted JSON file.
-        Clear();
-    }
-
-    /// <summary>
-    /// Clears the in-memory session cache and deletes the persisted file.
-    /// </summary>
+    /// <summary>Clears in-memory + persisted user session blob only.</summary>
     public static void Clear()
     {
         lock (_lock)
         {
             _cached = null;
-            IVXSecureStorage.DeleteKey(SecureSessionKey);
-            if (File.Exists(SessionPath))
-            {
-                try
-                {
-                    File.Delete(SessionPath);
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogWarning($"[UserSession] Could not delete legacy session file: {ex.Message}");
-                }
-            }
+            _temporaryOnly = false;
+            IVXSecureStorage.DeleteKey(IVXLocalDataKeys.UserSession);
+            IVXLocalData.DeleteLegacySessionFile(SessionPath);
         }
 #if UNITY_EDITOR
         Debug.Log("[UserSession] Cleared.");
@@ -257,30 +220,148 @@ public static class UserSessionManager
     }
 
     /// <summary>
-    /// Sets the current session in memory without persisting to disk.
-    /// Useful for temporary sessions (e.g., guest before full signup).
-    /// Call Save() afterward if you want to persist it.
+    /// Logout-safe clear: user session, mirrored identity tokens/profile, Nakama token keys.
+    /// Keeps device/game id. Optionally clears remember-me email.
     /// </summary>
+    public static void ClearAuthSession(bool clearRememberMe = false)
+    {
+        Clear();
+        IVXLocalData.ClearAuthRelatedKeys(clearRememberMe);
+        try
+        {
+            IntelliVerseXIdentity.ClearUserData();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"[UserSession] Identity clear failed: {ex.Message}");
+        }
+#if UNITY_EDITOR
+        Debug.Log("[UserSession] Auth session + related local tokens cleared.");
+#endif
+    }
+
+    /// <summary>
+    /// Full SDK local wipe (editor tool / GDPR). Clears registered keys + legacy session file + memory.
+    /// </summary>
+    public static void ClearAllLocalData()
+    {
+        lock (_lock)
+        {
+            _cached = null;
+            _temporaryOnly = false;
+        }
+
+        IVXLocalData.DeleteLegacySessionFile(SessionPath);
+        IVXLocalData.ClearAllRegisteredKeys();
+
+        try
+        {
+            IntelliVerseXIdentity.ClearUserData();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"[UserSession] Identity clear during full wipe failed: {ex.Message}");
+        }
+
+        Debug.Log("[UserSession] All registered SDK local data cleared.");
+    }
+
     public static void SetTemporary(UserSession session)
     {
         lock (_lock)
         {
             _cached = session;
+            _temporaryOnly = session != null;
         }
+
+        // Ensure a previous persisted session cannot outlive "remember me" off.
+        IVXSecureStorage.DeleteKey(IVXLocalDataKeys.UserSession);
+        IVXLocalData.DeleteLegacySessionFile(SessionPath);
+        IVXLocalData.SetPersistFlag(false);
+
+        TryMirrorIdentity(session);
 #if UNITY_EDITOR
         Debug.Log($"[UserSession] Temporary session set (not persisted): {session?.userId ?? "null"}");
 #endif
     }
 
-    /// <summary>
-    /// Checks if the access token is still fresh (not expired).
-    /// </summary>
     public static bool IsAccessTokenFresh(int skewSeconds = 60)
     {
         var c = Current;
         if (c == null || c.accessTokenExpiryEpoch <= 0) return false;
         long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         return now + skewSeconds < c.accessTokenExpiryEpoch;
+    }
+
+    /// <summary>
+    /// Startup helper: load persisted session only when remember-me / persist flag allows it.
+    /// </summary>
+    public static UserSession TryRestorePersistedSession()
+    {
+        IVXLocalData.EnsureInitialized();
+        if (!RememberMe && !IVXLocalData.GetPersistFlag())
+        {
+            // Stale disk session with remember-me off — drop it.
+            if (IVXSecureStorage.HasKey(IVXLocalDataKeys.UserSession))
+                Clear();
+            return null;
+        }
+
+        return Load();
+    }
+
+    private static void TryMirrorIdentity(UserSession session)
+    {
+        if (session == null)
+            return;
+
+        try
+        {
+            var existing = IntelliVerseXIdentity.GetUser();
+            var mapped = new IntelliVerseXUser
+            {
+                Username = session.userName ?? existing?.Username ?? session.firstName ?? string.Empty,
+                DeviceId = existing?.DeviceId ?? string.Empty,
+                GameId = existing?.GameId ?? string.Empty,
+                CognitoUserId = !string.IsNullOrWhiteSpace(session.idpUsername)
+                    ? session.idpUsername
+                    : (session.userId ?? string.Empty),
+                Email = session.email ?? string.Empty,
+                IdpUsername = session.idpUsername ?? string.Empty,
+                FirstName = session.firstName ?? string.Empty,
+                LastName = session.lastName ?? string.Empty,
+                AccessToken = session.accessToken ?? string.Empty,
+                IdToken = session.idToken ?? string.Empty,
+                RefreshToken = session.refreshToken ?? string.Empty,
+                AccessTokenExpiryEpoch = session.accessTokenExpiryEpoch,
+                GameWalletId = existing?.GameWalletId ?? string.Empty,
+                GlobalWalletId = existing?.GlobalWalletId ?? string.Empty,
+                GameWalletBalance = existing?.GameWalletBalance ?? 0,
+                GlobalWalletBalance = existing?.GlobalWalletBalance ?? 0,
+                GameWalletCurrency = string.IsNullOrWhiteSpace(existing?.GameWalletCurrency)
+                    ? "coins"
+                    : existing.GameWalletCurrency,
+                GlobalWalletCurrency = string.IsNullOrWhiteSpace(existing?.GlobalWalletCurrency)
+                    ? "gems"
+                    : existing.GlobalWalletCurrency,
+                WalletAddress = session.walletAddress ?? string.Empty,
+                Role = session.role ?? "user",
+                IsAdult = session.isAdult ? "True" : "False",
+                LoginType = session.loginType ?? "email",
+                AccountStatus = session.accountStatus ?? string.Empty,
+                KycStatus = session.kycStatus ?? string.Empty,
+                IsGuestUser = session.isGuest,
+                GuestCreatedEpoch = existing?.GuestCreatedEpoch ?? 0
+            };
+
+            // Only write when identity system has been initialized (avoids null-instance spam).
+            if (IntelliVerseXIdentity.Instance != null || existing != null)
+                IntelliVerseXIdentity.SetCurrentUser(mapped);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"[UserSession] Identity mirror skipped: {ex.Message}");
+        }
     }
 
     private static UserSession CreateSessionFromLoginResponse(APIManager.LoginResponse resp)
@@ -309,6 +390,7 @@ public static class UserSessionManager
             role = u.role,
             isAdult = u.isAdult,
             loginType = u.loginType,
+            isGuest = false,
 
             walletAddress = u.walletAddress,
             fcmToken = u.fcmToken,
@@ -325,21 +407,16 @@ public static class UserSessionManager
     {
         try
         {
-            string json = IVXSecureStorage.GetString(SecureSessionKey, "");
+            IVXLocalData.EnsureInitialized();
+
+            string json = IVXSecureStorage.GetString(IVXLocalDataKeys.UserSession, "");
             if (string.IsNullOrWhiteSpace(json) && File.Exists(SessionPath))
             {
                 json = File.ReadAllText(SessionPath, Encoding.UTF8);
                 if (!string.IsNullOrWhiteSpace(json))
                 {
-                    IVXSecureStorage.SetString(SecureSessionKey, json);
-                    try
-                    {
-                        File.Delete(SessionPath);
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.LogWarning($"[UserSession] Migrated legacy file but could not delete: {ex.Message}");
-                    }
+                    IVXSecureStorage.SetString(IVXLocalDataKeys.UserSession, json);
+                    IVXLocalData.DeleteLegacySessionFile(SessionPath);
                 }
             }
 
@@ -358,6 +435,7 @@ public static class UserSessionManager
                 return null;
             }
 
+            _temporaryOnly = false;
             return session;
         }
         catch (Exception e)
@@ -372,10 +450,6 @@ public static class UserSessionManager
         }
     }
 
-    /// <summary>
-    /// Rejects deserialized blobs that are empty or clearly not a real persisted auth session
-    /// (avoids treating decrypt garbage or partial JSON as logged-in).
-    /// </summary>
     private static bool IsPlausiblePersistedSession(UserSession s)
     {
         if (s == null)

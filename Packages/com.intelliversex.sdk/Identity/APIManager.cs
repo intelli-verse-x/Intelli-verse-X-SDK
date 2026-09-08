@@ -88,8 +88,8 @@ public static class APIManager
             return _liveUserSession.idpUsername;
         }
         
-        // Fallback to stored session
-        var session = UserSessionManager.Load();
+        // Fallback to stored session (respect remember-me / persist flag)
+        var session = UserSessionManager.TryRestorePersistedSession();
         if (session != null && !string.IsNullOrEmpty(session.idpUsername))
         {
             return session.idpUsername;
@@ -1315,7 +1315,7 @@ Do not include any other top-level keys. Do not include code fences.";
     {
         try
         {
-            var sess = UserSessionManager.Current;
+            var sess = UserSessionManager.TryRestorePersistedSession() ?? UserSessionManager.Current;
             if (sess == null) return false;
 
             // Prefer email -> userName -> idpUsername (server expects a real identifier)
@@ -1381,7 +1381,9 @@ Do not include any other top-level keys. Do not include code fences.";
         _useUserAuthToken = true;
 
         if (persistSession)
-            UserSessionManager.SaveFromLoginResponse(resp);
+            UserSessionManager.ApplyLoginResponse(resp, persist: true);
+        else
+            UserSessionManager.ApplyLoginResponse(resp, persist: false);
     }
 
     private static bool LooksLikeGuid(string s)
@@ -2801,9 +2803,9 @@ Do not include any other top-level keys. Do not include code fences.";
                             try
                             {
                                 if (persistSession)
-                                    UserSessionManager.SaveFromLoginResponse(resp);
+                                    UserSessionManager.ApplyLoginResponse(resp, persist: true);
                                 else
-                                    UserSessionManager.SetTemporaryFromLoginResponse(resp);
+                                    UserSessionManager.ApplyLoginResponse(resp, persist: false);
                             }
                             catch (Exception ex)
                             {
@@ -3186,10 +3188,24 @@ Do not include any other top-level keys. Do not include code fences.";
                             );
                         }
 
-                        // Persist for later use
-                        if (persistSession && resp.data != null)
+                        // Persist for later use (or keep runtime-only when remember-me is off)
+                        if (resp.data != null)
                         {
-                            try { UserSessionManager.SaveFromGuestResponse(resp); }
+                            try
+                            {
+                                if (persistSession)
+                                    UserSessionManager.SaveFromGuestResponse(resp);
+                                else
+                                {
+                                    var asLogin = new LoginResponse
+                                    {
+                                        status = resp.status,
+                                        message = resp.message,
+                                        data = resp.data
+                                    };
+                                    UserSessionManager.ApplyLoginResponse(asLogin, persist: false);
+                                }
+                            }
                             catch (Exception ex) { LogError("[Session] Save (guest) failed: " + ex.Message); }
                         }
 

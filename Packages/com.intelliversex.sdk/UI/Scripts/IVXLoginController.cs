@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 using IntelliVerseX.Core;
+using IntelliVerseX.Storage;
 using System.Threading.Tasks;
 
 namespace IntelliVerseX.UI
@@ -70,10 +71,26 @@ namespace IntelliVerseX.UI
             LoadConfiguration();
             SetupUI();
             SetupButtonListeners();
-            
+            PrefillRememberMe();
+
             if (enableAutoLogin)
             {
                 await TryAutoLogin();
+            }
+        }
+
+        void PrefillRememberMe()
+        {
+            IVXLocalData.EnsureInitialized();
+            bool remember = IVXLocalData.GetRememberMe(true);
+            if (rememberMeToggle != null)
+                rememberMeToggle.isOn = remember;
+
+            if (remember && emailInput != null)
+            {
+                string last = IVXLocalData.GetLastEmail();
+                if (!string.IsNullOrWhiteSpace(last))
+                    emailInput.text = last;
             }
         }
 
@@ -142,6 +159,24 @@ namespace IntelliVerseX.UI
         async Task TryAutoLogin()
         {
             if (!config.enableAutoLogin) return;
+
+            IVXLocalData.EnsureInitialized();
+            if (!IVXLocalData.GetRememberMe(true))
+                return;
+
+            // Prefer restored auth session (UserSessionManager → IVXSecureStorage)
+            if (global::UserSessionManager.TryRestorePersistedSession() != null
+                && global::UserSessionManager.IsAccessTokenFresh())
+            {
+                ShowStatus("Restoring session...", Color.white);
+                ShowLoadingPanel(true);
+                if (IntelliVerseX.Identity.IVXAPIClient.TryRestoreSession())
+                {
+                    Debug.Log("[IVX Login] Auto-login from persisted UserSession succeeded");
+                    LoadMainMenu();
+                    return;
+                }
+            }
             
             var identity = IntelliVerseXIdentity.Instance;
             if (identity == null)
@@ -150,14 +185,13 @@ namespace IntelliVerseX.UI
                 return;
             }
             
-            // Check if user has saved credentials
+            // Fallback: device-id guest restore
             var user = IntelliVerseXIdentity.CurrentUser;
             if (user != null && !string.IsNullOrEmpty(user.DeviceId))
             {
                 ShowStatus("Restoring session...", Color.white);
                 ShowLoadingPanel(true);
                 
-                // Try to authenticate with saved device ID
                 bool success = await AuthenticateWithDeviceId(user.DeviceId);
                 
                 if (success)
@@ -254,8 +288,12 @@ namespace IntelliVerseX.UI
                     
                     if (rememberMeToggle && rememberMeToggle.isOn)
                     {
-                        PlayerPrefs.SetString("IVX_SavedEmail", email);
-                        PlayerPrefs.Save();
+                        IVXLocalData.SetRememberMe(true);
+                        IVXLocalData.SetLastEmail(email);
+                    }
+                    else
+                    {
+                        IVXLocalData.SetRememberMe(false);
                     }
                     
                     await Task.Delay(500);

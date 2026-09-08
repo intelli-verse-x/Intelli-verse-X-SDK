@@ -7,7 +7,8 @@
         "GUID:a6a6609a8c6ccb74b9b49037e1686b2f",
         "IntelliVerseX.Bootstrap",
         "IntelliVerseX.Bootstrap.Editor",
-        "IntelliVerseX.Identity"
+        "IntelliVerseX.Identity",
+        "IntelliVerseX.Storage"
     ],
     "includePlatforms": [
         "Editor"

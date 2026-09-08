@@ -1,4 +1,5 @@
 using System;
+using IntelliVerseX.Core;
 using IntelliVerseX.Monetization;
 using IntelliVerseX.Monetization.Ads;
 using UnityEngine;
@@ -19,12 +20,24 @@ namespace IntelliVerseX.Samples.UIToolkit
             SetStatus(IVXAdsManager.IsInitialized() ? "Ads already initialized." : "Ads not initialized.");
         }
 
+        private void EnsureInitialized()
+        {
+            if (IVXAdsManager.IsInitialized())
+                return;
+
+#pragma warning disable CS0618 // Legacy config still required by IVXAdsManager.Initialize
+            var config = ScriptableObject.CreateInstance<IntelliVerseXConfig>();
+            config.enableAds = true;
+            IVXAdsManager.Initialize(config, IVXAdNetwork.None);
+#pragma warning restore CS0618
+        }
+
         private void InitAds()
         {
             try
             {
-                IVXAdsManager.Initialize();
-                SetStatus(IVXAdsManager.IsInitialized() ? "Ads initialized." : "Init called (check logs).");
+                EnsureInitialized();
+                SetStatus(IVXAdsManager.IsInitialized() ? "Ads initialized." : "Init called (check logs / enableAds).");
             }
             catch (Exception ex)
             {
@@ -36,8 +49,7 @@ namespace IntelliVerseX.Samples.UIToolkit
         {
             try
             {
-                if (!IVXAdsManager.IsInitialized())
-                    IVXAdsManager.Initialize();
+                EnsureInitialized();
 
                 IVXAdsManager.ShowRewardedAd((ok, reward) =>
                 {
@@ -56,8 +68,7 @@ namespace IntelliVerseX.Samples.UIToolkit
         {
             try
             {
-                if (!IVXAdsManager.IsInitialized())
-                    IVXAdsManager.Initialize();
+                EnsureInitialized();
 
                 IVXAdsManager.ShowInterstitialAd(ok =>
                 {

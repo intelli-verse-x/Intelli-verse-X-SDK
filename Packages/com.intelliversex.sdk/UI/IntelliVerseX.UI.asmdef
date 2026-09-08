@@ -4,8 +4,10 @@
     "references": [
         "Unity.TextMeshPro",
         "IntelliVerseX.Core",
+        "IntelliVerseX.Identity",
         "IntelliVerseX.V2",
         "IntelliVerseX.Backend",
+        "IntelliVerseX.Storage",
         "NakamaRuntime",
         "DOTween.Modules"
     ],

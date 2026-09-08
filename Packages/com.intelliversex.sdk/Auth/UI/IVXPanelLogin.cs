@@ -94,13 +94,6 @@ namespace IntelliVerseX.Auth.UI
         private bool _passwordVisible;
         private int _panelTransitionVersion;
 
-        private const string PP_REMEMBER = "IVX_auth.remember";
-        private const string LEGACY_PP_REMEMBER = "auth.remember";
-        private const string PP_LAST_EMAIL = "IVX_auth.last_email";
-        private const string PP_PERSIST_FLAG = "IVX_auth.persisted";
-        private const string PP_USER_ID = "IVX_auth.user_id";
-        private const string PP_LOGIN_TYPE = "IVX_auth.login_type";
-
         #endregion
 
         #region Unity Lifecycle
@@ -257,20 +250,7 @@ namespace IntelliVerseX.Auth.UI
 
         private void SetupRememberMe()
         {
-            if (PlayerPrefs.HasKey(LEGACY_PP_REMEMBER) && !PlayerPrefs.HasKey(PP_REMEMBER))
-            {
-                PlayerPrefs.SetInt(PP_REMEMBER, PlayerPrefs.GetInt(LEGACY_PP_REMEMBER, 1));
-                PlayerPrefs.Save();
-            }
-
-            if (!PlayerPrefs.HasKey(PP_REMEMBER))
-            {
-                PlayerPrefs.SetInt(PP_REMEMBER, 1);
-                PlayerPrefs.SetInt(LEGACY_PP_REMEMBER, 1);
-                PlayerPrefs.Save();
-            }
-
-            bool remembered = PlayerPrefs.GetInt(PP_REMEMBER, 1) == 1;
+            bool remembered = UserSessionManager.RememberMe;
             if (_rememberMeToggle != null)
             {
                 _rememberMeToggle.isOn = remembered;
@@ -280,11 +260,9 @@ namespace IntelliVerseX.Auth.UI
 
             if (remembered && _emailInput != null)
             {
-                var lastEmail = PlayerPrefs.GetString(PP_LAST_EMAIL, string.Empty);
+                var lastEmail = UserSessionManager.LastEmail;
                 if (!string.IsNullOrWhiteSpace(lastEmail))
-                {
                     _emailInput.text = lastEmail;
-                }
             }
         }
 
@@ -345,17 +323,12 @@ namespace IntelliVerseX.Auth.UI
 
             if (remember)
             {
-                PlayerPrefs.SetString(PP_LAST_EMAIL, email);
-                PlayerPrefs.SetInt(PP_REMEMBER, 1);
-                PlayerPrefs.SetInt(LEGACY_PP_REMEMBER, 1);
-                PlayerPrefs.Save();
+                UserSessionManager.RememberMe = true;
+                UserSessionManager.LastEmail = email;
             }
             else
             {
-                PlayerPrefs.DeleteKey(PP_LAST_EMAIL);
-                PlayerPrefs.SetInt(PP_REMEMBER, 0);
-                PlayerPrefs.SetInt(LEGACY_PP_REMEMBER, 0);
-                PlayerPrefs.Save();
+                UserSessionManager.RememberMe = false;
             }
 
             SetInteractable(false);
@@ -393,22 +366,7 @@ namespace IntelliVerseX.Auth.UI
                         SyncCoreIdentityFromLoginResponse(resp);
                         TryRefreshRuntimeSnapshot();
 
-                        if (remember)
-                        {
-                            PlayerPrefs.SetInt(PP_PERSIST_FLAG, 1);
-                            if (resp.data.user != null)
-                            {
-                                PlayerPrefs.SetString(PP_USER_ID, resp.data.user.id ?? "");
-                                PlayerPrefs.SetString(PP_LOGIN_TYPE, resp.data.user.loginType ?? "cognito");
-                            }
-                            PlayerPrefs.Save();
-                        }
-                        else
-                        {
-                            PlayerPrefs.SetInt(PP_PERSIST_FLAG, 0);
-                            PlayerPrefs.Save();
-                        }
-
+                        // Persist flag + user hint are owned by UserSessionManager.ApplyLoginResponse.
                         SetStatus("Signed in! Syncing player data...");
 
                         bool nakamaSuccess = await InitializeNakamaAsync();
@@ -681,19 +639,8 @@ namespace IntelliVerseX.Auth.UI
 
         private void OnRememberMeChanged(bool on)
         {
-            PlayerPrefs.SetInt(PP_REMEMBER, on ? 1 : 0);
-            PlayerPrefs.SetInt(LEGACY_PP_REMEMBER, on ? 1 : 0);
-            PlayerPrefs.Save();
+            UserSessionManager.RememberMe = on;
             UpdateRememberVisual(on, instant: false);
-
-            if (!on)
-            {
-                PlayerPrefs.DeleteKey(PP_LAST_EMAIL);
-                PlayerPrefs.DeleteKey(PP_PERSIST_FLAG);
-                PlayerPrefs.DeleteKey(PP_USER_ID);
-                PlayerPrefs.DeleteKey(PP_LOGIN_TYPE);
-                PlayerPrefs.Save();
-            }
         }
 
         private void UpdateRememberVisual(bool on, bool instant)

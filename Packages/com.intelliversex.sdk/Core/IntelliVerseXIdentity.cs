@@ -19,34 +19,34 @@ namespace IntelliVerseX.Core
     /// </summary>
     public class IntelliVerseXIdentity : MonoBehaviour
     {
-        // Secure Storage Keys
-        private const string PREF_USERNAME = "IVX_Username";
-        private const string PREF_DEVICE_ID = "IVX_DeviceId";
-        private const string PREF_GAME_ID = "IVX_GameId";
-        private const string PREF_GAME_WALLET_ID = "IVX_GameWalletId";
-        private const string PREF_GLOBAL_WALLET_ID = "IVX_GlobalWalletId";
-        private const string PREF_GAME_WALLET_BALANCE = "IVX_GameWalletBalance";
-        private const string PREF_GLOBAL_WALLET_BALANCE = "IVX_GlobalWalletBalance";
-        private const string PREF_GAME_WALLET_CURRENCY = "IVX_GameWalletCurrency";
-        private const string PREF_GLOBAL_WALLET_CURRENCY = "IVX_GlobalWalletCurrency";
-        private const string PREF_COGNITO_USER_ID = "IVX_CognitoUserId";
-        private const string PREF_EMAIL = "IVX_Email";
-        private const string PREF_IDP_USERNAME = "IVX_IdpUsername";
-        private const string PREF_FIRST_NAME = "IVX_FirstName";
-        private const string PREF_LAST_NAME = "IVX_LastName";
-        private const string PREF_WALLET_ADDRESS = "IVX_WalletAddress";
-        private const string PREF_ROLE = "IVX_Role";
-        private const string PREF_IS_ADULT = "IVX_IsAdult";
-        private const string PREF_LOGIN_TYPE = "IVX_LoginType";
-        private const string PREF_ACCOUNT_STATUS = "IVX_AccountStatus";
-        private const string PREF_KYC_STATUS = "IVX_KycStatus";
-        private const string PREF_IS_GUEST = "IVX_IsGuestUser";
-        private const string PREF_GUEST_CREATED_EPOCH = "IVX_GuestCreatedEpoch";
-        private const string PREF_ACCESS_TOKEN = "IVX_AccessToken";
-        private const string PREF_ID_TOKEN = "IVX_IdToken";
-        private const string PREF_REFRESH_TOKEN = "IVX_RefreshToken";
-        private const string PREF_ACCESS_TOKEN_EXPIRY = "IVX_AccessTokenExpiry";
-        private const string PREF_IDENTITY_MIGRATED = "IVX_IdentityMigratedV1";
+        // Secure Storage Keys (canonical catalog — do not invent parallel key names)
+        private const string PREF_USERNAME = IVXLocalDataKeys.Username;
+        private const string PREF_DEVICE_ID = IVXLocalDataKeys.DeviceId;
+        private const string PREF_GAME_ID = IVXLocalDataKeys.GameId;
+        private const string PREF_GAME_WALLET_ID = IVXLocalDataKeys.GameWalletId;
+        private const string PREF_GLOBAL_WALLET_ID = IVXLocalDataKeys.GlobalWalletId;
+        private const string PREF_GAME_WALLET_BALANCE = IVXLocalDataKeys.GameWalletBalance;
+        private const string PREF_GLOBAL_WALLET_BALANCE = IVXLocalDataKeys.GlobalWalletBalance;
+        private const string PREF_GAME_WALLET_CURRENCY = IVXLocalDataKeys.GameWalletCurrency;
+        private const string PREF_GLOBAL_WALLET_CURRENCY = IVXLocalDataKeys.GlobalWalletCurrency;
+        private const string PREF_COGNITO_USER_ID = IVXLocalDataKeys.CognitoUserId;
+        private const string PREF_EMAIL = IVXLocalDataKeys.Email;
+        private const string PREF_IDP_USERNAME = IVXLocalDataKeys.IdpUsername;
+        private const string PREF_FIRST_NAME = IVXLocalDataKeys.FirstName;
+        private const string PREF_LAST_NAME = IVXLocalDataKeys.LastName;
+        private const string PREF_WALLET_ADDRESS = IVXLocalDataKeys.WalletAddress;
+        private const string PREF_ROLE = IVXLocalDataKeys.Role;
+        private const string PREF_IS_ADULT = IVXLocalDataKeys.IsAdult;
+        private const string PREF_LOGIN_TYPE = IVXLocalDataKeys.LoginType;
+        private const string PREF_ACCOUNT_STATUS = IVXLocalDataKeys.AccountStatus;
+        private const string PREF_KYC_STATUS = IVXLocalDataKeys.KycStatus;
+        private const string PREF_IS_GUEST = IVXLocalDataKeys.IsGuest;
+        private const string PREF_GUEST_CREATED_EPOCH = IVXLocalDataKeys.GuestCreatedEpoch;
+        private const string PREF_ACCESS_TOKEN = IVXLocalDataKeys.AccessToken;
+        private const string PREF_ID_TOKEN = IVXLocalDataKeys.IdToken;
+        private const string PREF_REFRESH_TOKEN = IVXLocalDataKeys.RefreshToken;
+        private const string PREF_ACCESS_TOKEN_EXPIRY = IVXLocalDataKeys.AccessTokenExpiry;
+        private const string PREF_IDENTITY_MIGRATED = IVXLocalDataKeys.IdentityMigrated;
 
         private static IntelliVerseXIdentity _instance;
         private static IntelliVerseXConfig _config;
@@ -299,7 +299,7 @@ namespace IntelliVerseX.Core
         }
 
         /// <summary>
-        /// Clear all user data (logout)
+        /// Clear all user data (logout). Alias: <see cref="Clear"/>.
         /// </summary>
         public static void ClearUserData()
         {
@@ -341,6 +341,9 @@ namespace IntelliVerseX.Core
             
             OnIdentityUpdated?.Invoke();
         }
+
+        /// <summary>Alias for <see cref="ClearUserData"/> (logout / wipe tooling).</summary>
+        public static void Clear() => ClearUserData();
 
         // ========== INTERNAL METHODS ==========
 

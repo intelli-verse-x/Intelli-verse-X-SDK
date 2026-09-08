@@ -48,7 +48,6 @@ namespace IntelliVerseX.Editor
         private string _wizardStatus = "";
         private MessageType _wizardStatusType = MessageType.None;
         private CancellationTokenSource _wizardCts;
-        private bool _serverFoldout;
         private string _lastCreatedAppId = "";
         private bool _focusConnectBanner;
         private int _recentGamesPopupIndex;
@@ -115,7 +114,7 @@ namespace IntelliVerseX.Editor
             if (_config == null)
             {
                 EditorGUILayout.HelpBox(
-                    "Create a bootstrap connection file once. Game ID and Nakama settings are stored there.",
+                    "Create a bootstrap connection file once. Your Game ID is stored there.",
                     MessageType.Info);
                 if (GUILayout.Button("Create connection file", GUILayout.Height(34)))
                 {
@@ -161,8 +160,8 @@ namespace IntelliVerseX.Editor
                 DrawCreatedSuccessActions();
             }
 
-            EditorGUILayout.Space(8);
-            DrawNakamaServerFoldout();
+            // Nakama host/port/key intentionally omitted from Control Center (consumer security).
+            // Maintainers: IntelliVerseX → Advanced Setup → Backend, or Bootstrap Config inspector.
         }
 
         private void DrawConnectProgress()
@@ -505,58 +504,6 @@ namespace IntelliVerseX.Editor
             EditorGUILayout.EndVertical();
         }
 
-        private void DrawNakamaServerFoldout()
-        {
-            if (_configSo == null)
-                return;
-
-            _configSo.Update();
-            bool server = EditorGUILayout.BeginFoldoutHeaderGroup(_serverFoldout, "Nakama server");
-            if (server != _serverFoldout)
-            {
-                _serverFoldout = server;
-                EditorPrefs.SetBool(IVXConnectWizardValidation.PrefServerFoldout, _serverFoldout);
-            }
-
-            if (_serverFoldout)
-            {
-                EditorGUILayout.PropertyField(_configSo.FindProperty("_serverHost"), new GUIContent("Server host"));
-                EditorGUILayout.PropertyField(_configSo.FindProperty("_serverPort"), new GUIContent("Server port"));
-                EditorGUILayout.PropertyField(_configSo.FindProperty("_serverKey"), new GUIContent("Server key"));
-                EditorGUILayout.PropertyField(_configSo.FindProperty("_useSSL"), new GUIContent("Use SSL"));
-                EditorGUILayout.ObjectField("Config asset", _config, typeof(IVXBootstrapConfig), false);
-
-                EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Ping server", GUILayout.Height(26)))
-                    PingServer();
-                if (GUILayout.Button("Select config", GUILayout.Height(26)))
-                {
-                    Selection.activeObject = _config;
-                    EditorGUIUtility.PingObject(_config);
-                }
-                EditorGUILayout.EndHorizontal();
-
-                if (!string.IsNullOrEmpty(_serverPing))
-                    EditorGUILayout.HelpBox(_serverPing, _serverPingType);
-            }
-
-            EditorGUILayout.EndFoldoutHeaderGroup();
-
-            if (_configSo.ApplyModifiedProperties())
-                EditorUtility.SetDirty(_config);
-
-            if (!HasValidBootstrapGameId)
-            {
-                EditorGUILayout.HelpBox(
-                    "No valid Game ID yet — finish Create new or Use existing above.",
-                    MessageType.Warning);
-            }
-            else
-            {
-                DrawStatusRow("Game ID", true);
-            }
-        }
-
         private void PasteGameIdFromClipboard()
         {
             string clip = (EditorGUIUtility.systemCopyBuffer ?? "").Trim();
@@ -608,7 +555,6 @@ namespace IntelliVerseX.Editor
                 _loginEmail = EditorPrefs.GetString(IVXConnectWizardValidation.PrefEmail, string.Empty) ?? string.Empty;
             if (string.IsNullOrWhiteSpace(_createGameName))
                 _createGameName = EditorPrefs.GetString(IVXConnectWizardValidation.PrefGameName, string.Empty) ?? string.Empty;
-            _serverFoldout = EditorPrefs.GetBool(IVXConnectWizardValidation.PrefServerFoldout, false);
             _connectMode = (ConnectSourceMode)Mathf.Clamp(
                 EditorPrefs.GetInt(PrefConnectMode, (int)ConnectSourceMode.CreateNew), 0, 1);
             _focusConnectBanner = EditorPrefs.GetBool(IVXConnectWizardValidation.PrefFocusConnect, false);
