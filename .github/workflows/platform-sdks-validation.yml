@@ -97,12 +97,24 @@ jobs:
       - name: Check version consistency across SDKs
         run: |
           VERSION="5.8.0"
-          echo "Checking all SDKs declare version $VERSION"
+          JS_VERSION="5.9.0"
+          echo "Checking platform SDKs at $VERSION and JavaScript at $JS_VERSION"
           FAIL=0
 
           grep -q "$VERSION" SDKs/unreal/IntelliVerseX.uplugin || { echo "FAIL: Unreal version mismatch"; FAIL=1; }
           grep -q "$VERSION" SDKs/godot/addons/intelliversex/plugin.cfg || { echo "FAIL: Godot version mismatch"; FAIL=1; }
-          grep -q "$VERSION" SDKs/javascript/package.json || { echo "FAIL: JavaScript version mismatch"; FAIL=1; }
+          # JavaScript has an additive Phygital release; other platforms are unchanged.
+          python3 - "$JS_VERSION" <<'PYTHON' || FAIL=1
+          import json, re, sys
+          from pathlib import Path
+          expected = sys.argv[1]
+          root = Path("SDKs/javascript")
+          package = json.loads((root / "package.json").read_text())
+          lock = json.loads((root / "package-lock.json").read_text())
+          runtime = re.search(r"SDK_VERSION\s*=\s*['\"]([^'\"]+)", (root / "src/types.ts").read_text())
+          assert package["version"] == lock["version"] == lock["packages"][""]["version"] == expected, "JavaScript package version mismatch"
+          assert runtime and runtime.group(1) == expected, "JavaScript runtime version mismatch"
+          PYTHON
           grep -q "$VERSION" SDKs/java/build.gradle || { echo "FAIL: Java version mismatch"; FAIL=1; }
           grep -q "$VERSION" SDKs/flutter/pubspec.yaml || { echo "FAIL: Flutter version mismatch"; FAIL=1; }
           grep -q "$VERSION" SDKs/cpp/CMakeLists.txt || { echo "FAIL: C++ version mismatch"; FAIL=1; }
@@ -113,4 +125,4 @@ jobs:
             echo "Version consistency check FAILED"
             exit 1
           fi
-          echo "Version check passed — all SDKs at $VERSION"
+          echo "Version check passed — platform SDKs $VERSION; JavaScript $JS_VERSION"

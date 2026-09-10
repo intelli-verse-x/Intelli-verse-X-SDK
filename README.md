@@ -1,8 +1,8 @@
-<h1 align="center">IntelliVerseX SDK</h1>
+<h1 align="center">Intelliverse SDK</h1>
 
 <p align="center">
-The AI-native, 11-engine game development platform.<br>
-From game design document to live retention — one SDK, any engine, every platform.
+Open-source tools for apps that go beyond a screen.<br>
+Build digital apps and games. Connect quests, content, kiosks, and conversations.
 </p>
 
 <p align="center">
@@ -16,9 +16,35 @@ From game design document to live retention — one SDK, any engine, every platf
 
 ---
 
-## Why IntelliVerseX
+## Come build apps, wherever people are
 
-Most game SDKs solve one problem — ads, analytics, or multiplayer. IntelliVerseX covers the **entire game development lifecycle** from initial concept to live operations, across 11 engines and every major platform.
+**App Quests. App Ads. Conversational experiences.** We believe in omnipresent apps: apps people can open on a phone, chat with on WhatsApp or the web, talk to through voice calls, and discover at an AI kiosk.
+
+**Phygital means physical + digital.** Imagine completing a quest at a real vending machine to earn a reward in your mobile game.
+
+- **ContentX** creates content for apps and campaigns.
+- **QuestX** provides quests and rewards.
+- **KioskX** connects apps to physical kiosks and vending machines.
+
+### Start building in five commands
+
+```bash
+git clone https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git
+cd Intelli-verse-X-SDK/SDKs/javascript
+npm ci
+npm run build
+npm run example:phygital
+```
+
+The **JavaScript Phygital adapter toolkit** validates and routes App Quests, App Ads, and conversations across explicitly configured channels. The example runs locally with demo adapters—no account or provider keys required.
+
+[**Build your first Phygital app →**](docs/guides/phygital-apps.md) · [**Explore the source →**](SDKs/javascript/src/IVXPhygitalApp.ts) · [**See Intelliverse →**](https://intelli-verse-x.ai/#phygital) · [**Contribute →**](CONTRIBUTING.md)
+
+**Availability:** The adapter toolkit is in the JavaScript source. Kiosk quests and campaigns are a preview and require participating locations. WhatsApp and voice calls require separately connected providers. Installing this SDK does not activate those services. Other engine SDKs retain their existing capabilities; this is not a claim of Phygital parity across every engine.
+
+## App and game development foundations
+
+Most game SDKs solve one problem — ads, analytics, or multiplayer. Intelliverse covers the **entire game development lifecycle** from initial concept to live operations, across 11 engines and every major platform.
 
 | What You Get | Without IVX | With IVX |
 |-------------|-------------|----------|
@@ -37,7 +63,7 @@ Most game SDKs solve one problem — ads, analytics, or multiplayer. IntelliVers
 
 ## The Complete Game Development Lifecycle
 
-IntelliVerseX is organized around the stages every game goes through:
+Intelliverse is organized around the stages every game goes through:
 
 ```
  DESIGN          BUILD           SHIP            GROW
@@ -57,11 +83,11 @@ IntelliVerseX is organized around the stages every game goes through:
 
 ### Phase 1: Design Your Game
 
-Before writing a single line of code, IntelliVerseX helps you design:
+Before writing a single line of code, Intelliverse helps you design:
 
 | Tool | What It Does |
 |------|-------------|
-| [**Game Design Studio**](.cursor/skills/ivx-game-design-studio/SKILL.md) | AI-assisted GDD generation with 15 document templates, 8-section design review, systems dependency mapping, MDA framework, Bartle player types, brand identity, store metadata, character bibles, and a **Starter Project Generator** that outputs a fully-wired "Hello IntelliVerseX" game for any of the 11 supported engines — auth, economy, daily rewards, streaks, leaderboards, achievements, analytics, and FTUE all working out of the box. |
+| [**Game Design Studio**](.cursor/skills/ivx-game-design-studio/SKILL.md) | AI-assisted GDD generation with 15 document templates, 8-section design review, systems dependency mapping, MDA framework, Bartle player types, brand identity, store metadata, character bibles, and a **Starter Project Generator** that outputs a fully-wired "Hello Intelliverse" game for any of the 11 supported engines — auth, economy, daily rewards, streaks, leaderboards, achievements, analytics, and FTUE all working out of the box. |
 | [**Economy Simulator**](.cursor/skills/ivx-economy-simulator/SKILL.md) | Currency flow modeling (sources, sinks, exchange rates). Monte Carlo simulation over 90+ days. Inflation/deflation detection. Gini coefficient monitoring. Reward curve designer. Store pricing A/B test integration. |
 | [**Narrative Engine**](.cursor/skills/ivx-narrative-engine/SKILL.md) | Branching dialog trees. Story state machine with flags, variables, conditions. Character relationship tracking. Ink and Yarn Spinner import. AI-generated dialog for dynamic NPCs. Cutscene sequencer. |
 
@@ -170,7 +196,7 @@ Keep players engaged and revenue growing after launch:
 }
 ```
 
-**2. Bootstrap** — Run **IntelliVerseX > Generate All Prefabs**, drag `IVX_Bootstrap.prefab` into your first scene, configure the Bootstrap Config asset.
+**2. Bootstrap** — Run **Intelliverse > Generate All Prefabs**, drag `IVX_Bootstrap.prefab` into your first scene, configure the Bootstrap Config asset.
 
 **3. Go** — Listen for ready and start building:
 
@@ -241,7 +267,7 @@ Every skill is a purpose-built workflow that any AI coding agent can execute. Wo
 
 | Skill | Trigger Phrases | What It Does |
 |-------|----------------|-------------|
-| [**ivx-sdk-setup**](.cursor/skills/ivx-sdk-setup/SKILL.md) | "set up IntelliVerseX" | Bootstrap on any engine, config wizard, XR/console/WebGL detection |
+| [**ivx-sdk-setup**](.cursor/skills/ivx-sdk-setup/SKILL.md) | "set up Intelliverse" | Bootstrap on any engine, config wizard, XR/console/WebGL detection |
 | [**ivx-asset-pipeline**](.cursor/skills/ivx-asset-pipeline/SKILL.md) | "scaffold character", "spritesheet" | 2D/3D character scaffolding, sprite sheet generation, sound manifests, schema validation |
 | [**ivx-asset-manager**](.cursor/skills/ivx-asset-manager/SKILL.md) | "replace sprite", "add asset", "swap sound" | **CRUD for any asset** — add, replace, modify, delete sprites/sounds/3D models/scenes/videos from any source (human or AI), with schema validation, manifest updates, audit, and S3 sync |
 | [**ivx-character-factory**](.cursor/skills/ivx-character-factory/SKILL.md) | "generate character", "create sprites" | **AI-generated** full sprite sheets, expression grids, emotional states, topic skins — validated against SDK schemas |
@@ -282,7 +308,7 @@ Every skill is a purpose-built workflow that any AI coding agent can execute. Wo
 
 ### Wiring Skills into Your AI Coding Tool
 
-Skills are `SKILL.md` files that tell your AI coding assistant exactly how to integrate each IntelliVerseX feature. Once wired, you just describe what you want in natural language and the AI follows the skill's instructions.
+Skills are `SKILL.md` files that tell your AI coding assistant exactly how to integrate each Intelliverse feature. Once wired, you just describe what you want in natural language and the AI follows the skill's instructions.
 
 <details>
 <summary><strong>Cursor (Recommended)</strong></summary>
@@ -339,14 +365,14 @@ cp /path/to/Intelli-verse-X-SDK/.cursor/skills/ivx-monetization/SKILL.md .cursor
 **Verifying skills are active:**
 
 1. Open Cursor Settings (Cmd/Ctrl + Shift + J) and check the Skills section
-2. Or start a chat and ask: *"What IntelliVerseX skills do you have access to?"*
+2. Or start a chat and ask: *"What Intelliverse skills do you have access to?"*
 3. The agent will list all detected skills from `.cursor/skills/`
 
 **Using skills:**
 
 Just describe what you want. Cursor matches your intent to the right skill:
 
-- *"Set up IntelliVerseX in my Unity project"* → triggers `ivx-sdk-setup`
+- *"Set up Intelliverse in my Unity project"* → triggers `ivx-sdk-setup`
 - *"Add daily rewards and a season pass"* → triggers `ivx-live-ops`
 - *"Monetize my game with rewarded ads"* → triggers `ivx-monetization`
 - *"Add AI NPC dialog"* → triggers `ivx-ai-integration`
@@ -567,7 +593,7 @@ Open your project folder in Windsurf. Skills in `.cursor/skills/` are automatica
 
 Open Cascade (the AI panel) and describe what you need:
 
-- *"Set up IntelliVerseX in my Unity project"*
+- *"Set up Intelliverse in my Unity project"*
 - *"Add a season pass using the live ops skill"*
 - *"Wire crash reporting with Sentry"*
 
@@ -653,7 +679,7 @@ Open your project in Antigravity and describe what you need. The agent reads `.a
 <details>
 <summary><strong>Devin / OpenAI Codex / Other Agents</strong></summary>
 
-Any AI agent that can read files from a repository can use IntelliVerseX skills.
+Any AI agent that can read files from a repository can use Intelliverse skills.
 
 **Step 1: Add skills to your project**
 
@@ -761,7 +787,7 @@ pip install Pillow jsonschema
 
 ### Project Boilerplate & Integration
 
-Generate a **complete, runnable game project** or **wire into an existing project** for any of the 11 supported engines with every IntelliVerseX SDK feature wired up. 
+Generate a **complete, runnable game project** or **wire into an existing project** for any of the 11 supported engines with every Intelliverse SDK feature wired up.
 
 #### Mode 1: From Scratch
 Creates a brand new project with all 18 features (Auth, Economy, Store, Achievements, Daily Rewards, Energy, Leaderboards, Progression, Settings, FTUE, Retention, Analytics) fully implemented and compiling. All 11 engine templates produce **100% compilable, functional projects** out of the box using local SDK stubs.
@@ -806,7 +832,7 @@ The tools read your GDD exports (`brand_entity.json`, `game_context.json`) and c
 
 ## Content-Factory Integration (AI Asset Generation)
 
-IntelliVerseX is the only SDK that pairs game infrastructure with AI content generation. The [Content-Factory](https://github.com/Intelli-verse-X/content-factory) integration turns text descriptions into production-ready game assets — characters, sprites, 3D models, audio, environments, and store listings.
+Intelliverse is the only SDK that pairs game infrastructure with AI content generation. The [Content-Factory](https://github.com/Intelli-verse-X/content-factory) integration turns text descriptions into production-ready game assets — characters, sprites, 3D models, audio, environments, and store listings.
 
 ### The Cost Difference
 
@@ -868,7 +894,7 @@ python -m utils.ivx.validate game_sound/ivx/sound_manifest.json --schema sound-m
 
 ## Asset Coverage Matrix
 
-IntelliVerseX + Content-Factory covers **68 asset types** across in-game, app store, and promotional categories. **43 are fully automated, 57 are automated or assisted (84%).**
+Intelliverse + Content-Factory covers **68 asset types** across in-game, app store, and promotional categories. **43 are fully automated, 57 are automated or assisted (84%).**
 
 Legend: **AUTO** = fully automated | **SEMI** = template/scaffold provided | **TOOL** = SDK tool assists | **NONE** = not covered yet
 
@@ -1089,3 +1115,7 @@ MIT License — see [LICENSE](LICENSE)
 ---
 
 <p align="center">Made with care by <a href="https://intelliversex.com">IntelliVerse-X</a></p>
+
+## Publish beyond the phone
+
+Build a kiosk-only app or pair a phone controller with a smart kiosk display. The coordinated preview includes a typed KioskX publisher and a runnable two-screen example. [Follow the screen publishing guide](docs/guides/kiosk-screen-publishing.md).

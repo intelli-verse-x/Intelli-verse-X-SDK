@@ -9,7 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_(no unreleased changes)_
+### Added — JavaScript 5.9.0 source
+
+- `IVXPhygitalApp`: validated immutable app manifests, explicit channel/capability routing, App Quest and App Ad intents, and conversations for host-owned mobile, web, kiosk, WhatsApp, chat, and voice adapters.
+- Local runnable example, integration guide, and failure-path tests. Provider connectivity and server-authoritative reward/campaign handling remain host responsibilities.
+- GitHub introduction centered on Intelliverse, Phygital apps, and the omnipresent app vision.
+
+### Fixed
+
+- JavaScript package declaration build: Nakama RPC object payload/response handling and missing WebXR types. No breaking API changes or provider deployment. Package-registry publishing is separate.
 
 ---
 
@@ -351,3 +359,8 @@ See [`Assets/Intelli-verse-X-SDK/CHANGELOG.md`](Assets/Intelli-verse-X-SDK/CHANG
 ---
 
 For the Unity UPM package changelog, see [Assets/Intelli-verse-X-SDK/CHANGELOG.md](Assets/Intelli-verse-X-SDK/CHANGELOG.md).
+
+## Unreleased — kiosk screen publishing
+
+- Add server-side IVXKioskPublisher, v1 experience manifest validation, revision-aware publishing and disabling.
+- Add runnable two-screen web example and coordinated cloud/operator/ZHZN release guide. Included in the pending JavaScript 5.9.0 feature release; no Unity public API changes.

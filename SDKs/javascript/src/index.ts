@@ -136,3 +136,13 @@ export type {
 // WebXR
 export { IVXWebXRHelper, WebXRSessionType } from './IVXWebXRHelper';
 export type { WebXRCapabilities } from './IVXWebXRHelper';
+
+// Phygital apps — host-owned channel adapters (no bundled network/provider integration).
+export { IVXPhygitalApp } from './IVXPhygitalApp';
+export type {
+  IVXAppChannel, IVXAppCapability, IVXPhygitalManifest, IVXAppIntent,
+  IVXPhygitalRequest, IVXPhygitalResult, IVXPhygitalAdapter,
+} from './IVXPhygitalApp';
+
+export { IVXKioskPublisher, validateIVXKioskExperience } from './IVXKioskPublisher';
+export type { IVXKioskExperience, IVXKioskPublication, IVXKioskPublisherOptions } from './IVXKioskPublisher';
