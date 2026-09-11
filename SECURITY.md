@@ -4,13 +4,11 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 5.8.x   | :white_check_mark: |
-| 5.7.x   | :white_check_mark: |
-| 5.6.x   | :white_check_mark: |
-| 5.5.x   | :white_check_mark: |
-| 5.1.x   | :x:                |
-| 5.0.x   | :x:                |
-| < 5.0   | :x:                |
+| 6.0.x   | :white_check_mark: |
+| 5.11.x  | :white_check_mark: (security fixes only) |
+| 5.10.x  | :x:                |
+| 5.8.x   | :x:                |
+| < 5.8   | :x:                |
 
 ## Reporting a Vulnerability
 
@@ -55,56 +53,57 @@ When using IntelliVerseX SDK:
 ### Configuration Security
 
 ```csharp
-// ❌ Don't hardcode secrets
-public string apiKey = "sk_live_xxxx";
+// Don't hardcode secrets in ScriptableObjects or tooltips
+public string apiKey = "sk_live_xxxx"; // BAD
 
-// ✅ Use the common config file (config/keys.json) or secure storage
-// Copy config/keys.example.json to config/keys.json, fill values, never commit keys.json. See config/README.md.
-// In Unity, AuthService reads authBaseUrl from config/keys.json; for other keys load from that file or use IVXSecureStorage.
-var apiKey = IVXSecureStorage.GetString("api_key"); // or read from config/keys.json (see config/README.md)
+// Use config/keys.json (gitignored) or IVXSecureStorage
+// Copy config/keys.example.json → config/keys.json; never commit keys.json
+var apiKey = IVXSecureStorage.GetString("api_key");
 ```
 
 ### Data Encryption
 
-The SDK encrypts sensitive data by default:
+The SDK encrypts sensitive PlayerPrefs values with AES-256-CBC (PBKDF2-derived per-device key):
 
 ```csharp
-// Encrypted storage (default)
 IVXSecureStorage.SetObject("user_data", sensitiveData);
-
-// Verify encryption is enabled
-Debug.Assert(IntelliVerseXSDK.Config.encryptLocalData);
 ```
+
+WebGL / browser builds cannot provide the same secrecy as native — treat client storage as untrusted.
 
 ### Network Security
 
 - All backend communication uses TLS 1.2+
-- SSL certificate pinning available for mobile
-- Token refresh prevents session hijacking
+- Token refresh reduces long-lived session risk
+- **Certificate pinning is not currently enforced in the Unity package** — rely on platform TLS and pin at the reverse-proxy if required for your threat model
 
 ### Input Validation
 
 ```csharp
-// The SDK validates inputs, but always sanitize user data
+// The SDK validates many inputs; still sanitize untrusted user content before display or RPC
 var sanitizedInput = SanitizeUserInput(rawInput);
 ```
 
 ## Known Security Considerations
 
+### Shared cloud defaults
+
+Shared Nakama hosts may use platform default server keys for the managed SaaS. For self-hosting, set a strong server key in `IVXBootstrapConfig` and never ship production secrets in client tooltips or source.
+
 ### WebGL / Browser Limitations
 
 WebGL and JavaScript browser builds have reduced security:
-- No native encryption
-- Data stored in IndexedDB / localStorage (not encrypted)
+- No native encryption guarantees
+- Data stored in IndexedDB / localStorage
 - Session tokens accessible via browser dev tools
-- Consider additional server-side validation
+- Prefer server-side validation for economy and competitive scores
 
 ### Platform-Specific Notes
 
 | Platform | Session Storage | Encryption |
 |----------|----------------|------------|
-| Unity (Mobile) | PlayerPrefs (encrypted) | AES-256 |
-| Unity (WebGL) | IndexedDB | None |
+| Unity (Mobile) | PlayerPrefs (encrypted via IVXSecureStorage) | AES-256 |
+| Unity (WebGL) | IndexedDB / PlayerPrefs | Limited |
 | Unreal | GConfig (Game.ini) | File-system level |
 | Godot | ConfigFile (user://) | None by default |
 | Defold | sys.save | None by default |
@@ -114,30 +113,23 @@ WebGL and JavaScript browser builds have reduced security:
 | Flutter/Dart | SharedPreferences | None by default |
 | Web3 | Browser wallet + localStorage | TLS only |
 
-For all non-Unity platforms, sensitive data should be protected at the OS/filesystem level. SSL/TLS is enforced for all server communication.
-
 ### Debug Builds
 
-Debug builds may expose sensitive information. Disable debug logging in production:
+Disable verbose logging in production:
 
 ```csharp
-// Unity
 #if !DEVELOPMENT_BUILD
     IVXLogger.SetLevel(LogLevel.Error);
 #endif
 ```
 
-```typescript
-// JavaScript
-ivx.initialize({ enableDebugLogs: false });
-```
-
-```java
-// Java
-IVXConfig.builder().enableDebugLogs(false).build();
-```
-
 ## Security Changelog
+
+### v6.0.0
+- Removed shared Photon App IDs from consumer-visible tooltips
+- Replaced fixed secure-storage fallback secrets with install-scoped seeds
+- Documented that certificate pinning is not enforced in-package
+- Added CodeQL workflow for C# / JS / Python surfaces
 
 ### v5.1.0 (2026-03-02)
 - Added Flutter/Dart and Web3/TypeScript SDK security considerations
@@ -146,19 +138,8 @@ IVXConfig.builder().enableDebugLogs(false).build();
 
 ### v5.0.0 (2026-02-27)
 - Upgraded encryption to AES-256
-- Added SSL certificate pinning
 - Improved token storage security
 - Added secure device ID generation
-
-### v4.2.0 (2024-11-15)
-- Fixed potential token exposure in logs
-- Added session timeout enforcement
-
-## Acknowledgments
-
-We thank the following security researchers:
-
-- (Your name could be here!)
 
 ---
 

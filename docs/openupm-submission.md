@@ -7,7 +7,7 @@ Step-by-step to publish **com.intelliversex.sdk** (Unity C# SDK only) on [OpenUP
 ## Prerequisites
 
 - [ ] Package `com.intelliversex.sdk` is open-source on GitHub (this repo)
-- [ ] At least one Git tag exists (e.g. `v5.8.0`) for the build
+- [ ] At least one Git tag exists (e.g. `v6.0.0`) for the build
 - [ ] Package is **not** on the official Unity registry (OpenUPM requirement)
 - [ ] License is MIT and clearly stated
 
@@ -100,7 +100,7 @@ Standard format:
 ## Notes
 
 - **Unity Asset Store:** OpenUPM disallows publishing Asset Store content without explicit open-source rights. This package is your own SDK with MIT license; ensure no third-party Asset Store assets are included in the UPM package.
-- **Version tags:** OpenUPM builds from Git tags. Use semver (e.g. `v5.8.0`). Create tags via GitHub Releases or: `git tag v5.8.0 && git push origin v5.8.0`
+- **Version tags:** OpenUPM builds from Git tags. Use semver (e.g. `v6.0.0`). Create tags via GitHub Releases or: `git tag v6.0.0 && git push origin v6.0.0`
 - **Path:** If your package lives in a subfolder (e.g. `Assets/_IntelliVerseXSDK` or `Assets/Intelli-verse-X-SDK`), the add form may ask for the path. OpenUPM supports subfolder packages; specify the path where `package.json` lives.
 
 ---

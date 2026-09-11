@@ -34,6 +34,8 @@ namespace IntelliVerseX.Bootstrap
         private static IVXBootstrap _instance;
         private bool _isInitialized;
         private bool _isInitializing;
+        private IVXBootstrapStatus _status = IVXBootstrapStatus.NotStarted;
+        private int _moduleFailureCount;
         private string _userId;
         private string _userName;
         private string _authToken;
@@ -50,10 +52,14 @@ namespace IntelliVerseX.Bootstrap
 
         /// <summary>Singleton instance.</summary>
         public static IVXBootstrap Instance => _instance;
-        /// <summary>Whether bootstrap initialization has completed successfully.</summary>
+        /// <summary>Whether bootstrap finished without a hard failure (Online, Offline, or Partial).</summary>
         public bool IsInitialized => _isInitialized;
         /// <summary>Whether initialization is currently in progress.</summary>
         public bool IsInitializing => _isInitializing;
+        /// <summary>Detailed bootstrap outcome. Prefer this over the bool on <see cref="OnBootstrapComplete"/>.</summary>
+        public IVXBootstrapStatus Status => _status;
+        /// <summary>True when backend auth succeeded (Online or Partial).</summary>
+        public bool IsOnline => _status == IVXBootstrapStatus.Online || _status == IVXBootstrapStatus.Partial;
         /// <summary>The bootstrap configuration.</summary>
         public IVXBootstrapConfig Config => _config;
 
@@ -81,8 +87,13 @@ namespace IntelliVerseX.Bootstrap
 
         #region Events
 
-        /// <summary>Fired when bootstrap completes. Bool = success.</summary>
+        /// <summary>
+        /// Fired when bootstrap completes. Bool is true for Online/Offline/Partial (SDK usable),
+        /// false only for Failed. Prefer <see cref="OnBootstrapStatus"/> for precise semantics.
+        /// </summary>
         public event Action<bool> OnBootstrapComplete;
+        /// <summary>Fired when bootstrap completes with an explicit <see cref="IVXBootstrapStatus"/>.</summary>
+        public event Action<IVXBootstrapStatus> OnBootstrapStatus;
         /// <summary>Fired when a specific module initializes. String = module name.</summary>
         public event Action<string> OnModuleInitialized;
         /// <summary>Fired if a module fails. (module name, error message).</summary>
@@ -115,7 +126,7 @@ namespace IntelliVerseX.Bootstrap
             catch (System.Exception e)
             {
                 Debug.LogError($"[IVXBootstrap] Initialization failed: {e.Message}\n{e.StackTrace}");
-                OnBootstrapComplete?.Invoke(false);
+                CompleteBootstrap(IVXBootstrapStatus.Failed);
             }
         }
 
@@ -136,18 +147,23 @@ namespace IntelliVerseX.Bootstrap
         /// Initialize all enabled SDK modules in dependency order.
         /// Safe to call multiple times — returns immediately if already initialized.
         /// </summary>
-        /// <returns>True if all enabled modules initialized successfully.</returns>
+        /// <returns>
+        /// True when status is Online, Offline, or Partial (SDK usable).
+        /// False only when status is Failed. Inspect <see cref="Status"/> for details.
+        /// </returns>
         public async Task<bool> InitializeAsync()
         {
-            if (_isInitialized) return true;
+            if (_isInitialized) return _status != IVXBootstrapStatus.Failed;
             if (_isInitializing) return false;
             _isInitializing = true;
+            _moduleFailureCount = 0;
+            _status = IVXBootstrapStatus.NotStarted;
 
             if (_config == null)
             {
                 Debug.LogError("[IVXBootstrap] No IVXBootstrapConfig assigned. Drag one onto the Inspector.");
                 _isInitializing = false;
-                OnBootstrapComplete?.Invoke(false);
+                CompleteBootstrap(IVXBootstrapStatus.Failed);
                 return false;
             }
 
@@ -167,7 +183,7 @@ namespace IntelliVerseX.Bootstrap
             }
 
             Log("Starting SDK bootstrap...");
-            var success = true;
+            var backendOnline = true;
 
             // ── Phase 1: Platform ──
             if (_config.EnablePlatform) InitPlatform();
@@ -175,15 +191,15 @@ namespace IntelliVerseX.Bootstrap
             // ── Phase 2: Backend (Nakama auth) ──
             if (_config.AutoDeviceAuth)
             {
-                success = await InitBackendAsync();
-                if (!success)
+                backendOnline = await InitBackendAsync();
+                if (!backendOnline)
                 {
                     Log("Backend auth failed — continuing in offline mode");
                 }
             }
 
             // ── Phase 3: Hiro + Satori (need Nakama session) ──
-            if (success)
+            if (backendOnline)
             {
                 if (_config.EnableHiro) InitHiro();
                 if (_config.EnableSatori) InitSatori();
@@ -198,11 +214,29 @@ namespace IntelliVerseX.Bootstrap
             // ── Phase 6: Multiplayer (self-initializing, just touch the singleton) ──
             if (_config.EnableMultiplayer) InitMultiplayer();
 
-            _isInitialized = true;
+            IVXBootstrapStatus outcome;
+            if (!backendOnline)
+                outcome = IVXBootstrapStatus.Offline;
+            else if (_moduleFailureCount > 0)
+                outcome = IVXBootstrapStatus.Partial;
+            else
+                outcome = IVXBootstrapStatus.Online;
+
+            Log($"Bootstrap complete ({outcome}). User: {_userId ?? "(offline)"}");
+            CompleteBootstrap(outcome);
+            return outcome != IVXBootstrapStatus.Failed;
+        }
+
+        private void CompleteBootstrap(IVXBootstrapStatus status)
+        {
+            _status = status;
+            _isInitialized = status != IVXBootstrapStatus.Failed;
             _isInitializing = false;
-            Log($"Bootstrap complete. User: {_userId ?? "(offline)"}");
-            OnBootstrapComplete?.Invoke(true);
-            return true;
+            bool usable = status != IVXBootstrapStatus.Failed;
+            try { OnBootstrapStatus?.Invoke(status); }
+            catch (Exception e) { Debug.LogError($"[IVXBootstrap] OnBootstrapStatus subscriber error: {e.Message}"); }
+            try { OnBootstrapComplete?.Invoke(usable); }
+            catch (Exception e) { Debug.LogError($"[IVXBootstrap] OnBootstrapComplete subscriber error: {e.Message}"); }
         }
 
         /// <summary>
@@ -235,6 +269,7 @@ namespace IntelliVerseX.Bootstrap
             IVXOptionalModules.TryShutdownDiscord();
 
             _isInitialized = false;
+            _status = IVXBootstrapStatus.NotStarted;
             Debug.Log("[IVXBootstrap] SDK shutdown complete.");
         }
 
@@ -426,8 +461,16 @@ namespace IntelliVerseX.Bootstrap
 
         private void EmitModuleFail(string moduleName, Exception e)
         {
+            _moduleFailureCount++;
             Debug.LogError($"[IVXBootstrap] {moduleName} failed: {e.Message}");
             OnModuleFailed?.Invoke(moduleName, e.Message);
+        }
+
+        private void EmitModuleFail(string moduleName, string message)
+        {
+            _moduleFailureCount++;
+            Debug.LogError($"[IVXBootstrap] {moduleName} failed: {message}");
+            OnModuleFailed?.Invoke(moduleName, message);
         }
 
         #endregion

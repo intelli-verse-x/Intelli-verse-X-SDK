@@ -277,7 +277,7 @@ The IntelliVerseX SDK spans **10 game engine/platform SDKs** targeting **17 dist
 
 ### Phase 1: Unity Launch (Week 1-2)
 1. Unity Asset Store submission
-2. GitHub release v5.8.0
+2. GitHub release v6.0.0
 3. OpenUPM registration
 4. Nakama community announcement
 

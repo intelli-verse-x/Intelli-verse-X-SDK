@@ -317,7 +317,8 @@ Photon multiplayer configuration.
 ```csharp
 public static class IVXPhotonConfig
 {
-    public const string APP_ID = "fa2f730e-1c81-4d01-b11f-708680dcaf37";
+    // Set from keys.json / Bootstrap — never commit shared production App IDs
+    public const string APP_ID = "";
     public const string REGION = "us";
 }
 ```

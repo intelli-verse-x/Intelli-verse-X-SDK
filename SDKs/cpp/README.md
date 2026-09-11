@@ -2,7 +2,7 @@
 
 > Complete modular game development SDK for C/C++ — Auth, Backend (Nakama), Analytics, Social, Monetization, AI, Multiplayer, Hiro Live-Ops, and more.
 
-## What's New in v5.8.0
+## What's New in v6.0.0
 
 ### AI Voice & Host (`ivx::AIClient`)
 
@@ -56,7 +56,7 @@ hiro.getStreakState([](const ivx::StreakState& s) { ... });
 hiro.claimStreak([](const ivx::StreakState& s) { ... });
 ```
 
-## What's New in v5.8.0
+## What's New in v6.0.0
 
 - Discord Social SDK integration (Rich Presence, friends, lobbies, voice, invites, DMs, moderation)
 - Satori Analytics (events, feature flags, A/B experiments, live events)

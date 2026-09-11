@@ -54,6 +54,11 @@ namespace IntelliVerseX.Auth.UI
         [SerializeField] private Button _guestLoginButton;
 
         [Header("Social Login")]
+        [Tooltip("Hidden by default until a Google ID token provider is wired via IVXAPIClient.SocialLoginAsync.")]
+        [SerializeField] private bool _showGoogleSignIn;
+        [Tooltip("Hidden by default until Apple Auth plugin + INTELLIVERSEX_HAS_APPLE_SIGNIN are present.")]
+        [SerializeField] private bool _showAppleSignIn;
+        [SerializeField] private bool _showFacebookSignIn;
         [SerializeField] private Button _googleSignInButton;
         [SerializeField] private Button _appleSignInButton;
         [SerializeField] private Button _facebookSignInButton;
@@ -242,10 +247,26 @@ namespace IntelliVerseX.Auth.UI
             _appleSignInButton?.onClick.AddListener(SignInWithApple);
             _facebookSignInButton?.onClick.AddListener(SignInWithFacebook);
 
+            ApplySocialButtonVisibility();
+
             if (_guestLoginButton != null && _canvasAuth != null)
             {
                 _guestLoginButton.gameObject.SetActive(_canvasAuth.AllowGuestLogin);
             }
+        }
+
+        private void ApplySocialButtonVisibility()
+        {
+            bool appleOk = _showAppleSignIn;
+#if !(UNITY_IOS && INTELLIVERSEX_HAS_APPLE_SIGNIN)
+            appleOk = false;
+#endif
+            if (_googleSignInButton != null)
+                _googleSignInButton.gameObject.SetActive(_showGoogleSignIn);
+            if (_appleSignInButton != null)
+                _appleSignInButton.gameObject.SetActive(appleOk);
+            if (_facebookSignInButton != null)
+                _facebookSignInButton.gameObject.SetActive(_showFacebookSignIn);
         }
 
         private void SetupRememberMe()
@@ -566,22 +587,22 @@ namespace IntelliVerseX.Auth.UI
         private void SignInWithGoogle()
         {
             AnimateButton(_googleSignInButton);
-            ShowError("Google sign-in is coming soon.");
-            Debug.Log($"[{nameof(IVXPanelLogin)}] Google Sign-In requested (not yet available)");
+            ShowError("Google sign-in: obtain an ID token in your game, then call IVXAPIClient.SocialLoginAsync(\"google\", ...).");
+            Debug.LogWarning($"[{nameof(IVXPanelLogin)}] Google Sign-In is opt-in; wire a token provider before enabling the button.");
         }
 
         private void SignInWithApple()
         {
             AnimateButton(_appleSignInButton);
-            ShowError("Apple sign-in is coming soon.");
-            Debug.Log($"[{nameof(IVXPanelLogin)}] Apple Sign-In requested (not yet available)");
+            ShowError("Apple sign-in: wire AppleAuth credentials, then call IVXAPIClient.SocialLoginAsync(\"apple\", ...).");
+            Debug.LogWarning($"[{nameof(IVXPanelLogin)}] Apple Sign-In is opt-in; enable only with INTELLIVERSEX_HAS_APPLE_SIGNIN.");
         }
 
         private void SignInWithFacebook()
         {
             AnimateButton(_facebookSignInButton);
-            ShowError("Facebook sign-in is coming soon.");
-            Debug.Log($"[{nameof(IVXPanelLogin)}] Facebook Sign-In requested (not yet available)");
+            ShowError("Facebook sign-in is not shipped. Use IVXAPIClient.SocialLoginAsync when your token provider is ready.");
+            Debug.LogWarning($"[{nameof(IVXPanelLogin)}] Facebook Sign-In is opt-in and currently unfinished.");
         }
 
         #endregion

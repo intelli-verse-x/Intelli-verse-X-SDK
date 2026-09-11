@@ -46,7 +46,7 @@ Intelli-verse-X-SDK/                 git root — docs, CI, tools, UPM package
 
 | Platform | Install | Update |
 |----------|---------|--------|
-| **Unity** | `"com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk#v5.10.0"` | bump `#vX.Y.Z` |
+| **Unity** | `"com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk#v6.0.0"` | bump `#vX.Y.Z` |
 | **JavaScript** | `npm install @intelliversex/sdk` (publish from `SDKs/javascript`) | `npm update` |
 | **Flutter** | `pubspec.yaml` git url + `path: SDKs/flutter` | bump git `ref` |
 | **Unreal** | add `SDKs/unreal` as a plugin | pull |

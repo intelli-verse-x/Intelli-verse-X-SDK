@@ -2,7 +2,7 @@
 
 > Complete modular game development SDK for JavaScript/TypeScript — Auth, Backend (Nakama), Analytics, Social, Monetization, AI, Multiplayer, Hiro Live-Ops, and more.
 
-## What's New in v5.8.0
+## What's New in v6.0.0
 
 ### AI Voice & Host (`IVXAIClient`)
 

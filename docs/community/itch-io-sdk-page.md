@@ -65,7 +65,7 @@ MIT — see `LICENSE` inside the archive.
 
 - **README (this SDK):** included in the zip (`README.md`).
 - **Repo & cross-platform overview:** [github.com/intelli-verse-x/Intelli-verse-X-SDK](https://github.com/intelli-verse-x/Intelli-verse-X-SDK)
-- **Release notes:** [v5.8.0](https://github.com/intelli-verse-x/Intelli-verse-X-SDK/releases/tag/v5.8.0)
+- **Release notes:** [v5.8.0](https://github.com/intelli-verse-x/Intelli-verse-X-SDK/releases/tag/v6.0.0)
 
 ### Server
 

@@ -9,7 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_(no unreleased changes)_
+### Added — Production hardening (trust / CI / security)
+
+- `IVXBootstrapStatus` enum + `OnBootstrapStatus` (Online / Offline / Partial / Failed); bool complete event means usable, not necessarily online.
+- `IVXAuthClient` preferred auth facade; social login buttons hidden by default (finish-or-hide).
+- Paywall via `IVXSubscriptionManager.OnPaywallRequested` + optional `IVXPremiumGate` panel.
+- Critical-path EditMode tests: bootstrap status, wallet consolidation.
+- CodeQL workflow (C# / JS / Python).
+- Unity CI fail-closed without license secrets; Unity 6-only (dropped 2023 job).
+
+### Changed
+
+- Docs/install pins and coverage matrix synced to **v6.0.0** with honest Stub/RPC labels.
+- `IVXAPIClient.GetWalletBalanceAsync` delegates to `IVXNWalletManager`.
+- Email login in `IVXLoginController` uses Auth V2 (`IVXAPIClient.LoginAsync`).
+- `APIManager` split into partials: `APIManager.cs`, `.Auth.cs`, `.Notes.cs`, `.Social.cs`.
+- SECURITY.md supports 6.0.x; cert-pinning claim corrected.
+- Removed Photon App IDs from config tooltips; secure-storage fallback no longer uses fixed shared secrets.
 
 ---
 
@@ -215,7 +231,7 @@ Full-featured clan/group management powered by Nakama Groups.
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Assets/Intelli-verse-X-SDK#v5.2.0"
+    "com.intelliversex.sdk": "https://github.com/intelli-verse-x/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk#v6.0.0"
   }
 }
 ```

@@ -27,8 +27,21 @@ namespace IntelliVerseX.Storage
             if (_cachedKey != null) return _cachedKey;
 
             string deviceId = SystemInfo.deviceUniqueIdentifier;
-            if (string.IsNullOrEmpty(deviceId))
-                deviceId = "IntelliVerseX_Default_Key_2026";
+            if (string.IsNullOrEmpty(deviceId) || deviceId == "n/a")
+            {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                Debug.LogWarning("[IVXSecureStorage] deviceUniqueIdentifier unavailable; deriving ephemeral per-install key.");
+#endif
+                // No fixed shared secret — install-scoped random key persisted once.
+                const string installKeyPref = "IVX_INSTALL_ENC_SEED";
+                deviceId = PlayerPrefs.GetString(installKeyPref, string.Empty);
+                if (string.IsNullOrEmpty(deviceId))
+                {
+                    deviceId = Guid.NewGuid().ToString("N") + Application.identifier;
+                    PlayerPrefs.SetString(installKeyPref, deviceId);
+                    PlayerPrefs.Save();
+                }
+            }
 
             using var kdf = new Rfc2898DeriveBytes(
                 deviceId, PBKDF2_SALT, PBKDF2_ITERATIONS, HashAlgorithmName.SHA256);
@@ -142,8 +155,13 @@ namespace IntelliVerseX.Storage
         private static string DecryptLegacyXOR(byte[] cipherBytes)
         {
             string deviceId = SystemInfo.deviceUniqueIdentifier;
-            if (string.IsNullOrEmpty(deviceId))
-                deviceId = "IntelliVerseX_Default_Key_2025";
+            if (string.IsNullOrEmpty(deviceId) || deviceId == "n/a")
+            {
+                const string installKeyPref = "IVX_INSTALL_ENC_SEED";
+                deviceId = PlayerPrefs.GetString(installKeyPref, string.Empty);
+                if (string.IsNullOrEmpty(deviceId))
+                    deviceId = Guid.NewGuid().ToString("N") + Application.identifier;
+            }
 
             byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(deviceId);
             byte[] legacyKey = new byte[32];

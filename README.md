@@ -127,7 +127,7 @@ Keep players engaged and revenue growing after launch:
 | Feature | Unity | Unreal | Godot | Roblox | JS | Java | Flutter | C++ | Defold | Cocos | Web3 |
 |---------|:-----:|:------:|:-----:|:------:|:--:|:----:|:-------:|:---:|:------:|:-----:|:----:|
 | Auth (Device/Email/Social) | Full | Full | Full | Auto | Full | Full | Full | Full | Full | Full | Wallet |
-| Wallet / Economy | Full | Full | Full | Full | Full | Full | Full | Full | Full | Full | Full |
+| Wallet / Economy | Full | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC |
 | Leaderboards | Full | Full | Full | Native | Full | Full | Full | Full | Full | Full | Full |
 | Cloud Storage | Full | Full | Full | Full | Full | Full | Full | Full | Full | Full | Full |
 | Hiro Live-Ops (33 systems) | Full | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC | RPC |
@@ -136,10 +136,12 @@ Keep players engaged and revenue growing after launch:
 | Multiplayer (real-time) | Full | -- | Full | Native | Full | -- | -- | -- | Full | -- | -- |
 | Monetization (Ads/IAP) | Full | -- | -- | Native | -- | -- | -- | -- | -- | -- | -- |
 | Discord Social | Full | Stub | Stub | -- | Stub | Stub | Stub | Stub | Stub | Stub | Stub |
-| XR/VR/AR | Full | Full | Full | -- | WebXR | -- | -- | Full | -- | -- | -- |
-| Console (PS5/Xbox/Switch) | Full | Full | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| XR/VR/AR | Full | Partial | Partial | -- | WebXR | -- | -- | Full | -- | -- | -- |
+| Console (PS5/Xbox/Switch) | Stub | Stub | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 
-**Full** = native feature set | **RPC** = available via server calls | **Stub** = wrapper ready, implementation in progress | **Native** = platform handles natively
+**Full** = native | **RPC** = server RPCs | **Stub** = unfinished | **Native** = platform-owned | **Partial** = subset
+
+> Audited details: [FEATURE_COVERAGE_MATRIX.md](docs/FEATURE_COVERAGE_MATRIX.md)
 
 ### Deployment Targets
 
@@ -165,7 +167,7 @@ Keep players engaged and revenue growing after launch:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk#v5.10.0"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk#v6.0.0"
   }
 }
 ```
@@ -181,9 +183,13 @@ public class GameInit : MonoBehaviour
 {
     void Start()
     {
-        IVXBootstrap.OnBootstrapComplete += success =>
+        var bootstrap = IVXBootstrap.Instance;
+        // Prefer status enum: Online / Offline / Partial / Failed
+        bootstrap.OnBootstrapStatus += status =>
         {
-            Debug.Log($"IntelliVerseX Ready! User: {IVXBootstrap.Instance.UserId}");
+            Debug.Log($"IntelliVerseX Ready: {status}. User: {IVXBootstrap.Instance.UserId}");
+            if (status == IVXBootstrapStatus.Offline)
+                Debug.LogWarning("Running offline — backend features unavailable.");
         };
     }
 }

@@ -2,7 +2,7 @@
 
 > Web3 game development SDK — Wallet auth (MetaMask/WalletConnect), NFT rewards, token gating, on-chain leaderboards, AI, Multiplayer, Hiro Live-Ops, backed by Nakama + Hiro.
 
-## What's New in v5.8.0
+## What's New in v6.0.0
 
 ### AI Voice & Host (`IVXAIClient`)
 

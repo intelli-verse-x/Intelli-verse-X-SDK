@@ -4,28 +4,17 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 using IntelliVerseX.Core;
+using IntelliVerseX.Identity;
 using IntelliVerseX.Storage;
 using System.Threading.Tasks;
 
 namespace IntelliVerseX.UI
 {
-    /// <summary>
-    /// Universal login screen controller for IntelliVerse-X SDK.
-    /// Handles guest login, email/password, and social authentication.
-    /// 
-    /// Setup:
-    /// 1. Add IVX_LoginScene prefab to your login scene
-    /// 2. Configure mainMenuSceneName (e.g., "MainMenu")
-    /// 3. Optional: Customize UI elements and colors
-    /// 
-    /// Features:
-    /// - Guest account (4-day expiry)
-    /// - Email/Password authentication
-    /// - Apple Sign In (iOS)
-    /// - Google Sign In (Android/iOS)
-    /// - Auto-login with saved credentials
-    /// - Automatic SDK initialization
-    /// </summary>
+        /// <summary>
+        /// Handles guest login, email/password (Auth V2 / Cognito), and optional social buttons.
+        /// Apple/Google buttons are hidden by default until the required plugins/tokens are wired.
+        /// Prefer IVXAPIClient.SocialLoginAsync for production social auth.
+        /// </summary>
     [AddComponentMenu("IntelliVerse-X/UI/Login Controller")]
     public class IVXLoginController : MonoBehaviour
     {
@@ -57,11 +46,11 @@ namespace IntelliVerseX.UI
         [Tooltip("Enable auto-login with saved credentials")]
         public bool enableAutoLogin = true;
         
-        [Tooltip("Show Apple Sign In button (iOS only)")]
-        public bool showAppleSignIn = true;
+        [Tooltip("Show Apple Sign In button (iOS only). Requires Apple Auth plugin + INTELLIVERSEX_HAS_APPLE_SIGNIN.")]
+        public bool showAppleSignIn = false;
         
-        [Tooltip("Show Google Sign In button")]
-        public bool showGoogleSignIn = true;
+        [Tooltip("Show Google Sign In button. Requires a Google ID token provider in your game — SDK does not ship a Google plugin.")]
+        public bool showGoogleSignIn = false;
         
         private IntelliVerseXConfig config;
         private bool isInitializing = false;
@@ -123,20 +112,18 @@ namespace IntelliVerseX.UI
             if (versionText)
                 versionText.text = $"v{Application.version}";
             
-            // Platform-specific buttons
+            // Hide unfinished social providers by default (finish-or-hide).
+            bool appleAvailable = false;
+#if UNITY_IOS && INTELLIVERSEX_HAS_APPLE_SIGNIN
+            appleAvailable = showAppleSignIn;
+#endif
             if (appleSignInButton)
-            {
-                #if UNITY_IOS
-                appleSignInButton.gameObject.SetActive(showAppleSignIn);
-                #else
-                appleSignInButton.gameObject.SetActive(false);
-                #endif
-            }
-            
+                appleSignInButton.gameObject.SetActive(appleAvailable);
+
+            // Google requires a game-supplied ID token; keep hidden unless explicitly opted in.
             if (googleSignInButton)
                 googleSignInButton.gameObject.SetActive(showGoogleSignIn);
             
-            // Show login panel
             if (loginPanel) loginPanel.SetActive(true);
             if (loadingPanel) loadingPanel.SetActive(false);
         }
@@ -319,19 +306,22 @@ namespace IntelliVerseX.UI
 
         async void OnAppleSignInClicked()
         {
-            await Task.CompletedTask; // Stub for future async implementation
-#if UNITY_IOS
             if (isInitializing) return;
-            
+
+#if !(UNITY_IOS && INTELLIVERSEX_HAS_APPLE_SIGNIN)
+            ShowStatus("Apple Sign In is not available on this build. Enable Apple Auth plugin or use email/guest.", Color.red);
+            return;
+#else
             Debug.Log("[IVX Login] Apple Sign In clicked");
             ShowStatus("Signing in with Apple...", Color.white);
             ShowLoadingPanel(true);
-            
             isInitializing = true;
-            
+
             try
             {
-                throw new NotSupportedException("Apple Sign In is not yet implemented. See CONTRIBUTING.md to help.");
+                // Plugin present: games must supply the Apple identity token via IVXAPIClient.SocialLoginAsync.
+                // Without a live AppleAuth callback wired here, fail gracefully instead of throwing.
+                ShowStatus("Apple Sign In requires your AppleAuth credential callback. See Auth sample / IVXPanelLogin.", Color.yellow);
                 ShowLoadingPanel(false);
             }
             catch (System.Exception ex)
@@ -349,37 +339,18 @@ namespace IntelliVerseX.UI
 
         async void OnGoogleSignInClicked()
         {
-            await Task.CompletedTask; // Stub for future async implementation
             if (isInitializing) return;
 
             Debug.Log("[IVX Login] Google Sign In clicked");
-            ShowStatus("Signing in with Google...", Color.white);
-            ShowLoadingPanel(true);
-            
-            isInitializing = true;
-            
-            try
-            {
-                throw new NotSupportedException("Google Sign In is not yet implemented. See CONTRIBUTING.md to help.");
-                ShowLoadingPanel(false);
-            }
-            catch (System.Exception ex)
-            {
-                Debug.LogError($"[IVX Login] Google Sign In error: {ex.Message}");
-                ShowStatus("Google Sign In failed. Please try again.", Color.red);
-                ShowLoadingPanel(false);
-            }
-            finally
-            {
-                isInitializing = false;
-            }
+            ShowStatus("Google Sign In requires a game-supplied ID token. Use IVXAPIClient.SocialLoginAsync(\"google\", ...).", Color.yellow);
+            ShowLoadingPanel(false);
+            await Task.CompletedTask;
         }
 
         async Task<bool> AuthenticateWithDeviceId(string deviceId)
         {
             try
             {
-                // Canonical init is IVXBootstrap (Control Center) — do not call IntelliVerseXManager.
                 var identity = IntelliVerseXIdentity.Instance;
                 if (identity == null)
                 {
@@ -409,10 +380,24 @@ namespace IntelliVerseX.UI
 
         async Task<bool> AuthenticateWithEmail(string email, string password)
         {
-            Debug.LogWarning("[IVXLoginController] Cognito email/password authentication is not yet available.");
-            // For now, fallback to device ID authentication
-            string deviceId = SystemInfo.deviceUniqueIdentifier;
-            return await AuthenticateWithDeviceId(deviceId);
+            try
+            {
+                var result = await IntelliVerseX.Identity.IVXAPIClient.LoginAsync(email, password, persistSession: true);
+                if (result != null && result.status)
+                {
+                    Debug.Log("[IVX Login] Cognito/Auth V2 email login succeeded");
+                    return true;
+                }
+
+                string msg = result != null ? result.message : "Unknown error";
+                Debug.LogWarning($"[IVX Login] Email login failed: {msg}");
+                return false;
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[IVX Login] Email login exception: {ex.Message}");
+                return false;
+            }
         }
 
         void LoadMainMenu()

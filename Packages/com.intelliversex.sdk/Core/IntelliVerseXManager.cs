@@ -6,6 +6,7 @@ namespace IntelliVerseX.Core
     /// <summary>
     /// REMOVED as a public init path. Use <c>IVXBootstrap</c> + <c>IVXBootstrapConfig</c>
     /// (IntelliVerseX → Control Center). Kept as a deserialize stub for old scenes only.
+    /// Prefer <c>IVXAuthClient</c> / <c>IVXAPIClient</c> for auth and <c>IVXNWalletManager</c> for wallet.
     /// </summary>
     [Obsolete("Removed. Use IVXBootstrap + IVXBootstrapConfig (IntelliVerseX → Control Center).")]
     public class IntelliVerseXManager : MonoBehaviour

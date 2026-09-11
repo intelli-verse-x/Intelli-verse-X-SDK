@@ -34,7 +34,7 @@ With specific version tag:
 ```json
 {
   "dependencies": {
-    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Assets/_IntelliVerseXSDK#v5.8.0"
+    "com.intelliversex.sdk": "https://github.com/Intelli-verse-X/Intelli-verse-X-SDK.git?path=Packages/com.intelliversex.sdk#v6.0.0"
   }
 }
 ```
@@ -260,7 +260,7 @@ Values are taken from the [Feature Coverage Matrix](../FEATURE_COVERAGE_MATRIX.m
 | tvOS | - |
 | visionOS | S |
 
-At **v5.8.0**, Unity is the reference platform (**~82%** fully implemented in the audited matrix). For cross-engine comparison, keep using the full matrix.
+At **v6.0.0**, Unity is the reference platform (**~82%** fully implemented in the audited matrix). For cross-engine comparison, keep using the full matrix.
 
 ## Platform-Specific Configuration
 

@@ -570,4 +570,4 @@ All 7 skills include guidance for XR, console, and WebGL deployment targets:
 
 ---
 
-*IntelliVerseX SDK v5.8.0 -- 8 skills, 10 platforms, one natural language interface.*
+*IntelliVerseX SDK v6.0.0 -- 8 skills, 10 platforms, one natural language interface.*

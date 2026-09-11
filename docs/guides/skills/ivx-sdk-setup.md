@@ -232,7 +232,7 @@ https://github.com/intelli-verse-x/defold-sdk/archive/main.zip
 FetchContent_Declare(
   intelliversex
   GIT_REPOSITORY https://github.com/intelli-verse-x/cpp-sdk.git
-  GIT_TAG v5.8.0
+  GIT_TAG v6.0.0
 )
 FetchContent_MakeAvailable(intelliversex)
 target_link_libraries(${PROJECT_NAME} PRIVATE intelliversex::sdk)

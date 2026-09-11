@@ -452,25 +452,16 @@ namespace IntelliVerseX.Identity
         #region Wallet
 
         /// <summary>
-        /// Get the user's wallet balance.
-        /// Note: Wallet APIs may require additional backend configuration.
+        /// Obsolete HTTP wallet entry. Use <c>IntelliVerseX.Core.IVXNWalletManager</c> (V2) instead.
         /// </summary>
-        /// <param name="ct">Cancellation token</param>
-        /// <returns>Wallet balance response</returns>
-        public static async Task<IVXModels.WalletBalanceResponse> GetWalletBalanceAsync(
+        [Obsolete("Use IntelliVerseX.Core.IVXNWalletManager (GameBalance/GlobalBalance or RefreshBalancesAsync).")]
+        public static Task<IVXModels.WalletBalanceResponse> GetWalletBalanceAsync(
             CancellationToken ct = default)
         {
-            string walletAddress = UserSessionManager.Current?.walletAddress;
-            if (string.IsNullOrEmpty(walletAddress))
-            {
-                throw new InvalidOperationException("User must be logged in with a wallet address to get wallet balance");
-            }
-            
-            Debug.LogWarning("[IVXAPIClient] GetWalletBalanceAsync: Wallet API not yet implemented in APIManager. Returning empty response.");
-            return await Task.FromResult(new IVXModels.WalletBalanceResponse
+            return Task.FromResult(new IVXModels.WalletBalanceResponse
             {
                 success = false,
-                message = "Wallet API not yet implemented"
+                message = "Use IVXNWalletManager (canonical dual-wallet API). This HTTP stub is retired."
             });
         }
 

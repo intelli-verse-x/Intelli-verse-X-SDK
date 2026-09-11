@@ -23,14 +23,14 @@ namespace IntelliVerseX.Core
         public string gameName = "My Game";
         
         [Header("Backend Configuration")]
-        [Tooltip("Backend services are hardcoded at SDK level. Nakama: nakama-rest.intelli-verse-x.ai:443 | Photon: fa2f730e-1c81-4d01-b11f-708680dcaf37 | Ads: IronSource/AdMob")]
+        [Tooltip("Use the shared IntelliVerse-X cloud backend (Nakama host configured in IVXNakamaConfig / Bootstrap). Do not embed third-party App IDs here.")]
         public bool useSharedBackend = true;
         
         // Legacy fields - kept for backward compatibility, but SDK uses hardcoded config
         [HideInInspector] public string nakamaScheme = "https";
         [HideInInspector] public string nakamaHost = "nakama-rest.intelli-verse-x.ai";
         [HideInInspector] public int nakamaPort = 443;
-        [HideInInspector] public string nakamaServerKey = "defaultkey";
+        [HideInInspector] public string nakamaServerKey = "";
         
         [Header("Authentication")]
         [Tooltip("Cognito settings are hardcoded at SDK level (see IVXCognitoConfig.cs). All games use shared pool: aicart-user-pool")]
@@ -40,7 +40,7 @@ namespace IntelliVerseX.Core
         [Tooltip("Enable Photon multiplayer for this game")]
         public bool enablePhotonMultiplayer = true;
         
-        [Tooltip("Photon App ID for this game. Leave empty to use shared IntelliVerse-X App ID: fa2f730e-1c81-4d01-b11f-708680dcaf37")]
+        [Tooltip("Photon App ID for this game. Leave empty and set via Bootstrap / keys.json — never commit shared App IDs.")]
         public string photonAppId = "";
         
         [Header("Features")]

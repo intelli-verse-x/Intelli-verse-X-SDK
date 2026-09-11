@@ -1,6 +1,6 @@
 ﻿# Optional Unity modules
 
-Core: `com.intelliversex.sdk` at `Packages/com.intelliversex.sdk` (**5.11.0**).
+Core: `com.intelliversex.sdk` at `Packages/com.intelliversex.sdk` (**6.0.0**).
 
 Kid path: **Control Center → sign in (Auth V2) → create unique App ID (or paste / recent) → Play**. Optional: **IntelliVerseX → Connect (UI Toolkit)** for the same story in UITK.
 

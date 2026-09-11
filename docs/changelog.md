@@ -30,7 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - `IVXAIProfiler._eventQueue` grew unboundedly; now capped by `MaxEventQueueSize`
 - `IVXAIVoiceServices._wsHost` GameObject not destroyed on `OnDestroy()`
 - `GameBootstrap.cs` example used stale `IntelliVerseXManager` API; rewritten for `IVXBootstrap`
-- Documentation version drift: all docs, configs, and package manifests synced to v5.8.0
+- Documentation version drift: all docs, configs, and package manifests synced to v6.0.0
 - Installation guide had wrong UPM Git path
 - Changelog was missing entries for v5.2.0–v5.7.0
 

@@ -48,6 +48,12 @@ namespace IntelliVerseX.IAP
         /// </summary>
         public static event Action<IVXSubscriptionStatus> OnSubscriptionStatusChanged;
 
+        /// <summary>
+        /// Fired when premium access is denied and a paywall should be shown.
+        /// Args: (productId). Games/samples should open UI and call <see cref="PurchaseSubscriptionAsync"/>.
+        /// </summary>
+        public static event Action<string> OnPaywallRequested;
+
         #endregion
 
         #region Private Fields
@@ -157,9 +163,46 @@ namespace IntelliVerseX.IAP
                 return true;
             }
 
-            // Show paywall
-            Debug.Log("[IVXSubscriptionManager] Premium access required - show paywall");
+            RequestPaywall();
             return false;
+        }
+
+        /// <summary>
+        /// Raise <see cref="OnPaywallRequested"/> for game UI. Safe to call from gates/buttons.
+        /// </summary>
+        public void RequestPaywall()
+        {
+            string productId = _subscriptionProductId ?? string.Empty;
+            Debug.Log($"[IVXSubscriptionManager] Paywall requested for product '{productId}'");
+            try
+            {
+                OnPaywallRequested?.Invoke(productId);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[IVXSubscriptionManager] OnPaywallRequested subscriber error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Start the store purchase flow for the configured subscription product.
+        /// </summary>
+        public void PurchaseSubscriptionAsync()
+        {
+            if (string.IsNullOrEmpty(_subscriptionProductId))
+            {
+                Debug.LogError("[IVXSubscriptionManager] No subscription product id. Call Initialize first.");
+                return;
+            }
+
+            var iap = IVXIAPService.Instance;
+            if (iap == null)
+            {
+                Debug.LogError("[IVXSubscriptionManager] IVXIAPService not available.");
+                return;
+            }
+
+            iap.PurchaseProduct(_subscriptionProductId);
         }
 
         #endregion
@@ -287,6 +330,19 @@ namespace IntelliVerseX.IAP
         [Tooltip("Show paywall on click if not premium")]
         [SerializeField] private bool showPaywallOnClick = true;
 
+        [Tooltip("Optional: purchase immediately via IAP when paywall is requested (no custom UI).")]
+        [SerializeField] private bool purchaseOnPaywall = false;
+
+        [Header("Optional Paywall UI")]
+        [Tooltip("Optional panel shown when paywall is requested. If null, only the event fires.")]
+        [SerializeField] private GameObject paywallPanel;
+
+        [Tooltip("Optional buy button on the paywall panel")]
+        [SerializeField] private UnityEngine.UI.Button paywallBuyButton;
+
+        [Tooltip("Optional close button on the paywall panel")]
+        [SerializeField] private UnityEngine.UI.Button paywallCloseButton;
+
         #endregion
 
         #region Unity Lifecycle
@@ -298,13 +354,22 @@ namespace IntelliVerseX.IAP
                 CheckPremiumAccess();
             }
 
-            // Subscribe to status changes
             IVXSubscriptionManager.OnSubscriptionStatusChanged += OnStatusChanged;
+            IVXSubscriptionManager.OnPaywallRequested += OnPaywallRequested;
+
+            if (paywallBuyButton != null)
+                paywallBuyButton.onClick.AddListener(OnPaywallBuyClicked);
+            if (paywallCloseButton != null)
+                paywallCloseButton.onClick.AddListener(HidePaywall);
+
+            if (paywallPanel != null)
+                paywallPanel.SetActive(false);
         }
 
         private void OnDestroy()
         {
             IVXSubscriptionManager.OnSubscriptionStatusChanged -= OnStatusChanged;
+            IVXSubscriptionManager.OnPaywallRequested -= OnPaywallRequested;
         }
 
         #endregion
@@ -343,14 +408,26 @@ namespace IntelliVerseX.IAP
                 return false;
             }
 
-            bool granted = IVXSubscriptionManager.Instance.RequirePremiumAccess();
+            // Manager raises OnPaywallRequested when access is denied.
+            return IVXSubscriptionManager.Instance.RequirePremiumAccess();
+        }
 
-            if (!granted && showPaywallOnClick)
-            {
-                ShowPaywall();
-            }
+        /// <summary>Show the optional paywall panel and/or start purchase.</summary>
+        public void ShowPaywall()
+        {
+            if (paywallPanel != null)
+                paywallPanel.SetActive(true);
+            else
+                IVXSubscriptionManager.Instance?.RequestPaywall();
 
-            return granted;
+            if (purchaseOnPaywall)
+                IVXSubscriptionManager.Instance?.PurchaseSubscriptionAsync();
+        }
+
+        public void HidePaywall()
+        {
+            if (paywallPanel != null)
+                paywallPanel.SetActive(false);
         }
 
         #endregion
@@ -361,11 +438,27 @@ namespace IntelliVerseX.IAP
         {
             Debug.Log($"[IVXPremiumGate] Status changed: {newStatus}");
             CheckPremiumAccess();
+            if (newStatus == IVXSubscriptionStatus.Active || newStatus == IVXSubscriptionStatus.GracePeriod)
+                HidePaywall();
         }
 
-        private void ShowPaywall()
+        private void OnPaywallRequested(string productId)
         {
-            Debug.LogWarning("[IVXPremiumGate] Paywall UI not yet implemented. Override ShowPaywall() or listen for OnPaywallRequested.");
+            if (!showPaywallOnClick)
+                return;
+
+            if (paywallPanel != null)
+                paywallPanel.SetActive(true);
+
+            if (purchaseOnPaywall && IVXSubscriptionManager.Instance != null)
+                IVXSubscriptionManager.Instance.PurchaseSubscriptionAsync();
+            else if (paywallPanel == null && !purchaseOnPaywall)
+                Debug.Log($"[IVXPremiumGate] Paywall requested for '{productId}'. Assign paywallPanel or subscribe to IVXSubscriptionManager.OnPaywallRequested.");
+        }
+
+        private void OnPaywallBuyClicked()
+        {
+            IVXSubscriptionManager.Instance?.PurchaseSubscriptionAsync();
         }
 
         #endregion

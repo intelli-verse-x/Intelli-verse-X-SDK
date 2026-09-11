@@ -28,7 +28,7 @@ All features share a single config asset (`IVXAIConfig`) and work on **Android, 
 | Requirement | Details |
 |-------------|---------|
 | Unity | 2023.3+ or Unity 6 |
-| IntelliVerseX SDK | v5.8.0+ installed via UPM |
+| IntelliVerseX SDK | v6.0.0+ installed via UPM |
 | Newtonsoft JSON | Included with SDK |
 | Backend | See [Backend Options](#2-choose-your-ai-backend) below |
 
