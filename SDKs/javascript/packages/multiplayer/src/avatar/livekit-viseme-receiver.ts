@@ -64,8 +64,8 @@ export class IVXLiveKitVisemeReceiver implements IIVXVisemeStream {
   on(event: "phoneme",    cb: Cb<IVXPhonemeFrame>): Unsub;
   on(event: "expression", cb: Cb<IVXFacialExpressionFrame>): Unsub;
   on(event: "footer",     cb: Cb<IVXVisemeStreamFooter>): Unsub;
-  on(event: keyof ListenerMap, cb: (p: unknown) => void): Unsub {
-    const set = this.listeners[event] as Set<(p: unknown) => void>;
+  on(event: keyof ListenerMap, cb: Cb<any>): Unsub {
+    const set = this.listeners[event] as Set<Cb<any>>;
     set.add(cb);
     return () => set.delete(cb);
   }

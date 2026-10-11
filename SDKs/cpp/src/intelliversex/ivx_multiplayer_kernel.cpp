@@ -20,7 +20,7 @@
 #include "nakama-cpp/realtime/NRtClientInterface.h"
 #include "nakama-cpp/realtime/rtdata/NMatchData.h"
 #include "nakama-cpp/realtime/rtdata/NMatchPresenceEvent.h"
-#include "nakama-cpp/realtime/rtdata/NMatch.h"
+#include "nakama-cpp/data/NMatch.h"
 
 namespace ivx { namespace multiplayer {
 
@@ -299,26 +299,39 @@ std::string MatchSession::BuildEnvelopeJson(int64_t seq, int64_t match_time_ms,
 // ===========================================================================
 
 MultiplayerKernel::MultiplayerKernel(std::shared_ptr<Nakama::NClientInterface> client,
-                                     std::shared_ptr<Nakama::NSessionInterface> session)
-    : client_(std::move(client)), session_(std::move(session)) {}
+                                     std::shared_ptr<Nakama::NSessionInterface> session,
+                                     std::shared_ptr<Nakama::NRtTransportInterface> transport)
+    : client_(std::move(client)),
+      session_(std::move(session)),
+      rt_transport_(std::move(transport)) {}
 
 MultiplayerKernel::~MultiplayerKernel() { Shutdown(); }
 
 bool MultiplayerKernel::Initialize() {
     if (initialized_.load()) return true;
     if (!client_ || !session_) return false;
-    rt_client_ = client_->createRtClient();
+#if !defined(WITH_EXTERNAL_WS) && !defined(BUILD_IO_EXTERNAL)
+    rt_client_ = rt_transport_
+        ? client_->createRtClient(rt_transport_)
+        : client_->createRtClient();
+#else
+    if (!rt_transport_) {
+        SetState(TransportState::FailedFatal);
+        return false;
+    }
+    rt_client_ = client_->createRtClient(rt_transport_);
+#endif
     if (!rt_client_) {
         SetState(TransportState::FailedFatal);
         return false;
     }
-    auto listener = std::make_shared<Nakama::NRtDefaultClientListener>();
-    listener->setConnectCallback([this]() { SetState(TransportState::Connected); });
-    listener->setDisconnectCallback([this](const Nakama::NRtClientDisconnectInfo&) { SetState(TransportState::Disconnected); });
-    listener->setErrorCallback([](const Nakama::NRtError&){ /* fanned through disconnect */ });
-    listener->setMatchDataCallback([this](const Nakama::NMatchData& d){ Internal_OnMatchData(d); });
-    listener->setMatchPresenceCallback([this](const Nakama::NMatchPresenceEvent& e){ Internal_OnMatchPresence(e); });
-    rt_client_->setListener(listener.get());
+    rt_listener_ = std::make_shared<Nakama::NRtDefaultClientListener>();
+    rt_listener_->setConnectCallback([this]() { SetState(TransportState::Connected); });
+    rt_listener_->setDisconnectCallback([this](const Nakama::NRtClientDisconnectInfo&) { SetState(TransportState::Disconnected); });
+    rt_listener_->setErrorCallback([](const Nakama::NRtError&){ /* fanned through disconnect */ });
+    rt_listener_->setMatchDataCallback([this](const Nakama::NMatchData& d){ Internal_OnMatchData(d); });
+    rt_listener_->setMatchPresenceCallback([this](const Nakama::NMatchPresenceEvent& e){ Internal_OnMatchPresence(e); });
+    rt_client_->setListener(rt_listener_.get());
     SetState(TransportState::Connecting);
     rt_client_->connect(session_, /*createStatus*/ true);
     initialized_.store(true);
@@ -338,6 +351,7 @@ void MultiplayerKernel::Shutdown() {
         rt_client_->disconnect();
         rt_client_.reset();
     }
+    rt_listener_.reset();
     SetState(TransportState::Disconnected);
 }
 
@@ -376,6 +390,32 @@ void MultiplayerKernel::CreateMatch(const CreateMatchRequest& req, CreateMatchCb
             err.error_message = e.message;
             if (cb) cb(err);
         });
+}
+
+void MultiplayerKernel::ListTemplates(RpcCb cb) {
+    RpcRaw("mp_list_templates", "{}", std::move(cb));
+}
+
+void MultiplayerKernel::ReadMatchResult(const std::string& match_id, RpcCb cb) {
+    std::ostringstream o;
+    o << "{\"match_id\":\"" << EscapeJsonString(match_id) << "\"}";
+    RpcRaw("mp_read_match_result", o.str(), std::move(cb));
+}
+
+void MultiplayerKernel::ListAgentPersonas(RpcCb cb) {
+    RpcRaw("mp_agent_list_personas", "{}", std::move(cb));
+}
+
+void MultiplayerKernel::SpawnAgent(const std::string& request_json, RpcCb cb) {
+    RpcRaw("mp_agent_spawn", LooksLikeJsonObjectOrArray(request_json) ? request_json : "{}", std::move(cb));
+}
+
+void MultiplayerKernel::DespawnAgent(const std::string& request_json, RpcCb cb) {
+    RpcRaw("mp_agent_despawn", LooksLikeJsonObjectOrArray(request_json) ? request_json : "{}", std::move(cb));
+}
+
+void MultiplayerKernel::AgentSpeak(const std::string& request_json, RpcCb cb) {
+    RpcRaw("mp_agent_speak", LooksLikeJsonObjectOrArray(request_json) ? request_json : "{}", std::move(cb));
 }
 
 void MultiplayerKernel::JoinMatch(const std::string& match_id,
@@ -435,7 +475,7 @@ void MultiplayerKernel::Internal_OnMatchData(const Nakama::NMatchData& data) {
     const std::string body(data.data.begin(), data.data.end());
     Envelope env;
     if (!ParseEnvelope(body, static_cast<int32_t>(data.opCode),
-                       data.presence ? data.presence->userId : std::string(), env)) {
+                       data.presence.userId, env)) {
         return;
     }
     sess->Internal_Dispatch(env);
@@ -468,6 +508,20 @@ void MultiplayerKernel::SetState(TransportState s) {
     for (auto& h : snapshot) {
         if (h) try { h(s); } catch (...) {}
     }
+}
+
+void MultiplayerKernel::RpcRaw(const std::string& rpc_id, const std::string& payload_json, RpcCb cb) {
+    if (!initialized_.load() || !client_ || !session_) {
+        if (cb) cb(RpcResponse{ "", false, "not_initialized" });
+        return;
+    }
+    client_->rpc(session_, rpc_id, payload_json.empty() ? "{}" : payload_json,
+        [cb](const Nakama::NRpc& rpc) {
+            if (cb) cb(RpcResponse{ rpc.payload, true, "" });
+        },
+        [cb](const Nakama::NError& e) {
+            if (cb) cb(RpcResponse{ "", false, e.message });
+        });
 }
 
 bool MultiplayerKernel::ParseEnvelope(const std::string& body, int32_t op_code,

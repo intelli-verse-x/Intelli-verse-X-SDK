@@ -7,6 +7,7 @@
 #include <functional>
 #include <vector>
 #include <cstdint>
+#include <utility>
 
 namespace ivx {
 
@@ -30,6 +31,14 @@ struct LeaderboardRecord {
 struct Error {
     int code = 0;
     std::string message;
+
+    Error() = default;
+    Error(int errorCode, std::string errorMessage)
+        : code(errorCode), message(std::move(errorMessage)) {}
+
+    template <typename ErrorCode>
+    Error(ErrorCode errorCode, std::string errorMessage)
+        : code(static_cast<int>(errorCode)), message(std::move(errorMessage)) {}
 };
 
 using ErrorCb = std::function<void(const Error&)>;
